@@ -46,7 +46,7 @@ public class ThemeChooseWindow extends JDialog implements ActionListener, ListSe
     {
         super(parent);
 
-        File dir = new File(GUI.getJarPath() + File.separator + "theme"+File.separator);
+        File dir = new File(GUI.getJarPath() + File.separator + "jchess"+ File.separator + "theme"+File.separator);
 
         System.out.println("Theme path: "+dir.getPath());
 
@@ -58,7 +58,7 @@ public class ThemeChooseWindow extends JDialog implements ActionListener, ListSe
             this.setMinimumSize(winDim);
             this.setMaximumSize(winDim);
             this.setSize(winDim);
-            this.setResizable(false);
+            this.setResizable(false);	
             this.setLayout(null);
             this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);            
             String[] dirNames = new String[files.length];
