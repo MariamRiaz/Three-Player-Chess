@@ -29,10 +29,10 @@ import javax.swing.event.ListSelectionEvent;
 import java.io.File;
 import java.util.Properties;
 import java.io.FileOutputStream;
+
 import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
 
-public class ThemeChooseWindow extends JDialog implements ActionListener, ListSelectionListener
-{
+public class ThemeChooseWindow extends JDialog implements ActionListener, ListSelectionListener {
 
     JList themesList;
     ImageIcon themePreview;
@@ -42,28 +42,25 @@ public class ThemeChooseWindow extends JDialog implements ActionListener, ListSe
     JButton themePreviewButton;
     JButton okButton;
 
-    ThemeChooseWindow(Frame parent) throws Exception
-    {
+    ThemeChooseWindow(Frame parent) throws Exception {
         super(parent);
 
-        File dir = new File(GUI.getJarPath() + File.separator + "jchess"+ File.separator + "theme"+File.separator);
+        File dir = new File(GUI.getJarPath() + File.separator + "jchess" + File.separator + "theme" + File.separator);
 
-        System.out.println("Theme path: "+dir.getPath());
+        System.out.println("Theme path: " + dir.getPath());
 
         File[] files = dir.listFiles();
-        if (files != null && dir.exists())
-        {
+        if (files != null && dir.exists()) {
             this.setTitle(Settings.lang("choose_theme_window_title"));
             Dimension winDim = new Dimension(550, 230);
             this.setMinimumSize(winDim);
             this.setMaximumSize(winDim);
             this.setSize(winDim);
-            this.setResizable(false);	
+            this.setResizable(false);
             this.setLayout(null);
-            this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);            
+            this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
             String[] dirNames = new String[files.length];
-            for (int i = 0; i < files.length; i++)
-            {
+            for (int i = 0; i < files.length; i++) {
                 dirNames[i] = files[i].getName();
             }
             this.themesList = new JList(dirNames);
@@ -73,15 +70,12 @@ public class ThemeChooseWindow extends JDialog implements ActionListener, ListSe
             this.themesList.setSelectionMode(0);
             this.themesList.addListSelectionListener(this);
             Properties prp = GUI.getConfigFile();
-            
+
             this.gbl = new GridBagLayout();
             this.gbc = new GridBagConstraints();
-            try
-            {
+            try {
                 this.themePreview = new ImageIcon(GUI.loadImage("Preview.png"));//JChessApp.class.getResource("theme/"+GUI.configFile.getProperty("THEME")+"/images/Preview.png"));
-            }
-            catch (java.lang.NullPointerException exc)
-            {
+            } catch (java.lang.NullPointerException exc) {
                 System.out.println("Cannot find preview image: " + exc);
                 this.themePreview = new ImageIcon(JChessApp.class.getResource("theme/noPreview.png"));
                 return;
@@ -97,48 +91,41 @@ public class ThemeChooseWindow extends JDialog implements ActionListener, ListSe
             this.add(this.okButton);
             this.okButton.addActionListener(this);
             this.setModal(true);
-        }
-        else
-        {
+        } else {
             throw new Exception(Settings.lang("error_when_creating_theme_config_window"));
         }
 
     }
 
     @Override
-    public void valueChanged(ListSelectionEvent event)
-    {
+    public void valueChanged(ListSelectionEvent event) {
         String element = this.themesList.getModel().getElementAt(this.themesList.getSelectedIndex()).toString();
-        String path = GUI.getJarPath() + File.separator + "theme/";
+        String path = GUI.getJarPath() + File.separator + "jchess" + File.separator + "theme/";
         //String path  = JChessApp.class.getResource("theme/").getPath().toString();
         System.out.println(path + element + "/images/Preview.png");
         this.themePreview = new ImageIcon(path + element + "/images/Preview.png");
         this.themePreviewButton.setIcon(this.themePreview);
     }
 
-    /** Method wich is changing a pawn into queen, rook, bishop or knight
+    /**
+     * Method wich is changing a pawn into queen, rook, bishop or knight
+     *
      * @param arg0 Capt information about performed action
      */
-    public void actionPerformed(ActionEvent evt)
-    {
-        if (evt.getSource() == this.okButton)
-        {
+    public void actionPerformed(ActionEvent evt) {
+        if (evt.getSource() == this.okButton) {
             Properties prp = GUI.getConfigFile();
             int element = this.themesList.getSelectedIndex();
             String name = this.themesList.getModel().getElementAt(element).toString();
-            if (GUI.themeIsValid(name))
-            {
+            if (GUI.themeIsValid(name)) {
                 prp.setProperty("THEME", name);
-                try
-                {
+                try {
                     //FileOutputStream fOutStr = new FileOutputStream(ThemeChooseWindow.class.getResource("config.txt").getFile());
                     FileOutputStream fOutStr = new FileOutputStream("config.txt");
                     prp.store(fOutStr, null);
                     fOutStr.flush();
                     fOutStr.close();
-                }
-                catch (java.io.IOException exc)
-                {
+                } catch (java.io.IOException exc) {
                 }
                 JOptionPane.showMessageDialog(this, Settings.lang("changes_visible_after_restart"));
                 this.setVisible(false);
