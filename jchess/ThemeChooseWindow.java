@@ -109,16 +109,16 @@ public class ThemeChooseWindow extends JDialog implements ActionListener, ListSe
     public void valueChanged(ListSelectionEvent event)
     {
         String element = this.themesList.getModel().getElementAt(this.themesList.getSelectedIndex()).toString();
-        String path = GUI.getJarPath()+File.separator+this.getClass().getPackageName()+File.separator +"theme/";
+        String path = GUI.getJarPath() + File.separator  + "jchess" + File.separator + "theme/" ;
         //String path  = JChessApp.class.getResource("theme/").getPath().toString();
         System.out.println(path + element + "/images/Preview.png");
         this.themePreview = new ImageIcon(path + element + "/images/Preview.png");
         this.themePreviewButton.setIcon(this.themePreview);
     }
 
-/** Method which is changing a pawn into queen, rook, bishop or knight
-**@param arg0 Capt information about performed action*/
-    
+	/** Method wich is changing a pawn into queen, rook, bishop or knight
+     * @param arg0 Capt information about performed action
+     */
     public void actionPerformed(ActionEvent evt)
     {
         if (evt.getSource() == this.okButton)
