@@ -31,6 +31,8 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import jchess.Log;
+
 public class Server implements Runnable
 {
 
@@ -195,7 +197,7 @@ public class Server implements Runnable
     {
         if (isPrintEnable)
         {
-            System.out.println("Server: " + str);
+            Log.log("Server: " + str);
         }
     }
 

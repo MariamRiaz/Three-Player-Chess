@@ -37,7 +37,6 @@ import jchess.server.Connection_info;
  */
 public class Client implements Runnable
 {
-
     public static boolean isPrintEnable = true; //print all messages (print function)
     Socket s;
     ObjectOutputStream output;
@@ -218,7 +217,7 @@ public class Client implements Runnable
     {
         if (isPrintEnable)
         {
-            System.out.println("Client: " + str);
+            Log.log("Client: " + str);
         }
     }
     

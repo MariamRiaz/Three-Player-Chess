@@ -40,6 +40,7 @@ import javax.swing.JTextField;
 import jchess.Client;
 import jchess.Game;
 import jchess.JChessApp;
+import jchess.Log;
 import jchess.Settings;
 import jchess.server.MD5;
 import jchess.server.Server;
@@ -251,7 +252,7 @@ public class DrawNetworkSettings extends JPanel implements ActionListener
 
                 if (isJoining) //Client connection: succesful
                 {
-                    System.out.println("Client connection: succesful");
+                    Log.log("Client connection: succesful");
                     //create new game and draw chessboard
                     Game newGUI = JChessApp.jcv.addNewTab("Network game, table: " + textGameID.getText()/*client.sett.playerWhite.getName()+" vs "+client.sett.playerBlack.getName()*/);
                     client.game = newGUI;
@@ -271,7 +272,7 @@ public class DrawNetworkSettings extends JPanel implements ActionListener
             }
             catch (Error err)
             {
-                System.out.println("Client connection: failure");
+                Log.log(Level.SEVERE, "Client connection: failure");
                 JOptionPane.showMessageDialog(this, err);
             }
         }

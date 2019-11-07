@@ -24,6 +24,7 @@ import javax.swing.*;
 
 import jchess.GUI;
 import jchess.JChessApp;
+import jchess.Log;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -58,7 +59,7 @@ public class JChessTabbedPane extends JTabbedPane implements MouseListener, Imag
     public void addTab(String title, Component component, Icon closeIcon)
     {
         super.addTab(title, new TabbedPaneIcon(closeIcon), component);
-        System.out.println("Present number of tabs: " + this.getTabCount());
+        Log.log("Present number of tabs: " + this.getTabCount());
         this.updateAddIconRect();
     }
 
@@ -89,7 +90,7 @@ public class JChessTabbedPane extends JTabbedPane implements MouseListener, Imag
             rect = ((TabbedPaneIcon) getIconAt(tabNumber)).getBounds();
             if (rect.contains(e.getX(), e.getY()))
             {
-                System.out.println("Removing tab with " + tabNumber + " number!...");
+                Log.log("Removing tab with " + tabNumber + " number!...");
                 this.removeTabAt(tabNumber);//remove tab
                 this.updateAddIconRect();
             }
@@ -100,10 +101,10 @@ public class JChessTabbedPane extends JTabbedPane implements MouseListener, Imag
         }
         else if (this.addIconRect != null && this.addIconRect.contains(e.getX(), e.getY()))
         {
-            System.out.println("newGame by + button");
+            Log.log("newGame by + button");
             this.showNewGameWindow();
         }
-        //System.out.println("x:" +e.getX()+" y: "+e.getY()+" x:"+this.addIconRect.x+" y::"+this.addIconRect.y+" width:"+this.addIconRect.width+" height: "+this.addIconRect.height);
+        //Log.log("x:" +e.getX()+" y: "+e.getY()+" x:"+this.addIconRect.x+" y::"+this.addIconRect.y+" width:"+this.addIconRect.width+" height: "+this.addIconRect.height);
     }
 
     public void mouseEntered(MouseEvent e)

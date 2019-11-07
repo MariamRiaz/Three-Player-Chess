@@ -40,6 +40,7 @@ package jchess.pieces;
 import java.util.ArrayList;
 
 import jchess.GUI;
+import jchess.Log;
 import jchess.Player;
 import jchess.UI.board.Chessboard;
 import jchess.UI.board.Square;
@@ -579,7 +580,7 @@ public class King extends Piece
 
         // Pawn
         if (this.player.goDown) //check if player "go" down or up
-        {//System.out.println("go down");
+        {//Log.log("go down");
             newX = s.pozX - 1;
             newY = s.pozY + 1;
             if (!isout(newX, newY))
@@ -611,7 +612,7 @@ public class King extends Piece
             }
         }
         else
-        {//System.out.println("go up");
+        {//Log.log.println("go up");
             newX = s.pozX - 1;
             newY = s.pozY - 1;
             if (!isout(newX, newY))

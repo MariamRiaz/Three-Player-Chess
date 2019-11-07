@@ -21,6 +21,8 @@ import org.jdesktop.application.SingleFrameApplication;
 import org.jdesktop.application.FrameView;
 import org.jdesktop.application.TaskMonitor;
 
+import com.sun.istack.internal.logging.Logger;
+
 import jchess.UI.JChessAboutBox;
 import jchess.UI.JChessTabbedPane;
 import jchess.UI.NewGameWindow;
@@ -38,6 +40,7 @@ import java.awt.event.*;
 import java.io.File;
 import java.applet.*;
 import java.io.IOException;
+import java.util.logging.Level;
 
 
 
@@ -45,7 +48,7 @@ import java.io.IOException;
  * The application's main frame.
  */
 public class JChessView extends FrameView implements ActionListener, ComponentListener
-{
+{	
     static GUI gui = null;
     GUI activeGUI;//in future it will be reference to active tab
 
@@ -87,7 +90,7 @@ public class JChessView extends FrameView implements ActionListener, ComponentLi
                         }
                         catch (java.io.IOException exc)
                         {
-                            System.out.println("error creating file: " + exc);
+                        	Log.log(Level.SEVERE, "error creating file: " + exc);
                         }
                     }
                     else if (selFile.exists())
@@ -102,7 +105,7 @@ public class JChessView extends FrameView implements ActionListener, ComponentLi
                     {
                         tempGUI.saveGame(selFile);
                     }
-                    System.out.println(fc.getSelectedFile().isFile());
+                    Log.log(fc.getSelectedFile().isFile());
                     break;
                 }
                 else if (retVal == JFileChooser.CANCEL_OPTION)
@@ -138,7 +141,7 @@ public class JChessView extends FrameView implements ActionListener, ComponentLi
                     JChessApp.getApplication().getMainFrame(), 
                     exc.getMessage()
                 );
-                System.out.println("Something wrong creating window - perhaps themeList is null");                
+                Log.log(Level.SEVERE, "Something wrong creating window - perhaps themeList is null");                
             }
         }
     }
@@ -579,7 +582,7 @@ public class JChessView extends FrameView implements ActionListener, ComponentLi
     public  JDialog  newGameFrame;
 
     public void componentResized(ComponentEvent e) {
-        System.out.println("jchessView resized!!;");
+        Log.log("jchessView resized!!;");
         throw new UnsupportedOperationException("Not supported yet.");
     }
     

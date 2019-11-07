@@ -28,6 +28,7 @@ import javax.swing.JTable;
 import javax.swing.table.*;
 
 import jchess.Game;
+import jchess.Log;
 import jchess.Player;
 import jchess.Settings;
 import jchess.Player.colors;
@@ -385,7 +386,7 @@ public class Moves extends AbstractTableModel
                     break; // R like Rook
             }
             sign = move.charAt(from);
-            System.out.println(sign);
+            Log.log(sign);
             if (sign < 97 || sign > 104) //if lower than 'a' or higher than 'h'
             {
                 return false;

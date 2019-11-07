@@ -26,7 +26,9 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.logging.Level;
 
+import jchess.Log;
 import jchess.Player;
 import jchess.UI.board.Chessboard;
 import jchess.UI.board.Square;
@@ -96,13 +98,13 @@ public abstract class Piece
             }
             else
             {
-                System.out.println("image is null!");
+                Log.log(Level.SEVERE, "image is null!");
             }
 
         }
         catch (java.lang.NullPointerException exc)
         {
-            System.out.println("Something wrong when painting piece: " + exc.getMessage());
+            Log.log(Level.SEVERE, "Something wrong when painting piece: " + exc.getMessage());
         }
     }
 

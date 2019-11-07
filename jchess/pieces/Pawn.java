@@ -23,6 +23,7 @@ package jchess.pieces;
 import java.util.ArrayList;
 
 import jchess.GUI;
+import jchess.Log;
 import jchess.Player;
 import jchess.Player.colors;
 import jchess.UI.board.Chessboard;
@@ -106,7 +107,7 @@ public class Pawn extends Piece
     @Override
     public ArrayList allMoves()
     {
-        //System.out.println(this.player.goDown);//4test
+        //Log.log(this.player.goDown);//4test
         ArrayList list = new ArrayList();
         Square sq;
         Square sq1;

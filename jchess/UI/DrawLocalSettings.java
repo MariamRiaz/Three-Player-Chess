@@ -23,12 +23,14 @@ import javax.swing.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.TextListener;
+import java.util.logging.Level;
 import java.awt.event.TextEvent;
 import java.awt.*;
 import javax.swing.text.BadLocationException;
 
 import jchess.Game;
 import jchess.JChessApp;
+import jchess.Log;
 import jchess.Player;
 import jchess.Settings;
 import jchess.Player.playerTypes;
@@ -100,7 +102,7 @@ public class DrawLocalSettings extends JPanel implements ActionListener, TextLis
                 }
                 catch (BadLocationException exc)
                 {
-                    System.out.println("Something wrong in editables: \n" + exc);
+                    Log.log(Level.SEVERE, "Something wrong in editables: \n" + exc);
                 }
             }
         }
@@ -184,9 +186,9 @@ public class DrawLocalSettings extends JPanel implements ActionListener, TextLis
                 newGUI.gameClock.setTimes(sett.timeForGame, sett.timeForGame);
                 newGUI.gameClock.start();
             }
-            System.out.println(this.time4Game.getActionCommand());
+            Log.log(this.time4Game.getActionCommand());
             //this.time4Game.getComponent(this.time4Game.getSelectedIndex());
-            System.out.println("****************\nStarting new game: " + pl1.name + " vs. " + pl2.name
+            Log.log("****************\nStarting new game: " + pl1.name + " vs. " + pl2.name
                     + "\ntime 4 game: " + sett.timeForGame + "\ntime limit set: " + sett.timeLimitSet
                     + "\nwhite on top?: " + sett.upsideDown + "\n****************");//4test
             newGUI.newGame();//start new Game
@@ -307,7 +309,7 @@ public class DrawLocalSettings extends JPanel implements ActionListener, TextLis
         }
         catch (BadLocationException exc)
         {
-            System.out.println("Something wrong in editables: \n" + exc);
+            Log.log(Level.SEVERE, "Something wrong in editables: \n" + exc);
         }
         return result;
     }

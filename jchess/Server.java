@@ -245,7 +245,7 @@ public class Server implements Runnable
     private static void print(String str)
     {
         if(isPrintEnable)
-            System.out.println("Server: "+str);
+            Log.log("Server: "+str);
     }
 
     /*

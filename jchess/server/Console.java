@@ -25,12 +25,14 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import jchess.Log;
+
 public class Console
 {
 
     public static void main(String[] args)
     {
-        System.out.println("JChess Server Start!");
+        Log.log("JChess Server Start!");
 
         Server server = new Server(); //create server
         server.isPrintEnable = false;
@@ -38,11 +40,11 @@ public class Console
         boolean isOK = true;
         while (isOK)
         {
-            System.out.println("--------------------");
-            System.out.println("[1] Nowy stół");
-            System.out.println("[2] Lista aktywnych stołów");
-            System.out.println("[3] Włącz/wyłącz komunikaty serwera");
-            System.out.println("[4] Wyłącz serwer");
+            Log.log("--------------------");
+            Log.log("[1] Nowy stół");
+            Log.log("[2] Lista aktywnych stołów");
+            Log.log("[3] Włącz/wyłącz komunikaty serwera");
+            Log.log("[4] Wyłącz serwer");
             System.out.print("-> ");
             String str = readString();
 
@@ -93,7 +95,7 @@ public class Console
                         p2 = table.clientPlayer2.nick;
                     }
 
-                    System.out.println("\t" + id + ": " + p1 + " vs " + p2);
+                    Log.log("\t" + id + ": " + p1 + " vs " + p2);
                 }
             }
             else if (str.equals("3")) //on/off server's communicats
@@ -101,12 +103,12 @@ public class Console
                 if (server.isPrintEnable == false)
                 {
                     server.isPrintEnable = true;
-                    System.out.println("Komunikaty serwera zostały włączone");
+                    Log.log("Komunikaty serwera zostały włączone");
                 }
                 else
                 {
                     server.isPrintEnable = false;
-                    System.out.println("Komunikaty serwera zostały wyłączone");
+                    Log.log("Komunikaty serwera zostały wyłączone");
                 }
             }
             else if (str.equals("4")) //exit
@@ -115,7 +117,7 @@ public class Console
             }
             else //bad commant
             {
-                System.out.println("Nierozpoznane polecenie");
+                Log.log(Level.SEVERE, "Nierozpoznane polecenie");
             }
         }
         System.exit(0);

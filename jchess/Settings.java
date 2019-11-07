@@ -89,7 +89,7 @@ public class Settings implements Serializable
         {
             result = key;
         }
-        System.out.println(Settings.loc.getLocale().toString());
+        Log.log(Settings.loc.getLocale().toString());
         return result;
     }
 }

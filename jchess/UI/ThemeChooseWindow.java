@@ -28,11 +28,13 @@ import javax.swing.event.ListSelectionListener;
 
 import jchess.GUI;
 import jchess.JChessApp;
+import jchess.Log;
 import jchess.Settings;
 
 import javax.swing.event.ListSelectionEvent;
 import java.io.File;
 import java.util.Properties;
+import java.util.logging.Level;
 import java.io.FileOutputStream;
 
 import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
@@ -52,7 +54,7 @@ public class ThemeChooseWindow extends JDialog implements ActionListener, ListSe
 
         File dir = new File(GUI.getJarPath() + File.separator + "jchess" + File.separator + "theme" + File.separator);
 
-        System.out.println("Theme path: " + dir.getPath());
+        Log.log("Theme path: " + dir.getPath());
 
         File[] files = dir.listFiles();
         if (files != null && dir.exists()) {
@@ -81,7 +83,7 @@ public class ThemeChooseWindow extends JDialog implements ActionListener, ListSe
             try {
                 this.themePreview = new ImageIcon(GUI.loadImage("Preview.png"));//JChessApp.class.getResource("theme/"+GUI.configFile.getProperty("THEME")+"/images/Preview.png"));
             } catch (java.lang.NullPointerException exc) {
-                System.out.println("Cannot find preview image: " + exc);
+                Log.log(Level.SEVERE, "Cannot find preview image: " + exc);
                 this.themePreview = new ImageIcon(JChessApp.class.getResource("theme/noPreview.png"));
                 return;
             }
@@ -107,7 +109,7 @@ public class ThemeChooseWindow extends JDialog implements ActionListener, ListSe
         String element = this.themesList.getModel().getElementAt(this.themesList.getSelectedIndex()).toString();
         String path = GUI.getJarPath() + File.separator + "jchess" + File.separator + "theme/";
         //String path  = JChessApp.class.getResource("theme/").getPath().toString();
-        System.out.println(path + element + "/images/Preview.png");
+        Log.log(path + element + "/images/Preview.png");
         this.themePreview = new ImageIcon(path + element + "/images/Preview.png");
         this.themePreviewButton.setIcon(this.themePreview);
     }
@@ -136,7 +138,7 @@ public class ThemeChooseWindow extends JDialog implements ActionListener, ListSe
                 this.setVisible(false);
 
             }
-            System.out.print(prp.getProperty("THEME"));
+            Log.log(prp.getProperty("THEME"));
         }
     }
 }

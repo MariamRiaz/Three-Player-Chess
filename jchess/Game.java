@@ -123,7 +123,7 @@ public class Game extends JPanel implements MouseListener, ComponentListener
         }
         catch (java.io.IOException exc)
         {
-            System.out.println("error writing to file: " + exc);
+            Log.log(Level.SEVERE, "error writing to file: " + exc);
             JOptionPane.showMessageDialog(this, Settings.lang("error_writing_to_file")+": " + exc);
             return;
         }
@@ -156,7 +156,7 @@ public class Game extends JPanel implements MouseListener, ComponentListener
         }
         catch (java.io.IOException exc)
         {
-            System.out.println("Something wrong reading file: " + exc);
+        	Log.log(Level.SEVERE, "Something wrong reading file: " + exc);
             return;
         }
         BufferedReader br = new BufferedReader(fileR);
@@ -172,7 +172,7 @@ public class Game extends JPanel implements MouseListener, ComponentListener
         }
         catch (ReadGameError err)
         {
-            System.out.println("Error reading file: " + err);
+        	Log.log(Level.SEVERE, "Error reading file: " + err);
             return;
         }
         Game newGUI = JChessApp.jcv.addNewTab(whiteName + " vs. " + blackName);
@@ -209,7 +209,7 @@ public class Game extends JPanel implements MouseListener, ComponentListener
             }
             catch (java.io.IOException exc)
             {
-                System.out.println("Something wrong reading file: " + exc);
+            	Log.log(Level.SEVERE, "Something wrong reading file: " + exc);
             }
             if (str == null)
             {
@@ -229,7 +229,7 @@ public class Game extends JPanel implements MouseListener, ComponentListener
      */
     static public String getValue(String line) throws ReadGameError
     {
-        //System.out.println("getValue called with: "+line);
+        //Log.log("getValue called with: "+line);
         int from = line.indexOf("\"");
         int to = line.lastIndexOf("\"");
         int size = line.length() - 1;
@@ -244,7 +244,7 @@ public class Game extends JPanel implements MouseListener, ComponentListener
         }
         catch (java.lang.StringIndexOutOfBoundsException exc)
         {
-            System.out.println("error getting value: " + exc);
+        	Log.log(Level.SEVERE, "error getting value: " + exc);
             return "none";
         }
         return result;
@@ -257,7 +257,7 @@ public class Game extends JPanel implements MouseListener, ComponentListener
     {
         chessboard.setPieces("", settings.playerWhite, settings.playerBlack);
 
-        //System.out.println("new game, game type: "+settings.gameType.name());
+        //Log.log("new game, game type: "+settings.gameType.name());
 
         activePlayer = settings.playerWhite;
         if (activePlayer.playerType != Player.playerTypes.localUser)
@@ -284,7 +284,7 @@ public class Game extends JPanel implements MouseListener, ComponentListener
     public void endGame(String massage)
     {
         this.blockedChessboard = true;
-        System.out.println(massage);
+        Log.log(massage);
         JOptionPane.showMessageDialog(null, massage);
     }
 
@@ -318,7 +318,7 @@ public class Game extends JPanel implements MouseListener, ComponentListener
     {
         switchActive();
 
-        System.out.println("next move, active player: " + activePlayer.name + ", color: " + activePlayer.color.name() + ", type: " + activePlayer.playerType.name());
+        Log.log("next move, active player: " + activePlayer.name + ", color: " + activePlayer.color.name() + ", type: " + activePlayer.playerType.name());
         if (activePlayer.playerType == Player.playerTypes.localUser)
         {
             this.blockedChessboard = false;
@@ -349,7 +349,7 @@ public class Game extends JPanel implements MouseListener, ComponentListener
             }
             else
             {
-                System.out.println("Bad move");
+                Log.log("Bad move");
                 return false;
             }
             chessboard.unselect();
@@ -552,7 +552,7 @@ public class Game extends JPanel implements MouseListener, ComponentListener
             }
             else if (blockedChessboard)
             {
-                System.out.println("Chessboard is blocked");
+                Log.log("Chessboard is blocked");
             }
         }
         //chessboard.repaint();

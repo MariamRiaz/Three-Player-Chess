@@ -30,6 +30,7 @@ import javax.swing.JPanel;
 import java.io.IOException;
 import java.util.Properties;
 import java.io.FileOutputStream;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /** Class representing the game interface which is seen by a player and
@@ -66,14 +67,14 @@ public class GUI
         try
         {
             String imageLink = "theme/" + configFile.getProperty("THEME", "default") + "/images/" + name;
-            System.out.println(configFile.getProperty("THEME"));
+            Log.log(configFile.getProperty("THEME"));
             url = JChessApp.class.getResource(imageLink);
             img = tk.getImage(url);
 
         }
         catch (Exception e)
         {
-            System.out.println("some error loading image!");
+        	Log.log(Level.SEVERE, "some error loading image!");
             e.printStackTrace();
         }
         return img;
@@ -109,7 +110,7 @@ public class GUI
         }
         catch (java.io.IOException exc)
         {
-            System.out.println("some error loading image! what goes: " + exc);
+        	Log.log(Level.SEVERE, "some error loading image! what goes: " + exc);
             exc.printStackTrace();
         }
         if (!outFile.exists())
