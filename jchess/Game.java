@@ -24,6 +24,14 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import javax.swing.*;
+
+import jchess.UI.Chat;
+import jchess.UI.GameClock;
+import jchess.UI.board.Chessboard;
+import jchess.UI.board.Square;
+import jchess.pieces.King;
+import jchess.pieces.Moves;
+
 import java.awt.*;
 import java.io.File;
 import java.io.BufferedReader;
@@ -51,7 +59,7 @@ public class Game extends JPanel implements MouseListener, ComponentListener
     public Moves moves;
     public Chat chat;
 
-    Game()
+    public Game()
     {
         this.setLayout(null);
         this.moves = new Moves(this);

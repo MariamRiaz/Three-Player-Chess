@@ -18,9 +18,15 @@
  * Mateusz Sławomir Lach ( matlak, msl )
  * Damian Marciniak
  */
-package jchess;
+package jchess.pieces;
 
 import java.util.ArrayList;
+
+import jchess.GUI;
+import jchess.Player;
+import jchess.Player.colors;
+import jchess.UI.board.Chessboard;
+
 import java.awt.Graphics;
 import java.awt.Image;
 
@@ -44,7 +50,7 @@ public class Queen extends Piece
     protected static final Image imageWhite = GUI.loadImage("Queen-W.png");
     protected static final Image imageBlack = GUI.loadImage("Queen-B.png");
 
-    Queen(Chessboard chessboard, Player player)
+    public Queen(Chessboard chessboard, Player player)
     {
         super(chessboard, player);//call initializer of super type: Piece
         //this.setImages("Queen-W.png", "Queen-B.png");

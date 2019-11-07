@@ -18,12 +18,16 @@
  * Mateusz Sławomir Lach ( matlak, msl )
  * Damian Marciniak
  */
-package jchess;
+package jchess.UI;
 
 import java.awt.*;
 import java.awt.image.*;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+
+import jchess.Game;
+import jchess.Player;
+import jchess.Settings;
 
 /** Class to representing the full game time
  * @param game The current game
@@ -42,7 +46,7 @@ public class GameClock extends JPanel implements Runnable
     private BufferedImage background;
     private Graphics bufferedGraphics;
 
-    GameClock(Game game)
+    public GameClock(Game game)
     {
         super();
         this.clock1 = new Clock();//white player clock

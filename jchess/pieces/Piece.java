@@ -18,7 +18,7 @@
  * Mateusz Sławomir Lach ( matlak, msl )
  * Damian Marciniak
  */
-package jchess;
+package jchess.pieces;
 
 
 import java.awt.Graphics;
@@ -26,6 +26,11 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.util.ArrayList;
 import java.util.Iterator;
+
+import jchess.Player;
+import jchess.UI.board.Chessboard;
+import jchess.UI.board.Square;
+
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
@@ -36,10 +41,10 @@ Class to represent a piece (any kind) - this class should be extended to represe
 public abstract class Piece
 {
 
-    Chessboard chessboard; // <-- this relations isn't in class diagram, but it's necessary :/
+    public Chessboard chessboard; // <-- this relations isn't in class diagram, but it's necessary :/
     public Square square;
     public Player player;
-    String name;
+    public String name;
     protected String symbol;
     protected static Image imageBlack;// = null;
     protected static Image imageWhite;// = null;
@@ -66,7 +71,7 @@ public abstract class Piece
      * @graph : where to draw
      */
 
-    final void draw(Graphics g)
+    public final void draw(Graphics g)
     {
         try
         {

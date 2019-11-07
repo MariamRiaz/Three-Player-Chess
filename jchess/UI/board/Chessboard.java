@@ -18,7 +18,7 @@
  * Mateusz Sławomir Lach ( matlak, msl )
  * Damian Marciniak
  */
-package jchess;
+package jchess.UI.board;
 
 import java.awt.*;
 import java.awt.Graphics;
@@ -28,7 +28,23 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Iterator;
 import javax.swing.JPanel;
-import jchess.Moves.castling;
+
+import jchess.GUI;
+import jchess.JChessApp;
+import jchess.Player;
+import jchess.Settings;
+import jchess.Player.colors;
+import jchess.Settings.gameTypes;
+import jchess.pieces.Bishop;
+import jchess.pieces.King;
+import jchess.pieces.Knight;
+import jchess.pieces.Move;
+import jchess.pieces.Moves;
+import jchess.pieces.Pawn;
+import jchess.pieces.Piece;
+import jchess.pieces.Queen;
+import jchess.pieces.Rook;
+import jchess.pieces.Moves.castling;
 
 /** Class to represent chessboard. Chessboard is made from squares.
  * It is setting the squers of chessboard and sets the pieces(pawns)
@@ -305,7 +321,7 @@ public class Chessboard extends JPanel
     }/*--endOf-get_widht--*/
 
 
-    int get_height(boolean includeLabels)
+    public int get_height(boolean includeLabels)
     {
         if (this.settings.renderLabels)
         {
@@ -315,7 +331,7 @@ public class Chessboard extends JPanel
     }/*--endOf-get_height--*/
 
 
-    int get_square_height()
+    public int get_square_height()
     {
         int result = (int) this.square_height;
         return result;
@@ -667,7 +683,7 @@ public class Chessboard extends JPanel
      * Method to draw Chessboard and their elements (pieces etc.)
      * @deprecated 
      */
-    void draw()
+    public void draw()
     {
         this.getGraphics().drawImage(image, this.getTopLeftPoint().x, this.getTopLeftPoint().y, null);//draw an Image of chessboard
         this.drawLabels();

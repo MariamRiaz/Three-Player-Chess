@@ -17,7 +17,7 @@
  * Authors:
  * Mateusz Sławomir Lach ( matlak, msl )
  */
-package jchess;
+package jchess.UI;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -36,6 +36,12 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+
+import jchess.Client;
+import jchess.Game;
+import jchess.JChessApp;
+import jchess.Settings;
+import jchess.server.MD5;
 import jchess.server.Server;
 
 /**
@@ -64,7 +70,7 @@ public class DrawNetworkSettings extends JPanel implements ActionListener
     private ServOptionsPanel servOptions;
     private ClientOptionsPanel clientOptions;
 
-    DrawNetworkSettings(JDialog parent)
+    public DrawNetworkSettings(JDialog parent)
     {
         super();
 

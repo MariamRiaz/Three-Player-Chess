@@ -18,9 +18,12 @@
  *
  * Created on 2009-10-20, 15:11:49
  */
-package jchess;
+package jchess.UI;
 
 import javax.swing.*;
+
+import jchess.Settings;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.*;

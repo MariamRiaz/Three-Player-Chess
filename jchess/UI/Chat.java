@@ -18,7 +18,7 @@
  * Mateusz Sławomir Lach ( matlak, msl )
  * Damian Marciniak
  */
-package jchess;
+package jchess.UI;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -27,6 +27,9 @@ import java.awt.event.ActionListener;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+
+import jchess.Client;
+
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 
@@ -45,7 +48,7 @@ public class Chat extends JPanel implements ActionListener
     private JTextField textInput;
     private JButton buttonSend;
 
-    Chat()
+    public Chat()
     {
         super();
 

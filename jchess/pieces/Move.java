@@ -16,11 +16,13 @@
 /*
  * Author: Mateusz Sławomir Lach ( matlak, msl )
  */
-package jchess;
+package jchess.pieces;
 
-import jchess.Moves.castling;
+import jchess.UI.board.Chessboard;
+import jchess.UI.board.Square;
+import jchess.pieces.Moves.castling;
 
-class Move
+public class Move
 {
 
     protected Square from = null;

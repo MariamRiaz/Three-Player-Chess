@@ -18,9 +18,13 @@
  * Mateusz Sławomir Lach ( matlak, msl )
  * Damian Marciniak
  */
-package jchess;
+package jchess.UI;
 
 import javax.swing.*;
+
+import jchess.GUI;
+import jchess.JChessApp;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.ImageObserver;
@@ -34,7 +38,7 @@ public class JChessTabbedPane extends JTabbedPane implements MouseListener, Imag
     private Image unclickedAddIcon = null;
     private Rectangle addIconRect = null;
 
-    JChessTabbedPane()
+    public JChessTabbedPane()
     {
         super();
         this.closeIcon = new TabbedPaneIcon(this.closeIcon);

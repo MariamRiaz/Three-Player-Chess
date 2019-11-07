@@ -26,6 +26,7 @@ import java.io.*;
 import java.io.InputStreamReader;
 import javax.swing.*;
 import javax.swing.JPanel;
+
 import java.io.IOException;
 import java.util.Properties;
 import java.io.FileOutputStream;
@@ -53,7 +54,7 @@ public class GUI
      * @returns  : image or null if cannot load
      * */
 
-    static Image loadImage(String name)
+    public static Image loadImage(String name)
     {
         if (configFile == null)
         {
@@ -79,12 +80,12 @@ public class GUI
     }/*--endOf-loadImage--*/
 
 
-    static boolean themeIsValid(String name)
+    public static boolean themeIsValid(String name)
     {
         return true;
     }
 
-    static String getJarPath()
+    public static String getJarPath()
     {
         String path = GUI.class.getProtectionDomain().getCodeSource().getLocation().getFile();
         path = path.replaceAll("[a-zA-Z0-9%!@#$%^&*\\(\\)\\[\\]\\{\\}\\.\\,\\s]+\\.jar", "");
@@ -97,7 +98,7 @@ public class GUI
         return path;
     }
 
-    static Properties getConfigFile()
+    public static Properties getConfigFile()
     {
         Properties defConfFile = new Properties();
         Properties confFile = new Properties();

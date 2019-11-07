@@ -44,12 +44,12 @@ public class Client implements Runnable
     ObjectInputStream input;
     String ip;
     int port;
-    Game game;
+    public Game game;
     Settings sett;
     boolean wait4undoAnswer = false;
     boolean isObserver = false;
 
-    Client(String ip, int port)
+    public Client(String ip, int port)
     {
         print("running");
 
@@ -60,7 +60,7 @@ public class Client implements Runnable
     /* Method responsible for joining to the server on 
      * witch the game was created
      */
-    boolean join(int tableID, boolean asPlayer, String nick, String password) throws Error //join to server
+    public boolean join(int tableID, boolean asPlayer, String nick, String password) throws Error //join to server
     {
         print("running function: join(" + tableID + ", " + asPlayer + ", " + nick + ")");
         try

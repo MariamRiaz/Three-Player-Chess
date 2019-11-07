@@ -18,7 +18,7 @@
  * Mateusz Sławomir Lach ( matlak, msl )
  * Damian Marciniak
  */
-package jchess;
+package jchess.pieces;
 
 import java.util.ArrayList;
 import java.util.Stack;
@@ -26,6 +26,15 @@ import java.awt.Point;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.*;
+
+import jchess.Game;
+import jchess.Player;
+import jchess.Settings;
+import jchess.Player.colors;
+import jchess.Settings.gameTypes;
+import jchess.UI.board.Chessboard;
+import jchess.UI.board.Square;
+
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import javax.swing.JOptionPane;
@@ -54,12 +63,12 @@ public class Moves extends AbstractTableModel
     protected Stack<Move> moveBackStack = new Stack<Move>();
     protected Stack<Move> moveForwardStack = new Stack<Move>();
 
-    enum castling
+    public enum castling
     {
         none, shortCastling, longCastling
     }
 
-    Moves(Game game)
+    public Moves(Game game)
     {
         super();
         this.tableModel = new MyDefaultTableModel();

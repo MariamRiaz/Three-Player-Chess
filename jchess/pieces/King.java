@@ -18,7 +18,7 @@
  * Mateusz Sławomir Lach ( matlak, msl )
  * Damian Marciniak
  */
-package jchess;
+package jchess.pieces;
 
 /**
  * Class to represent a chess pawn king. King is the most important
@@ -38,6 +38,12 @@ package jchess;
         0 1 2 3 4 5 6 7
  */
 import java.util.ArrayList;
+
+import jchess.GUI;
+import jchess.Player;
+import jchess.UI.board.Chessboard;
+import jchess.UI.board.Square;
+
 import java.awt.Image;
 
 public class King extends Piece
@@ -49,7 +55,7 @@ public class King extends Piece
     private static final Image imageWhite = GUI.loadImage("King-W.png");
     private static final Image imageBlack = GUI.loadImage("King-B.png");
 
-    King(Chessboard chessboard, Player player)
+    public King(Chessboard chessboard, Player player)
     {
         super(chessboard, player);
         //this.setImages("King-W.png", "King-B.png");

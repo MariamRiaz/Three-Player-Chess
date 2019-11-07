@@ -18,10 +18,13 @@
  * Mateusz Sławomir Lach ( matlak, msl )
  * Damian Marciniak
  */
-package jchess;
+package jchess.UI;
 
 import java.awt.*;
 import javax.swing.*;
+
+import jchess.GUI;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -42,7 +45,7 @@ public class PawnPromotionWindow extends JDialog implements ActionListener
     public String result;
     GridBagConstraints gbc;
 
-    PawnPromotionWindow(Frame parent, String color)
+    public PawnPromotionWindow(Frame parent, String color)
     {
         super(parent);
         this.setTitle("Choose piece");
