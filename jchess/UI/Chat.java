@@ -27,87 +27,84 @@ import java.awt.event.ActionListener;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-
 import jchess.Client;
-
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 
 /**
- * Class representing the game chat
- * Players are in touch and can write a messages to each other
+ * Class representing the game chat Players are in touch and can write a
+ * messages to each other
  */
-public class Chat extends JPanel implements ActionListener
-{
+public class Chat extends JPanel implements ActionListener {
+	public Client client;
+	private GridBagLayout gbl;
+	private GridBagConstraints gbc;
+	private JScrollPane scrollPane;
+	private JTextArea textOutput;
+	private JTextField textInput;
+	private JButton buttonSend;
 
-    public Client client;
-    private GridBagLayout gbl;
-    private GridBagConstraints gbc;
-    private JScrollPane scrollPane;
-    private JTextArea textOutput;
-    private JTextField textInput;
-    private JButton buttonSend;
+	public Chat() {
+		super();
 
-    public Chat()
-    {
-        super();
+		this.textOutput = new JTextArea();
+		this.textOutput.setEditable(false);
+		this.scrollPane = new JScrollPane();
+		this.scrollPane.setViewportView(this.textOutput);
+		this.textInput = new JTextField();
+		this.textInput.addActionListener(this);
+		this.buttonSend = new JButton("^");
+		this.buttonSend.addActionListener(this);
 
-        this.textOutput = new JTextArea();
-        this.textOutput.setEditable(false);
-        this.scrollPane = new JScrollPane();
-        this.scrollPane.setViewportView(this.textOutput);
-        this.textInput = new JTextField();
-        this.textInput.addActionListener(this);
-        this.buttonSend = new JButton("^");
-        this.buttonSend.addActionListener(this);
+		// add components
+		this.gbl = new GridBagLayout();
+		this.gbc = new GridBagConstraints();
+		this.gbc.fill = GridBagConstraints.BOTH;
+		this.setLayout(gbl);
 
-        //add components
-        this.gbl = new GridBagLayout();
-        this.gbc = new GridBagConstraints();
-        this.gbc.fill = GridBagConstraints.BOTH;
-        this.setLayout(gbl);
+		this.gbc.gridx = 0;
+		this.gbc.gridy = 0;
+		this.gbc.gridwidth = 2;
+		this.gbc.gridheight = 1;
+		this.gbc.weighty = 1.0;
+		this.gbc.weightx = 0;
+		this.gbl.setConstraints(scrollPane, gbc);
+		this.add(scrollPane);
 
-        this.gbc.gridx = 0;
-        this.gbc.gridy = 0;
-        this.gbc.gridwidth = 2;
-        this.gbc.gridheight = 1;
-        this.gbc.weighty = 1.0;
-        this.gbc.weightx = 0;
-        this.gbl.setConstraints(scrollPane, gbc);
-        this.add(scrollPane);
+		this.gbc.gridx = 0;
+		this.gbc.gridy = 1;
+		this.gbc.gridwidth = 1;
+		this.gbc.gridheight = 1;
+		this.gbc.weighty = 0;
+		this.gbc.weightx = 1.0;
+		this.gbl.setConstraints(textInput, gbc);
+		this.add(textInput);
 
-        this.gbc.gridx = 0;
-        this.gbc.gridy = 1;
-        this.gbc.gridwidth = 1;
-        this.gbc.gridheight = 1;
-        this.gbc.weighty = 0;
-        this.gbc.weightx = 1.0;
-        this.gbl.setConstraints(textInput, gbc);
-        this.add(textInput);
+		this.gbc.gridx = 1;
+		this.gbc.gridy = 1;
+		this.gbc.gridwidth = 1;
+		this.gbc.gridheight = 1;
+		this.gbc.weighty = 0;
+		this.gbc.weightx = 0;
+		this.gbl.setConstraints(buttonSend, gbc);
+		this.add(buttonSend);
+	}
 
-        this.gbc.gridx = 1;
-        this.gbc.gridy = 1;
-        this.gbc.gridwidth = 1;
-        this.gbc.gridheight = 1;
-        this.gbc.weighty = 0;
-        this.gbc.weightx = 0;
-        this.gbl.setConstraints(buttonSend, gbc);
-        this.add(buttonSend);
-    }
+	/**
+	 * Method of adding message to the list
+	 */
+	public void addMessage(String str) // added message to list
+	{
+		textOutput.append(str + "\n");
+		textOutput.setCaretPosition(textOutput.getDocument().getLength());
+	}
 
-    /** Method of adding message to the list
-     */
-    public void addMessage(String str) //added message to list
-    {
-        textOutput.append(str + "\n");
-        textOutput.setCaretPosition(textOutput.getDocument().getLength());
-    }
-
-    /** Sending message method
-     */
-    public void actionPerformed(ActionEvent arg0) //sending message
-    {
-        this.client.sendMassage(textInput.getText());
-        textInput.setText("");
-    }
+	/**
+	 * Sending message method
+	 */
+	public void actionPerformed(ActionEvent arg0) // sending message
+	{
+		this.client.sendMassage(textInput.getText());
+		textInput.setText("");
+	}
 }
