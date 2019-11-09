@@ -68,7 +68,7 @@ public class GUI
         {
             String imageLink = "theme/" + configFile.getProperty("THEME", "default") + "/images/" + name;
             Log.log(configFile.getProperty("THEME"));
-            url = JChessApp.class.getResource(imageLink);
+            url = JChessApp.class.getClassLoader().getResource(imageLink);
             img = tk.getImage(url);
 
         }
@@ -106,7 +106,7 @@ public class GUI
         File outFile = new File(GUI.getJarPath() + File.separator + "config.txt");
         try
         {
-            defConfFile.load(GUI.class.getResourceAsStream("config.txt"));
+            defConfFile.load(GUI.class.getClassLoader().getResourceAsStream("config.txt"));
         }
         catch (java.io.IOException exc)
         {
