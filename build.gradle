@@ -1,0 +1,17 @@
+plugins {
+    id 'java-library'
+}
+
+repositories {
+    mavenCentral()
+}
+
+//java {
+//    sourceCompatibility = JavaVersion.VERSION_1_8
+//    targetCompatibility = JavaVersion.VERSION_1_8
+//}
+dependencies {
+    // https://mvnrepository.com/artifact/org.jdesktop/appframework
+    compile group: 'org.jdesktop', name: 'appframework', version: '1.0.3'
+    testCompile 'junit:junit:4.12'
+}

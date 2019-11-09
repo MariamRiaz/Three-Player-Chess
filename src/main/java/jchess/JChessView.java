@@ -20,9 +20,6 @@ import org.jdesktop.application.ResourceMap;
 import org.jdesktop.application.SingleFrameApplication;
 import org.jdesktop.application.FrameView;
 import org.jdesktop.application.TaskMonitor;
-
-import com.sun.istack.internal.logging.Logger;
-
 import jchess.UI.JChessAboutBox;
 import jchess.UI.JChessTabbedPane;
 import jchess.UI.NewGameWindow;

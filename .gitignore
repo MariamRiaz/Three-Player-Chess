@@ -1,11 +1,9 @@
 
-# Created by https://www.gitignore.io/api/java,eclipse,intellij
-# Edit at https://www.gitignore.io/?templates=java,eclipse,intellij
+# Created by https://www.gitignore.io/api/java,gradle,eclipse,intellij
+# Edit at https://www.gitignore.io/?templates=java,gradle,eclipse,intellij
 
 ### Eclipse ###
 .metadata
-joChess-1.0.1-sources/.classpath
-joChess-1.0.1-sources/.project
 bin/
 tmp/
 *.tmp
@@ -78,7 +76,6 @@ local.properties
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
 # User-specific stuff
-.idea
 .idea/**/workspace.xml
 .idea/**/tasks.xml
 .idea/**/usage.statistics.xml
@@ -96,6 +93,8 @@ local.properties
 .idea/**/dynamic.xml
 .idea/**/uiDesigner.xml
 .idea/**/dbnavigator.xml
+.idea/**/misc.xml
+.idea/**/vcs.xml
 
 # Gradle
 .idea/**/gradle.xml
@@ -147,7 +146,7 @@ fabric.properties
 ### Intellij Patch ###
 # Comment Reason: https://github.com/joeblau/gitignore.io/issues/186#issuecomment-215987721
 
-*.iml
+# *.iml
 # modules.xml
 # .idea/misc.xml
 # *.ipr
@@ -187,7 +186,23 @@ fabric.properties
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
-# End of https://www.gitignore.io/api/java,eclipse,intellij
+### Gradle ###
+.gradle
+build/
 
-output
-.DS_Store
+# Ignore Gradle GUI config
+gradle-app.setting
+
+# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
+!gradle-wrapper.jar
+
+# Cache of project
+.gradletasknamecache
+
+# # Work around https://youtrack.jetbrains.com/issue/IDEA-116898
+# gradle/wrapper/gradle-wrapper.properties
+
+### Gradle Patch ###
+**/build/
+
+# End of https://www.gitignore.io/api/java,gradle,eclipse,intellij
