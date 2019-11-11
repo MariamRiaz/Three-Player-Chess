@@ -22,62 +22,61 @@ package jchess;
 
 import java.io.Serializable;
 
-
 /**
  * Class representing the player in the game
  */
-public class Player implements Serializable
-{
+public class Player implements Serializable {
 
-    public String name;
+	public String name;
 
-    public enum colors
-    {
+	public enum colors {
 
-        white, black
-    }
-    public colors color;
+		white, black
+	}
 
-    public enum playerTypes
-    {
+	public colors color;
 
-        localUser, networkUser, computer
-    }
-    public playerTypes playerType;
-    public boolean goDown;
+	public enum playerTypes {
 
-    public Player()
-    {
-    }
+		localUser, networkUser, computer
+	}
 
-    public Player(String name, String color)
-    {
-        this.name = name;
-        this.color = colors.valueOf(color);
-        this.goDown = false;
-    }
+	public playerTypes playerType;
+	public boolean goDown;
 
-    /** Method setting the players name
-     *  @param name name of player
-     */
-    public void setName(String name)
-    {
-        this.name = name;
-    }
+	public Player() {
+	}
 
-    /** Method getting the players name
-     *  @return name of player
-     */
-    public String getName()
-    {
-        return this.name;
-    }
+	public Player(String name, String color) {
+		this.name = name;
+		this.color = colors.valueOf(color);
+		this.goDown = false;
+	}
 
-    /** Method setting the players type
-     *  @param type type of player - enumerate
-     */
-    public void setType(playerTypes type)
-    {
-        this.playerType = type;
-    }
+	/**
+	 * Method setting the players name
+	 * 
+	 * @param name name of player
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	/**
+	 * Method getting the players name
+	 * 
+	 * @return name of player
+	 */
+	public String getName() {
+		return this.name;
+	}
+
+	/**
+	 * Method setting the players type
+	 * 
+	 * @param type type of player - enumerate
+	 */
+	public void setType(playerTypes type) {
+		this.playerType = type;
+	}
 }

@@ -40,7 +40,6 @@ import java.io.IOException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 
-
 /**
  * The application's main frame.
  */
