@@ -1,2 +1,0 @@
-#Thu Nov 07 22:45:46 CET 2019
-THEME=hunter
