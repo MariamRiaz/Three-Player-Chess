@@ -8,6 +8,6 @@ public class Tests {
     public void intialTest() {
         int a = 5;
         int b = 10;
-        assertEquals("5 + 10 must be equal to 10", 15, a+b);
+        assertEquals("5 + 10 must be equal to 10", 13, a+b);
     }
 }
