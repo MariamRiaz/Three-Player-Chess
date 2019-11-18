@@ -56,7 +56,6 @@ public class JChessApp extends SingleFrameApplication {
      * jchess.Main method launching the application.
      */
     public static void main(String... args) {
-        //test
         launch(JChessApp.class, args);
     }
 }
