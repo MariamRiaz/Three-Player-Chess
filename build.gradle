@@ -1,5 +1,5 @@
 plugins {
-    id 'java-library'
+    id 'java'
 }
 
 repositories {
@@ -8,6 +8,16 @@ repositories {
 
 sourceCompatibility = 1.6
 targetCompatibility = 1.6
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'jchess.JChessApp'
+    }
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
 
 dependencies {
     // https://mvnrepository.com/artifact/org.jdesktop/appframework
