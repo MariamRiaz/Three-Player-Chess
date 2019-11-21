@@ -16,8 +16,6 @@
 package jchess.UI;
 
 import org.jdesktop.application.Action;
-
-import jchess.JChessApp;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.ResourceMap;
 
