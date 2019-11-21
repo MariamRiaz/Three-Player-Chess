@@ -15,7 +15,6 @@
 
 package jchess.UI;
 
-import com.sun.xml.internal.ws.api.ResourceLoader;
 import org.jdesktop.application.Action;
 
 import jchess.JChessApp;
