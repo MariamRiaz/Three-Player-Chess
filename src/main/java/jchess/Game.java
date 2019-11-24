@@ -29,8 +29,8 @@ import jchess.UI.Chat;
 import jchess.UI.GameClock;
 import jchess.UI.board.Chessboard;
 import jchess.UI.board.Square;
-import jchess.pieces.King;
 import jchess.pieces.Moves;
+import jchess.pieces.Piece;
 
 import java.awt.*;
 import java.io.File;
@@ -316,7 +316,7 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
 	public boolean simulateMove(int beginX, int beginY, int endX, int endY) {
 		try {
 			chessboard.select(chessboard.squares[beginX][beginY]);
-			if (chessboard.activeSquare.piece.allMoves().indexOf(chessboard.squares[endX][endY]) != -1) // move
+			if (chessboard.getValidTargetSquares(chessboard.activeSquare.piece).contains(chessboard.squares[endX][endY])) // move
 			{
 				chessboard.move(chessboard.squares[beginX][beginY], chessboard.squares[endX][endY]);
 			} else {
@@ -430,7 +430,7 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
 					{
 						chessboard.unselect();
 					} else if (chessboard.activeSquare != null && chessboard.activeSquare.piece != null
-							&& chessboard.activeSquare.piece.allMoves().indexOf(sq) != -1) // move
+							&& chessboard.getValidTargetSquares(chessboard.activeSquare.piece).contains(sq)) // move
 					{
 						if (settings.gameType == Settings.gameTypes.local) {
 							chessboard.move(chessboard.activeSquare, sq);
@@ -446,21 +446,19 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
 						this.nextMove();
 
 						// checkmate or stalemate
-						King king;
+						Piece king;
 						if (this.activePlayer == settings.playerWhite) {
 							king = chessboard.kingWhite;
 						} else {
 							king = chessboard.kingBlack;
 						}
 
-						switch (king.isCheckmatedOrStalemated()) {
-						case 1:
+						/*if (chessboard.pieceUnsavable(king)) TODO
 							this.endGame("Checkmate! " + king.player.color.toString() + " player lose!");
-							break;
 						case 2:
 							this.endGame("Stalemate! Draw!");
 							break;
-						}
+						}*/
 					}
 
 				} catch (NullPointerException exc) {

@@ -20,182 +20,71 @@
  */
 package jchess.pieces;
 
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.logging.Level;
+import java.util.HashSet;
 
-import jchess.Log;
 import jchess.Player;
-import jchess.UI.board.Chessboard;
 import jchess.UI.board.Square;
 
-import java.awt.Point;
-import java.awt.RenderingHints;
-import java.awt.image.BufferedImage;
-
 /**
- * Class to represent a piece (any kind) - this class should be extended to
- * represent pawn, bishop etc.
+ * Class to represent a piece of any kind.
  */
-public abstract class Piece {
-
-	public Chessboard chessboard; // <-- this relations isn't in class diagram, but it's necessary :/
-	public Square square;
-	public Player player;
-	public String name;
-	protected String symbol;
-	protected static Image imageBlack;// = null;
-	protected static Image imageWhite;// = null;
-	public Image orgImage;
-	public Image image;
-	public static short value = 0;
-
-	Piece(Chessboard chessboard, Player player) {
-		this.chessboard = chessboard;
+public class Piece {
+	private static int nextID = 0;
+	
+	private Square square = null;
+	private boolean hasMoved = false;
+	
+	public final int ID, value;
+	public final Player player;
+	public final String type, symbol;
+	public final IMovement movement;
+	
+	/**
+	 * @param player Must be non-null.
+	 * @param movement Must be non-null.
+	 * @param type Must be non-null.
+	 */
+	public Piece(IMovement movement, String type, Player player, int value, String symbol) {
+		this.ID = nextID++;
+		this.value = value;
+		if (player == null)
+			throw new NullPointerException("Argument 'player' is null.");
 		this.player = player;
-		if (player.color == player.color.black) {
-			image = imageBlack;
-		} else {
-			image = imageWhite;
-		}
-		this.name = this.getClass().getSimpleName();
-
+		if (movement == null)
+			throw new NullPointerException("Argument 'movement' is null.");
+		this.movement = movement;
+		if (type == null)
+			throw new NullPointerException("Argument 'type' is null.");
+		this.symbol = symbol;
+		if (symbol == null)
+			throw new NullPointerException("Argument 'symbol' is null.");
+		this.type = type;
 	}
-	/*
-	 * Method to draw piece on chessboard
-	 * 
-	 * @graph : where to draw
-	 */
-
-	public final void draw(Graphics g) {
-		try {
-			Graphics2D g2d = (Graphics2D) g;
-			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-			Point topLeft = this.chessboard.getTopLeftPoint();
-			int height = this.chessboard.get_square_height();
-			int x = (this.square.pozX * height) + topLeft.x;
-			int y = (this.square.pozY * height) + topLeft.y;
-			float addX = (height - image.getWidth(null)) / 2;
-			float addY = (height - image.getHeight(null)) / 2;
-			if (image != null && g != null) {
-				Image tempImage = orgImage;
-				BufferedImage resized = new BufferedImage(height, height, BufferedImage.TYPE_INT_ARGB_PRE);
-				Graphics2D imageGr = (Graphics2D) resized.createGraphics();
-				imageGr.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-				imageGr.drawImage(tempImage, 0, 0, height, height, null);
-				imageGr.dispose();
-				image = resized.getScaledInstance(height, height, 0);
-				g2d.drawImage(image, x, y, null);
-			} else {
-				Log.log(Level.SEVERE, "image is null!");
-			}
-
-		} catch (java.lang.NullPointerException exc) {
-			Log.log(Level.SEVERE, "Something wrong when painting piece: " + exc.getMessage());
-		}
+	
+	public Square getSquare() {
+		return square;
 	}
-
-	void clean() {
+	
+	public boolean hasMoved() {
+		return hasMoved;
 	}
-
+	
+	public Piece refresh() {
+		hasMoved = false;
+		return this;
+	}
+	
+	public Piece setSquare(Square square) {
+		if (square != null && this.square != null && this.square != square)
+			hasMoved = true;
+		this.square = square;
+		return this;
+	}
+	
 	/**
-	 * method check if Piece can move to given square
-	 * 
-	 * @param square   square where piece want to move (Square object)
-	 * @param allmoves all moves which can piece do
+	 * @return List of all available moves for this Piece.
 	 */
-	boolean canMove(Square square, ArrayList allmoves) {
-		// throw new UnsupportedOperationException("Not supported yet.");
-		ArrayList moves = allmoves;
-		for (Iterator it = moves.iterator(); it.hasNext();) {
-			Square sq = (Square) it.next();// get next from iterator
-			if (sq == square) {// if adress is the same
-				return true; // piece canMove
-			}
-		}
-		return false;// if not, piece cannot move
-	}
-
-	void setImage() {
-		if (this.player.color == this.player.color.black) {
-			image = imageBlack;
-		} else {
-			image = imageWhite;
-		}
-	}
-	// void setImages(String white, String black) {
-	/*
-	 * method set image to black or white (depends on player color)
-	 * 
-	 * @white: String with name of image with white piece
-	 * 
-	 * @black: String with name of image with black piece
-	 */
-	// this.imageBlack = black;
-	// this.imageWhite = white;
-	// if(player.color == player.color.black) {
-	// this.image = GUI.loadImage(imageBlack);
-	// } else {
-	// this.image = GUI.loadImage(imageWhite);
-	// }
-	// }/*--endOf-setImages(String white, String black)--*/
-
-	abstract public ArrayList allMoves();
-
-	/**
-	 * Method is useful for out of bounds protection
-	 * 
-	 * @param x x position on chessboard
-	 * @param y y position on chessboard
-	 * @return true if parameters are out of bounds (array)
-	 */
-	protected boolean isout(int x, int y) {
-		if (x < 0 || x > 7 || y < 0 || y > 7) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * @param x y position on chessboard
-	 * @param y y position on chessboard
-	 * @return true if can move, false otherwise
-	 */
-	protected boolean checkPiece(int x, int y) {
-		if (chessboard.squares[x][y].piece != null && chessboard.squares[x][y].piece.name.equals("King")) {
-			return false;
-		}
-		Piece piece = chessboard.squares[x][y].piece;
-		if (piece == null || // if this sqhuare is empty
-				piece.player != this.player) // or piece is another player
-		{
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Method check if piece has other owner than calling piece
-	 * 
-	 * @param x x position on chessboard
-	 * @param y y position on chessboard
-	 * @return true if owner(player) is different
-	 */
-	protected boolean otherOwner(int x, int y) {
-		Square sq = chessboard.squares[x][y];
-		if (sq.piece == null) {
-			return false;
-		}
-		if (this.player != sq.piece.player) {
-			return true;
-		}
-		return false;
-	}
-
-	public String getSymbol() {
-		return this.symbol;
+	public HashSet<IMovement.Move> getMoves() {
+		return movement.getMoves();
 	}
 }

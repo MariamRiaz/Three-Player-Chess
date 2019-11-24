@@ -49,6 +49,17 @@ public class Square {
 
 	void setPiece(Piece piece) {
 		this.piece = piece;
-		this.piece.square = this;
+		this.piece.setSquare(this);
+	}
+	
+	public boolean equals(Object obj) {
+		if (obj == null)
+			return false;
+		if (!Square.class.isAssignableFrom(obj.getClass()))
+			return false;
+		final Square other = (Square) obj;
+		if (other.pozX != this.pozX || other.pozY != this.pozY)
+			return false;
+		return true;
 	}
 }

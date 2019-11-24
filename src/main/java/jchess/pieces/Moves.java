@@ -21,6 +21,7 @@
 package jchess.pieces;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Stack;
 import java.awt.Point;
 import javax.swing.JScrollPane;
@@ -191,14 +192,14 @@ public class Moves extends AbstractTableModel {
 			locMove += "(e.p)";// pawn take down opponent en passant
 			wasEnPassant = true;
 		}
-		if ((!this.enterBlack && this.game.chessboard.kingBlack.isChecked())
-				|| (this.enterBlack && this.game.chessboard.kingWhite.isChecked())) {// if checked
+		if ((!this.enterBlack && this.game.chessboard.pieceThreatened(this.game.chessboard.kingBlack))
+				|| (this.enterBlack && this.game.chessboard.pieceThreatened(this.game.chessboard.kingWhite))) {// if checked
 
-			if ((!this.enterBlack && this.game.chessboard.kingBlack.isCheckmatedOrStalemated() == 1)
-					|| (this.enterBlack && this.game.chessboard.kingWhite.isCheckmatedOrStalemated() == 1)) {// check if
+			/*if ((!this.enterBlack && this.game.chessboard.pieceUnsavable(this.game.chessboard.kingBlack)) // TODO
+					|| (this.enterBlack && this.game.chessboard.pieceUnsavable(this.game.chessboard.kingBlack))) {// check if
 																												// checkmated
 				locMove += "#";// check mate
-			} else {
+			} else*/ {
 				locMove += "+";// check
 			}
 		}
@@ -479,12 +480,12 @@ public class Moves extends AbstractTableModel {
 								|| this.game.getActivePlayer().color != squares[i][j].piece.player.color) {
 							continue;
 						}
-						ArrayList pieceMoves = squares[i][j].piece.allMoves();
+						HashSet<Square> pieceMoves = this.game.chessboard.getValidTargetSquares(squares[i][j].piece);
 						for (Object square : pieceMoves) {
 							Square currSquare = (Square) square;
 							if (currSquare.pozX == xTo && currSquare.pozY == yTo) {
-								xFrom = squares[i][j].piece.square.pozX;
-								yFrom = squares[i][j].piece.square.pozY;
+								xFrom = squares[i][j].piece.getSquare().pozX;
+								yFrom = squares[i][j].piece.getSquare().pozY;
 								pieceFound = true;
 							}
 						}
