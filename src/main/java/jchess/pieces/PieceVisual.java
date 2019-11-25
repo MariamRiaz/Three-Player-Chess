@@ -13,14 +13,14 @@ import jchess.Log;
 public class PieceVisual {
 	private final Image image;
 	
-	public final int pieceID;
+	public final Piece pieceID;
 	
 	/**
 	 * @param pieceID The ID of the drawn Piece.
 	 * @param imageID Must be non-null.
 	 */
-	public PieceVisual(int pieceID, String imageID) {
-		this.pieceID = pieceID;
+	public PieceVisual(Piece piece, String imageID) {
+		this.pieceID = piece;
 		this.image = GUI.loadImage(imageID);
 		if (this.image == null)
 			throw new NullPointerException("PieceVisual image is null. Argument 'imageID' was " + new String(imageID));

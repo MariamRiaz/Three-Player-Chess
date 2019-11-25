@@ -20,71 +20,84 @@
  */
 package jchess.pieces;
 
+import java.security.InvalidParameterException;
+import java.util.Arrays;
 import java.util.HashSet;
 
 import jchess.Player;
-import jchess.UI.board.Square;
 
 /**
  * Class to represent a piece of any kind.
  */
 public class Piece {
-	private static int nextID = 0;
+	public static class Move {
+		public enum MoveType {
+			OnlyAttack,
+			OnlyMove,
+			Unblockable,
+			OnlyWhenFresh,
+			Castling, //TODO: Add relevant Move instance to King implementation and code in Chessboard.recurseMove
+			EnPassant //TODO: Add relevant Move instance to Pawn implementation and code in Chessboard.recurseMove
+		}
+		
+		public final int x, y;
+		public final Integer limit;
+		public final HashSet<MoveType> conditions;
+		
+		protected Move(int x, int y, Integer limit, MoveType... conditions) {
+			this.x = x;
+			this.y = y;
+			this.limit = limit;
+			this.conditions = new HashSet<MoveType>(Arrays.asList(conditions));
+			
+			if (this.conditions.contains(MoveType.OnlyAttack) && this.conditions.contains(MoveType.OnlyMove))
+				throw new InvalidParameterException("Move conditions cannot include 'OnlyAttack' and 'OnlyMove' simultaneously.");
+		}
+	}
 	
-	private Square square = null;
 	private boolean hasMoved = false;
 	
-	public final int ID, value;
 	public final Player player;
+	public final int value;
 	public final String type, symbol;
-	public final IMovement movement;
+	public final HashSet<Move> moves;
 	
 	/**
 	 * @param player Must be non-null.
 	 * @param movement Must be non-null.
 	 * @param type Must be non-null.
 	 */
-	public Piece(IMovement movement, String type, Player player, int value, String symbol) {
-		this.ID = nextID++;
+	public Piece(Player player, String type, int value, String symbol, Move... moves) {
 		this.value = value;
+		
+		this.moves = new HashSet<Move>(Arrays.asList(moves));
+		
 		if (player == null)
 			throw new NullPointerException("Argument 'player' is null.");
 		this.player = player;
-		if (movement == null)
-			throw new NullPointerException("Argument 'movement' is null.");
-		this.movement = movement;
+		
 		if (type == null)
 			throw new NullPointerException("Argument 'type' is null.");
 		this.symbol = symbol;
+		
 		if (symbol == null)
 			throw new NullPointerException("Argument 'symbol' is null.");
 		this.type = type;
 	}
 	
-	public Square getSquare() {
-		return square;
+	public Piece setHasMoved(boolean val) {
+		hasMoved = val;
+		return this;
 	}
 	
 	public boolean hasMoved() {
 		return hasMoved;
 	}
 	
-	public Piece refresh() {
-		hasMoved = false;
-		return this;
-	}
-	
-	public Piece setSquare(Square square) {
-		if (square != null && this.square != null && this.square != square)
-			hasMoved = true;
-		this.square = square;
-		return this;
-	}
-	
 	/**
 	 * @return List of all available moves for this Piece.
 	 */
-	public HashSet<IMovement.Move> getMoves() {
-		return movement.getMoves();
+	public HashSet<Move> getMoves() {
+		return moves;
 	}
 }

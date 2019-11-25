@@ -23,7 +23,6 @@ package jchess.pieces;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Stack;
-import java.awt.Point;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.*;
@@ -32,8 +31,6 @@ import jchess.Game;
 import jchess.Log;
 import jchess.Player;
 import jchess.Settings;
-import jchess.Player.colors;
-import jchess.Settings.gameTypes;
 import jchess.UI.board.Chessboard;
 import jchess.UI.board.Square;
 
@@ -162,41 +159,41 @@ public class Moves extends AbstractTableModel {
 	public void addMove(Square begin, Square end, boolean registerInHistory, castling castlingMove,
 			boolean wasEnPassant, Piece promotedPiece) {
 		boolean wasCastling = castlingMove != castling.none;
-		String locMove = new String(begin.piece.symbol);
+		String locMove = new String(begin.getPiece().symbol);
 
 		if (game.settings.upsideDown) {
-			locMove += Character.toString((char) ((Chessboard.bottom - begin.pozX) + 97));// add letter of Square from
+			locMove += Character.toString((char) ((Chessboard.bottom - begin.getX()) + 97));// add letter of Square from
 																							// which move was made
-			locMove += Integer.toString(begin.pozY + 1);// add number of Square from which move was made
+			locMove += Integer.toString(begin.getY() + 1);// add number of Square from which move was made
 		} else {
-			locMove += Character.toString((char) (begin.pozX + 97));// add letter of Square from which move was made
-			locMove += Integer.toString(8 - begin.pozY);// add number of Square from which move was made
+			locMove += Character.toString((char) (begin.getX() + 97));// add letter of Square from which move was made
+			locMove += Integer.toString(8 - begin.getY());// add number of Square from which move was made
 		}
 
-		if (end.piece != null) {
+		if (end.getPiece() != null) {
 			locMove += "x";// take down opponent piece
 		} else {
 			locMove += "-";// normal move
 		}
 
 		if (game.settings.upsideDown) {
-			locMove += Character.toString((char) ((Chessboard.bottom - end.pozX) + 97));// add letter of Square to which
+			locMove += Character.toString((char) ((Chessboard.bottom - end.getX()) + 97));// add letter of Square to which
 																						// move was made
-			locMove += Integer.toString(end.pozY + 1);// add number of Square to which move was made
+			locMove += Integer.toString(end.getY() + 1);// add number of Square to which move was made
 		} else {
-			locMove += Character.toString((char) (end.pozX + 97));// add letter of Square to which move was made
-			locMove += Integer.toString(8 - end.pozY);// add number of Square to which move was made
+			locMove += Character.toString((char) (end.getX() + 97));// add letter of Square to which move was made
+			locMove += Integer.toString(8 - end.getY());// add number of Square to which move was made
 		}
 
-		if (begin.piece.symbol.equals("") && begin.pozX - end.pozX != 0 && end.piece == null) {
+		if (begin.getPiece().symbol.equals("") && begin.getX() - end.getX() != 0 && end.getPiece() == null) {
 			locMove += "(e.p)";// pawn take down opponent en passant
 			wasEnPassant = true;
 		}
 		if ((!this.enterBlack && this.game.chessboard.pieceThreatened(this.game.chessboard.kingBlack))
 				|| (this.enterBlack && this.game.chessboard.pieceThreatened(this.game.chessboard.kingWhite))) {// if checked
 
-			/*if ((!this.enterBlack && this.game.chessboard.pieceUnsavable(this.game.chessboard.kingBlack)) // TODO
-					|| (this.enterBlack && this.game.chessboard.pieceUnsavable(this.game.chessboard.kingBlack))) {// check if
+			/*if ((!this.enterBlack && this.game.chessboard.getPiece()Unsavable(this.game.chessboard.kingBlack)) // TODO
+					|| (this.enterBlack && this.game.chessboard.getPiece()Unsavable(this.game.chessboard.kingBlack))) {// check if
 																												// checkmated
 				locMove += "#";// check mate
 			} else*/ {
@@ -214,7 +211,7 @@ public class Moves extends AbstractTableModel {
 		this.scrollPane.scrollRectToVisible(new Rectangle(0, this.scrollPane.getHeight() - 2, 1, 1));
 
 		if (registerInHistory) {
-			this.moveBackStack.add(new Move(new Square(begin), new Square(end), begin.piece, end.piece, castlingMove,
+			this.moveBackStack.add(new Move(begin, end, begin.getPiece(), end.getPiece(), castlingMove,
 					wasEnPassant, promotedPiece));
 		}
 	}
@@ -476,16 +473,16 @@ public class Moves extends AbstractTableModel {
 				yTo = Chessboard.bottom - (locMove.charAt(from + 1) - 49);// from ASCII
 				for (int i = 0; i < squares.length && !pieceFound; i++) {
 					for (int j = 0; j < squares[i].length && !pieceFound; j++) {
-						if (squares[i][j].piece == null
-								|| this.game.getActivePlayer().color != squares[i][j].piece.player.color) {
+						if (squares[i][j].getPiece() == null
+								|| this.game.getActivePlayer().color != squares[i][j].getPiece().player.color) {
 							continue;
 						}
-						HashSet<Square> pieceMoves = this.game.chessboard.getValidTargetSquares(squares[i][j].piece);
+						HashSet<Square> pieceMoves = this.game.chessboard.getValidTargetSquares(squares[i][j].getPiece());
 						for (Object square : pieceMoves) {
 							Square currSquare = (Square) square;
-							if (currSquare.pozX == xTo && currSquare.pozY == yTo) {
-								xFrom = squares[i][j].piece.getSquare().pozX;
-								yFrom = squares[i][j].piece.getSquare().pozY;
+							if (currSquare.getX() == xTo && currSquare.getY() == yTo) {
+								xFrom = squares[i][j].getX();
+								yFrom = squares[i][j].getY();
 								pieceFound = true;
 							}
 						}

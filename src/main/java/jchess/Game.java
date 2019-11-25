@@ -316,7 +316,7 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
 	public boolean simulateMove(int beginX, int beginY, int endX, int endY) {
 		try {
 			chessboard.select(chessboard.squares[beginX][beginY]);
-			if (chessboard.getValidTargetSquares(chessboard.activeSquare.piece).contains(chessboard.squares[endX][endY])) // move
+			if (chessboard.getValidTargetSquares(chessboard.activeSquare.getPiece()).contains(chessboard.squares[endX][endY])) // move
 			{
 				chessboard.move(chessboard.squares[beginX][beginY], chessboard.squares[endX][endY]);
 			} else {
@@ -416,27 +416,27 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
 					int x = event.getX();// get X position of mouse
 					int y = event.getY();// get Y position of mouse
 
-					Square sq = chessboard.getSquare(x, y);
-					if ((sq == null && sq.piece == null && chessboard.activeSquare == null)
-							|| (this.chessboard.activeSquare == null && sq.piece != null
-									&& sq.piece.player != this.activePlayer)) {
+					Square sq = chessboard.getSquareFromClick(x, y);
+					if ((sq == null && sq.getPiece() == null && chessboard.activeSquare == null)
+							|| (this.chessboard.activeSquare == null && sq.getPiece() != null
+									&& sq.getPiece().player != this.activePlayer)) {
 						return;
 					}
 
-					if (sq.piece != null && sq.piece.player == this.activePlayer && sq != chessboard.activeSquare) {
+					if (sq.getPiece() != null && sq.getPiece().player == this.activePlayer && sq != chessboard.activeSquare) {
 						chessboard.unselect();
 						chessboard.select(sq);
 					} else if (chessboard.activeSquare == sq) // unselect
 					{
 						chessboard.unselect();
-					} else if (chessboard.activeSquare != null && chessboard.activeSquare.piece != null
-							&& chessboard.getValidTargetSquares(chessboard.activeSquare.piece).contains(sq)) // move
+					} else if (chessboard.activeSquare != null && chessboard.activeSquare.getPiece() != null
+							&& chessboard.getValidTargetSquares(chessboard.activeSquare.getPiece()).contains(sq)) // move
 					{
 						if (settings.gameType == Settings.gameTypes.local) {
 							chessboard.move(chessboard.activeSquare, sq);
 						} else if (settings.gameType == Settings.gameTypes.network) {
-							client.sendMove(chessboard.activeSquare.pozX, chessboard.activeSquare.pozY, sq.pozX,
-									sq.pozY);
+							client.sendMove(chessboard.activeSquare.getX(), chessboard.activeSquare.getY(), sq.getX(),
+									sq.getY());
 							chessboard.move(chessboard.activeSquare, sq);
 						}
 
