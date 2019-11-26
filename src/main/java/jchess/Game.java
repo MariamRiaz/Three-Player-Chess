@@ -29,7 +29,7 @@ import jchess.UI.Chat;
 import jchess.UI.GameClock;
 import jchess.UI.board.Chessboard;
 import jchess.UI.board.Square;
-import jchess.pieces.Moves;
+import jchess.pieces.MoveHistory;
 import jchess.pieces.Piece;
 
 import java.awt.*;
@@ -55,12 +55,12 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
 	private Player activePlayer;
 	public GameClock gameClock;
 	public Client client;
-	public Moves moves;
+	public MoveHistory moves;
 	public Chat chat;
 
 	public Game() {
 		this.setLayout(null);
-		this.moves = new Moves(this);
+		this.moves = new MoveHistory(this);
 		settings = new Settings();
 		chessboard = new Chessboard(this.settings, this.moves);
 		chessboard.setVisible(true);
@@ -453,9 +453,9 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
 							king = chessboard.kingBlack;
 						}
 
-						/*if (chessboard.pieceUnsavable(king)) TODO
+						if (chessboard.pieceUnsavable(king))
 							this.endGame("Checkmate! " + king.player.color.toString() + " player lose!");
-						case 2:
+						/*case 2:
 							this.endGame("Stalemate! Draw!");
 							break;
 						}*/

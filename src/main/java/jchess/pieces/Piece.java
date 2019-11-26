@@ -27,10 +27,18 @@ import java.util.HashSet;
 import jchess.Player;
 
 /**
- * Class to represent a piece of any kind.
+ * Class to represent a Piece of any kind. Each Piece is defined by specific values for its member attributes.
  */
 public class Piece {
+	/**
+	 * Class representing a potential Move of a Piece. It describes the direction, limit and conditions for this Move.
+	 * @author Stefan
+	 */
 	public static class Move {
+		/**
+		 * Enum describing constraints, conditions, and move types to be observed when evaluating this Move.
+		 * @author Stefan
+		 */
 		public enum MoveType {
 			OnlyAttack,
 			OnlyMove,
@@ -63,9 +71,12 @@ public class Piece {
 	public final HashSet<Move> moves;
 	
 	/**
+	 * Creates a new Piece based on the given parameters. Piece attributes cannot be changed after initialization.
 	 * @param player Must be non-null.
-	 * @param movement Must be non-null.
-	 * @param type Must be non-null.
+	 * @param type Must be non-null. The type of this Piece, e.g. Pawn, King etc.
+	 * @param value The value in points of this Piece.
+	 * @param symbol Must be non-null. The shorthand symbol of this Piece, e.g. N, K, Q etc.
+	 * @param moves The Moves for this Piece. Each Move must be non-null.
 	 */
 	public Piece(Player player, String type, int value, String symbol, Move... moves) {
 		this.value = value;
@@ -85,17 +96,47 @@ public class Piece {
 		this.type = type;
 	}
 	
+	/**
+	 * Creates a new Piece with the same attributes as those of the Piece other.
+	 * @param other Piece whose attributes to copy. Must be non-null.
+	 */
+	public Piece(Piece other) {
+		if (other == null)
+			throw new NullPointerException("Argument 'other' is null.");
+		
+		this.value = other.value;
+		
+		this.moves = new HashSet<Move>(other.moves);
+		this.player = other.player;
+		this.symbol = new String(other.symbol);
+		this.type = new String(other.type);
+	}
+	
+	/**
+	 * Returns a copy of this Piece.
+	 */
+	public Piece clone() {
+		return new Piece(this);
+	}
+	
+	/**
+	 * @param val Whether the Piece has moved since its creation or not.
+	 * @return This Piece.
+	 */
 	public Piece setHasMoved(boolean val) {
 		hasMoved = val;
 		return this;
 	}
 	
+	/**
+	 * @return Whether this Piece has moved since its creation or not.
+	 */
 	public boolean hasMoved() {
 		return hasMoved;
 	}
 	
 	/**
-	 * @return List of all available moves for this Piece.
+	 * @return List of all available Moves for this Piece.
 	 */
 	public HashSet<Move> getMoves() {
 		return moves;

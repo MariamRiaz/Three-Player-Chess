@@ -13,22 +13,23 @@ import jchess.Log;
 public class PieceVisual {
 	private final Image image;
 	
-	public final Piece pieceID;
-	
 	/**
-	 * @param pieceID The ID of the drawn Piece.
-	 * @param imageID Must be non-null.
+	 * Creates a new PieceVisual instnace.
+	 * @param imageID The String ID of the image to use when drawing this PieceVisual. Must be non-null and containted in GUI.loadImage().
 	 */
-	public PieceVisual(Piece piece, String imageID) {
-		this.pieceID = piece;
+	public PieceVisual(String imageID) {
 		this.image = GUI.loadImage(imageID);
 		if (this.image == null)
 			throw new NullPointerException("PieceVisual image is null. Argument 'imageID' was " + new String(imageID));
 	}
 	
-	/*
-	 * Method to draw PieceVisual.
-	 * @graph Canvas to draw.
+	/**
+	 * Draws this PieceVisual on the given canvas at the given location with the given dimensions.
+	 * @param g The canvas. Must be non-null.
+	 * @param x The top-left point's x value.
+	 * @param y The top-left point's y value.
+	 * @param width The width for the PieceVisual image.
+	 * @param height The height for the PieceVisual image.
 	 */
 	public final void draw(Graphics g, int x, int y, int width, int height) {
 		try {

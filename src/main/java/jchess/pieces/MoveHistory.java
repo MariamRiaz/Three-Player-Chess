@@ -45,7 +45,7 @@ import javax.swing.JOptionPane;
  * 
  * @param game The current game
  */
-public class Moves extends AbstractTableModel {
+public class MoveHistory extends AbstractTableModel {
 
 	private ArrayList<String> move = new ArrayList<String>();
 	private int columnsNum = 3;
@@ -56,14 +56,14 @@ public class Moves extends AbstractTableModel {
 	private JTable table;
 	private boolean enterBlack = false;
 	private Game game;
-	protected Stack<Move> moveBackStack = new Stack<Move>();
-	protected Stack<Move> moveForwardStack = new Stack<Move>();
+	protected Stack<PlayedMove> moveBackStack = new Stack<PlayedMove>();
+	protected Stack<PlayedMove> moveForwardStack = new Stack<PlayedMove>();
 
 	public enum castling {
 		none, shortCastling, longCastling
 	}
 
-	public Moves(Game game) {
+	public MoveHistory(Game game) {
 		super();
 		this.tableModel = new MyDefaultTableModel();
 		this.table = new JTable(this.tableModel);
@@ -156,10 +156,10 @@ public class Moves extends AbstractTableModel {
 
 	}
 
-	public void addMove(Square begin, Square end, boolean registerInHistory, castling castlingMove,
+	public void addMove(Square begin, Square end, Piece beginPiece, Piece beginState, Piece endPiece, Piece endState, boolean registerInHistory, castling castlingMove,
 			boolean wasEnPassant, Piece promotedPiece) {
 		boolean wasCastling = castlingMove != castling.none;
-		String locMove = new String(begin.getPiece().symbol);
+		String locMove = new String(beginState.symbol);
 
 		if (game.settings.upsideDown) {
 			locMove += Character.toString((char) ((Chessboard.bottom - begin.getX()) + 97));// add letter of Square from
@@ -170,7 +170,7 @@ public class Moves extends AbstractTableModel {
 			locMove += Integer.toString(8 - begin.getY());// add number of Square from which move was made
 		}
 
-		if (end.getPiece() != null) {
+		if (endState != null) {
 			locMove += "x";// take down opponent piece
 		} else {
 			locMove += "-";// normal move
@@ -185,33 +185,31 @@ public class Moves extends AbstractTableModel {
 			locMove += Integer.toString(8 - end.getY());// add number of Square to which move was made
 		}
 
-		if (begin.getPiece().symbol.equals("") && begin.getX() - end.getX() != 0 && end.getPiece() == null) {
+		if (beginState.symbol.equals("") && begin.getX() - end.getX() != 0 && endState == null) {
 			locMove += "(e.p)";// pawn take down opponent en passant
 			wasEnPassant = true;
 		}
-		if ((!this.enterBlack && this.game.chessboard.pieceThreatened(this.game.chessboard.kingBlack))
-				|| (this.enterBlack && this.game.chessboard.pieceThreatened(this.game.chessboard.kingWhite))) {// if checked
+		if ((!this.enterBlack && this.game.chessboard.pieceThreatened(this.game.chessboard.kingWhite))
+				|| (this.enterBlack && this.game.chessboard.pieceThreatened(this.game.chessboard.kingBlack))) {// if checked
 
-			/*if ((!this.enterBlack && this.game.chessboard.getPiece()Unsavable(this.game.chessboard.kingBlack)) // TODO
-					|| (this.enterBlack && this.game.chessboard.getPiece()Unsavable(this.game.chessboard.kingBlack))) {// check if
-																												// checkmated
+			if ((!this.enterBlack && this.game.chessboard.pieceUnsavable(this.game.chessboard.kingWhite)) // TODO
+					|| (this.enterBlack && this.game.chessboard.pieceUnsavable(this.game.chessboard.kingBlack))) {// check if checkmated
 				locMove += "#";// check mate
-			} else*/ {
+			} else {
 				locMove += "+";// check
 			}
 		}
+		
 		if (castlingMove == castling.shortCastling) {
-			this.addCastling("0-0");
 		} else if (castlingMove == castling.longCastling) {
-			this.addCastling("0-0-0");
 		} else {
 			this.move.add(locMove);
 			this.addMove2Table(locMove);
 		}
 		this.scrollPane.scrollRectToVisible(new Rectangle(0, this.scrollPane.getHeight() - 2, 1, 1));
-
+		
 		if (registerInHistory) {
-			this.moveBackStack.add(new Move(begin, end, begin.getPiece(), end.getPiece(), castlingMove,
+			this.moveBackStack.add(new PlayedMove(begin, end, beginPiece, beginState, endPiece, endState, castlingMove,
 					wasEnPassant, promotedPiece));
 		}
 	}
@@ -228,18 +226,18 @@ public class Moves extends AbstractTableModel {
 		return this.move;
 	}
 
-	public synchronized Move getLastMoveFromHistory() {
+	public synchronized PlayedMove getLastMoveFromHistory() {
 		try {
-			Move last = this.moveBackStack.get(this.moveBackStack.size() - 1);
+			PlayedMove last = this.moveBackStack.get(this.moveBackStack.size() - 1);
 			return last;
 		} catch (java.lang.ArrayIndexOutOfBoundsException exc) {
 			return null;
 		}
 	}
 
-	public synchronized Move getNextMoveFromHistory() {
+	public synchronized PlayedMove getNextMoveFromHistory() {
 		try {
-			Move next = this.moveForwardStack.get(this.moveForwardStack.size() - 1);
+			PlayedMove next = this.moveForwardStack.get(this.moveForwardStack.size() - 1);
 			return next;
 		} catch (java.lang.ArrayIndexOutOfBoundsException exc) {
 			return null;
@@ -247,9 +245,9 @@ public class Moves extends AbstractTableModel {
 
 	}
 
-	public synchronized Move undo() {
+	public synchronized PlayedMove undo() {
 		try {
-			Move last = this.moveBackStack.pop();
+			PlayedMove last = this.moveBackStack.pop();
 			if (last != null) {
 				if (this.game.settings.gameType == Settings.gameTypes.local) // moveForward / redo available only for
 																				// local game
@@ -280,10 +278,10 @@ public class Moves extends AbstractTableModel {
 		}
 	}
 
-	public synchronized Move redo() {
+	public synchronized PlayedMove redo() {
 		try {
 			if (this.game.settings.gameType == Settings.gameTypes.local) {
-				Move first = this.moveForwardStack.pop();
+				PlayedMove first = this.moveForwardStack.pop();
 				this.moveBackStack.push(first);
 
 				return first;
@@ -420,7 +418,7 @@ public class Moves extends AbstractTableModel {
 		}
 		for (String locMove : tempArray) // test if moves are written correctly
 		{
-			if (!Moves.isMoveCorrect(locMove.trim())) // if not
+			if (!MoveHistory.isMoveCorrect(locMove.trim())) // if not
 			{
 				JOptionPane.showMessageDialog(this.game, Settings.lang("invalid_file_to_load") + move);
 				return;// show message and finish reading game
