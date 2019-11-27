@@ -29,8 +29,11 @@ import jchess.UI.Chat;
 import jchess.UI.GameClock;
 import jchess.UI.board.Chessboard;
 import jchess.UI.board.Square;
+import jchess.controller.ChessboardController;
+import jchess.model.ChessboardModel;
 import jchess.pieces.MoveHistory;
 import jchess.pieces.Piece;
+import jchess.view.ChessboardView;
 
 import java.awt.*;
 import java.io.File;
@@ -51,7 +54,7 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
 
 	public Settings settings;
 	public boolean blockedChessboard;
-	public Chessboard chessboard;
+	public ChessboardController chessboard;
 	private Player activePlayer;
 	public GameClock gameClock;
 	public Client client;
@@ -62,7 +65,8 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
 		this.setLayout(null);
 		this.moves = new MoveHistory(this);
 		settings = new Settings();
-		chessboard = new Chessboard(this.settings, this.moves);
+//		chessboard = new Chessboard(this.settings, this.moves);
+		chessboard = new ChessboardController(new ChessboardModel(settings), new ChessboardView());
 		chessboard.setVisible(true);
 		chessboard.setSize(Chessboard.img_height, Chessboard.img_widht);
 		chessboard.addMouseListener(this);
