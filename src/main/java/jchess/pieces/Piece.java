@@ -20,182 +20,125 @@
  */
 package jchess.pieces;
 
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.logging.Level;
+import java.security.InvalidParameterException;
+import java.util.Arrays;
+import java.util.HashSet;
 
-import jchess.Log;
 import jchess.Player;
-import jchess.UI.board.Chessboard;
-import jchess.UI.board.Square;
-
-import java.awt.Point;
-import java.awt.RenderingHints;
-import java.awt.image.BufferedImage;
 
 /**
- * Class to represent a piece (any kind) - this class should be extended to
- * represent pawn, bishop etc.
+ * Class to represent a Piece of any kind. Each Piece is defined by specific values for its member attributes.
  */
-public abstract class Piece {
-
-	public Chessboard chessboard; // <-- this relations isn't in class diagram, but it's necessary :/
-	public Square square;
-	public Player player;
-	public String name;
-	protected String symbol;
-	protected static Image imageBlack;// = null;
-	protected static Image imageWhite;// = null;
-	public Image orgImage;
-	public Image image;
-	public static short value = 0;
-
-	Piece(Chessboard chessboard, Player player) {
-		this.chessboard = chessboard;
+public class Piece {
+	/**
+	 * Class representing a potential Move of a Piece. It describes the direction, limit and conditions for this Move.
+	 * @author Stefan
+	 */
+	public static class Move {
+		/**
+		 * Enum describing constraints, conditions, and move types to be observed when evaluating this Move.
+		 * @author Stefan
+		 */
+		public enum MoveType {
+			OnlyAttack,
+			OnlyMove,
+			Unblockable,
+			OnlyWhenFresh,
+			Castling, //TODO: Add relevant Move instance to King implementation and code in Chessboard.recurseMove
+			EnPassant //TODO: Add relevant Move instance to Pawn implementation and code in Chessboard.recurseMove
+		}
+		
+		public final int x, y;
+		public final Integer limit;
+		public final HashSet<MoveType> conditions;
+		
+		protected Move(int x, int y, Integer limit, MoveType... conditions) {
+			this.x = x;
+			this.y = y;
+			this.limit = limit;
+			this.conditions = new HashSet<MoveType>(Arrays.asList(conditions));
+			
+			if (this.conditions.contains(MoveType.OnlyAttack) && this.conditions.contains(MoveType.OnlyMove))
+				throw new InvalidParameterException("Move conditions cannot include 'OnlyAttack' and 'OnlyMove' simultaneously.");
+		}
+	}
+	
+	private boolean hasMoved = false;
+	
+	public final Player player;
+	public final int value;
+	public final String type, symbol;
+	public final HashSet<Move> moves;
+	
+	/**
+	 * Creates a new Piece based on the given parameters. Piece attributes cannot be changed after initialization.
+	 * @param player Must be non-null.
+	 * @param type Must be non-null. The type of this Piece, e.g. Pawn, King etc.
+	 * @param value The value in points of this Piece.
+	 * @param symbol Must be non-null. The shorthand symbol of this Piece, e.g. N, K, Q etc.
+	 * @param moves The Moves for this Piece. Each Move must be non-null.
+	 */
+	public Piece(Player player, String type, int value, String symbol, Move... moves) {
+		this.value = value;
+		
+		this.moves = new HashSet<Move>(Arrays.asList(moves));
+		
+		if (player == null)
+			throw new NullPointerException("Argument 'player' is null.");
 		this.player = player;
-		if (player.color == player.color.black) {
-			image = imageBlack;
-		} else {
-			image = imageWhite;
-		}
-		this.name = this.getClass().getSimpleName();
-
+		
+		if (type == null)
+			throw new NullPointerException("Argument 'type' is null.");
+		this.symbol = symbol;
+		
+		if (symbol == null)
+			throw new NullPointerException("Argument 'symbol' is null.");
+		this.type = type;
 	}
-	/*
-	 * Method to draw piece on chessboard
-	 * 
-	 * @graph : where to draw
-	 */
-
-	public final void draw(Graphics g) {
-		try {
-			Graphics2D g2d = (Graphics2D) g;
-			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-			Point topLeft = this.chessboard.getTopLeftPoint();
-			int height = this.chessboard.get_square_height();
-			int x = (this.square.pozX * height) + topLeft.x;
-			int y = (this.square.pozY * height) + topLeft.y;
-			float addX = (height - image.getWidth(null)) / 2;
-			float addY = (height - image.getHeight(null)) / 2;
-			if (image != null && g != null) {
-				Image tempImage = orgImage;
-				BufferedImage resized = new BufferedImage(height, height, BufferedImage.TYPE_INT_ARGB_PRE);
-				Graphics2D imageGr = (Graphics2D) resized.createGraphics();
-				imageGr.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-				imageGr.drawImage(tempImage, 0, 0, height, height, null);
-				imageGr.dispose();
-				image = resized.getScaledInstance(height, height, 0);
-				g2d.drawImage(image, x, y, null);
-			} else {
-				Log.log(Level.SEVERE, "image is null!");
-			}
-
-		} catch (java.lang.NullPointerException exc) {
-			Log.log(Level.SEVERE, "Something wrong when painting piece: " + exc.getMessage());
-		}
-	}
-
-	void clean() {
-	}
-
+	
 	/**
-	 * method check if Piece can move to given square
-	 * 
-	 * @param square   square where piece want to move (Square object)
-	 * @param allmoves all moves which can piece do
+	 * Creates a new Piece with the same attributes as those of the Piece other.
+	 * @param other Piece whose attributes to copy. Must be non-null.
 	 */
-	boolean canMove(Square square, ArrayList allmoves) {
-		// throw new UnsupportedOperationException("Not supported yet.");
-		ArrayList moves = allmoves;
-		for (Iterator it = moves.iterator(); it.hasNext();) {
-			Square sq = (Square) it.next();// get next from iterator
-			if (sq == square) {// if adress is the same
-				return true; // piece canMove
-			}
-		}
-		return false;// if not, piece cannot move
+	public Piece(Piece other) {
+		if (other == null)
+			throw new NullPointerException("Argument 'other' is null.");
+		
+		this.value = other.value;
+		
+		this.moves = new HashSet<Move>(other.moves);
+		this.player = other.player;
+		this.symbol = new String(other.symbol);
+		this.type = new String(other.type);
 	}
-
-	void setImage() {
-		if (this.player.color == this.player.color.black) {
-			image = imageBlack;
-		} else {
-			image = imageWhite;
-		}
-	}
-	// void setImages(String white, String black) {
-	/*
-	 * method set image to black or white (depends on player color)
-	 * 
-	 * @white: String with name of image with white piece
-	 * 
-	 * @black: String with name of image with black piece
-	 */
-	// this.imageBlack = black;
-	// this.imageWhite = white;
-	// if(player.color == player.color.black) {
-	// this.image = GUI.loadImage(imageBlack);
-	// } else {
-	// this.image = GUI.loadImage(imageWhite);
-	// }
-	// }/*--endOf-setImages(String white, String black)--*/
-
-	abstract public ArrayList allMoves();
-
+	
 	/**
-	 * Method is useful for out of bounds protection
-	 * 
-	 * @param x x position on chessboard
-	 * @param y y position on chessboard
-	 * @return true if parameters are out of bounds (array)
+	 * Returns a copy of this Piece.
 	 */
-	protected boolean isout(int x, int y) {
-		if (x < 0 || x > 7 || y < 0 || y > 7) {
-			return true;
-		}
-		return false;
+	public Piece clone() {
+		return new Piece(this);
 	}
-
+	
 	/**
-	 * @param x y position on chessboard
-	 * @param y y position on chessboard
-	 * @return true if can move, false otherwise
+	 * @param val Whether the Piece has moved since its creation or not.
+	 * @return This Piece.
 	 */
-	protected boolean checkPiece(int x, int y) {
-		if (chessboard.squares[x][y].piece != null && chessboard.squares[x][y].piece.name.equals("King")) {
-			return false;
-		}
-		Piece piece = chessboard.squares[x][y].piece;
-		if (piece == null || // if this sqhuare is empty
-				piece.player != this.player) // or piece is another player
-		{
-			return true;
-		}
-		return false;
+	public Piece setHasMoved(boolean val) {
+		hasMoved = val;
+		return this;
 	}
-
+	
 	/**
-	 * Method check if piece has other owner than calling piece
-	 * 
-	 * @param x x position on chessboard
-	 * @param y y position on chessboard
-	 * @return true if owner(player) is different
+	 * @return Whether this Piece has moved since its creation or not.
 	 */
-	protected boolean otherOwner(int x, int y) {
-		Square sq = chessboard.squares[x][y];
-		if (sq.piece == null) {
-			return false;
-		}
-		if (this.player != sq.piece.player) {
-			return true;
-		}
-		return false;
+	public boolean hasMoved() {
+		return hasMoved;
 	}
-
-	public String getSymbol() {
-		return this.symbol;
+	
+	/**
+	 * @return List of all available Moves for this Piece.
+	 */
+	public HashSet<Move> getMoves() {
+		return moves;
 	}
 }

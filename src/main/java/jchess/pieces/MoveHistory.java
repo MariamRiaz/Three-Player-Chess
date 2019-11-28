@@ -21,8 +21,8 @@
 package jchess.pieces;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Stack;
-import java.awt.Point;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.*;
@@ -31,8 +31,6 @@ import jchess.Game;
 import jchess.Log;
 import jchess.Player;
 import jchess.Settings;
-import jchess.Player.colors;
-import jchess.Settings.gameTypes;
 import jchess.UI.board.Chessboard;
 import jchess.UI.board.Square;
 import jchess.UI.MovesUI;
@@ -48,7 +46,7 @@ import javax.swing.JOptionPane;
  *
  * @param game The current game
  */
-public class Moves extends AbstractTableModel {
+public class MoveHistory extends AbstractTableModel {
 
 	private ArrayList<String> move = new ArrayList<String>();
 	private int columnsNum = 3;
@@ -59,15 +57,16 @@ public class Moves extends AbstractTableModel {
 	//private JTable table;
 	private boolean enterBlack = false;
 	private Game game;
-	protected Stack<Move> moveBackStack = new Stack<Move>();
-	protected Stack<Move> moveForwardStack = new Stack<Move>();
+	protected Stack<PlayedMove> moveBackStack = new Stack<PlayedMove>();
+	protected Stack<PlayedMove> moveForwardStack = new Stack<PlayedMove>();
 	private MovesUI movesUI;
+
 
 	public enum castling {
 		none, shortCastling, longCastling
 	}
 
-	public Moves(Game game) {
+	public MoveHistory(Game game) {
 		super();
 		this.movesUI = new MovesUI();
 
@@ -153,71 +152,61 @@ public class Moves extends AbstractTableModel {
 	 *
 	 * @param move String which in is capt player move
 	 */
-	public void addMove(String move) {
-		if (isMoveCorrect(move)) {
-			this.move.add(move);
-			this.addMove2Table(move);
-			this.moveForwardStack.clear();
-		}
+	
+	public void addMove(Square begin, Square end, Piece beginPiece, Piece beginState, Piece endPiece, Piece endState, boolean registerInHistory, castling castlingMove,
+			boolean wasEnPassant, Piece promotedPiece) {
 
-	}
-
-	public void addMove(Square begin, Square end, boolean registerInHistory, castling castlingMove,
-						boolean wasEnPassant, Piece promotedPiece) {
 		boolean wasCastling = castlingMove != castling.none;
-		String locMove = new String(begin.piece.symbol);
+		String locMove = new String(beginState.symbol);
 
 		if (game.settings.upsideDown) {
-			locMove += Character.toString((char) ((Chessboard.bottom - begin.pozX) + 97));// add letter of Square from
-			// which move was made
-			locMove += Integer.toString(begin.pozY + 1);// add number of Square from which move was made
+			locMove += Character.toString((char) ((Chessboard.bottom - begin.getX()) + 97));// add letter of Square from
+																							// which move was made
+			locMove += Integer.toString(begin.getY() + 1);// add number of Square from which move was made
 		} else {
-			locMove += Character.toString((char) (begin.pozX + 97));// add letter of Square from which move was made
-			locMove += Integer.toString(8 - begin.pozY);// add number of Square from which move was made
+			locMove += Character.toString((char) (begin.getX() + 97));// add letter of Square from which move was made
+			locMove += Integer.toString(8 - begin.getY());// add number of Square from which move was made
 		}
 
-		if (end.piece != null) {
+		if (endState != null) {
 			locMove += "x";// take down opponent piece
 		} else {
 			locMove += "-";// normal move
 		}
 
 		if (game.settings.upsideDown) {
-			locMove += Character.toString((char) ((Chessboard.bottom - end.pozX) + 97));// add letter of Square to which
-			// move was made
-			locMove += Integer.toString(end.pozY + 1);// add number of Square to which move was made
+			locMove += Character.toString((char) ((Chessboard.bottom - end.getX()) + 97));// add letter of Square to which
+																						// move was made
+			locMove += Integer.toString(end.getY() + 1);// add number of Square to which move was made
+
 		} else {
-			locMove += Character.toString((char) (end.pozX + 97));// add letter of Square to which move was made
-			locMove += Integer.toString(8 - end.pozY);// add number of Square to which move was made
+			locMove += Character.toString((char) (end.getX() + 97));// add letter of Square to which move was made
+			locMove += Integer.toString(8 - end.getY());// add number of Square to which move was made
 		}
 
-		if (begin.piece.symbol.equals("") && begin.pozX - end.pozX != 0 && end.piece == null) {
+		if (beginState.symbol.equals("") && begin.getX() - end.getX() != 0 && endState == null) {
 			locMove += "(e.p)";// pawn take down opponent en passant
 			wasEnPassant = true;
 		}
-		if ((!this.enterBlack && this.game.chessboard.kingBlack.isChecked())
-				|| (this.enterBlack && this.game.chessboard.kingWhite.isChecked())) {// if checked
-
-			if ((!this.enterBlack && this.game.chessboard.kingBlack.isCheckmatedOrStalemated() == 1)
-					|| (this.enterBlack && this.game.chessboard.kingWhite.isCheckmatedOrStalemated() == 1)) {// check if
-				// checkmated
+		if ((!this.enterBlack && this.game.chessboard.pieceThreatened(this.game.chessboard.kingWhite))
+				|| (this.enterBlack && this.game.chessboard.pieceThreatened(this.game.chessboard.kingBlack))) {// if checked
+			if ((!this.enterBlack && this.game.chessboard.pieceUnsavable(this.game.chessboard.kingWhite)) // TODO
+					|| (this.enterBlack && this.game.chessboard.pieceUnsavable(this.game.chessboard.kingBlack))) {// check if checkmated
 				locMove += "#";// check mate
 			} else {
 				locMove += "+";// check
 			}
 		}
+		
 		if (castlingMove == castling.shortCastling) {
-			this.addCastling("0-0");
 		} else if (castlingMove == castling.longCastling) {
-			this.addCastling("0-0-0");
 		} else {
 			this.move.add(locMove);
 			this.addMove2Table(locMove);
 		}
 		//this.scrollPane.scrollRectToVisible(new Rectangle(0, this.scrollPane.getHeight() - 2, 1, 1));
-
 		if (registerInHistory) {
-			this.moveBackStack.add(new Move(new Square(begin), new Square(end), begin.piece, end.piece, castlingMove,
+			this.moveBackStack.add(new PlayedMove(begin, end, beginPiece, beginState, endPiece, endState, castlingMove,
 					wasEnPassant, promotedPiece));
 		}
 	}
@@ -234,18 +223,18 @@ public class Moves extends AbstractTableModel {
 		return this.move;
 	}
 
-	public synchronized Move getLastMoveFromHistory() {
+	public synchronized PlayedMove getLastMoveFromHistory() {
 		try {
-			Move last = this.moveBackStack.get(this.moveBackStack.size() - 1);
+			PlayedMove last = this.moveBackStack.get(this.moveBackStack.size() - 1);
 			return last;
 		} catch (java.lang.ArrayIndexOutOfBoundsException exc) {
 			return null;
 		}
 	}
 
-	public synchronized Move getNextMoveFromHistory() {
+	public synchronized PlayedMove getNextMoveFromHistory() {
 		try {
-			Move next = this.moveForwardStack.get(this.moveForwardStack.size() - 1);
+			PlayedMove next = this.moveForwardStack.get(this.moveForwardStack.size() - 1);
 			return next;
 		} catch (java.lang.ArrayIndexOutOfBoundsException exc) {
 			return null;
@@ -253,9 +242,9 @@ public class Moves extends AbstractTableModel {
 
 	}
 
-	public synchronized Move undo() {
+	public synchronized PlayedMove undo() {
 		try {
-			Move last = this.moveBackStack.pop();
+			PlayedMove last = this.moveBackStack.pop();
 			if (last != null) {
 				if (this.game.settings.gameType == Settings.gameTypes.local) // moveForward / redo available only for
 				// local game
@@ -286,10 +275,10 @@ public class Moves extends AbstractTableModel {
 		}
 	}
 
-	public synchronized Move redo() {
+	public synchronized PlayedMove redo() {
 		try {
 			if (this.game.settings.gameType == Settings.gameTypes.local) {
-				Move first = this.moveForwardStack.pop();
+				PlayedMove first = this.moveForwardStack.pop();
 				this.moveBackStack.push(first);
 
 				return first;
@@ -361,10 +350,18 @@ public class Moves extends AbstractTableModel {
 		return true;
 	}
 
+	public void addMove(String move) {
+	if (isMoveCorrect(move)) {
+			this.move.add(move);
+			this.addMove2Table(move);
+			this.moveForwardStack.clear();
+		}}
+	
 	public void addMoves(ArrayList<String> list) {
 		for (String singleMove : list) {
 			if (isMoveCorrect(singleMove)) {
 				this.addMove(singleMove);
+				
 			}
 		}
 	}
@@ -426,7 +423,7 @@ public class Moves extends AbstractTableModel {
 		}
 		for (String locMove : tempArray) // test if moves are written correctly
 		{
-			if (!Moves.isMoveCorrect(locMove.trim())) // if not
+			if (!MoveHistory.isMoveCorrect(locMove.trim())) // if not
 			{
 				JOptionPane.showMessageDialog(this.game, Settings.lang("invalid_file_to_load") + move);
 				return;// show message and finish reading game
@@ -479,16 +476,16 @@ public class Moves extends AbstractTableModel {
 				yTo = Chessboard.bottom - (locMove.charAt(from + 1) - 49);// from ASCII
 				for (int i = 0; i < squares.length && !pieceFound; i++) {
 					for (int j = 0; j < squares[i].length && !pieceFound; j++) {
-						if (squares[i][j].piece == null
-								|| this.game.getActivePlayer().color != squares[i][j].piece.player.color) {
+						if (squares[i][j].getPiece() == null
+								|| this.game.getActivePlayer().color != squares[i][j].getPiece().player.color) {
 							continue;
 						}
-						ArrayList pieceMoves = squares[i][j].piece.allMoves();
+						HashSet<Square> pieceMoves = this.game.chessboard.getValidTargetSquares(squares[i][j].getPiece());
 						for (Object square : pieceMoves) {
 							Square currSquare = (Square) square;
-							if (currSquare.pozX == xTo && currSquare.pozY == yTo) {
-								xFrom = squares[i][j].piece.square.pozX;
-								yFrom = squares[i][j].piece.square.pozY;
+							if (currSquare.getX() == xTo && currSquare.getY() == yTo) {
+								xFrom = squares[i][j].getX();
+								yFrom = squares[i][j].getY();
 								pieceFound = true;
 							}
 						}
