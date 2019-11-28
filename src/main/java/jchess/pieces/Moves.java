@@ -44,7 +44,7 @@ import javax.swing.JOptionPane;
  * Class representing the players moves, it's also checking that the moves taken
  * by player are correct. All moves which was taken by current player are saving
  * as List of Strings The history of moves is printing in a table
- * 
+ *
  * @param game The current game
  */
 public class Moves extends AbstractTableModel {
@@ -120,7 +120,7 @@ public class Moves extends AbstractTableModel {
 
 	/**
 	 * Method of adding new moves to the table
-	 * 
+	 *
 	 * @param str String which in is saved player move
 	 */
 	protected void addMove2Table(String str) {
@@ -146,7 +146,7 @@ public class Moves extends AbstractTableModel {
 
 	/**
 	 * Method of adding new move
-	 * 
+	 *
 	 * @param move String which in is capt player move
 	 */
 	public void addMove(String move) {
@@ -299,7 +299,7 @@ public class Moves extends AbstractTableModel {
 
 	/**
 	 * Method with is checking is the move is correct
-	 * 
+	 *
 	 * @param move String which in is capt player move
 	 * @return boolean 1 if the move is correct, else 0
 	 */
@@ -367,7 +367,7 @@ public class Moves extends AbstractTableModel {
 
 	/**
 	 * Method of getting the moves in string
-	 * 
+	 *
 	 * @return str String which in is capt player move
 	 */
 	public String getMovesInString() {
@@ -388,7 +388,7 @@ public class Moves extends AbstractTableModel {
 	/**
 	 * Method to set all moves from String with validation test (usefoul for network
 	 * game)
-	 * 
+	 *
 	 * @param moves String to set in String like PGN with full-notation format
 	 */
 	public void setMoves(String moves) {
