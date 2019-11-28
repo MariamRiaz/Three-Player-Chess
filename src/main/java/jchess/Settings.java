@@ -46,6 +46,7 @@ public class Settings implements Serializable {
     public gameModes gameMode;
     public Player playerWhite;
     public Player playerBlack;
+    public Player playerGray;
 
     public enum gameTypes {
 
