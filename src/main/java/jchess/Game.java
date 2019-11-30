@@ -64,15 +64,13 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
 	public Game() {
 		this.setLayout(null);
 		this.moves = new MoveHistory(this);
+
 		settings = new Settings();
-//		chessboard = new Chessboard(this.settings, this.moves);
-		chessboard = new ChessboardController(new ChessboardModel(settings), new ChessboardView());
-		chessboard.setVisible(true);
-		chessboard.setSize(Chessboard.img_height, Chessboard.img_widht);
-		chessboard.addMouseListener(this);
-		chessboard.setLocation(new Point(0, 0));
-		this.add(chessboard);
-		// this.chessboard.
+		chessboard = new ChessboardController(new ChessboardModel(settings), new ChessboardView(), settings);
+		chessboard.initView();
+		chessboard.view.addMouseListener(this);
+		this.add(chessboard.view);
+
 		gameClock = new GameClock(this);
 		gameClock.setSize(new Dimension(200, 100));
 		gameClock.setLocation(new Point(500, 0));
@@ -237,7 +235,7 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
 	 *
 	 */
 	public void newGame() {
-		chessboard.setPieces("", settings.playerWhite, settings.playerBlack);
+		chessboard.setPieces4NewGame();
 
 		// Log.log("new game, game type: "+settings.gameType.name());
 
@@ -249,7 +247,7 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
 		// to fix rendering artefacts on first run
 		Game activeGame = JChessApp.jcv.getActiveTabGame();
 		if (activeGame != null && JChessApp.jcv.getNumberOfOpenedTabs() == 0) {
-			activeGame.chessboard.resizeChessboard(activeGame.chessboard.get_height(false));
+			activeGame.chessboard.resizeChessboard();
 			activeGame.chessboard.repaint();
 			activeGame.repaint();
 		}
@@ -261,7 +259,7 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
 	/**
 	 * Method to end game
 	 * 
-	 * @param message what to show player(s) at end of the game (for example "draw",
+	 * @param massage what to show player(s) at end of the game (for example "draw",
 	 *                "black wins" etc.)
 	 */
 	public void endGame(String massage) {

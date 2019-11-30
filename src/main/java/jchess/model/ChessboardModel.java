@@ -64,30 +64,11 @@ public class ChessboardModel {
     /**
      * Method setPieces on begin of new game or loaded game
      *
-     * @param places  string with pieces to set on chessboard
+     * @param upsideDown  bool
      * @param plWhite reference to white player
      * @param plBlack reference to black player
      */
-    public void setPieces(String places, Player plWhite, Player plBlack) {
-
-        if (places.equals("")) // if newGame
-        {
-            if (this.settings.upsideDown) {
-                this.setPieces4NewGame(true, plWhite, plBlack);
-            } else {
-                this.setPieces4NewGame(false, plWhite, plBlack);
-            }
-
-        } else // if loadedGame
-        {
-            return;
-        }
-    }/*--endOf-setPieces--*/
-
-    /**
-     *
-     */
-    private void setPieces4NewGame(boolean upsideDown, Player plWhite, Player plBlack) {
+    public void setPieces4NewGame(boolean upsideDown, Player plWhite, Player plBlack) {
 
         /* WHITE PIECES */
         Player player = plBlack;
