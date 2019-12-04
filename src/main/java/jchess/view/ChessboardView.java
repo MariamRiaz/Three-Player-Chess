@@ -2,7 +2,6 @@ package jchess.view;
 
 import jchess.GUI;
 import jchess.Settings;
-import jchess.UI.board.Chessboard;
 import jchess.pieces.Piece;
 import jchess.pieces.PieceVisual;
 
@@ -21,6 +20,7 @@ public class ChessboardView extends JPanel {
     public float square_height;
     public Image upDownLabel = null;
     private Image LeftRightLabel = null;
+    private Point topLeft = new Point(0, 0);
     public HashMap<Piece, PieceVisual> pieceVisuals = new HashMap<Piece, PieceVisual>();
 
 
@@ -36,8 +36,7 @@ public class ChessboardView extends JPanel {
         this.setLocation(new Point(0, 0));
     }
 
-    public void resizeChessboard() {
-        int height = this.get_height(settings.renderLabels);
+    public void resizeChessboard(int height) {
         BufferedImage resized = new BufferedImage(height, height, BufferedImage.TYPE_INT_ARGB_PRE);
         Graphics g = resized.createGraphics();
         g.drawImage(boardImage, 0, 0, height, height, null);
@@ -122,6 +121,26 @@ public class ChessboardView extends JPanel {
         }
         uDL2D.dispose();
         this.LeftRightLabel = uDL;
+    }
+
+    /**
+     * Method to draw Chessboard and their elements (pieces etc.)
+     *
+     * @deprecated
+     */
+    public void draw() {
+        this.getGraphics().drawImage(boardImage, this.getTopLeftPoint().x, this.getTopLeftPoint().y, null);// draw an Image
+        // of chessboard
+        this.drawLabels();
+        this.repaint();
+    }/*--endOf-draw--*/
+
+    public Point getTopLeftPoint() {
+        if (this.settings.renderLabels) {
+            return new Point(this.topLeft.x + this.upDownLabel.getHeight(null),
+                    this.topLeft.y + this.upDownLabel.getHeight(null));
+        }
+        return this.topLeft;
     }
 
     public int get_height(boolean renderLabels) {

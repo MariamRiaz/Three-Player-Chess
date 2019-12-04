@@ -31,8 +31,8 @@ import jchess.Game;
 import jchess.Log;
 import jchess.Player;
 import jchess.Settings;
-import jchess.UI.board.Chessboard;
 import jchess.UI.board.Square;
+import jchess.controller.ChessboardController;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
@@ -162,7 +162,7 @@ public class MoveHistory extends AbstractTableModel {
 		String locMove = new String(beginState.symbol);
 
 		if (game.settings.upsideDown) {
-			locMove += Character.toString((char) ((Chessboard.bottom - begin.getX()) + 97));// add letter of Square from
+			locMove += Character.toString((char) ((ChessboardController.bottom - begin.getX()) + 97));// add letter of Square from
 																							// which move was made
 			locMove += Integer.toString(begin.getY() + 1);// add number of Square from which move was made
 		} else {
@@ -177,7 +177,7 @@ public class MoveHistory extends AbstractTableModel {
 		}
 
 		if (game.settings.upsideDown) {
-			locMove += Character.toString((char) ((Chessboard.bottom - end.getX()) + 97));// add letter of Square to which
+			locMove += Character.toString((char) ((ChessboardController.bottom - end.getX()) + 97));// add letter of Square to which
 																						// move was made
 			locMove += Integer.toString(end.getY() + 1);// add number of Square to which move was made
 		} else {
@@ -189,11 +189,11 @@ public class MoveHistory extends AbstractTableModel {
 			locMove += "(e.p)";// pawn take down opponent en passant
 			wasEnPassant = true;
 		}
-		if ((!this.enterBlack && this.game.chessboard.pieceThreatened(this.game.chessboard.kingWhite))
-				|| (this.enterBlack && this.game.chessboard.pieceThreatened(this.game.chessboard.kingBlack))) {// if checked
+		if ((!this.enterBlack && this.game.chessboard.pieceThreatened(this.game.chessboard.getKingWhite()))
+				|| (this.enterBlack && this.game.chessboard.pieceThreatened(this.game.chessboard.getKingBlack()))) {// if checked
 
-			if ((!this.enterBlack && this.game.chessboard.pieceUnsavable(this.game.chessboard.kingWhite)) // TODO
-					|| (this.enterBlack && this.game.chessboard.pieceUnsavable(this.game.chessboard.kingBlack))) {// check if checkmated
+			if ((!this.enterBlack && this.game.chessboard.pieceUnsavable(this.game.chessboard.getKingWhite())) // TODO
+					|| (this.enterBlack && this.game.chessboard.pieceUnsavable(this.game.chessboard.getKingBlack()))) {// check if checkmated
 				locMove += "#";// check mate
 			} else {
 				locMove += "+";// check
@@ -466,9 +466,9 @@ public class MoveHistory extends AbstractTableModel {
 			int yTo = 9;
 			boolean pieceFound = false;
 			if (locMove.length() <= 3) {
-				Square[][] squares = this.game.chessboard.squares;
+				Square[][] squares = this.game.chessboard.getSquares();
 				xTo = locMove.charAt(from) - 97;// from ASCII
-				yTo = Chessboard.bottom - (locMove.charAt(from + 1) - 49);// from ASCII
+				yTo = ChessboardController.bottom - (locMove.charAt(from + 1) - 49);// from ASCII
 				for (int i = 0; i < squares.length && !pieceFound; i++) {
 					for (int j = 0; j < squares[i].length && !pieceFound; j++) {
 						if (squares[i][j].getPiece() == null
@@ -488,15 +488,15 @@ public class MoveHistory extends AbstractTableModel {
 				}
 			} else {
 				xFrom = locMove.charAt(from) - 97;// from ASCII
-				yFrom = Chessboard.bottom - (locMove.charAt(from + 1) - 49);// from ASCII
+				yFrom = ChessboardController.bottom - (locMove.charAt(from + 1) - 49);// from ASCII
 				xTo = locMove.charAt(from + 3) - 97;// from ASCII
-				yTo = Chessboard.bottom - (locMove.charAt(from + 4) - 49);// from ASCII
+				yTo = ChessboardController.bottom - (locMove.charAt(from + 4) - 49);// from ASCII
 			}
 			canMove = this.game.simulateMove(xFrom, yFrom, xTo, yTo);
 			if (!canMove) // if move is illegal
 			{
 				JOptionPane.showMessageDialog(this.game, Settings.lang("illegal_move_on") + locMove);
-				this.game.chessboard.activeSquare = null;
+				this.game.chessboard.setActiveSquare(null);
 				return;// finish reading game and show message
 			}
 		}

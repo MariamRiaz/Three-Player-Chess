@@ -27,7 +27,6 @@ import javax.swing.*;
 
 import jchess.UI.Chat;
 import jchess.UI.GameClock;
-import jchess.UI.board.Chessboard;
 import jchess.UI.board.Square;
 import jchess.controller.ChessboardController;
 import jchess.model.ChessboardModel;
@@ -467,7 +466,7 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
     public void componentResized(ComponentEvent e) {
         int height = this.getHeight() >= this.getWidth() ? this.getWidth() : this.getHeight();
         int chess_height = (int) Math.round((height * 0.8) / 8) * 8;
-        this.chessboard.resizeChessboard((int) chess_height);
+        this.chessboard.resizeChessboard(chess_height);
         chess_height = this.chessboard.getHeight();
         this.moves.getScrollPane().setLocation(new Point(chess_height + 5, 100));
         this.moves.getScrollPane().setSize(this.moves.getScrollPane().getWidth(), chess_height - 100);

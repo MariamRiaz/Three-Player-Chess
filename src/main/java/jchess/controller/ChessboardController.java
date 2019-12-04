@@ -33,6 +33,9 @@ public class ChessboardController {
     public Piece twoSquareMovedPawn2 = null;
     private MoveHistory moves_history;
 
+    public static int bottom = 7;
+    public static int top = 0;
+
     public ChessboardController(ChessboardModel model, ChessboardView view, Settings settings) {
         this.model = model;
         this.view = view;
@@ -51,8 +54,12 @@ public class ChessboardController {
         this.model.setPieces4NewGame(settings.upsideDown, settings.playerWhite, settings.playerBlack);
     }
 
-    public void resizeChessboard() {
-        this.view.resizeChessboard();
+    public void resizeChessboard(int height) {
+        this.view.resizeChessboard(height);
+    }
+
+    public void resizeChessboard(){
+        this.view.resizeChessboard(view.get_height(settings.renderLabels));
     }
 
     public boolean simulateMove(int beginX, int beginY, int endX, int endY) {
@@ -148,12 +155,20 @@ public class ChessboardController {
         return model.activeSquare;
     }
 
+    public void setActiveSquare(Square square){
+        this.model.activeSquare = square;
+    }
+
     public Square getSquare(Piece piece) {
         return piece != null && model.pieceToSquare.containsKey(piece) ? model.pieceToSquare.get(piece) : null;
     }
 
     public Square getSquare(int x, int y) { // duplicate method with GUI-related getSquare
         return x < 0 || y < 0 || x >= model.squares.length || y >= model.squares[x].length ? null : model.squares[x][y];
+    }
+
+    public Square[][] getSquares(){
+        return this.model.squares;
     }
 
     /**
@@ -522,5 +537,13 @@ public class ChessboardController {
         }
 
         return false;
+    }
+
+    public int getHeight(){
+        return view.getHeight();
+    }
+
+    public void draw(){
+        this.view.draw();
     }
 }
