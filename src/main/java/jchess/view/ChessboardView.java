@@ -1,56 +1,127 @@
 package jchess.view;
 
 import jchess.GUI;
+import jchess.Settings;
 import jchess.UI.board.Chessboard;
+import jchess.pieces.Piece;
+import jchess.pieces.PieceVisual;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.HashMap;
 
 public class ChessboardView extends JPanel {
+    private Settings settings;
     private Image boardImage;
     private Image selectedSquareImage = GUI.loadImage("sel_square.png");// image of highlighted square
     private Image ableSquareImage = GUI.loadImage("able_square.png");// image of square where piece can go
     private int chessBoardHeight = 480;
     private int chessBoardWidth = chessBoardHeight;
-    private Image upDownLabel = null;
+    public float square_height;
+    public Image upDownLabel = null;
     private Image LeftRightLabel = null;
+    public HashMap<Piece, PieceVisual> pieceVisuals = new HashMap<Piece, PieceVisual>();
+
 
     public ChessboardView() {
     }
 
-    public void initView(String chessBoardImagePath){
+    public void initView(String chessBoardImagePath, Settings settings){
+        this.settings = settings;
         this.boardImage = GUI.loadImage(chessBoardImagePath);
         this.setSize(chessBoardHeight, chessBoardWidth);
+        this.square_height = chessBoardHeight / 8;
         this.setVisible(true);
         this.setLocation(new Point(0, 0));
     }
 
-    public void resizeChessboard(boolean renderLabels) {
-        int height = this.get_height(renderLabels);
+    public void resizeChessboard() {
+        int height = this.get_height(settings.renderLabels);
         BufferedImage resized = new BufferedImage(height, height, BufferedImage.TYPE_INT_ARGB_PRE);
         Graphics g = resized.createGraphics();
-        g.drawImage(Chessboard.orgImage, 0, 0, height, height, null);
+        g.drawImage(boardImage, 0, 0, height, height, null);
         g.dispose();
-        Chessboard.image = resized.getScaledInstance(height, height, 0);
+        boardImage = resized.getScaledInstance(height, height, 0);
         this.square_height = (float) (height / 8);
-        if (this.settings.renderLabels) {
+        if (settings.renderLabels) {
             height += 2 * (this.upDownLabel.getHeight(null));
         }
         this.setSize(height, height);
 
         resized = new BufferedImage((int) square_height, (int) square_height, BufferedImage.TYPE_INT_ARGB_PRE);
         g = resized.createGraphics();
-        g.drawImage(Chessboard.org_able_square, 0, 0, (int) square_height, (int) square_height, null);
+        g.drawImage(this.ableSquareImage, 0, 0, (int) square_height, (int) square_height, null);
         g.dispose();
-        Chessboard.able_square = resized.getScaledInstance((int) square_height, (int) square_height, 0);
+        this.ableSquareImage = resized.getScaledInstance((int) square_height, (int) square_height, 0);
 
         resized = new BufferedImage((int) square_height, (int) square_height, BufferedImage.TYPE_INT_ARGB_PRE);
         g = resized.createGraphics();
-        g.drawImage(Chessboard.org_sel_square, 0, 0, (int) square_height, (int) square_height, null);
+        g.drawImage(this.selectedSquareImage, 0, 0, (int) square_height, (int) square_height, null);
         g.dispose();
-        Chessboard.sel_square = resized.getScaledInstance((int) square_height, (int) square_height, 0);
+        this.selectedSquareImage = resized.getScaledInstance((int) square_height, (int) square_height, 0);
         this.drawLabels();
+    }
+
+    protected void drawLabels() {
+        this.drawLabels((int) this.square_height);
+    }
+
+    protected final void drawLabels(int square_height) {
+        // BufferedImage uDL = new BufferedImage(800, 800,
+        // BufferedImage.TYPE_3BYTE_BGR);
+        int min_label_height = 20;
+        int labelHeight = (int) Math.ceil(square_height / 4);
+        labelHeight = (labelHeight < min_label_height) ? min_label_height : labelHeight;
+        int labelWidth = (int) Math.ceil(square_height * 8 + (2 * labelHeight));
+        BufferedImage uDL = new BufferedImage(labelWidth + min_label_height, labelHeight, BufferedImage.TYPE_3BYTE_BGR);
+        Graphics2D uDL2D = (Graphics2D) uDL.createGraphics();
+        uDL2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        uDL2D.setColor(Color.white);
+
+        uDL2D.fillRect(0, 0, labelWidth + min_label_height, labelHeight);
+        uDL2D.setColor(Color.black);
+        uDL2D.setFont(new Font("Arial", Font.BOLD, 12));
+        int addX = (square_height / 2);
+        if (this.settings.renderLabels) {
+            addX += labelHeight;
+        }
+
+        String[] letters = {"a", "b", "c", "d", "e", "f", "g", "h"};
+        if (!this.settings.upsideDown) {
+            for (int i = 1; i <= letters.length; i++) {
+                uDL2D.drawString(letters[i - 1], (square_height * (i - 1)) + addX, 10 + (labelHeight / 3));
+            }
+        } else {
+            int j = 1;
+            for (int i = letters.length; i > 0; i--, j++) {
+                uDL2D.drawString(letters[i - 1], (square_height * (j - 1)) + addX, 10 + (labelHeight / 3));
+            }
+        }
+        uDL2D.dispose();
+        this.upDownLabel = uDL;
+
+        uDL = new BufferedImage(labelHeight, labelWidth + min_label_height, BufferedImage.TYPE_3BYTE_BGR);
+        uDL2D = (Graphics2D) uDL.createGraphics();
+        uDL2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        uDL2D.setColor(Color.white);
+        // uDL2D.fillRect(0, 0, 800, 800);
+        uDL2D.fillRect(0, 0, labelHeight, labelWidth + min_label_height);
+        uDL2D.setColor(Color.black);
+        uDL2D.setFont(new Font("Arial", Font.BOLD, 12));
+
+        if (this.settings.upsideDown) {
+            for (int i = 1; i <= 8; i++) {
+                uDL2D.drawString(new Integer(i).toString(), 3 + (labelHeight / 3), (square_height * (i - 1)) + addX);
+            }
+        } else {
+            int j = 1;
+            for (int i = 8; i > 0; i--, j++) {
+                uDL2D.drawString(new Integer(i).toString(), 3 + (labelHeight / 3), (square_height * (j - 1)) + addX);
+            }
+        }
+        uDL2D.dispose();
+        this.LeftRightLabel = uDL;
     }
 
     public int get_height(boolean renderLabels) {
@@ -62,6 +133,17 @@ public class ChessboardView extends JPanel {
 
     public int getWidth(){
         return this.getHeight();
+    }
+
+    public void setVisual(Piece piece) {
+        if (piece == null)
+            return;
+        this.pieceVisuals.put(piece, new PieceVisual(piece.player.color == piece.player.color.black ? piece.type + "-B.png" : piece.type + "-W.png"));
+    }
+
+    public void removeVisual(Piece piece) {
+        if (piece != null && this.pieceVisuals.containsKey(piece))
+            this.pieceVisuals.remove(piece);
     }
 
 }

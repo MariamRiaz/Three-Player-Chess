@@ -15,9 +15,14 @@ public class ChessboardModel {
     public Square squares[][];// squares of chessboard
     public Piece kingWhite;
     public Piece kingBlack;
+    public Square activeSquare;
+    public int active_x_square;
+    public int active_y_square;
+
+
 
     public HashMap<Piece, PieceVisual> pieceVisuals = new HashMap<Piece, PieceVisual>();
-    private HashMap<Piece, Square> pieceToSquare = new HashMap<Piece, Square>();
+    public HashMap<Piece, Square> pieceToSquare = new HashMap<Piece, Square>();
 
 
     public ChessboardModel(Settings settings) {
