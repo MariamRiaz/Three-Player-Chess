@@ -70,7 +70,7 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
 		this.add(chessboard);
 		// this.chessboard.
 		gameClock = new GameClock(this);
-		gameClock.setSize(new Dimension(200, 100));
+		gameClock.setSize(new Dimension(400, 100));
 		gameClock.setLocation(new Point(500, 0));
 		this.add(gameClock);
 
