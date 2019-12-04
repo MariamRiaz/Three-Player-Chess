@@ -51,7 +51,7 @@ public class MoveHistory extends AbstractTableModel {
 	private ArrayList<String> move = new ArrayList<String>();
 	private int columnsNum = 3;
 	private int rowsNum = 0;
-	private String[] names = new String[] { Settings.lang("white"), Settings.lang("black") };
+	private String[] names = new String[] { Settings.lang("white"), Settings.lang("black"), Settings.lang("gray") };
 	//private MyDefaultTableModel tableModel;
 	//private JScrollPane scrollPane;
 	//private JTable table;
@@ -79,6 +79,7 @@ public class MoveHistory extends AbstractTableModel {
 
 		this.movesUI.addColumn(this.names[0]);
 		this.movesUI.addColumn(this.names[1]);
+		this.movesUI.addColumn(this.names[2]);
 		this.addTableModelListener(null);
 		//this.tableModel.addTableModelListener(null);
 		//this.scrollPane.setAutoscrolls(true);
