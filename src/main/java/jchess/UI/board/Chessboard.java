@@ -24,6 +24,8 @@ import java.awt.*;
 import java.awt.Graphics;
 import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -418,39 +420,32 @@ public class Chessboard extends JPanel {
 					else color = "B";
 					
 					String newPiece = JChessApp.jcv.showPawnPromotionBox(color); // return name of new piece
-
+					Piece promoted;
+					
 					if (newPiece.equals("Queen")) // transform pawn to queen
-					{
-						Piece queen = PieceFactory.createQueen(tempBegin.player);
-						setPieceOnSquare(queen, end);
-						setVisual(queen);
-					} else if (newPiece.equals("Rook")) // transform pawn to rook
-					{
-						Piece rook = PieceFactory.createRook(tempBegin.player);
-						setPieceOnSquare(rook, end);
-						setVisual(rook);
-					} else if (newPiece.equals("Bishop")) // transform pawn to bishop
-					{
-						Piece bishop = PieceFactory.createBishop(tempBegin.player);
-						setPieceOnSquare(bishop, end);
-						setVisual(bishop);
-					} else // transform pawn to knight
-					{
-						Piece knight = PieceFactory.createKing(tempBegin.player);
-						setPieceOnSquare(knight, end);
-						setVisual(knight);
-					}
+						promoted = PieceFactory.createQueen(tempBegin.player);
+					else if (newPiece.equals("Rook")) // transform pawn to rook
+						promoted = PieceFactory.createRook(tempBegin.player);
+					else if (newPiece.equals("Bishop")) // transform pawn to bishop
+						promoted = PieceFactory.createBishop(tempBegin.player);
+					else // transform pawn to knight
+						promoted = PieceFactory.createKing(tempBegin.player);
+					
+					removeVisual(tempBegin);
+					setPieceOnSquare(promoted, end);
+					setVisual(promoted);
 					promotedPiece = tempBegin;
 				}
 			}
 		}
-
+		
 		if (refresh) {
 			this.unselect();// unselect square
 			repaint();
 		}
 
-		setPieceOnSquare(tempBegin, end);
+		if (promotedPiece == null)
+			setPieceOnSquare(tempBegin, end);
 		tempBegin.setHasMoved(true);
 		
 		if (clearForwardHistory) {
@@ -529,7 +524,9 @@ public class Chessboard extends JPanel {
 				
 				setPieceOnSquare(taken, getSquare(end.pozX, begin.pozY));
 				setVisual(taken);
-			} else if (moved.type.equals("Pawn") && last.getPromotedPiece() != null) {
+			} else if (moved.type.equals("Pawn") && !last.wasPawnTwoFieldsMove())
+				moved.setHasMoved(true);
+			else if (moved.type.equals("Pawn") && last.getPromotedPiece() != null) {
 				Piece promoted = getSquare(end.pozX, end.pozY).piece;
 				setPieceOnSquare(promoted, null);
 				removeVisual(promoted);
@@ -659,18 +656,24 @@ public class Chessboard extends JPanel {
 	}
 
 	public boolean pieceThreatened(Piece piece) {
-		if (piece == null)
+		return squareThreatened(getSquare(piece), piece.player);
+	}
+	
+	public boolean squareThreatened(Square square, Player player, Piece... exclude) {
+		if (square == null)
 			return false;
+		
+		java.util.List<Piece> exclusionList = Arrays.asList(exclude);
 		
 		for (Iterator<Entry<Piece, Square>> it = this.pieceToSquare.entrySet().iterator(); it.hasNext();) {
 			Entry<Piece, Square> ent = it.next();
 
-			if (ent.getKey().player == piece.player)
+			if (exclusionList.contains(ent.getKey()) || ent.getKey().player == player)
 				continue;
 
 			HashSet<Square> validMoveSquares = getValidTargetSquares(ent.getKey());
 			for (Iterator<Square> it2 = validMoveSquares.iterator(); it2.hasNext();)
-				if (it2.next() == getSquare(piece))
+				if (it2.next() == square)
 					return true;
 		}
 
@@ -738,7 +741,7 @@ public class Chessboard extends JPanel {
 			PlayedMove lastMove = it.next();
 			
 			if (lastMove.wasPawnTwoFieldsMove() 
-					&& square == getSquare((lastMove.getTo().pozX + lastMove.getFrom().pozX) / 2, (lastMove.getTo().pozY + lastMove.getFrom().pozY) / 2))
+					&& square == getSquare(lastMove.getTo().pozX, lastMove.getFrom().pozY + (lastMove.getTo().pozY - lastMove.getFrom().pozY) / 2))
 				return getPiece(lastMove.getTo());
 		}
 		
@@ -774,6 +777,28 @@ public class Chessboard extends JPanel {
 				Piece target = getPawnSkippedOverSquareEnPassant(next);
 				if (target != null && target.player != piece.player)
 					add = true;
+			}
+			
+			if (move.conditions.contains(MoveType.Castling)) {
+				Square current = getSquare(piece);
+				
+				if (squareThreatened(current, piece.player, kingBlack, kingWhite))
+					add = false;
+				else {
+					int start = move.x < 0 ? 0 : current.pozX + 1,
+							end = move.x < 0 ? current.pozX : squares[current.pozX].length;
+					
+					Piece rk = getSquare(move.x < 0 ? 0 : end - 1, current.pozY).piece;
+					if (rk == null || rk.hasMoved())
+						add = false;
+					else for (; start < end; start++) {
+							Square sq = getSquare(start, current.pozY);
+							if ((sq.piece != null && sq.piece != rk) || squareThreatened(sq, piece.player, piece, kingBlack, kingWhite)) {
+								add = false;
+								break;
+							}
+					}
+				}
 			}
 			
 			if (add)
