@@ -119,6 +119,13 @@ public class Piece {
 		return new Piece(this);
 	}
 	
+	public Piece load(Piece other) {
+		if (other == null)
+			return this;
+		hasMoved = other.hasMoved;
+		return this;
+	}
+	
 	/**
 	 * @param val Whether the Piece has moved since its creation or not.
 	 * @return This Piece.

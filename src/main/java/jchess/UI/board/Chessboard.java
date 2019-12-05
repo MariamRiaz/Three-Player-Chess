@@ -81,14 +81,12 @@ public class Chessboard extends JPanel {
 	private Square undo1_sq_end = null;
 	private Piece undo1_piece_begin = null;
 	private Piece undo1_piece_end = null;
-	private Piece ifWasEnPassant = null;
+	//private Piece ifWasEnPassant = null;
 	private Piece ifWasCastling = null;
 	private boolean breakCastling = false; // if last move break castling
 	// ----------------------------
 	// For En passant:
 	// |-> Pawn whose in last turn moved two square
-	public Piece twoSquareMovedPawn = null;
-	public Piece twoSquareMovedPawn2 = null;
 	private MoveHistory moves_history;
 
 	private HashMap<Piece, Square> pieceToSquare = new HashMap<Piece, Square>();
@@ -136,18 +134,18 @@ public class Chessboard extends JPanel {
 	public Piece setPieceOnSquare(Piece piece, Square square) {
 		if (piece == null)
 			return null;
-
+		
 		if (pieceToSquare.containsKey(piece)) {
 			pieceToSquare.get(piece).piece = null;
 			pieceToSquare.remove(piece);
 		}
-
+		
 		if (square != null) {
 			setPieceOnSquare(square.piece, null);
 			square.piece = piece;
 			pieceToSquare.put(piece, square);
 		}
-
+		
 		return piece;
 	}
 
@@ -398,112 +396,103 @@ public class Chessboard extends JPanel {
 		 */
 
 		Piece tempBegin = begin.piece, tempBeginState = tempBegin != null ? tempBegin.clone() : null;// 4 moves history
-		Piece tempEnd = end.piece, tempEndState = tempEnd != null ? tempEnd.clone() : null; // 4 moves history
+		Piece tempEnd = end.piece; // 4 moves history
 		// for undo
 		undo1_piece_begin = begin.piece;
 		undo1_sq_begin = begin;
-		undo1_piece_end = end.piece;
+		undo1_piece_end = tempEnd;
 		undo1_sq_end = end;
-		ifWasEnPassant = null;
+		//ifWasEnPassant = null;
 		ifWasCastling = null;
 		breakCastling = false;
 		// ---
 
-		twoSquareMovedPawn2 = twoSquareMovedPawn;
+		//twoSquareMovedPawn2 = twoSquareMovedPawn;
+		
+		if (tempBegin.type.equals("King")) {
 
-		setPieceOnSquare(begin.piece, end);
-
-		System.out.print(end.piece.type);
-		if (end.piece.type.equals("King")) {
-
-			if (!end.piece.hasMoved())
+			if (!tempBeginState.hasMoved())
 				breakCastling = true;
-
-			end.piece.setHasMoved(true);// set square of piece to ending
 
 			// Castling
 			if (begin.pozX + 2 == end.pozX) {
 				move(squares[7][begin.pozY], squares[end.pozX - 1][begin.pozY], false, false);
-				ifWasCastling = end.piece; // for undo
+				ifWasCastling = tempEnd; // for undo
 				wasCastling = MoveHistory.castling.shortCastling;
 				// this.moves_history.addMove(tempBegin, tempEnd, clearForwardHistory,
 				// wasCastling, wasEnPassant);
 				// return;
 			} else if (begin.pozX - 2 == end.pozX) {
 				move(squares[0][begin.pozY], squares[end.pozX + 1][begin.pozY], false, false);
-				ifWasCastling = end.piece; // for undo
+				ifWasCastling = tempBegin; // for undo
 				wasCastling = MoveHistory.castling.longCastling;
 				// this.moves_history.addMove(tempBegin, tempEnd, clearForwardHistory,
 				// wasCastling, wasEnPassant);
 				// return;
 			}
 			// endOf Castling
-		} else if (end.piece.type.equals("Rook")) {
-			if (!end.piece.hasMoved())
+		} else if (tempBegin.type.equals("Rook")) {
+			if (!tempBeginState.hasMoved())
 				breakCastling = true;
-			end.piece.setHasMoved(true);// set square of piece to ending
-		} else if (end.piece.type.equals("Pawn")) {
-			if (twoSquareMovedPawn != null && squares[end.pozX][begin.pozY] == getSquare(twoSquareMovedPawn)) // en
-																												// passant
+		} else if (tempBegin.type.equals("Pawn")) {
+			/*if (twoSquareMovedPawn != null && squares[end.pozX][begin.pozY] == getSquare(twoSquareMovedPawn)) // en
+																												// passant*/
+			Piece pawnForEnPassant = getPawnSkippedOverSquareEnPassant(end);
+			if (pawnForEnPassant != null)
 			{
-				ifWasEnPassant = squares[end.pozX][begin.pozY].piece; // for undo
-
-				tempEnd = squares[end.pozX][begin.pozY].piece; // ugly hack - put taken pawn in en passant plasty
-																		// do end square
-				tempEndState = tempEnd.clone();
+				tempEnd = pawnForEnPassant;
+				//ifWasEnPassant = squares[end.pozX][begin.pozY].piece; // for undo
+				setPieceOnSquare(tempEnd, null);
 				
-				squares[end.pozX][begin.pozY].piece = null;
 				wasEnPassant = true;
 			}
 
 			if (begin.pozY - end.pozY == 2 || end.pozY - begin.pozY == 2) // moved two square
 			{
 				breakCastling = true;
-				twoSquareMovedPawn = end.piece;
+				//twoSquareMovedPawn = end.piece;
 			} else {
-				twoSquareMovedPawn = null; // erase last saved move (for En passant)
+				//twoSquareMovedPawn = null; // erase last saved move (for En passant)
 			}
-
-			end.piece.setHasMoved(true);// set square of piece to ending
 
 			if (end.pozY == 0 || end.pozY == 7) // promote Pawn
 			{
 				if (clearForwardHistory) {
 					String color;
-					if (end.piece.player.color == Player.colors.white) {
+					if (tempBegin.player.color == Player.colors.white) {
 						color = "W"; // promotionWindow was show with pieces in this color
 					} else {
 						color = "B";
 					}
-
+					
 					String newPiece = JChessApp.jcv.showPawnPromotionBox(color); // return name of new piece
 
 					if (newPiece.equals("Queen")) // transform pawn to queen
 					{
-						Piece queen = PieceFactory.createQueen(end.piece.player);
+						Piece queen = PieceFactory.createQueen(tempBegin.player);
 						setPieceOnSquare(queen, end);
 						setVisual(queen);
 					} else if (newPiece.equals("Rook")) // transform pawn to rook
 					{
-						Piece rook = PieceFactory.createRook(end.piece.player);
+						Piece rook = PieceFactory.createRook(tempBegin.player);
 						setPieceOnSquare(rook, end);
 						setVisual(rook);
 					} else if (newPiece.equals("Bishop")) // transform pawn to bishop
 					{
-						Piece bishop = PieceFactory.createBishop(end.piece.player);
+						Piece bishop = PieceFactory.createBishop(tempBegin.player);
 						setPieceOnSquare(bishop, end);
 						setVisual(bishop);
 					} else // transform pawn to knight
 					{
-						Piece knight = PieceFactory.createKing(end.piece.player);
+						Piece knight = PieceFactory.createKing(tempBegin.player);
 						setPieceOnSquare(knight, end);
 						setVisual(knight);
 					}
-					promotedPiece = end.piece;
+					promotedPiece = tempBegin;
 				}
 			}
-		} else if (!end.piece.type.equals("Pawn")) {
-			twoSquareMovedPawn = null; // erase last saved move (for En passant)
+		} else if (!tempBegin.type.equals("Pawn")) {
+			//twoSquareMovedPawn = null; // erase last saved move (for En passant)
 		}
 		// }
 
@@ -511,15 +500,16 @@ public class Chessboard extends JPanel {
 			this.unselect();// unselect square
 			repaint();
 		}
+
+		setPieceOnSquare(tempBegin, end);
+		tempBegin.setHasMoved(true);
 		
 		if (clearForwardHistory) {
 			this.moves_history.clearMoveForwardStack();
-			this.moves_history.addMove(begin, end, tempBegin, tempBeginState, tempEnd, tempEndState, true, wasCastling, wasEnPassant, promotedPiece);
+			this.moves_history.addMove(begin, end, tempBegin, tempBeginState, tempEnd, true, wasCastling, wasEnPassant, promotedPiece);
 		} else {
-			this.moves_history.addMove(begin, end, tempBegin, tempBeginState, tempEnd, tempEndState, false, wasCastling, wasEnPassant, promotedPiece);
+			this.moves_history.addMove(begin, end, tempBegin, tempBeginState, tempEnd, false, wasCastling, wasEnPassant, promotedPiece);
 		}
-
-		end.piece.setHasMoved(true);
 	}/* endOf-move()- */
 	
 	public boolean redo() {
@@ -530,14 +520,14 @@ public class Chessboard extends JPanel {
 		if (this.settings.gameType == Settings.gameTypes.local) // redo only for local game
 		{
 			PlayedMove first = this.moves_history.redo();
-
+			
 			Square from = null;
 			Square to = null;
-
+			
 			if (first != null) {
 				from = first.getFrom();
 				to = first.getTo();
-
+				
 				this.move(from, to, true, false);
 				if (first.getPromotedPiece() != null) {
 					Piece promoted = setPieceOnSquare(first.getPromotedPiece(), to);
@@ -557,19 +547,18 @@ public class Chessboard extends JPanel {
 	public synchronized boolean undo(boolean refresh) // undo last move
 	{
 		PlayedMove last = this.moves_history.undo();
-
-		System.out.print(last != null);
+		
 		if (last != null && last.getFrom() != null) {
-			System.out.print("1");
 			Square begin = last.getFrom();
 			Square end = last.getTo();
 			try {
 				Piece moved = last.getMovedPiece(), movedState = last.getMovedPieceState();
 				setPieceOnSquare(moved, null);
 				removeVisual(moved);
-				setPieceOnSquare(movedState, begin);
-				setVisual(movedState);
-
+				
+				setPieceOnSquare(moved.load(movedState), begin);
+				setVisual(moved);
+				
 				Piece taken = last.getTakenPiece();
 				if (last.getCastlingMove() != castling.none) {
 					Piece rook = null;
@@ -583,60 +572,51 @@ public class Chessboard extends JPanel {
 						setPieceOnSquare(rook, getSquare(0, begin.pozY));
 						setVisual(rook);
 					}
-					movedState.setHasMoved(false);
+					
 					rook.setHasMoved(false);
 					this.breakCastling = false;
-				} else if (movedState.type.equals("Rook")) {
-					movedState.setHasMoved(false);
-				} else if (movedState.type.equals("Pawn") && last.wasEnPassant()) {
-					Piece pawn = last.getTakenPiece();
-					setPieceOnSquare(pawn, getSquare(end.pozX, begin.pozY));
-					setVisual(pawn);
-
-				} else if (movedState.type.equals("Pawn") && last.getPromotedPiece() != null) {
+				} else if (moved.type.equals("Pawn") && last.wasEnPassant()) {
+					setPieceOnSquare(taken, null);
+					removeVisual(taken);
+					
+					setPieceOnSquare(taken, getSquare(end.pozX, begin.pozY));
+					setVisual(taken);
+				} else if (moved.type.equals("Pawn") && last.getPromotedPiece() != null) {
 					Piece promoted = getSquare(end.pozX, end.pozY).piece;
 					setPieceOnSquare(promoted, null);
 					removeVisual(promoted);
 				}
 
 				// check one more move back for en passant
-				PlayedMove oneMoveEarlier = this.moves_history.getLastMoveFromHistory();
+				/*PlayedMove oneMoveEarlier = this.moves_history.getLastMoveFromHistory();
 				if (oneMoveEarlier != null && oneMoveEarlier.wasPawnTwoFieldsMove()) {
 					Piece canBeTakenEnPassant = getSquare(oneMoveEarlier.getTo().pozX,
 							oneMoveEarlier.getTo().pozY).piece;
 					if (canBeTakenEnPassant.type.equals("Pawn")) {
 						this.twoSquareMovedPawn = canBeTakenEnPassant;
 					}
-				}
-
+				}*/
+				
 				if (taken != null && !last.wasEnPassant()) {
 					setPieceOnSquare(taken, null);
 					removeVisual(taken);
 					
-					Piece takenState = last.getTakenPieceState();
-					setPieceOnSquare(takenState, end);
-					setVisual(takenState);
-				} else {
-					removeVisual(end.piece);
-					setPieceOnSquare(end.piece, null);
+					setPieceOnSquare(taken, end);
+					setVisual(taken);
 				}
 
 				if (refresh) {
 					this.unselect();// unselect square
 					repaint();
 				}
-
 			} catch (java.lang.ArrayIndexOutOfBoundsException exc) {
-				System.out.print("2");
 				return false;
 			} catch (java.lang.NullPointerException exc) {
-				System.out.print("3");
 				return false;
 			}
 
 			return true;
 		} else {
-			System.out.print("4");
 			return false;
 		}
 	}
@@ -807,23 +787,35 @@ public class Chessboard extends JPanel {
 
 		return ret;
 	}
-
+	
 	private Square nextSquare(Square current, int x, int y) {
 		return getSquare(current.pozX + x, current.pozY + y);
 	}
-
-	// TODO: 
+	
+	private Piece getPawnSkippedOverSquareEnPassant(Square square) {
+		java.util.List<PlayedMove> lastMoves = moves_history.getLastMoveOfEachPlayer();
+		for (Iterator<PlayedMove> it = lastMoves.iterator(); it.hasNext();) {
+			PlayedMove lastMove = it.next();
+			
+			if (lastMove.wasPawnTwoFieldsMove() 
+					&& square == getSquare((lastMove.getTo().pozX + lastMove.getFrom().pozX) / 2, (lastMove.getTo().pozY + lastMove.getFrom().pozY) / 2))
+				return getPiece(lastMove.getTo());
+		}
+		
+		return null;
+	}
+	
 	private HashSet<Square> evaluateMoveToTargetSquares(Piece.Move move, Piece piece) {
 		HashSet<Square> ret = new HashSet<Square>();
-
+		
 		if (move == null || piece == null)
 			return ret;
-
+		
 		int count = 0;
 		for (Square next = nextSquare(getSquare(piece), move.x, move.y); next != null
 				&& (move.limit == null || count < move.limit); next = nextSquare(next, move.x, move.y)) {
 			boolean add = true;
-
+			
 			if (move.conditions.contains(MoveType.OnlyAttack)) {
 				if (next.piece == null || next.piece.player == piece.player)
 					add = false;
@@ -832,22 +824,30 @@ public class Chessboard extends JPanel {
 					add = false;
 			} else if (next.piece != null && next.piece.player == piece.player)
 				add = false;
-
+			
 			if (move.conditions.contains(MoveType.OnlyWhenFresh) && piece.hasMoved())
 				add = false;
 
+			if (move.conditions.contains(MoveType.EnPassant)) {
+				add = false;
+				
+				Piece target = getPawnSkippedOverSquareEnPassant(next);
+				if (target != null && target.player != piece.player)
+					add = true;
+			}
+			
 			if (add)
 				ret.add(next);
-
+			
 			if (!move.conditions.contains(MoveType.Unblockable) && next.piece != null)
 				break;
-
+			
 			count++;
 		}
-
+		
 		return ret;
 	}
-
+	
 	public void resizeChessboard(int height) {
 		BufferedImage resized = new BufferedImage(height, height, BufferedImage.TYPE_INT_ARGB_PRE);
 		Graphics g = resized.createGraphics();

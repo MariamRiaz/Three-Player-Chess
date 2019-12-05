@@ -18,7 +18,9 @@ public class PieceFactory {
 	 */
 	public static final Piece createKing(Player player) {
 		return new Piece(player, "King", 99, "K", new Piece.Move(1, 1, 1), new Piece.Move(1, -1, 1), new Piece.Move(-1, -1, 1), new Piece.Move(-1, 1, 1),
-				new Piece.Move(1, 0, 1), new Piece.Move(-1, 0, 1), new Piece.Move(0, 1, 1), new Piece.Move(0, -1, 1));
+				new Piece.Move(1, 0, 1), new Piece.Move(-1, 0, 1), new Piece.Move(0, 1, 1), new Piece.Move(0, -1, 1),
+				new Piece.Move(2, 0, 1, MoveType.Castling),
+				new Piece.Move(-2, 0, 1, MoveType.Castling));
 	}
 
 	/**
@@ -58,6 +60,7 @@ public class PieceFactory {
 			y = -1;
 		else y = 1;
 		return new Piece(player, "Pawn", 1, "", new Piece.Move(0, y, 1, MoveType.OnlyMove), new Piece.Move(0, y, 2, MoveType.OnlyMove, MoveType.OnlyWhenFresh),
-				new Piece.Move(1, y, 1, MoveType.OnlyAttack), new Piece.Move(-1, y, 1, MoveType.OnlyAttack));
+				new Piece.Move(1, y, 1, MoveType.OnlyAttack), new Piece.Move(-1, y, 1, MoveType.OnlyAttack),
+				new Piece.Move(1, y, 1, MoveType.EnPassant), new Piece.Move(-1, y, 1, MoveType.EnPassant));
 	}
 }

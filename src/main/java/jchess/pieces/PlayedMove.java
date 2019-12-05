@@ -27,13 +27,13 @@ public class PlayedMove {
 	protected Square from = null;
 	protected Square to = null;
 	protected Piece movedPiece = null, movedPieceState = null;
-	protected Piece takenPiece = null, takenPieceState = null;
+	protected Piece takenPiece = null;
 	protected Piece promotedTo = null;
 	protected boolean wasEnPassant = false;
 	protected castling castlingMove = castling.none;
 	protected boolean wasPawnTwoFieldsMove = false;
 
-	PlayedMove(Square from, Square to, Piece movedPiece, Piece movedPieceState, Piece takenPiece, Piece takenPieceState, castling castlingMove, boolean wasEnPassant,
+	PlayedMove(Square from, Square to, Piece movedPiece, Piece movedPieceState, Piece takenPiece, castling castlingMove, boolean wasEnPassant,
 			Piece promotedPiece) {
 		this.from = from;
 		this.to = to;
@@ -41,7 +41,6 @@ public class PlayedMove {
 		this.movedPiece = movedPiece;
 		this.takenPiece = takenPiece;
 		this.movedPieceState = movedPieceState;
-		this.takenPieceState = takenPieceState;
 
 		this.castlingMove = castlingMove;
 		this.wasEnPassant = wasEnPassant;
@@ -72,10 +71,6 @@ public class PlayedMove {
 
 	public Piece getTakenPiece() {
 		return this.takenPiece;
-	}
-
-	public Piece getTakenPieceState() {
-		return this.takenPieceState;
 	}
 
 	public boolean wasEnPassant() {

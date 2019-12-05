@@ -21,10 +21,11 @@
 package jchess.pieces;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Stack;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.table.*;
 
 import jchess.Game;
@@ -35,8 +36,6 @@ import jchess.UI.board.Chessboard;
 import jchess.UI.board.Square;
 import jchess.UI.MovesUI;
 
-import java.awt.Dimension;
-import java.awt.Rectangle;
 import javax.swing.JOptionPane;
 
 /**
@@ -153,7 +152,7 @@ public class MoveHistory extends AbstractTableModel {
 	 * @param move String which in is capt player move
 	 */
 	
-	public void addMove(Square begin, Square end, Piece beginPiece, Piece beginState, Piece endPiece, Piece endState, boolean registerInHistory, castling castlingMove,
+	public void addMove(Square begin, Square end, Piece beginPiece, Piece beginState, Piece endPiece, boolean registerInHistory, castling castlingMove,
 			boolean wasEnPassant, Piece promotedPiece) {
 
 		boolean wasCastling = castlingMove != castling.none;
@@ -168,7 +167,7 @@ public class MoveHistory extends AbstractTableModel {
 			locMove += Integer.toString(8 - begin.getY());// add number of Square from which move was made
 		}
 
-		if (endState != null) {
+		if (endPiece != null) {
 			locMove += "x";// take down opponent piece
 		} else {
 			locMove += "-";// normal move
@@ -184,10 +183,8 @@ public class MoveHistory extends AbstractTableModel {
 			locMove += Integer.toString(8 - end.getY());// add number of Square to which move was made
 		}
 
-		if (beginState.symbol.equals("") && begin.getX() - end.getX() != 0 && endState == null) {
+		if (beginState.symbol.equals("") && begin.getX() - end.getX() != 0 && wasEnPassant)
 			locMove += "(e.p)";// pawn take down opponent en passant
-			wasEnPassant = true;
-		}
 		if ((!this.enterBlack && this.game.chessboard.pieceThreatened(this.game.chessboard.kingWhite))
 				|| (this.enterBlack && this.game.chessboard.pieceThreatened(this.game.chessboard.kingBlack))) {// if checked
 			if ((!this.enterBlack && this.game.chessboard.pieceUnsavable(this.game.chessboard.kingWhite)) // TODO
@@ -206,7 +203,7 @@ public class MoveHistory extends AbstractTableModel {
 		}
 		//this.scrollPane.scrollRectToVisible(new Rectangle(0, this.scrollPane.getHeight() - 2, 1, 1));
 		if (registerInHistory) {
-			this.moveBackStack.add(new PlayedMove(begin, end, beginPiece, beginState, endPiece, endState, castlingMove,
+			this.moveBackStack.add(new PlayedMove(begin, end, beginPiece, beginState, endPiece, castlingMove,
 					wasEnPassant, promotedPiece));
 		}
 	}
@@ -401,11 +398,9 @@ public class MoveHistory extends AbstractTableModel {
 		while (true) {
 			from = moves.indexOf(" ", from);
 			to = moves.indexOf(" ", from + 1);
-			// System.out.println(from+">"+to);
 			try {
 				tempArray.add(moves.substring(from + 1, to).trim());
 			} catch (java.lang.StringIndexOutOfBoundsException exc) {
-				System.out.println("error parsing file to load: " + exc);
 				break;
 			}
 			if (n % 2 == 0) {
@@ -505,6 +500,26 @@ public class MoveHistory extends AbstractTableModel {
 				return;// finish reading game and show message
 			}
 		}
+	}
+	
+	public List<PlayedMove> getLastMoveOfEachPlayer() {
+		List<PlayedMove> ret = new ArrayList<PlayedMove>();
+		if (moveBackStack.isEmpty())
+			return ret;
+		
+		Stack<PlayedMove> temp = new Stack<PlayedMove>();
+		HashMap<Player, Boolean> players = new HashMap<Player, Boolean>();
+		
+		while (!moveBackStack.isEmpty() && !players.containsKey(moveBackStack.lastElement().movedPieceState.player)) {
+			temp.push(moveBackStack.pop());
+			ret.add(temp.lastElement());
+			players.put(temp.lastElement().movedPieceState.player, true);
+		}
+		
+		while (!temp.isEmpty())
+			moveBackStack.push(temp.pop());
+		
+		return ret;
 	}
 }
 /*
