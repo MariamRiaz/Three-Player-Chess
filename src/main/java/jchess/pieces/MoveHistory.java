@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Stack;
+import java.util.logging.Level;
+
 import javax.swing.JScrollPane;
 import javax.swing.table.*;
 
@@ -240,34 +242,32 @@ public class MoveHistory extends AbstractTableModel {
 	}
 
 	public synchronized PlayedMove undo() {
+		if (this.moveBackStack.isEmpty()) {
+			this.enterBlack = false;
+			return null;
+		}
+		
 		try {
 			PlayedMove last = this.moveBackStack.pop();
 			if (last != null) {
 				if (this.game.settings.gameType == Settings.gameTypes.local) // moveForward / redo available only for
-				// local game
-				{
 					this.moveForwardStack.push(last);
-				}
+				
 				if (this.enterBlack) {
 					this.movesUI.setValueAt("", this.movesUI.getRowCount() - 1, 0);
 					this.movesUI.removeRow(this.movesUI.getRowCount() - 1);
 
-					if (this.rowsNum > 0) {
+					if (this.rowsNum > 0)
 						this.rowsNum--;
-					}
-				} else {
-					if (this.movesUI.getRowCount() > 0) {
+				} else if (this.movesUI.getRowCount() > 0)
 						this.movesUI.setValueAt("", this.movesUI.getRowCount() - 1, 1);
-					}
-				}
+				
 				this.move.remove(this.move.size() - 1);
 				this.enterBlack = !this.enterBlack;
 			}
 			return last;
-		} catch (java.util.EmptyStackException exc) {
-			this.enterBlack = false;
-			return null;
 		} catch (java.lang.ArrayIndexOutOfBoundsException exc) {
+			Log.log(Level.SEVERE, "Inconsistency in MoveHistory.move and MoveHistory.moveBackStack. Index out of bounds.");
 			return null;
 		}
 	}
