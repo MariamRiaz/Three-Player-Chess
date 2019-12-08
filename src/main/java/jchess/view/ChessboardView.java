@@ -3,11 +3,11 @@ package jchess.view;
 import jchess.GUI;
 import jchess.Player;
 import jchess.Settings;
-import jchess.UI.board.Chessboard;
 import jchess.UI.board.Square;
 import jchess.controller.ChessboardController;
 import jchess.model.ChessboardModel;
 import jchess.pieces.Piece;
+import jchess.pieces.PieceFactory;
 import jchess.pieces.PieceVisual;
 
 import javax.swing.*;
@@ -234,7 +234,26 @@ public class ChessboardView extends JPanel {
             this.pieceVisuals.remove(piece);
     }
 
-    public void setVisuals4NewGame(boolean upsideDown, Player playerWhite, Player playerBlack) {
-
+    public void setVisuals4NewGame() {
+        setVisualsForPlayer(1);
+        setVisualsForPlayer(2);
     }
+
+    public void setVisualsForPlayer(int player){
+        int rowPawns = player==1 ? 1 : 6;
+        int rowPieces = player==1 ? 0 : 7;
+
+        for (int x = 0; x < 8; x++) {
+            setVisual(controller.getSquare(x, rowPawns).piece);
+        }
+        setVisual(controller.getSquare(0, rowPieces).piece);
+        setVisual(controller.getSquare(1, rowPieces).piece);
+        setVisual(controller.getSquare(2, rowPieces).piece);
+        setVisual(controller.getSquare(3, rowPieces).piece);
+        setVisual(controller.getSquare(4, rowPieces).piece);
+        setVisual(controller.getSquare(5, rowPieces).piece);
+        setVisual(controller.getSquare(6, rowPieces).piece);
+        setVisual(controller.getSquare(7, rowPieces).piece);
+    }
+
 }

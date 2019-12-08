@@ -128,15 +128,6 @@ public class ChessboardModel {
             else
                 kingBlack = setPieceOnSquare(PieceFactory.createKing(player), getSquare(4, i));
         }
-
-        setVisual(getSquare(0, i).piece);
-        setVisual(getSquare(1, i).piece);
-        setVisual(getSquare(2, i).piece);
-        setVisual(getSquare(3, i).piece);
-        setVisual(getSquare(4, i).piece);
-        setVisual(getSquare(5, i).piece);
-        setVisual(getSquare(6, i).piece);
-        setVisual(getSquare(7, i).piece);
     }
 
     /**
@@ -152,13 +143,6 @@ public class ChessboardModel {
         }
         for (int x = 0; x < 8; x++) {
             setPieceOnSquare(PieceFactory.createPawn(player, !player.goDown), getSquare(x, i));
-            setVisual(getSquare(x, i).piece);
         }
-    }
-
-    private void setVisual(Piece piece) {
-        if (piece == null)
-            return;
-        this.pieceVisuals.put(piece, new PieceVisual(piece.player.color == piece.player.color.black ? piece.type + "-B.png" : piece.type + "-W.png"));
     }
 }

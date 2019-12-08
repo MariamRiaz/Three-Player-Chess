@@ -52,7 +52,7 @@ public class ChessboardController {
 
     public void setPieces4NewGame() {
         this.model.setPieces4NewGame(settings.upsideDown, settings.playerWhite, settings.playerBlack);
-        this.view.setVisuals4NewGame(settings.upsideDown, settings.playerWhite, settings.playerBlack)
+        this.view.setVisuals4NewGame();
     }
 
     public void resizeChessboard(int height) {
