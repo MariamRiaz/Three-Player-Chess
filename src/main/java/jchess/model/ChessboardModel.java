@@ -29,6 +29,11 @@ public class ChessboardModel {
 
         this.settings = settings;
         this.squares = new Square[8][8];// initalization of 8x8 chessboard
+        for (int i = 0; i < 8; i++) {// create object for each square
+            for (int y = 0; y < 8; y++) {
+                this.squares[i][y] = new Square(i, y, null);
+            }
+        }
 
     }
 
