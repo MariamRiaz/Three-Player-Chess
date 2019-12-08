@@ -36,9 +36,9 @@ public class ChessboardController {
     public static int bottom = 7;
     public static int top = 0;
 
-    public ChessboardController(ChessboardModel model, ChessboardView view, Settings settings) {
-        this.model = model;
-        this.view = view;
+    public ChessboardController(Settings settings) {
+        this.model = new ChessboardModel(settings);
+        this.view = new ChessboardView(this, model.activeSquare);
         this.settings = settings;
     }
 
@@ -169,6 +169,14 @@ public class ChessboardController {
 
     public Square[][] getSquares(){
         return this.model.squares;
+    }
+
+    public Piece getKing(Player player) {
+        if (player == null)
+            return null;
+        if (player.color == player.color.black)
+            return model.kingBlack;
+        return model.kingWhite;
     }
 
     /**

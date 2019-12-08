@@ -4,6 +4,7 @@ import jchess.GUI;
 import jchess.Settings;
 import jchess.UI.board.Chessboard;
 import jchess.UI.board.Square;
+import jchess.controller.ChessboardController;
 import jchess.model.ChessboardModel;
 import jchess.pieces.Piece;
 import jchess.pieces.PieceVisual;
@@ -11,9 +12,7 @@ import jchess.pieces.PieceVisual;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 
 public class ChessboardView extends JPanel {
     private Settings settings;
@@ -27,15 +26,14 @@ public class ChessboardView extends JPanel {
     private Image LeftRightLabel = null;
     private Point topLeft = new Point(0, 0);
     public HashMap<Piece, PieceVisual> pieceVisuals = new HashMap<Piece, PieceVisual>();
-    private ArrayList moves;
+    private HashSet<Square> moves;
 
-
-    public Square[][] squares;
+    public ChessboardController controller;
     public Square activeSquare;
 
 
-    public ChessboardView(Square[][] squares, Square activeSquare) {
-        this.squares = squares;
+    public ChessboardView(ChessboardController controller, Square activeSquare) {
+        this.controller = controller;
         this.activeSquare = activeSquare;
     }
 
@@ -72,32 +70,35 @@ public class ChessboardView extends JPanel {
             g2d.drawImage(this.LeftRightLabel, boardImage.getHeight(null) + topLeftPoint.x, 0, null);
         }
         g2d.drawImage(boardImage, topLeftPoint.x, topLeftPoint.y, null);// draw an Image of chessboard
-        for (int i = 0; i < 8; i++) // drawPiecesOnSquares
-        {
-            for (int y = 0; y < 8; y++) {
-                if (this.squares[i][y].piece != null) {
-                    this.squares[i][y].piece.draw(g);// draw image of Piece
-                }
+
+        for (Iterator<Map.Entry<Piece, PieceVisual>> it = this.pieceVisuals.entrySet().iterator(); it.hasNext(); ) {
+            Point p = new Point();
+            Map.Entry<Piece, PieceVisual> ent = it.next();
+            Square sq = controller.getSquare(ent.getKey());
+
+            if (sq != null && ent.getValue() != null) {
+                p.x = (int) (getTopLeftPoint().x + sq.pozX * square_height);
+                p.y = (int) (getTopLeftPoint().y + sq.pozY * square_height);
+                ent.getValue().draw(g, p.x, p.y, (int) square_height, (int) square_height);// draw image of Piece
             }
-        } // --endOf--drawPiecesOnSquares
+        }
+        // --endOf--drawPiecesOnSquares
         if (((this.activeSquare.pozX + 1) != 0) && ((this.activeSquare.pozY + 1) != 0)) // if some square is active
         {
-            g2d.drawImage(this.selectedSquareImage, ((activeSquare.pozX) * (int) square_height) + topLeftPoint.x,
-                    ((activeSquare.pozY) * (int) square_height) + topLeftPoint.y, null);// draw image of selected
+            g2d.drawImage(selectedSquareImage, (this.activeSquare.pozX * (int) square_height) + topLeftPoint.x,
+                    (this.activeSquare.pozY * (int) square_height) + topLeftPoint.y, null);// draw image of selected
             // square
-            Square tmpSquare = this.squares[(int) (this.activeSquare.pozX)][(int) (activeSquare.pozY)];
-            if (tmpSquare.piece != null) {
-                this.moves = this.squares[(int) (activeSquare.pozX)][(int) (activeSquare.pozY)].piece
-                        .allMoves();
-            }
+            Square tmpSquare = controller.getSquare((int) this.activeSquare.pozX, (int) this.activeSquare.pozY);
+            if (tmpSquare.piece != null)
+                this.moves = controller.getValidTargetSquaresToSavePiece(tmpSquare.piece, controller.getKing(tmpSquare.piece.player));
 
             for (Iterator it = moves.iterator(); moves != null && it.hasNext(); ) {
                 Square sq = (Square) it.next();
-                g2d.drawImage(this.ableSquareImage, (sq.pozX * (int) square_height) + topLeftPoint.x,
+                g2d.drawImage(ableSquareImage, (sq.pozX * (int) square_height) + topLeftPoint.x,
                         (sq.pozY * (int) square_height) + topLeftPoint.y, null);
             }
         }
-    }
+    }/*--endOf-paint--*/
 
     public void resizeChessboard(int height) {
         BufferedImage resized = new BufferedImage(height, height, BufferedImage.TYPE_INT_ARGB_PRE);
@@ -131,6 +132,8 @@ public class ChessboardView extends JPanel {
     }
 
     protected final void drawLabels(int square_height) {
+
+        System.out.println("LOOOOOOL FUCK YOU");
         // BufferedImage uDL = new BufferedImage(800, 800,
         // BufferedImage.TYPE_3BYTE_BGR);
         int min_label_height = 20;
