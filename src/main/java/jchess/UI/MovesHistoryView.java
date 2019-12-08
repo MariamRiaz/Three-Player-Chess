@@ -3,13 +3,13 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
-public class MovesUI {
+public class MovesHistoryView {
 
     public MyDefaultTableModel tableModel;
     public JScrollPane scrollPane;
     public JTable table;
 
-    public MovesUI(){
+    public MovesHistoryView(){
         this.tableModel = new MyDefaultTableModel();
         this.table = new JTable(this.tableModel);
         this.scrollPane = new JScrollPane(this.table);

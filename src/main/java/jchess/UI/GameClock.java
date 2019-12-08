@@ -23,10 +23,6 @@ package jchess.UI;
 import java.awt.*;
 import java.awt.image.*;
 import java.util.logging.Level;
-
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-
 import jchess.Game;
 import jchess.Log;
 import jchess.Player;
@@ -37,39 +33,34 @@ import jchess.Settings;
  * 
  * @param game The current game
  */
-public class GameClock extends JPanel implements Runnable {
+public class GameClock implements Runnable {
 
-	public Clock clock1;
-	public Clock clock2;
 	private Clock runningClock;
 	private Settings settings;
 	private Thread thread;
 	private Game game;
-	private Graphics g;
-	private String white_clock, black_clock;
-	private BufferedImage background;
-	private Graphics bufferedGraphics;
+	public GameClockView gameClockView;
 
 	public GameClock(Game game) {
 		super();
-		this.clock1 = new Clock();// white player clock
-		this.clock2 = new Clock();// black player clock
-		this.runningClock = this.clock1;// running/active clock
+		gameClockView = new GameClockView(game);
+		gameClockView.clock1 = new Clock();// white player clock
+		gameClockView.clock2 = new Clock();// black player clock
+		gameClockView.clock3 = new Clock();// gray player clock
+		this.runningClock = gameClockView.clock1;// running/active clock
 		this.game = game;
 		this.settings = game.settings;
-		this.background = new BufferedImage(600, 600, BufferedImage.TYPE_INT_ARGB);
+		//this.background = new BufferedImage(600, 600, BufferedImage.TYPE_INT_ARGB);
 
 		int time = this.settings.getTimeForGame();
 
-		this.setTimes(time, time);
-		this.setPlayers(this.settings.playerBlack, this.settings.playerWhite);
+		this.setTimes(time, time, time);
+		this.setPlayers(this.settings.playerBlack, this.settings.playerWhite, this.settings.playerGray);
 
 		this.thread = new Thread(this);
 		if (this.settings.timeLimitSet) {
 			thread.start();
 		}
-		this.drawBackground();
-		this.setDoubleBuffered(true);
 	}
 
 	/**
@@ -95,78 +86,6 @@ public class GameClock extends JPanel implements Runnable {
 	}
 
 	/**
-	 * Method of drawing graphical background of clock
-	 */
-	void drawBackground() {
-		Graphics gr = this.background.getGraphics();
-		Graphics2D g2d = (Graphics2D) gr;
-		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		Font font = new Font("Serif", Font.ITALIC, 20);
-
-		g2d.setColor(Color.WHITE);
-		g2d.fillRect(5, 30, 80, 30);
-		g2d.setFont(font);
-
-		g2d.setColor(Color.BLACK);
-		g2d.fillRect(85, 30, 90, 30);
-		g2d.drawRect(5, 30, 170, 30);
-		g2d.drawRect(5, 60, 170, 30);
-		g2d.drawLine(85, 30, 85, 90);
-		font = new Font("Serif", Font.ITALIC, 16);
-		g2d.drawString(settings.playerWhite.getName(), 10, 50);
-		g2d.setColor(Color.WHITE);
-		g2d.drawString(settings.playerBlack.getName(), 100, 50);
-		this.bufferedGraphics = this.background.getGraphics();
-	}
-
-	/**
-	 * Annotation to superclass Graphics drawing the clock graphics
-	 * 
-	 * @param g Graphics2D Capt object to paint
-	 */
-	@Override
-	public void paint(Graphics g) {
-		// Log.log("rysuje zegary");
-		super.paint(g);
-		white_clock = this.clock1.prepareString();
-		black_clock = this.clock2.prepareString();
-		Graphics2D g2d = (Graphics2D) g;
-		g2d.drawImage(this.background, 0, 0, this);
-		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		Font font = new Font("Serif", Font.ITALIC, 20);
-		g2d.drawImage(this.background, 0, 0, this);
-		g2d.setColor(Color.WHITE);
-		g2d.fillRect(5, 30, 80, 30);
-		g2d.setFont(font);
-
-		g2d.setColor(Color.BLACK);
-		g2d.fillRect(85, 30, 90, 30);
-		g2d.drawRect(5, 30, 170, 30);
-		g2d.drawRect(5, 60, 170, 30);
-		g2d.drawLine(85, 30, 85, 90);
-		font = new Font("Serif", Font.ITALIC, 14);
-		g2d.drawImage(this.background, 0, 0, this);
-		g2d.setFont(font);
-		g.drawString(settings.playerWhite.getName(), 10, 50);
-		g.setColor(Color.WHITE);
-		g.drawString(settings.playerBlack.getName(), 100, 50);
-		g2d.setFont(font);
-		g.setColor(Color.BLACK);
-		g2d.drawString(white_clock, 10, 80);
-		g2d.drawString(black_clock, 90, 80);
-	}
-
-	/**
-	 * Annotation to superclass Graphics updateing clock graphisc
-	 * 
-	 * @param g Graphics2D Capt object to paint
-	 */
-	@Override
-	public void update(Graphics g) {
-		paint(g);
-	}
-
-	/**
 	 * Method of swiching the players clocks
 	 */
 	public void switch_clocks() {
@@ -175,10 +94,10 @@ public class GameClock extends JPanel implements Runnable {
 		 * switch block (in pascal called "case") - this've to be repaired in
 		 * documentation by Wąsu:P
 		 */
-		if (this.runningClock == this.clock1) {
-			this.runningClock = this.clock2;
+		if (this.runningClock == gameClockView.clock1) {
+			this.runningClock = gameClockView.clock2;
 		} else {
-			this.runningClock = this.clock1;
+			this.runningClock = gameClockView.clock1;
 		}
 	}
 
@@ -188,13 +107,14 @@ public class GameClock extends JPanel implements Runnable {
 	 * @param t1 Capt the player time
 	 * @param t2 Capt the player time
 	 */
-	public void setTimes(int t1, int t2) {
+	public void setTimes(int t1, int t2, int t3) {
 		/*
 		 * rather in chess game players got the same time 4 game, so why in
 		 * documentation this method've 2 parameters ?
 		 */
-		this.clock1.init(t1);
-		this.clock2.init(t2);
+		gameClockView.clock1.init(t1);
+		gameClockView.clock2.init(t2);
+		gameClockView.clock3.init(t3);
 	}
 
 	/**
@@ -203,19 +123,47 @@ public class GameClock extends JPanel implements Runnable {
 	 * @param p1 Capt player information
 	 * @param p2 Capt player information
 	 */
-	private void setPlayers(Player p1, Player p2) {
+	private void setPlayers(Player p1, Player p2, Player p3) {
 		/*
 		 * in documentation it's called 'setPlayer' but when we've 'setTimes' better to
 		 * use one convention of naming methods - this've to be repaired in
 		 * documentation by Wąsu:P dojdziemy do tego:D:D:D
 		 */
 		if (p1.color == p1.color.white) {
-			this.clock1.setPlayer(p1);
-			this.clock2.setPlayer(p2);
-		} else {
-			this.clock1.setPlayer(p2);
-			this.clock2.setPlayer(p1);
-		}
+			if (p2.color == p2.color.black) {
+			gameClockView.clock1.setPlayer(p1);
+			gameClockView.clock2.setPlayer(p2);
+			gameClockView.clock3.setPlayer(p3);
+			}
+			else if (p2.color == p2.color.gray) {
+				gameClockView.clock1.setPlayer(p1);
+				gameClockView.clock2.setPlayer(p3);
+				gameClockView.clock3.setPlayer(p2);
+			}}
+
+		if (p1.color == p1.color.black) {
+			if (p2.color == p2.color.white) {
+				gameClockView.clock1.setPlayer(p2);
+				gameClockView.clock2.setPlayer(p1);
+				gameClockView.clock3.setPlayer(p3);
+			}
+			else if (p2.color == p2.color.gray){
+				gameClockView.clock1.setPlayer(p3);
+				gameClockView.clock2.setPlayer(p1);
+				gameClockView.clock3.setPlayer(p2);
+			}}
+
+		if (p1.color == p1.color.gray) {
+			if (p2.color == p2.color.white) {
+				gameClockView.clock1.setPlayer(p2);
+				gameClockView.clock2.setPlayer(p3);
+				gameClockView.clock3.setPlayer(p1);
+			}
+			else if (p2.color == p2.color.black){
+				gameClockView.clock1.setPlayer(p3);
+				gameClockView.clock2.setPlayer(p2);
+				gameClockView.clock3.setPlayer(p1);
+			}}
 	}
 
 	/**
@@ -225,7 +173,7 @@ public class GameClock extends JPanel implements Runnable {
 		while (true) {
 			if (this.runningClock != null) {
 				if (this.runningClock.decrement()) {
-					repaint();
+					gameClockView.repaint();
 					try {
 						thread.sleep(1000);
 					} catch (InterruptedException e) {
@@ -246,10 +194,10 @@ public class GameClock extends JPanel implements Runnable {
 	 */
 	private void timeOver() {
 		String color = new String();
-		if (this.clock1.get_left_time() == 0) {// Check which player win
-			color = this.clock2.getPlayer().color.toString();
-		} else if (this.clock2.get_left_time() == 0) {
-			color = this.clock1.getPlayer().color.toString();
+		if (gameClockView.clock1.get_left_time() == 0) {// Check which player win
+			color = gameClockView.clock2.getPlayer().color.toString();
+		} else if (gameClockView.clock2.get_left_time() == 0) {
+			color = gameClockView.clock1.getPlayer().color.toString();
 		} else {// if called in wrong moment
 			Log.log("Time over called when player got time 2 play");
 		}

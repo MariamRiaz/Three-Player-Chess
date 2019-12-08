@@ -70,12 +70,12 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
 		this.add(chessboard);
 		// this.chessboard.
 		gameClock = new GameClock(this);
-		gameClock.setSize(new Dimension(200, 100));
-		gameClock.setLocation(new Point(500, 0));
-		this.add(gameClock);
+		gameClock.gameClockView.setSize(new Dimension(400, 100));
+		gameClock.gameClockView.setLocation(new Point(500, 0));
+		this.add(gameClock.gameClockView);
 
 		JScrollPane movesHistory = this.moves.getScrollPane();
-		movesHistory.setSize(new Dimension(180, 350));
+		movesHistory.setSize(new Dimension(245, 350));
 		movesHistory.setLocation(new Point(500, 121));
 		this.add(movesHistory);
 
@@ -489,7 +489,7 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
 		chess_height = this.chessboard.getHeight();
 		this.moves.getScrollPane().setLocation(new Point(chess_height + 5, 100));
 		this.moves.getScrollPane().setSize(this.moves.getScrollPane().getWidth(), chess_height - 100);
-		this.gameClock.setLocation(new Point(chess_height + 5, 0));
+		this.gameClock.gameClockView.setLocation(new Point(chess_height + 5, 0));
 		if (this.chat != null) {
 			this.chat.setLocation(new Point(0, chess_height + 5));
 			this.chat.setSize(new Dimension(chess_height, this.getHeight() - (chess_height + 5)));
