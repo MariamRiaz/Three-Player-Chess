@@ -29,5 +29,4 @@ dependencies {
     // https://mvnrepository.com/artifact/org.jdesktop/appframework
     compile group: 'org.jdesktop', name: 'appframework', version: '1.0.3'
     testCompile 'junit:junit:4.12'
-    implementation 'junit:junit:4.12'
 }
