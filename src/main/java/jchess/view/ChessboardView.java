@@ -2,6 +2,8 @@ package jchess.view;
 
 import jchess.GUI;
 import jchess.Settings;
+import jchess.UI.board.Chessboard;
+import jchess.UI.board.Square;
 import jchess.pieces.Piece;
 import jchess.pieces.PieceVisual;
 
@@ -9,6 +11,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
+import java.util.Iterator;
 
 public class ChessboardView extends JPanel {
     private Settings settings;
@@ -36,6 +39,57 @@ public class ChessboardView extends JPanel {
         this.setLocation(new Point(0, 0));
     }
 
+    /**
+     * Annotations to superclass Game updateing and painting the crossboard
+     */
+    @Override
+    public void update(Graphics g) {
+        repaint();
+    }
+
+    @Override
+    public void paintComponent(Graphics g) {
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        Point topLeftPoint = this.getTopLeftPoint();
+        if (this.settings.renderLabels) {
+            if (topLeftPoint.x <= 0 && topLeftPoint.y <= 0) // if renderLabels and (0,0), than draw it! (for first run)
+            {
+                this.drawLabels();
+            }
+            g2d.drawImage(this.upDownLabel, 0, 0, null);
+            g2d.drawImage(this.upDownLabel, 0, boardImage.getHeight(null) + topLeftPoint.y, null);
+            g2d.drawImage(this.LeftRightLabel, 0, 0, null);
+            g2d.drawImage(this.LeftRightLabel, boardImage.getHeight(null) + topLeftPoint.x, 0, null);
+        }
+        g2d.drawImage(boardImage, topLeftPoint.x, topLeftPoint.y, null);// draw an Image of chessboard
+        for (int i = 0; i < 8; i++) // drawPiecesOnSquares
+        {
+            for (int y = 0; y < 8; y++) {
+                if (this.squares[i][y].piece != null) {
+                    this.squares[i][y].piece.draw(g);// draw image of Piece
+                }
+            }
+        } // --endOf--drawPiecesOnSquares
+        if ((this.active_x_square != 0) && (this.active_y_square != 0)) // if some square is active
+        {
+            g2d.drawImage(sel_square, ((this.active_x_square - 1) * (int) square_height) + topLeftPoint.x,
+                    ((this.active_y_square - 1) * (int) square_height) + topLeftPoint.y, null);// draw image of selected
+            // square
+            Square tmpSquare = this.squares[(int) (this.active_x_square - 1)][(int) (this.active_y_square - 1)];
+            if (tmpSquare.piece != null) {
+                this.moves = this.squares[(int) (this.active_x_square - 1)][(int) (this.active_y_square - 1)].piece
+                        .allMoves();
+            }
+
+            for (Iterator it = moves.iterator(); moves != null && it.hasNext();) {
+                Square sq = (Square) it.next();
+                g2d.drawImage(able_square, (sq.pozX * (int) square_height) + topLeftPoint.x,
+                        (sq.pozY * (int) square_height) + topLeftPoint.y, null);
+            }
+        }
+    }
+
     public void resizeChessboard(int height) {
         BufferedImage resized = new BufferedImage(height, height, BufferedImage.TYPE_INT_ARGB_PRE);
         Graphics g = resized.createGraphics();
@@ -61,6 +115,7 @@ public class ChessboardView extends JPanel {
         this.selectedSquareImage = resized.getScaledInstance((int) square_height, (int) square_height, 0);
         this.drawLabels();
     }
+
 
     protected void drawLabels() {
         this.drawLabels((int) this.square_height);
