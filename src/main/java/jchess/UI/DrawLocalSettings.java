@@ -33,9 +33,6 @@ import jchess.JChessApp;
 import jchess.Log;
 import jchess.Player;
 import jchess.Settings;
-import jchess.Player.playerTypes;
-import jchess.Settings.gameModes;
-import jchess.Settings.gameTypes;
 
 /**
  * Class responsible for drawing the fold with local game settings
@@ -52,8 +49,10 @@ public class DrawLocalSettings extends JPanel implements ActionListener, TextLis
 	JSlider computerLevel;// slider to choose jChess Engine level
 	JTextField firstName;// editable field 4 nickname
 	JTextField secondName;// editable field 4 nickname
+	JTextField thirdName;// editable field 4 nickname
 	JLabel firstNameLab;
 	JLabel secondNameLab;
+	JLabel thirdNameLab;
 	JCheckBox upsideDown;// if true draw chessboard upsideDown(white on top)
 	GridBagLayout gbl;
 	GridBagConstraints gbc;
@@ -62,14 +61,14 @@ public class DrawLocalSettings extends JPanel implements ActionListener, TextLis
 	JButton okButton;
 	JCheckBox timeGame;
 	JComboBox time4Game;
-	String colors[] = { Settings.lang("white"), Settings.lang("black") };
+	String colors[] = { Settings.lang("white"), Settings.lang("black"), Settings.lang("gray") };
 	String times[] = { "1", "3", "5", "8", "10", "15", "20", "25", "30", "60", "120" };
 
 	;
 
 	/**
 	 * Method witch is checking correction of edit tables
-	 * 
+	 *
 	 * @param e Object where is saving this what contents edit tables
 	 */
 	public void textValueChanged(TextEvent e) {
@@ -96,7 +95,7 @@ public class DrawLocalSettings extends JPanel implements ActionListener, TextLis
 	/**
 	 * Method responsible for changing the options which can make a player when he
 	 * want to start new local game
-	 * 
+	 *
 	 * @param e where is saving data of performed action
 	 */
 	public void actionPerformed(ActionEvent e) {
@@ -117,6 +116,9 @@ public class DrawLocalSettings extends JPanel implements ActionListener, TextLis
 			if (this.secondName.getText().length() > 9) {// make names short to 10 digits
 				this.secondName.setText(this.trimString(secondName, 9));
 			}
+			if (this.thirdName.getText().length() > 9) {// make names short to 10 digits
+				this.thirdName.setText(this.trimString(thirdName, 9));
+			}
 			if (!this.oponentComp.isSelected()
 					&& (this.firstName.getText().length() == 0 || this.secondName.getText().length() == 0)) {
 				JOptionPane.showMessageDialog(this, Settings.lang("fill_names"));
@@ -126,10 +128,11 @@ public class DrawLocalSettings extends JPanel implements ActionListener, TextLis
 				JOptionPane.showMessageDialog(this, Settings.lang("fill_name"));
 				return;
 			}
-			Game newGUI = JChessApp.jcv.addNewTab(this.firstName.getText() + " vs " + this.secondName.getText());
+			Game newGUI = JChessApp.jcv.addNewTab(this.firstName.getText() + " vs " + this.secondName.getText() + " vs " + this.thirdName.getText());
 			Settings sett = newGUI.settings;// sett local settings variable
 			Player pl1 = sett.playerWhite;// set local player variable
 			Player pl2 = sett.playerBlack;// set local player variable
+			Player pl3 = sett.playerGray;// set local player variable
 			sett.gameMode = Settings.gameModes.newGame;
 			// if(this.firstName.getText().length() >9 )
 			// this.firstName.setText(this.firstName.getText(0,8));
@@ -137,13 +140,16 @@ public class DrawLocalSettings extends JPanel implements ActionListener, TextLis
 			{
 				pl1.setName(this.firstName.getText());// set name of player
 				pl2.setName(this.secondName.getText());// set name of player
+				pl3.setName(this.thirdName.getText());// set name of player
 			} else // else change names
 			{
 				pl2.setName(this.firstName.getText());// set name of player
 				pl1.setName(this.secondName.getText());// set name of player
+				pl3.setName(this.thirdName.getText());// set name of player
 			}
 			pl1.setType(Player.playerTypes.localUser);// set type of player
 			pl2.setType(Player.playerTypes.localUser);// set type of player
+			pl3.setType(Player.playerTypes.localUser);// set type of player
 			sett.gameType = Settings.gameTypes.local;
 			if (this.oponentComp.isSelected()) // if computer oponent is checked
 			{
@@ -161,7 +167,7 @@ public class DrawLocalSettings extends JPanel implements ActionListener, TextLis
 				Integer val = new Integer(value);
 				sett.timeLimitSet = true;
 				sett.timeForGame = (int) val * 60;// set time for game and mult it to seconds
-				newGUI.gameClock.setTimes(sett.timeForGame, sett.timeForGame);
+				newGUI.gameClock.setTimes(sett.timeForGame, sett.timeForGame, sett.timeForGame);
 				newGUI.gameClock.start();
 			}
 			Log.log(this.time4Game.getActionCommand());
@@ -171,8 +177,8 @@ public class DrawLocalSettings extends JPanel implements ActionListener, TextLis
 					+ sett.upsideDown + "\n****************");// 4test
 			newGUI.newGame();// start new Game
 			this.parent.setVisible(false);// hide parent
-			newGUI.chessboard.repaint();
-			newGUI.chessboard.draw();
+			newGUI.chessboardController.repaint();
+			newGUI.chessboardController.draw();
 		}
 
 	}
@@ -192,8 +198,11 @@ public class DrawLocalSettings extends JPanel implements ActionListener, TextLis
 		this.firstName.setSize(new Dimension(200, 50));
 		this.secondName = new JTextField("", 10);
 		this.secondName.setSize(new Dimension(200, 50));
+		this.thirdName = new JTextField("", 10);
+		this.thirdName.setSize(new Dimension(200, 50));
 		this.firstNameLab = new JLabel(Settings.lang("first_player_name") + ": ");
 		this.secondNameLab = new JLabel(Settings.lang("second_player_name") + ": ");
+		this.thirdNameLab = new JLabel(Settings.lang("third_player_name") + ": ");
 		this.oponentChoos = new ButtonGroup();
 		this.computerLevel = new JSlider();
 		this.upsideDown = new JCheckBox(Settings.lang("upside_down"));
@@ -244,16 +253,24 @@ public class DrawLocalSettings extends JPanel implements ActionListener, TextLis
 		this.gbl.setConstraints(secondName, gbc);
 		this.add(secondName);
 		this.gbc.gridy = 5;
+
+		this.gbl.setConstraints(thirdNameLab, gbc);
+		this.add(thirdNameLab);
+		this.gbc.gridy = 6;
+		this.gbl.setConstraints(thirdName, gbc);
+		this.add(thirdName);
+		this.gbc.gridy = 7;
+
 		this.gbc.insets = new Insets(0, 0, 0, 0);
 		this.gbl.setConstraints(compLevLab, gbc);
 		this.add(compLevLab);
-		this.gbc.gridy = 6;
+		this.gbc.gridy = 8;
 		this.gbl.setConstraints(computerLevel, gbc);
 		this.add(computerLevel);
-		this.gbc.gridy = 7;
+		this.gbc.gridy = 9;
 		this.gbl.setConstraints(upsideDown, gbc);
 		this.add(upsideDown);
-		this.gbc.gridy = 8;
+		this.gbc.gridy = 10;
 		this.gbc.gridwidth = 1;
 		this.gbl.setConstraints(timeGame, gbc);
 		this.add(timeGame);
@@ -273,7 +290,7 @@ public class DrawLocalSettings extends JPanel implements ActionListener, TextLis
 
 	/**
 	 * Method responsible for triming white symbols from strings
-	 * 
+	 *
 	 * @param txt    Where is capt value to equal
 	 * @param length How long is the string
 	 * @return result trimmed String

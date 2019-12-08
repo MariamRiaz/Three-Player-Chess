@@ -31,7 +31,7 @@ public class Player implements Serializable {
 
 	public enum colors {
 
-		white, black
+		white, black, gray
 	}
 
 	public colors color;
