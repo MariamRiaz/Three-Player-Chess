@@ -39,15 +39,15 @@ public class GameClock implements Runnable {
 	private Settings settings;
 	private Thread thread;
 	private Game game;
-	public GameClockUI gameClockUI;
+	public GameClockView gameClockView;
 
 	public GameClock(Game game) {
 		super();
-		gameClockUI = new GameClockUI(game);
-		gameClockUI.clock1 = new Clock();// white player clock
-		gameClockUI.clock2 = new Clock();// black player clock
-		gameClockUI.clock3 = new Clock();// gray player clock
-		this.runningClock = gameClockUI.clock1;// running/active clock
+		gameClockView = new GameClockView(game);
+		gameClockView.clock1 = new Clock();// white player clock
+		gameClockView.clock2 = new Clock();// black player clock
+		gameClockView.clock3 = new Clock();// gray player clock
+		this.runningClock = gameClockView.clock1;// running/active clock
 		this.game = game;
 		this.settings = game.settings;
 		//this.background = new BufferedImage(600, 600, BufferedImage.TYPE_INT_ARGB);
@@ -84,7 +84,7 @@ public class GameClock implements Runnable {
 			Log.log(Level.SEVERE, "Error blocking thread: " + exc1);
 		}
 	}
-	
+
 	/**
 	 * Method of swiching the players clocks
 	 */
@@ -94,10 +94,10 @@ public class GameClock implements Runnable {
 		 * switch block (in pascal called "case") - this've to be repaired in
 		 * documentation by Wąsu:P
 		 */
-		if (this.runningClock == gameClockUI.clock1) {
-			this.runningClock = gameClockUI.clock2;
+		if (this.runningClock == gameClockView.clock1) {
+			this.runningClock = gameClockView.clock2;
 		} else {
-			this.runningClock = gameClockUI.clock1;
+			this.runningClock = gameClockView.clock1;
 		}
 	}
 
@@ -112,9 +112,9 @@ public class GameClock implements Runnable {
 		 * rather in chess game players got the same time 4 game, so why in
 		 * documentation this method've 2 parameters ?
 		 */
-		gameClockUI.clock1.init(t1);
-		gameClockUI.clock2.init(t2);
-		gameClockUI.clock3.init(t3);
+		gameClockView.clock1.init(t1);
+		gameClockView.clock2.init(t2);
+		gameClockView.clock3.init(t3);
 	}
 
 	/**
@@ -131,38 +131,38 @@ public class GameClock implements Runnable {
 		 */
 		if (p1.color == p1.color.white) {
 			if (p2.color == p2.color.black) {
-			gameClockUI.clock1.setPlayer(p1);
-			gameClockUI.clock2.setPlayer(p2);
-			gameClockUI.clock3.setPlayer(p3);
+			gameClockView.clock1.setPlayer(p1);
+			gameClockView.clock2.setPlayer(p2);
+			gameClockView.clock3.setPlayer(p3);
 			}
 			else if (p2.color == p2.color.gray) {
-				gameClockUI.clock1.setPlayer(p1);
-				gameClockUI.clock2.setPlayer(p3);
-				gameClockUI.clock3.setPlayer(p2);
+				gameClockView.clock1.setPlayer(p1);
+				gameClockView.clock2.setPlayer(p3);
+				gameClockView.clock3.setPlayer(p2);
 			}}
 
 		if (p1.color == p1.color.black) {
 			if (p2.color == p2.color.white) {
-				gameClockUI.clock1.setPlayer(p2);
-				gameClockUI.clock2.setPlayer(p1);
-				gameClockUI.clock3.setPlayer(p3);
+				gameClockView.clock1.setPlayer(p2);
+				gameClockView.clock2.setPlayer(p1);
+				gameClockView.clock3.setPlayer(p3);
 			}
 			else if (p2.color == p2.color.gray){
-				gameClockUI.clock1.setPlayer(p3);
-				gameClockUI.clock2.setPlayer(p1);
-				gameClockUI.clock3.setPlayer(p2);
+				gameClockView.clock1.setPlayer(p3);
+				gameClockView.clock2.setPlayer(p1);
+				gameClockView.clock3.setPlayer(p2);
 			}}
 
 		if (p1.color == p1.color.gray) {
 			if (p2.color == p2.color.white) {
-				gameClockUI.clock1.setPlayer(p2);
-				gameClockUI.clock2.setPlayer(p3);
-				gameClockUI.clock3.setPlayer(p1);
+				gameClockView.clock1.setPlayer(p2);
+				gameClockView.clock2.setPlayer(p3);
+				gameClockView.clock3.setPlayer(p1);
 			}
 			else if (p2.color == p2.color.black){
-				gameClockUI.clock1.setPlayer(p3);
-				gameClockUI.clock2.setPlayer(p2);
-				gameClockUI.clock3.setPlayer(p1);
+				gameClockView.clock1.setPlayer(p3);
+				gameClockView.clock2.setPlayer(p2);
+				gameClockView.clock3.setPlayer(p1);
 			}}
 	}
 
@@ -173,7 +173,7 @@ public class GameClock implements Runnable {
 		while (true) {
 			if (this.runningClock != null) {
 				if (this.runningClock.decrement()) {
-					gameClockUI.repaint();
+					gameClockView.repaint();
 					try {
 						thread.sleep(1000);
 					} catch (InterruptedException e) {
@@ -194,10 +194,10 @@ public class GameClock implements Runnable {
 	 */
 	private void timeOver() {
 		String color = new String();
-		if (gameClockUI.clock1.get_left_time() == 0) {// Check which player win
-			color = gameClockUI.clock2.getPlayer().color.toString();
-		} else if (gameClockUI.clock2.get_left_time() == 0) {
-			color = gameClockUI.clock1.getPlayer().color.toString();
+		if (gameClockView.clock1.get_left_time() == 0) {// Check which player win
+			color = gameClockView.clock2.getPlayer().color.toString();
+		} else if (gameClockView.clock2.get_left_time() == 0) {
+			color = gameClockView.clock1.getPlayer().color.toString();
 		} else {// if called in wrong moment
 			Log.log("Time over called when player got time 2 play");
 		}

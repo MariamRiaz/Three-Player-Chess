@@ -7,7 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class GameClockUI extends JPanel {
+public class GameClockView extends JPanel {
 
     private Settings settings;
     private BufferedImage background;
@@ -16,7 +16,7 @@ public class GameClockUI extends JPanel {
     public Clock clock2;
     public Clock clock3;
 
-    public GameClockUI(Game game){
+    public GameClockView(Game game){
         this.settings = game.settings;
     }
 

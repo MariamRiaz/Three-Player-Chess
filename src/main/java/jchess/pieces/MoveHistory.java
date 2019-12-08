@@ -33,7 +33,7 @@ import jchess.Player;
 import jchess.Settings;
 import jchess.UI.board.Chessboard;
 import jchess.UI.board.Square;
-import jchess.UI.MovesUI;
+import jchess.UI.MovesHistoryView;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
@@ -59,7 +59,7 @@ public class MoveHistory extends AbstractTableModel {
 	private Game game;
 	protected Stack<PlayedMove> moveBackStack = new Stack<PlayedMove>();
 	protected Stack<PlayedMove> moveForwardStack = new Stack<PlayedMove>();
-	private MovesUI movesUI;
+	private MovesHistoryView movesHistoryView;
 
 
 	public enum castling {
@@ -68,7 +68,7 @@ public class MoveHistory extends AbstractTableModel {
 
 	public MoveHistory(Game game) {
 		super();
-		this.movesUI = new MovesUI();
+		this.movesHistoryView = new MovesHistoryView();
 
 		//this.tableModel = new MyDefaultTableModel();
 		//this.table = new JTable(this.tableModel);
@@ -77,9 +77,9 @@ public class MoveHistory extends AbstractTableModel {
 		//this.table.setMinimumSize(new Dimension(100, 100));
 		this.game = game;
 
-		this.movesUI.addColumn(this.names[0]);
-		this.movesUI.addColumn(this.names[1]);
-		this.movesUI.addColumn(this.names[2]);
+		this.movesHistoryView.addColumn(this.names[0]);
+		this.movesHistoryView.addColumn(this.names[1]);
+		this.movesHistoryView.addColumn(this.names[2]);
 		this.addTableModelListener(null);
 		//this.tableModel.addTableModelListener(null);
 		//this.scrollPane.setAutoscrolls(true);
@@ -110,9 +110,9 @@ public class MoveHistory extends AbstractTableModel {
 	protected void addCastling(String move) {
 		this.move.remove(this.move.size() - 1);// remove last element (move of Rook)
 		if (!this.enterBlack) {
-			this.movesUI.setValueAt(move, this.movesUI.getRowCount() - 1, 1);// replace last value
+			this.movesHistoryView.setValueAt(move, this.movesHistoryView.getRowCount() - 1, 1);// replace last value
 		} else {
-			this.movesUI.setValueAt(move, this.movesUI.getRowCount() - 1, 0);// replace last value
+			this.movesHistoryView.setValueAt(move, this.movesHistoryView.getRowCount() - 1, 0);// replace last value
 		}
 		this.move.add(move);// add new move (O-O or O-O-O)
 	}
@@ -130,15 +130,15 @@ public class MoveHistory extends AbstractTableModel {
 	protected void addMove2Table(String str) {
 		try {
 			if (!this.enterBlack) {
-				this.movesUI.addRow();
-				this.rowsNum = this.movesUI.getRowCount() - 1;
-				this.movesUI.setValueAt(str, rowsNum, 0);
+				this.movesHistoryView.addRow();
+				this.rowsNum = this.movesHistoryView.getRowCount() - 1;
+				this.movesHistoryView.setValueAt(str, rowsNum, 0);
 			} else {
-				this.movesUI.setValueAt(str, rowsNum, 1);
-				this.rowsNum = this.movesUI.getRowCount() - 1;
+				this.movesHistoryView.setValueAt(str, rowsNum, 1);
+				this.rowsNum = this.movesHistoryView.getRowCount() - 1;
 			}
 			this.enterBlack = !this.enterBlack;
-			this.movesUI.table.scrollRectToVisible(this.movesUI.table.getCellRect(this.movesUI.table.getRowCount() - 1, 0, true));// scroll to down
+			this.movesHistoryView.table.scrollRectToVisible(this.movesHistoryView.table.getCellRect(this.movesHistoryView.table.getRowCount() - 1, 0, true));// scroll to down
 
 		} catch (java.lang.ArrayIndexOutOfBoundsException exc) {
 			if (this.rowsNum > 0) {
@@ -217,7 +217,7 @@ public class MoveHistory extends AbstractTableModel {
 	}
 
 	public JScrollPane getScrollPane() {
-		return this.movesUI.scrollPane;
+		return this.movesHistoryView.scrollPane;
 	}
 
 	public ArrayList<String> getMoves() {
@@ -253,15 +253,15 @@ public class MoveHistory extends AbstractTableModel {
 					this.moveForwardStack.push(last);
 				}
 				if (this.enterBlack) {
-					this.movesUI.setValueAt("", this.movesUI.getRowCount() - 1, 0);
-					this.movesUI.removeRow(this.movesUI.getRowCount() - 1);
+					this.movesHistoryView.setValueAt("", this.movesHistoryView.getRowCount() - 1, 0);
+					this.movesHistoryView.removeRow(this.movesHistoryView.getRowCount() - 1);
 
 					if (this.rowsNum > 0) {
 						this.rowsNum--;
 					}
 				} else {
-					if (this.movesUI.getRowCount() > 0) {
-						this.movesUI.setValueAt("", this.movesUI.getRowCount() - 1, 1);
+					if (this.movesHistoryView.getRowCount() > 0) {
+						this.movesHistoryView.setValueAt("", this.movesHistoryView.getRowCount() - 1, 1);
 					}
 				}
 				this.move.remove(this.move.size() - 1);
