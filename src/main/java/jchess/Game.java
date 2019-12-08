@@ -410,6 +410,7 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
                             && chessboardController.getValidTargetSquares(chessboardController.getActiveSquare().getPiece()).contains(sq)) // move
                     {
                         if (settings.gameType == Settings.gameTypes.local) {
+                            //TODO: exception is caught here --> method returns without switching player
                             chessboardController.move(chessboardController.getActiveSquare(), sq, true, true);
                         } else if (settings.gameType == Settings.gameTypes.network) {
                             client.sendMove(chessboardController.getActiveSquare().getX(), chessboardController.getActiveSquare().getY(), sq.getX(),
