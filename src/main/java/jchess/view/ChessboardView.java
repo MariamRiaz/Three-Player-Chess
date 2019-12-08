@@ -1,6 +1,7 @@
 package jchess.view;
 
 import jchess.GUI;
+import jchess.Player;
 import jchess.Settings;
 import jchess.UI.board.Chessboard;
 import jchess.UI.board.Square;
@@ -44,6 +45,7 @@ public class ChessboardView extends JPanel {
         this.square_height = chessBoardHeight / 8;
         this.setVisible(true);
         this.setLocation(new Point(0, 0));
+        this.drawLabels();
     }
 
     /**
@@ -83,7 +85,8 @@ public class ChessboardView extends JPanel {
             }
         }
         // --endOf--drawPiecesOnSquares
-        if (((this.activeSquare.pozX + 1) != 0) && ((this.activeSquare.pozY + 1) != 0)) // if some square is active
+        if (activeSquare != null) // if some square is active
+//        if (((this.activeSquare.pozX + 1) != 0) && ((this.activeSquare.pozY + 1) != 0)) // if some square is active
         {
             g2d.drawImage(selectedSquareImage, (this.activeSquare.pozX * (int) square_height) + topLeftPoint.x,
                     (this.activeSquare.pozY * (int) square_height) + topLeftPoint.y, null);// draw image of selected
@@ -133,7 +136,6 @@ public class ChessboardView extends JPanel {
 
     protected final void drawLabels(int square_height) {
 
-        System.out.println("LOOOOOOL FUCK YOU");
         // BufferedImage uDL = new BufferedImage(800, 800,
         // BufferedImage.TYPE_3BYTE_BGR);
         int min_label_height = 20;
@@ -232,4 +234,7 @@ public class ChessboardView extends JPanel {
             this.pieceVisuals.remove(piece);
     }
 
+    public void setVisuals4NewGame(boolean upsideDown, Player playerWhite, Player playerBlack) {
+
+    }
 }

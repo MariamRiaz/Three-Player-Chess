@@ -37,10 +37,6 @@ public class ChessboardModel {
 
     }
 
-    public Square getSquare(Piece piece) {
-        return piece != null && pieceToSquare.containsKey(piece) ? pieceToSquare.get(piece) : null;
-    }
-
     public Square getSquare(int x, int y) { // duplicate method with GUI-related getSquare
         return x < 0 || y < 0 || x >= this.squares.length || y >= this.squares[x].length ? null : this.squares[x][y];
     }
