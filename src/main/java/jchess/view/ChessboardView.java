@@ -4,12 +4,14 @@ import jchess.GUI;
 import jchess.Settings;
 import jchess.UI.board.Chessboard;
 import jchess.UI.board.Square;
+import jchess.model.ChessboardModel;
 import jchess.pieces.Piece;
 import jchess.pieces.PieceVisual;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -25,12 +27,19 @@ public class ChessboardView extends JPanel {
     private Image LeftRightLabel = null;
     private Point topLeft = new Point(0, 0);
     public HashMap<Piece, PieceVisual> pieceVisuals = new HashMap<Piece, PieceVisual>();
+    private ArrayList moves;
 
 
-    public ChessboardView() {
+    public Square[][] squares;
+    public Square activeSquare;
+
+
+    public ChessboardView(Square[][] squares, Square activeSquare) {
+        this.squares = squares;
+        this.activeSquare = activeSquare;
     }
 
-    public void initView(String chessBoardImagePath, Settings settings){
+    public void initView(String chessBoardImagePath, Settings settings) {
         this.settings = settings;
         this.boardImage = GUI.loadImage(chessBoardImagePath);
         this.setSize(chessBoardHeight, chessBoardWidth);
@@ -71,20 +80,20 @@ public class ChessboardView extends JPanel {
                 }
             }
         } // --endOf--drawPiecesOnSquares
-        if ((this.active_x_square != 0) && (this.active_y_square != 0)) // if some square is active
+        if (((this.activeSquare.pozX + 1) != 0) && ((this.activeSquare.pozY + 1) != 0)) // if some square is active
         {
-            g2d.drawImage(sel_square, ((this.active_x_square - 1) * (int) square_height) + topLeftPoint.x,
-                    ((this.active_y_square - 1) * (int) square_height) + topLeftPoint.y, null);// draw image of selected
+            g2d.drawImage(this.selectedSquareImage, ((activeSquare.pozX) * (int) square_height) + topLeftPoint.x,
+                    ((activeSquare.pozY) * (int) square_height) + topLeftPoint.y, null);// draw image of selected
             // square
-            Square tmpSquare = this.squares[(int) (this.active_x_square - 1)][(int) (this.active_y_square - 1)];
+            Square tmpSquare = this.squares[(int) (this.activeSquare.pozX)][(int) (activeSquare.pozY)];
             if (tmpSquare.piece != null) {
-                this.moves = this.squares[(int) (this.active_x_square - 1)][(int) (this.active_y_square - 1)].piece
+                this.moves = this.squares[(int) (activeSquare.pozX)][(int) (activeSquare.pozY)].piece
                         .allMoves();
             }
 
-            for (Iterator it = moves.iterator(); moves != null && it.hasNext();) {
+            for (Iterator it = moves.iterator(); moves != null && it.hasNext(); ) {
                 Square sq = (Square) it.next();
-                g2d.drawImage(able_square, (sq.pozX * (int) square_height) + topLeftPoint.x,
+                g2d.drawImage(this.ableSquareImage, (sq.pozX * (int) square_height) + topLeftPoint.x,
                         (sq.pozY * (int) square_height) + topLeftPoint.y, null);
             }
         }
@@ -205,7 +214,7 @@ public class ChessboardView extends JPanel {
         return boardImage.getHeight(null);
     }
 
-    public int getWidth(){
+    public int getWidth() {
         return this.getHeight();
     }
 
