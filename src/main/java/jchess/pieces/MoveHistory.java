@@ -33,6 +33,7 @@ import jchess.Player;
 import jchess.Settings;
 import jchess.UI.board.Chessboard;
 import jchess.UI.board.Square;
+import jchess.UI.MovesUI;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
@@ -42,7 +43,7 @@ import javax.swing.JOptionPane;
  * Class representing the players moves, it's also checking that the moves taken
  * by player are correct. All moves which was taken by current player are saving
  * as List of Strings The history of moves is printing in a table
- * 
+ *
  * @param game The current game
  */
 public class MoveHistory extends AbstractTableModel {
@@ -51,13 +52,15 @@ public class MoveHistory extends AbstractTableModel {
 	private int columnsNum = 3;
 	private int rowsNum = 0;
 	private String[] names = new String[] { Settings.lang("white"), Settings.lang("black") };
-	private MyDefaultTableModel tableModel;
-	private JScrollPane scrollPane;
-	private JTable table;
+	//private MyDefaultTableModel tableModel;
+	//private JScrollPane scrollPane;
+	//private JTable table;
 	private boolean enterBlack = false;
 	private Game game;
 	protected Stack<PlayedMove> moveBackStack = new Stack<PlayedMove>();
 	protected Stack<PlayedMove> moveForwardStack = new Stack<PlayedMove>();
+	private MovesUI movesUI;
+
 
 	public enum castling {
 		none, shortCastling, longCastling
@@ -65,18 +68,20 @@ public class MoveHistory extends AbstractTableModel {
 
 	public MoveHistory(Game game) {
 		super();
-		this.tableModel = new MyDefaultTableModel();
-		this.table = new JTable(this.tableModel);
-		this.scrollPane = new JScrollPane(this.table);
-		this.scrollPane.setMaximumSize(new Dimension(100, 100));
-		this.table.setMinimumSize(new Dimension(100, 100));
+		this.movesUI = new MovesUI();
+
+		//this.tableModel = new MyDefaultTableModel();
+		//this.table = new JTable(this.tableModel);
+		//this.scrollPane = new JScrollPane(this.table);
+		//this.scrollPane.setMaximumSize(new Dimension(100, 100));
+		//this.table.setMinimumSize(new Dimension(100, 100));
 		this.game = game;
 
-		this.tableModel.addColumn(this.names[0]);
-		this.tableModel.addColumn(this.names[1]);
+		this.movesUI.addColumn(this.names[0]);
+		this.movesUI.addColumn(this.names[1]);
 		this.addTableModelListener(null);
-		this.tableModel.addTableModelListener(null);
-		this.scrollPane.setAutoscrolls(true);
+		//this.tableModel.addTableModelListener(null);
+		//this.scrollPane.setAutoscrolls(true);
 	}
 
 	public void draw() {
@@ -97,16 +102,16 @@ public class MoveHistory extends AbstractTableModel {
 		return this.columnsNum;
 	}
 
-	protected void addRow() {
+	/*protected void addRow() {
 		this.tableModel.addRow(new String[2]);
-	}
+	}*/
 
 	protected void addCastling(String move) {
 		this.move.remove(this.move.size() - 1);// remove last element (move of Rook)
 		if (!this.enterBlack) {
-			this.tableModel.setValueAt(move, this.tableModel.getRowCount() - 1, 1);// replace last value
+			this.movesUI.setValueAt(move, this.movesUI.getRowCount() - 1, 1);// replace last value
 		} else {
-			this.tableModel.setValueAt(move, this.tableModel.getRowCount() - 1, 0);// replace last value
+			this.movesUI.setValueAt(move, this.movesUI.getRowCount() - 1, 0);// replace last value
 		}
 		this.move.add(move);// add new move (O-O or O-O-O)
 	}
@@ -118,21 +123,21 @@ public class MoveHistory extends AbstractTableModel {
 
 	/**
 	 * Method of adding new moves to the table
-	 * 
+	 *
 	 * @param str String which in is saved player move
 	 */
 	protected void addMove2Table(String str) {
 		try {
 			if (!this.enterBlack) {
-				this.addRow();
-				this.rowsNum = this.tableModel.getRowCount() - 1;
-				this.tableModel.setValueAt(str, rowsNum, 0);
+				this.movesUI.addRow();
+				this.rowsNum = this.movesUI.getRowCount() - 1;
+				this.movesUI.setValueAt(str, rowsNum, 0);
 			} else {
-				this.tableModel.setValueAt(str, rowsNum, 1);
-				this.rowsNum = this.tableModel.getRowCount() - 1;
+				this.movesUI.setValueAt(str, rowsNum, 1);
+				this.rowsNum = this.movesUI.getRowCount() - 1;
 			}
 			this.enterBlack = !this.enterBlack;
-			this.table.scrollRectToVisible(table.getCellRect(table.getRowCount() - 1, 0, true));// scroll to down
+			this.movesUI.table.scrollRectToVisible(this.movesUI.table.getCellRect(this.movesUI.table.getRowCount() - 1, 0, true));// scroll to down
 
 		} catch (java.lang.ArrayIndexOutOfBoundsException exc) {
 			if (this.rowsNum > 0) {
@@ -144,20 +149,13 @@ public class MoveHistory extends AbstractTableModel {
 
 	/**
 	 * Method of adding new move
-	 * 
+	 *
 	 * @param move String which in is capt player move
 	 */
-	public void addMove(String move) {
-		if (isMoveCorrect(move)) {
-			this.move.add(move);
-			this.addMove2Table(move);
-			this.moveForwardStack.clear();
-		}
-
-	}
-
+	
 	public void addMove(Square begin, Square end, Piece beginPiece, Piece beginState, Piece endPiece, Piece endState, boolean registerInHistory, castling castlingMove,
 			boolean wasEnPassant, Piece promotedPiece) {
+
 		boolean wasCastling = castlingMove != castling.none;
 		String locMove = new String(beginState.symbol);
 
@@ -180,6 +178,7 @@ public class MoveHistory extends AbstractTableModel {
 			locMove += Character.toString((char) ((Chessboard.bottom - end.getX()) + 97));// add letter of Square to which
 																						// move was made
 			locMove += Integer.toString(end.getY() + 1);// add number of Square to which move was made
+
 		} else {
 			locMove += Character.toString((char) (end.getX() + 97));// add letter of Square to which move was made
 			locMove += Integer.toString(8 - end.getY());// add number of Square to which move was made
@@ -191,7 +190,6 @@ public class MoveHistory extends AbstractTableModel {
 		}
 		if ((!this.enterBlack && this.game.chessboard.pieceThreatened(this.game.chessboard.kingWhite))
 				|| (this.enterBlack && this.game.chessboard.pieceThreatened(this.game.chessboard.kingBlack))) {// if checked
-
 			if ((!this.enterBlack && this.game.chessboard.pieceUnsavable(this.game.chessboard.kingWhite)) // TODO
 					|| (this.enterBlack && this.game.chessboard.pieceUnsavable(this.game.chessboard.kingBlack))) {// check if checkmated
 				locMove += "#";// check mate
@@ -206,8 +204,7 @@ public class MoveHistory extends AbstractTableModel {
 			this.move.add(locMove);
 			this.addMove2Table(locMove);
 		}
-		this.scrollPane.scrollRectToVisible(new Rectangle(0, this.scrollPane.getHeight() - 2, 1, 1));
-		
+		//this.scrollPane.scrollRectToVisible(new Rectangle(0, this.scrollPane.getHeight() - 2, 1, 1));
 		if (registerInHistory) {
 			this.moveBackStack.add(new PlayedMove(begin, end, beginPiece, beginState, endPiece, endState, castlingMove,
 					wasEnPassant, promotedPiece));
@@ -219,7 +216,7 @@ public class MoveHistory extends AbstractTableModel {
 	}
 
 	public JScrollPane getScrollPane() {
-		return this.scrollPane;
+		return this.movesUI.scrollPane;
 	}
 
 	public ArrayList<String> getMoves() {
@@ -250,20 +247,20 @@ public class MoveHistory extends AbstractTableModel {
 			PlayedMove last = this.moveBackStack.pop();
 			if (last != null) {
 				if (this.game.settings.gameType == Settings.gameTypes.local) // moveForward / redo available only for
-																				// local game
+				// local game
 				{
 					this.moveForwardStack.push(last);
 				}
 				if (this.enterBlack) {
-					this.tableModel.setValueAt("", this.tableModel.getRowCount() - 1, 0);
-					this.tableModel.removeRow(this.tableModel.getRowCount() - 1);
+					this.movesUI.setValueAt("", this.movesUI.getRowCount() - 1, 0);
+					this.movesUI.removeRow(this.movesUI.getRowCount() - 1);
 
 					if (this.rowsNum > 0) {
 						this.rowsNum--;
 					}
 				} else {
-					if (this.tableModel.getRowCount() > 0) {
-						this.tableModel.setValueAt("", this.tableModel.getRowCount() - 1, 1);
+					if (this.movesUI.getRowCount() > 0) {
+						this.movesUI.setValueAt("", this.movesUI.getRowCount() - 1, 1);
 					}
 				}
 				this.move.remove(this.move.size() - 1);
@@ -295,7 +292,7 @@ public class MoveHistory extends AbstractTableModel {
 
 	/**
 	 * Method with is checking is the move is correct
-	 * 
+	 *
 	 * @param move String which in is capt player move
 	 * @return boolean 1 if the move is correct, else 0
 	 */
@@ -308,13 +305,13 @@ public class MoveHistory extends AbstractTableModel {
 			int sign = move.charAt(from);// get First
 			switch (sign) // if sign of piece, get next
 			{
-			case 66: // B like Bishop
-			case 75: // K like King
-			case 78: // N like Knight
-			case 81: // Q like Queen
-			case 82:
-				from = 1;
-				break; // R like Rook
+				case 66: // B like Bishop
+				case 75: // K like King
+				case 78: // N like Knight
+				case 81: // Q like Queen
+				case 82:
+					from = 1;
+					break; // R like Rook
 			}
 			sign = move.charAt(from);
 			Log.log(sign);
@@ -328,7 +325,7 @@ public class MoveHistory extends AbstractTableModel {
 				return false;
 			}
 			if (move.length() > 3) // if is equal to 3 or lower, than it's in short notation, no more checking
-									// needed
+			// needed
 			{
 				sign = move.charAt(from + 2);
 				if (sign != 45 && sign != 120) // if isn't '-' and 'x'
@@ -353,17 +350,25 @@ public class MoveHistory extends AbstractTableModel {
 		return true;
 	}
 
+	public void addMove(String move) {
+	if (isMoveCorrect(move)) {
+			this.move.add(move);
+			this.addMove2Table(move);
+			this.moveForwardStack.clear();
+		}}
+	
 	public void addMoves(ArrayList<String> list) {
 		for (String singleMove : list) {
 			if (isMoveCorrect(singleMove)) {
 				this.addMove(singleMove);
+				
 			}
 		}
 	}
 
 	/**
 	 * Method of getting the moves in string
-	 * 
+	 *
 	 * @return str String which in is capt player move
 	 */
 	public String getMovesInString() {
@@ -384,7 +389,7 @@ public class MoveHistory extends AbstractTableModel {
 	/**
 	 * Method to set all moves from String with validation test (usefoul for network
 	 * game)
-	 * 
+	 *
 	 * @param moves String to set in String like PGN with full-notation format
 	 */
 	public void setMoves(String moves) {
@@ -460,7 +465,7 @@ public class MoveHistory extends AbstractTableModel {
 				from = 1;
 			}
 			int xFrom = 9; // set to higher value than chessboard has fields, to cause error if piece won't
-							// be found
+			// be found
 			int yFrom = 9;
 			int xTo = 9;
 			int yTo = 9;
@@ -507,6 +512,7 @@ public class MoveHistory extends AbstractTableModel {
  * edited by player)
  */
 
+/*
 class MyDefaultTableModel extends DefaultTableModel {
 
 	MyDefaultTableModel() {
@@ -517,4 +523,4 @@ class MyDefaultTableModel extends DefaultTableModel {
 	public boolean isCellEditable(int a, int b) {
 		return false;
 	}
-}
+}*/

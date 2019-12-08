@@ -1,7 +1,6 @@
-package jchess.pieces;
-
 import static org.junit.Assert.*;
 
+import jchess.pieces.PieceFactory;
 import org.junit.Test;
 
 import jchess.Player;
