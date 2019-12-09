@@ -14,15 +14,18 @@ public class JChessTestUi extends SingleFrameApplication {
     @Override
     protected void startup() {
         JFrame frame = new JFrame();
-        frame.add(new ChessboardView(8,8));
+        frame.setSize(new Dimension(1200,1200));
+//        frame.setSize(new Dimension(800,800));
+        int xCenter = 500;
+        int yCenter = 500;
+        frame.add(new ChessboardViewTest(1000,1000));
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setLocationByPlatform(true);
 
-        // ensures the frame is the minimum size it needs to be
-        // in order display the components within it
-        frame.pack();
-        // ensures the minimum size is enforced.
         frame.setMinimumSize(frame.getSize());
         frame.setVisible(true);
     }
+
+
+
 }
