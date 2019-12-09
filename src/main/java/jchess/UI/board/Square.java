@@ -3,11 +3,11 @@ package jchess.UI.board;
 import jchess.pieces.Piece;
 
 public class Square {
-	int pozX; // 0-7, becouse 8 squares for row/column
-	int pozY; // 0-7, becouse 8 squares for row/column
-	Piece piece = null;// object Piece on square (and extending Piecie)
+	public int pozX; // 0-7, becouse 8 squares for row/column
+	public int pozY; // 0-7, becouse 8 squares for row/column
+	public Piece piece = null;// object Piece on square (and extending Piecie)
 
-	Square(int pozX, int pozY, Piece piece) {
+	public Square(int pozX, int pozY, Piece piece) {
 		this.pozX = pozX;
 		this.pozY = pozY;
 		this.piece = piece;
