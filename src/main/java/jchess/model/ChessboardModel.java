@@ -69,21 +69,25 @@ public class ChessboardModel {
      * @param upsideDown bool
      * @param plWhite    reference to white player
      * @param plBlack    reference to black player
+     * @param plGray
      */
-    public void setPieces4NewGame(boolean upsideDown, Player plWhite, Player plBlack) {
+    public void setPieces4NewGame(boolean upsideDown, Player plWhite, Player plBlack, Player plGray) {
 
         /* WHITE PIECES */
         Player player = plBlack;
         Player player1 = plWhite;
+        Player player2 = plGray;
         if (upsideDown) // if white on Top
         {
             player = plWhite;
             player1 = plBlack;
         }
         this.setFigures4NewGame(0, player, upsideDown);
-        this.setPawns4NewGame(1, player);
         this.setFigures4NewGame(7, player1, upsideDown);
+        this.setFigures4NewGame(3, player2, upsideDown);
+        this.setPawns4NewGame(1, player);
         this.setPawns4NewGame(6, player1);
+        this.setPawns4NewGame(4, player2);
     }/*--endOf-setPieces(boolean upsideDown)--*/
 
     /**
@@ -95,14 +99,14 @@ public class ChessboardModel {
      */
     private void setFigures4NewGame(int i, Player player, boolean upsideDown) {
 
-        if (i != 0 && i != 7) {
-            Log.log(Level.SEVERE, "error setting figures like rook etc.");
-            return;
-        } else if (i == 0) {
+//        if (i != 0 && i != 7) {
+//            Log.log(Level.SEVERE, "error setting figures like rook etc.");
+//            return;
+//        } else
+        if (i == 0) {
             player.goDown = true;
         }
 
-        setPieceOnSquare(PieceFactory.createRook(player), getSquare(0, i));
         setPieceOnSquare(PieceFactory.createRook(player), getSquare(7, i));
         setPieceOnSquare(PieceFactory.createKnight(player), getSquare(1, i));
         setPieceOnSquare(PieceFactory.createKnight(player), getSquare(6, i));
@@ -133,10 +137,10 @@ public class ChessboardModel {
      * @param player player which is owner of pawns
      */
     private void setPawns4NewGame(int i, Player player) {
-        if (i != 1 && i != 6) {
-            Log.log(Level.SEVERE, "error setting pawns etc.");
-            return;
-        }
+//        if (i != 1 && i != 6) {
+//            Log.log(Level.SEVERE, "error setting pawns etc.");
+//            return;
+//        }
         for (int x = 0; x < 8; x++) {
             setPieceOnSquare(PieceFactory.createPawn(player, !player.goDown), getSquare(x, i));
         }

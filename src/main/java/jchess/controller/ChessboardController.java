@@ -53,7 +53,7 @@ public class ChessboardController {
     }
 
     public void setPieces4NewGame() {
-        this.model.setPieces4NewGame(settings.upsideDown, settings.playerWhite, settings.playerBlack);
+        this.model.setPieces4NewGame(settings.upsideDown, settings.playerWhite, settings.playerBlack, settings.playerGray);
         this.view.setVisuals4NewGame();
     }
 

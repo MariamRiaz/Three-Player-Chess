@@ -237,23 +237,36 @@ public class ChessboardView extends JPanel {
     public void setVisuals4NewGame() {
         setVisualsForPlayer(1);
         setVisualsForPlayer(2);
+        setVisualsForPlayer(3);
     }
 
-    public void setVisualsForPlayer(int player){
-        int rowPawns = player==1 ? 1 : 6;
-        int rowPieces = player==1 ? 0 : 7;
+    public void setVisualsForPlayer(int player) {
+
+        int rowPawns = 0;
+        int rowFigures = 0;
+
+        if (player == 1) {
+            rowPawns = 1;
+            rowFigures = 0;
+        } else if (player == 2){
+            rowPawns = 6;
+            rowFigures = 7;
+        } else if (player == 3){
+            rowPawns = 4;
+            rowFigures = 3;
+        }
 
         for (int x = 0; x < 8; x++) {
             setVisual(controller.getSquare(x, rowPawns).piece);
         }
-        setVisual(controller.getSquare(0, rowPieces).piece);
-        setVisual(controller.getSquare(1, rowPieces).piece);
-        setVisual(controller.getSquare(2, rowPieces).piece);
-        setVisual(controller.getSquare(3, rowPieces).piece);
-        setVisual(controller.getSquare(4, rowPieces).piece);
-        setVisual(controller.getSquare(5, rowPieces).piece);
-        setVisual(controller.getSquare(6, rowPieces).piece);
-        setVisual(controller.getSquare(7, rowPieces).piece);
+        setVisual(controller.getSquare(0, rowFigures).piece);
+        setVisual(controller.getSquare(1, rowFigures).piece);
+        setVisual(controller.getSquare(2, rowFigures).piece);
+        setVisual(controller.getSquare(3, rowFigures).piece);
+        setVisual(controller.getSquare(4, rowFigures).piece);
+        setVisual(controller.getSquare(5, rowFigures).piece);
+        setVisual(controller.getSquare(6, rowFigures).piece);
+        setVisual(controller.getSquare(7, rowFigures).piece);
     }
 
 }
