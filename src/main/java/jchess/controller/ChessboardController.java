@@ -94,6 +94,7 @@ public class ChessboardController {
 
     public void select(Square sq) {
         model.activeSquare = sq;
+        view.activeSquare = sq;
         model.active_x_square = sq.pozX + 1;
         model.active_y_square = sq.pozY + 1;
 
@@ -330,6 +331,7 @@ public class ChessboardController {
         model.active_x_square = 0;
         model.active_y_square = 0;
         model.activeSquare = null;
+        view.activeSquare = null;
         repaint();
     }
 
