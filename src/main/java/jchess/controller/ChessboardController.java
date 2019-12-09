@@ -61,7 +61,7 @@ public class ChessboardController {
         this.view.resizeChessboard(height);
     }
 
-    public void resizeChessboard(){
+    public void resizeChessboard() {
         this.view.resizeChessboard(view.get_height(settings.renderLabels));
     }
 
@@ -95,12 +95,7 @@ public class ChessboardController {
     public void select(Square sq) {
         model.activeSquare = sq;
         view.activeSquare = sq;
-        model.active_x_square = sq.pozX + 1;
-        model.active_y_square = sq.pozY + 1;
-
-        Log.log("active_x: " + model.active_x_square + " active_y: " + model.active_y_square);// 4tests
         repaint();
-
     }
 
     public HashSet<Square> getValidTargetSquares(Piece piece) {
@@ -155,11 +150,11 @@ public class ChessboardController {
         return getSquare(current.pozX + x, current.pozY + y);
     }
 
-    public Square getActiveSquare(){
+    public Square getActiveSquare() {
         return model.activeSquare;
     }
 
-    public void setActiveSquare(Square square){
+    public void setActiveSquare(Square square) {
         this.model.activeSquare = square;
     }
 
@@ -171,7 +166,7 @@ public class ChessboardController {
         return x < 0 || y < 0 || x >= model.squares.length || y >= model.squares[x].length ? null : model.squares[x][y];
     }
 
-    public Square[][] getSquares(){
+    public Square[][] getSquares() {
         return this.model.squares;
     }
 
@@ -328,8 +323,6 @@ public class ChessboardController {
      * Method set variables active_x_square & active_y_square to 0 values.
      */
     public void unselect() {
-        model.active_x_square = 0;
-        model.active_y_square = 0;
         model.activeSquare = null;
         view.activeSquare = null;
         repaint();
@@ -488,11 +481,11 @@ public class ChessboardController {
         return getSquare((int) square_x - 1, (int) square_y - 1);
     }
 
-    public Piece getKingWhite(){
+    public Piece getKingWhite() {
         return model.kingWhite;
     }
 
-    public Piece getKingBlack(){
+    public Piece getKingBlack() {
         return model.kingBlack;
     }
 
@@ -552,11 +545,11 @@ public class ChessboardController {
         return false;
     }
 
-    public int getHeight(){
+    public int getHeight() {
         return view.getHeight();
     }
 
-    public void draw(){
+    public void draw() {
         this.view.draw();
     }
 }
