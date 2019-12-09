@@ -1,6 +1,7 @@
 package jchess.controller;
 
 import jchess.*;
+import jchess.UI.MovesHistoryView;
 import jchess.UI.board.Square;
 import jchess.model.ChessboardModel;
 import jchess.pieces.*;
@@ -36,10 +37,11 @@ public class ChessboardController {
     public static int bottom = 7;
     public static int top = 0;
 
-    public ChessboardController(Settings settings) {
+    public ChessboardController(Settings settings, MoveHistory moves_history) {
         this.model = new ChessboardModel(settings);
         this.view = new ChessboardView(this, model.activeSquare);
         this.settings = settings;
+        this.moves_history = moves_history;
     }
 
     public void initView() {
