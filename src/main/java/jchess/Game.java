@@ -42,7 +42,6 @@ import java.io.FileReader;
 import java.util.Calendar;
 import java.awt.event.ComponentListener;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Class responsible for the starts of new games, loading games, saving it, and
@@ -52,13 +51,13 @@ import java.util.logging.Logger;
 public class Game extends JPanel implements MouseListener, ComponentListener {
 
     public Settings settings;
-    public boolean blockedChessboard;
+    private boolean blockedChessboard;
     public RoundChessboardController chessboardController;
     private Point circleCenter;
     private Player activePlayer;
     public GameClock gameClock;
-    public Client client;
-    public MoveHistory moves;
+    Client client;
+    MoveHistory moves;
     public Chat chat;
 
     public Game() {
@@ -66,8 +65,8 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
         this.moves = new MoveHistory(this);
         settings = new Settings();
         chessboardController = new RoundChessboardController(this.settings);
-        this.add(chessboardController.view);
-        chessboardController.view.addMouseListener(this);
+        this.add(chessboardController.getView());
+        chessboardController.getView().addMouseListener(this);
         // this.chessboard.
         gameClock = new GameClock(this);
         gameClock.gameClockView.setSize(new Dimension(400, 100));
@@ -415,8 +414,8 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
                             //TODO: exception is caught here --> method returns without switching player
                             chessboardController.move(chessboardController.getActiveSquare(), sq, true, true);
                         } else if (settings.gameType == Settings.gameTypes.network) {
-                            client.sendMove(chessboardController.getActiveSquare().getX(), chessboardController.getActiveSquare().getY(), sq.getX(),
-                                    sq.getY());
+                            client.sendMove(chessboardController.getActiveSquare().getPozX(), chessboardController.getActiveSquare().getPozY(), sq.getPozX(),
+                                    sq.getPozY());
                             chessboardController.move(chessboardController.getActiveSquare(), sq, true, true);
                         }
 

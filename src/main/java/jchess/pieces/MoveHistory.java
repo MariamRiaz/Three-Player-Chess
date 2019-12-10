@@ -159,12 +159,12 @@ public class MoveHistory extends AbstractTableModel {
         String locMove = new String(beginState.symbol);
 
         if (game.settings.upsideDown) {
-            locMove += Character.toString((char) ((ChessboardController.bottom - begin.getX()) + 97));// add letter of Square from
+            locMove += Character.toString((char) ((ChessboardController.bottom - begin.getPozX()) + 97));// add letter of Square from
             // which move was made
-            locMove += Integer.toString(begin.getY() + 1);// add number of Square from which move was made
+            locMove += Integer.toString(begin.getPozY() + 1);// add number of Square from which move was made
         } else {
-            locMove += Character.toString((char) (begin.getX() + 97));// add letter of Square from which move was made
-            locMove += Integer.toString(8 - begin.getY());// add number of Square from which move was made
+            locMove += Character.toString((char) (begin.getPozX() + 97));// add letter of Square from which move was made
+            locMove += Integer.toString(8 - begin.getPozY());// add number of Square from which move was made
         }
 
         if (endState != null) {
@@ -174,16 +174,16 @@ public class MoveHistory extends AbstractTableModel {
         }
 
         if (game.settings.upsideDown) {
-            locMove += Character.toString((char) ((ChessboardController.bottom - end.getX()) + 97));// add letter of Square to which
+            locMove += Character.toString((char) ((ChessboardController.bottom - end.getPozX()) + 97));// add letter of Square to which
             // move was made
-            locMove += Integer.toString(end.getY() + 1);// add number of Square to which move was made
+            locMove += Integer.toString(end.getPozY() + 1);// add number of Square to which move was made
 
         } else {
-            locMove += Character.toString((char) (end.getX() + 97));// add letter of Square to which move was made
-            locMove += Integer.toString(8 - end.getY());// add number of Square to which move was made
+            locMove += Character.toString((char) (end.getPozX() + 97));// add letter of Square to which move was made
+            locMove += Integer.toString(8 - end.getPozY());// add number of Square to which move was made
         }
 
-        if (beginState.symbol.equals("") && begin.getX() - end.getX() != 0 && endState == null) {
+        if (beginState.symbol.equals("") && begin.getPozX() - end.getPozX() != 0 && endState == null) {
             locMove += "(e.p)";// pawn take down opponent en passant
             wasEnPassant = true;
         }
@@ -483,9 +483,9 @@ public class MoveHistory extends AbstractTableModel {
                     HashSet<Square> pieceMoves = this.game.chessboardController.getValidTargetSquares(square.getPiece());
                     for (Object oldSquare : pieceMoves) {
                         Square currSquare = (Square) oldSquare;
-                        if (currSquare.getX() == xTo && currSquare.getY() == yTo) {
-                            xFrom = square.getX();
-                            yFrom = square.getY();
+                        if (currSquare.getPozX() == xTo && currSquare.getPozY() == yTo) {
+                            xFrom = square.getPozX();
+                            yFrom = square.getPozY();
                             pieceFound = true;
                         }
                     }

@@ -46,10 +46,10 @@ public class PlayedMove {
 		this.castlingMove = castlingMove;
 		this.wasEnPassant = wasEnPassant;
 
-		if (movedPiece.type.equals("Pawn") && Math.abs(to.getY() - from.getY()) == 2) {
+		if (movedPiece.type.equals("Pawn") && Math.abs(to.getPozY() - from.getPozY()) == 2) {
 			this.wasPawnTwoFieldsMove = true;
-		} else if (movedPiece.type.equals("Pawn") && to.getY() == ChessboardController.bottom
-				|| to.getY() == ChessboardController.top && promotedPiece != null) {
+		} else if (movedPiece.type.equals("Pawn") && to.getPozY() == ChessboardController.bottom
+				|| to.getPozY() == ChessboardController.top && promotedPiece != null) {
 			this.promotedTo = promotedPiece;
 		}
 	}
