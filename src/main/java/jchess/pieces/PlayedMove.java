@@ -18,8 +18,8 @@
  */
 package jchess.pieces;
 
-import jchess.UI.board.Chessboard;
 import jchess.UI.board.Square;
+import jchess.controller.ChessboardController;
 import jchess.pieces.MoveHistory.castling;
 
 public class PlayedMove {
@@ -46,10 +46,10 @@ public class PlayedMove {
 		this.castlingMove = castlingMove;
 		this.wasEnPassant = wasEnPassant;
 
-		if (movedPiece.type.equals("Pawn") && Math.abs(to.getY() - from.getY()) == 2) {
+		if (movedPiece.type.equals("Pawn") && Math.abs(to.getPozY() - from.getPozY()) == 2) {
 			this.wasPawnTwoFieldsMove = true;
-		} else if (movedPiece.type.equals("Pawn") && to.getY() == Chessboard.bottom
-				|| to.getY() == Chessboard.top && promotedPiece != null) {
+		} else if (movedPiece.type.equals("Pawn") && to.getPozY() == ChessboardController.bottom
+				|| to.getPozY() == ChessboardController.top && promotedPiece != null) {
 			this.promotedTo = promotedPiece;
 		}
 	}

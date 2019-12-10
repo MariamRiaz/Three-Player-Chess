@@ -33,9 +33,6 @@ import jchess.JChessApp;
 import jchess.Log;
 import jchess.Player;
 import jchess.Settings;
-import jchess.Player.playerTypes;
-import jchess.Settings.gameModes;
-import jchess.Settings.gameTypes;
 
 /**
  * Class responsible for drawing the fold with local game settings
@@ -180,8 +177,8 @@ public class DrawLocalSettings extends JPanel implements ActionListener, TextLis
 					+ sett.upsideDown + "\n****************");// 4test
 			newGUI.newGame();// start new Game
 			this.parent.setVisible(false);// hide parent
-			newGUI.chessboard.repaint();
-			newGUI.chessboard.draw();
+			newGUI.chessboardController.repaint();
+			newGUI.chessboardController.draw();
 		}
 
 	}
