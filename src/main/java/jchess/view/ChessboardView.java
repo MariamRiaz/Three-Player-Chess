@@ -1,19 +1,19 @@
 package jchess.view;
 
 import jchess.GUI;
-import jchess.Player;
 import jchess.Settings;
 import jchess.UI.board.Square;
 import jchess.controller.ChessboardController;
-import jchess.model.ChessboardModel;
 import jchess.pieces.Piece;
-import jchess.pieces.PieceFactory;
 import jchess.pieces.PieceVisual;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
 
 public class ChessboardView extends JPanel {
     private Settings settings;
@@ -26,10 +26,10 @@ public class ChessboardView extends JPanel {
     public Image upDownLabel = null;
     private Image LeftRightLabel = null;
     private Point topLeft = new Point(0, 0);
-    public HashMap<Piece, PieceVisual> pieceVisuals = new HashMap<Piece, PieceVisual>();
+    private HashMap<Piece, PieceVisual> pieceVisuals = new HashMap<Piece, PieceVisual>();
     private HashSet<Square> moves;
 
-    public ChessboardController controller;
+    private ChessboardController controller;
     public Square activeSquare;
 
 
@@ -73,14 +73,14 @@ public class ChessboardView extends JPanel {
         }
         g2d.drawImage(boardImage, topLeftPoint.x, topLeftPoint.y, null);// draw an Image of chessboard
 
-        for (Iterator<Map.Entry<Piece, PieceVisual>> it = this.pieceVisuals.entrySet().iterator(); it.hasNext(); ) {
+        for (Map.Entry<Piece, PieceVisual> piecePieceVisualEntry : this.pieceVisuals.entrySet()) {
             Point p = new Point();
-            Map.Entry<Piece, PieceVisual> ent = it.next();
+            Map.Entry<Piece, PieceVisual> ent = piecePieceVisualEntry;
             Square sq = controller.getSquare(ent.getKey());
 
             if (sq != null && ent.getValue() != null) {
-                p.x = (int) (getTopLeftPoint().x + sq.pozX * square_height);
-                p.y = (int) (getTopLeftPoint().y + sq.pozY * square_height);
+                p.x = (int) (getTopLeftPoint().x + sq.getPozX() * square_height);
+                p.y = (int) (getTopLeftPoint().y + sq.getPozY() * square_height);
                 ent.getValue().draw(g, p.x, p.y, (int) square_height, (int) square_height);// draw image of Piece
             }
         }
@@ -88,17 +88,17 @@ public class ChessboardView extends JPanel {
         if (activeSquare != null) // if some square is active
 //        if (((this.activeSquare.pozX + 1) != 0) && ((this.activeSquare.pozY + 1) != 0)) // if some square is active
         {
-            g2d.drawImage(selectedSquareImage, (this.activeSquare.pozX * (int) square_height) + topLeftPoint.x,
-                    (this.activeSquare.pozY * (int) square_height) + topLeftPoint.y, null);// draw image of selected
+            g2d.drawImage(selectedSquareImage, (this.activeSquare.getPozX() * (int) square_height) + topLeftPoint.x,
+                    (this.activeSquare.getPozY() * (int) square_height) + topLeftPoint.y, null);// draw image of selected
             // square
-            Square tmpSquare = controller.getSquare((int) this.activeSquare.pozX, (int) this.activeSquare.pozY);
-            if (tmpSquare.piece != null)
-                this.moves = controller.getValidTargetSquaresToSavePiece(tmpSquare.piece, controller.getKing(tmpSquare.piece.player));
+            Square tmpSquare = controller.getSquare((int) this.activeSquare.getPozX(), (int) this.activeSquare.getPozY());
+            if (tmpSquare.getPiece() != null)
+                this.moves = controller.getValidTargetSquaresToSavePiece(tmpSquare.getPiece(), controller.getKing(tmpSquare.getPiece().player));
 
             for (Iterator it = moves.iterator(); moves != null && it.hasNext(); ) {
                 Square sq = (Square) it.next();
-                g2d.drawImage(ableSquareImage, (sq.pozX * (int) square_height) + topLeftPoint.x,
-                        (sq.pozY * (int) square_height) + topLeftPoint.y, null);
+                g2d.drawImage(ableSquareImage, (sq.getPozX() * (int) square_height) + topLeftPoint.x,
+                        (sq.getPozY() * (int) square_height) + topLeftPoint.y, null);
             }
         }
     }/*--endOf-paint--*/
@@ -130,11 +130,11 @@ public class ChessboardView extends JPanel {
     }
 
 
-    protected void drawLabels() {
+    private void drawLabels() {
         this.drawLabels((int) this.square_height);
     }
 
-    protected final void drawLabels(int square_height) {
+    private final void drawLabels(int square_height) {
 
         // BufferedImage uDL = new BufferedImage(800, 800,
         // BufferedImage.TYPE_3BYTE_BGR);
@@ -180,12 +180,12 @@ public class ChessboardView extends JPanel {
 
         if (this.settings.upsideDown) {
             for (int i = 1; i <= 8; i++) {
-                uDL2D.drawString(new Integer(i).toString(), 3 + (labelHeight / 3), (square_height * (i - 1)) + addX);
+                uDL2D.drawString(Integer.toString(i), 3 + (labelHeight / 3), (square_height * (i - 1)) + addX);
             }
         } else {
             int j = 1;
             for (int i = 8; i > 0; i--, j++) {
-                uDL2D.drawString(new Integer(i).toString(), 3 + (labelHeight / 3), (square_height * (j - 1)) + addX);
+                uDL2D.drawString(Integer.toString(i), 3 + (labelHeight / 3), (square_height * (j - 1)) + addX);
             }
         }
         uDL2D.dispose();
@@ -204,7 +204,7 @@ public class ChessboardView extends JPanel {
         this.repaint();
     }/*--endOf-draw--*/
 
-    public Point getTopLeftPoint() {
+    private Point getTopLeftPoint() {
         if (this.settings.renderLabels) {
             return new Point(this.topLeft.x + this.upDownLabel.getHeight(null),
                     this.topLeft.y + this.upDownLabel.getHeight(null));
@@ -239,21 +239,21 @@ public class ChessboardView extends JPanel {
         setVisualsForPlayer(2);
     }
 
-    public void setVisualsForPlayer(int player){
+    private void setVisualsForPlayer(int player){
         int rowPawns = player==1 ? 1 : 6;
         int rowPieces = player==1 ? 0 : 7;
 
         for (int x = 0; x < 8; x++) {
-            setVisual(controller.getSquare(x, rowPawns).piece);
+            setVisual(controller.getSquare(x, rowPawns).getPiece());
         }
-        setVisual(controller.getSquare(0, rowPieces).piece);
-        setVisual(controller.getSquare(1, rowPieces).piece);
-        setVisual(controller.getSquare(2, rowPieces).piece);
-        setVisual(controller.getSquare(3, rowPieces).piece);
-        setVisual(controller.getSquare(4, rowPieces).piece);
-        setVisual(controller.getSquare(5, rowPieces).piece);
-        setVisual(controller.getSquare(6, rowPieces).piece);
-        setVisual(controller.getSquare(7, rowPieces).piece);
+        setVisual(controller.getSquare(0, rowPieces).getPiece());
+        setVisual(controller.getSquare(1, rowPieces).getPiece());
+        setVisual(controller.getSquare(2, rowPieces).getPiece());
+        setVisual(controller.getSquare(3, rowPieces).getPiece());
+        setVisual(controller.getSquare(4, rowPieces).getPiece());
+        setVisual(controller.getSquare(5, rowPieces).getPiece());
+        setVisual(controller.getSquare(6, rowPieces).getPiece());
+        setVisual(controller.getSquare(7, rowPieces).getPiece());
     }
 
 }
