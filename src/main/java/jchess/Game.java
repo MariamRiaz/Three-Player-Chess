@@ -66,7 +66,6 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
         this.moves = new MoveHistory(this);
         settings = new Settings();
         chessboardController = new RoundChessboardController(this.settings);
-
         this.add(chessboardController.view);
         chessboardController.view.addMouseListener(this);
         // this.chessboard.

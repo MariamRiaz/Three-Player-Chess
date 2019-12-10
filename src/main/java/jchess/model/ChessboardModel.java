@@ -16,10 +16,6 @@ public class ChessboardModel {
     public Piece kingWhite;
     public Piece kingBlack;
     public Square activeSquare;
-    public int active_x_square;
-    public int active_y_square;
-
-
 
     public HashMap<Piece, PieceVisual> pieceVisuals = new HashMap<Piece, PieceVisual>();
     public HashMap<Piece, Square> pieceToSquare = new HashMap<Piece, Square>();
@@ -70,9 +66,9 @@ public class ChessboardModel {
     /**
      * Method setPieces on begin of new game or loaded game
      *
-     * @param upsideDown  bool
-     * @param plWhite reference to white player
-     * @param plBlack reference to black player
+     * @param upsideDown bool
+     * @param plWhite    reference to white player
+     * @param plBlack    reference to black player
      */
     public void setPieces4NewGame(boolean upsideDown, Player plWhite, Player plBlack) {
 
