@@ -1,10 +1,12 @@
 package jchess.controller;
 
 import jchess.*;
-import jchess.UI.MovesHistoryView;
 import jchess.UI.board.Square;
 import jchess.model.ChessboardModel;
-import jchess.pieces.*;
+import jchess.pieces.MoveHistory;
+import jchess.pieces.Piece;
+import jchess.pieces.PieceFactory;
+import jchess.pieces.PlayedMove;
 import jchess.view.ChessboardView;
 
 import java.util.HashSet;
@@ -15,9 +17,9 @@ import java.util.logging.Logger;
 
 public class ChessboardController {
 
-    public ChessboardModel model;
-    public ChessboardView view;
-    public Settings settings;
+    private ChessboardModel model;
+    private ChessboardView view;
+    private Settings settings;
 
     // For undo:
     private Square undo1_sq_begin = null;
@@ -30,18 +32,22 @@ public class ChessboardController {
     // ----------------------------
     // For En passant:
     // |-> Pawn whose in last turn moved two square
-    public Piece twoSquareMovedPawn = null;
-    public Piece twoSquareMovedPawn2 = null;
+    private Piece twoSquareMovedPawn = null;
+    private Piece twoSquareMovedPawn2 = null;
     private MoveHistory moves_history;
 
     public static int bottom = 7;
     public static int top = 0;
 
     public ChessboardController(Settings settings, MoveHistory moves_history) {
-        this.model = new ChessboardModel(settings);
-        this.view = new ChessboardView(this, model.activeSquare);
+        this.model = new ChessboardModel();
+        this.view = new ChessboardView(this, model.getActiveSquare());
         this.settings = settings;
         this.moves_history = moves_history;
+    }
+
+    public ChessboardView getView() {
+        return view;
     }
 
     public void initView() {
@@ -68,10 +74,10 @@ public class ChessboardController {
     public boolean simulateMove(int beginX, int beginY, int endX, int endY) {
 
         try {
-            select(model.squares[beginX][beginY]);
-            if (getValidTargetSquares(model.activeSquare.getPiece()).contains(model.squares[endX][endY])) // move
+            select(model.getSquares()[beginX][beginY]);
+            if (getValidTargetSquares(model.getActiveSquare().getPiece()).contains(model.getSquares()[endX][endY])) // move
             {
-                move(model.squares[beginX][beginY], model.squares[endX][endY], true, true);
+                move(model.getSquares()[beginX][beginY], model.getSquares()[endX][endY], true, true);
             } else {
                 Log.log("Bad move");
                 return false;
@@ -93,7 +99,7 @@ public class ChessboardController {
     }
 
     public void select(Square sq) {
-        model.activeSquare = sq;
+        model.setActiveSquare(sq);
         view.activeSquare = sq;
         repaint();
     }
@@ -123,12 +129,12 @@ public class ChessboardController {
             boolean add = true;
 
             if (move.conditions.contains(Piece.Move.MoveType.OnlyAttack)) {
-                if (next.piece == null || next.piece.player == piece.player)
+                if (next.getPiece() == null || next.getPiece().player == piece.player)
                     add = false;
             } else if (move.conditions.contains(Piece.Move.MoveType.OnlyMove)) {
-                if (next.piece != null)
+                if (next.getPiece() != null)
                     add = false;
-            } else if (next.piece != null && next.piece.player == piece.player)
+            } else if (next.getPiece() != null && next.getPiece().player == piece.player)
                 add = false;
 
             if (move.conditions.contains(Piece.Move.MoveType.OnlyWhenFresh) && piece.hasMoved())
@@ -137,7 +143,7 @@ public class ChessboardController {
             if (add)
                 ret.add(next);
 
-            if (!move.conditions.contains(Piece.Move.MoveType.Unblockable) && next.piece != null)
+            if (!move.conditions.contains(Piece.Move.MoveType.Unblockable) && next.getPiece() != null)
                 break;
 
             count++;
@@ -147,35 +153,35 @@ public class ChessboardController {
     }
 
     private Square nextSquare(Square current, int x, int y) {
-        return getSquare(current.pozX + x, current.pozY + y);
+        return getSquare(current.getPozX() + x, current.getPozY() + y);
     }
 
     public Square getActiveSquare() {
-        return model.activeSquare;
+        return model.getActiveSquare();
     }
 
     public void setActiveSquare(Square square) {
-        this.model.activeSquare = square;
+        this.model.setActiveSquare(square);
     }
 
     public Square getSquare(Piece piece) {
-        return piece != null && model.pieceToSquare.containsKey(piece) ? model.pieceToSquare.get(piece) : null;
+        return piece != null && model.getPieceToSquare().containsKey(piece) ? model.getPieceToSquare().get(piece) : null;
     }
 
     public Square getSquare(int x, int y) { // duplicate method with GUI-related getSquare
-        return x < 0 || y < 0 || x >= model.squares.length || y >= model.squares[x].length ? null : model.squares[x][y];
+        return x < 0 || y < 0 || x >= model.getSquares().length || y >= model.getSquares()[x].length ? null : model.getSquares()[x][y];
     }
 
     public Square[][] getSquares() {
-        return this.model.squares;
+        return this.model.getSquares();
     }
 
     public Piece getKing(Player player) {
         if (player == null)
             return null;
         if (player.color == player.color.black)
-            return model.kingBlack;
-        return model.kingWhite;
+            return model.getKingBlack();
+        return model.getKingWhite();
     }
 
     /**
@@ -194,12 +200,12 @@ public class ChessboardController {
          * if (end.piece != null) { end.piece.setSquare(null); }
          */
 
-        Piece tempBegin = begin.piece, tempBeginState = tempBegin != null ? tempBegin.clone() : null;// 4 moves history
-        Piece tempEnd = end.piece, tempEndState = tempEnd != null ? tempEnd.clone() : null; // 4 moves history
+        Piece tempBegin = begin.getPiece(), tempBeginState = tempBegin != null ? tempBegin.clone() : null;// 4 moves history
+        Piece tempEnd = end.getPiece(), tempEndState = tempEnd != null ? tempEnd.clone() : null; // 4 moves history
         // for undo
-        undo1_piece_begin = begin.piece;
+        undo1_piece_begin = begin.getPiece();
         undo1_sq_begin = begin;
-        undo1_piece_end = end.piece;
+        undo1_piece_end = end.getPiece();
         undo1_sq_end = end;
         ifWasEnPassant = null;
         ifWasCastling = null;
@@ -208,66 +214,66 @@ public class ChessboardController {
 
         twoSquareMovedPawn2 = twoSquareMovedPawn;
 
-        model.setPieceOnSquare(begin.piece, end);
+        model.setPieceOnSquare(begin.getPiece(), end);
 
-        System.out.print(end.piece.type);
-        if (end.piece.type.equals("King")) {
+        System.out.print(end.getPiece().type);
+        if (end.getPiece().type.equals("King")) {
 
-            if (!end.piece.hasMoved())
+            if (!end.getPiece().hasMoved())
                 breakCastling = true;
 
-            end.piece.setHasMoved(true);// set square of piece to ending
+            end.getPiece().setHasMoved(true);// set square of piece to ending
 
             // Castling
-            if (begin.pozX + 2 == end.pozX) {
-                move(model.squares[7][begin.pozY], model.squares[end.pozX - 1][begin.pozY], false, false);
-                ifWasCastling = end.piece; // for undo
+            if (begin.getPozX() + 2 == end.getPozX()) {
+                move(model.getSquares()[7][begin.getPozY()], model.getSquares()[end.getPozX() - 1][begin.getPozY()], false, false);
+                ifWasCastling = end.getPiece(); // for undo
                 wasCastling = MoveHistory.castling.shortCastling;
                 // this.moves_history.addMove(tempBegin, tempEnd, clearForwardHistory,
                 // wasCastling, wasEnPassant);
                 // return;
-            } else if (begin.pozX - 2 == end.pozX) {
-                move(model.squares[0][begin.pozY], model.squares[end.pozX + 1][begin.pozY], false, false);
-                ifWasCastling = end.piece; // for undo
+            } else if (begin.getPozX() - 2 == end.getPozX()) {
+                move(model.getSquares()[0][begin.getPozY()], model.getSquares()[end.getPozX() + 1][begin.getPozY()], false, false);
+                ifWasCastling = end.getPiece(); // for undo
                 wasCastling = MoveHistory.castling.longCastling;
                 // this.moves_history.addMove(tempBegin, tempEnd, clearForwardHistory,
                 // wasCastling, wasEnPassant);
                 // return;
             }
             // endOf Castling
-        } else if (end.piece.type.equals("Rook")) {
-            if (!end.piece.hasMoved())
+        } else if (end.getPiece().type.equals("Rook")) {
+            if (!end.getPiece().hasMoved())
                 breakCastling = true;
-            end.piece.setHasMoved(true);// set square of piece to ending
-        } else if (end.piece.type.equals("Pawn")) {
-            if (twoSquareMovedPawn != null && model.squares[end.pozX][begin.pozY] == getSquare(twoSquareMovedPawn)) // en
+            end.getPiece().setHasMoved(true);// set square of piece to ending
+        } else if (end.getPiece().type.equals("Pawn")) {
+            if (twoSquareMovedPawn != null && model.getSquares()[end.getPozY()][begin.getPozY()] == getSquare(twoSquareMovedPawn)) // en
             // passant
             {
-                ifWasEnPassant = model.squares[end.pozX][begin.pozY].piece; // for undo
+                ifWasEnPassant = model.getSquares()[end.getPozX()][begin.getPozY()].getPiece(); // for undo
 
-                tempEnd = model.squares[end.pozX][begin.pozY].piece; // ugly hack - put taken pawn in en passant plasty
+                tempEnd = model.getSquares()[end.getPozX()][begin.getPozY()].getPiece(); // ugly hack - put taken pawn in en passant plasty
                 // do end square
                 tempEndState = tempEnd.clone();
 
-                model.squares[end.pozX][begin.pozY].piece = null;
+                model.getSquares()[end.getPozX()][begin.getPozY()].setPiece(null);
                 wasEnPassant = true;
             }
 
-            if (begin.pozY - end.pozY == 2 || end.pozY - begin.pozY == 2) // moved two square
+            if (begin.getPozY() - end.getPozY() == 2 || end.getPozY() - begin.getPozY() == 2) // moved two square
             {
                 breakCastling = true;
-                twoSquareMovedPawn = end.piece;
+                twoSquareMovedPawn = end.getPiece();
             } else {
                 twoSquareMovedPawn = null; // erase last saved move (for En passant)
             }
 
-            end.piece.setHasMoved(true);// set square of piece to ending
+            end.getPiece().setHasMoved(true);// set square of piece to ending
 
-            if (end.pozY == 0 || end.pozY == 7) // promote Pawn
+            if (end.getPozY() == 0 || end.getPozY() == 7) // promote Pawn
             {
                 if (clearForwardHistory) {
                     String color;
-                    if (end.piece.player.color == Player.colors.white) {
+                    if (end.getPiece().player.color == Player.colors.white) {
                         color = "W"; // promotionWindow was show with pieces in this color
                     } else {
                         color = "B";
@@ -277,29 +283,29 @@ public class ChessboardController {
 
                     if (newPiece.equals("Queen")) // transform pawn to queen
                     {
-                        Piece queen = PieceFactory.createQueen(end.piece.player);
+                        Piece queen = PieceFactory.createQueen(end.getPiece().player);
                         model.setPieceOnSquare(queen, end);
                         view.setVisual(queen);
                     } else if (newPiece.equals("Rook")) // transform pawn to rook
                     {
-                        Piece rook = PieceFactory.createRook(end.piece.player);
+                        Piece rook = PieceFactory.createRook(end.getPiece().player);
                         model.setPieceOnSquare(rook, end);
                         view.setVisual(rook);
                     } else if (newPiece.equals("Bishop")) // transform pawn to bishop
                     {
-                        Piece bishop = PieceFactory.createBishop(end.piece.player);
+                        Piece bishop = PieceFactory.createBishop(end.getPiece().player);
                         model.setPieceOnSquare(bishop, end);
                         view.setVisual(bishop);
                     } else // transform pawn to knight
                     {
-                        Piece knight = PieceFactory.createKing(end.piece.player);
+                        Piece knight = PieceFactory.createKing(end.getPiece().player);
                         model.setPieceOnSquare(knight, end);
                         view.setVisual(knight);
                     }
-                    promotedPiece = end.piece;
+                    promotedPiece = end.getPiece();
                 }
             }
-        } else if (!end.piece.type.equals("Pawn")) {
+        } else if (!end.getPiece().type.equals("Pawn")) {
             twoSquareMovedPawn = null; // erase last saved move (for En passant)
         }
         // }
@@ -316,14 +322,14 @@ public class ChessboardController {
             this.moves_history.addMove(begin, end, tempBegin, tempBeginState, tempEnd, tempEndState, false, wasCastling, wasEnPassant, promotedPiece);
         }
 
-        end.piece.setHasMoved(true);
+        end.getPiece().setHasMoved(true);
     }
 
     /**
      * Method set variables active_x_square & active_y_square to 0 values.
      */
     public void unselect() {
-        model.activeSquare = null;
+        model.setActiveSquare(null);
         view.activeSquare = null;
         repaint();
     }
@@ -348,13 +354,13 @@ public class ChessboardController {
                 if (last.getCastlingMove() != MoveHistory.castling.none) {
                     Piece rook = null;
                     if (last.getCastlingMove() == MoveHistory.castling.shortCastling) {
-                        rook = getSquare(end.pozX - 1, end.pozY).piece;
-                        model.setPieceOnSquare(rook, getSquare(7, begin.pozY));
+                        rook = getSquare(end.getPozX() - 1, end.getPozY()).getPiece();
+                        model.setPieceOnSquare(rook, getSquare(7, begin.getPozY()));
 
                         view.setVisual(rook);
                     } else {
-                        rook = getSquare(end.pozX + 1, end.pozY).piece;
-                        model.setPieceOnSquare(rook, getSquare(0, begin.pozY));
+                        rook = getSquare(end.getPozX() + 1, end.getPozY()).getPiece();
+                        model.setPieceOnSquare(rook, getSquare(0, begin.getPozY()));
                         view.setVisual(rook);
                     }
                     movedState.setHasMoved(false);
@@ -364,11 +370,11 @@ public class ChessboardController {
                     movedState.setHasMoved(false);
                 } else if (movedState.type.equals("Pawn") && last.wasEnPassant()) {
                     Piece pawn = last.getTakenPiece();
-                    model.setPieceOnSquare(pawn, getSquare(end.pozX, begin.pozY));
+                    model.setPieceOnSquare(pawn, getSquare(end.getPozX(), begin.getPozY()));
                     view.setVisual(pawn);
 
                 } else if (movedState.type.equals("Pawn") && last.getPromotedPiece() != null) {
-                    Piece promoted = getSquare(end.pozX, end.pozY).piece;
+                    Piece promoted = getSquare(end.getPozX(), end.getPozY()).getPiece();
                     model.setPieceOnSquare(promoted, null);
                     view.removeVisual(promoted);
                 }
@@ -376,8 +382,8 @@ public class ChessboardController {
                 // check one more move back for en passant
                 PlayedMove oneMoveEarlier = this.moves_history.getLastMoveFromHistory();
                 if (oneMoveEarlier != null && oneMoveEarlier.wasPawnTwoFieldsMove()) {
-                    Piece canBeTakenEnPassant = getSquare(oneMoveEarlier.getTo().pozX,
-                            oneMoveEarlier.getTo().pozY).piece;
+                    Piece canBeTakenEnPassant = getSquare(oneMoveEarlier.getTo().getPozX(),
+                            oneMoveEarlier.getTo().getPozY()).getPiece();
                     if (canBeTakenEnPassant.type.equals("Pawn")) {
                         this.twoSquareMovedPawn = canBeTakenEnPassant;
                     }
@@ -391,8 +397,8 @@ public class ChessboardController {
                     model.setPieceOnSquare(takenState, end);
                     view.setVisual(takenState);
                 } else {
-                    view.removeVisual(end.piece);
-                    model.setPieceOnSquare(end.piece, null);
+                    view.removeVisual(end.getPiece());
+                    model.setPieceOnSquare(end.getPiece(), null);
                 }
 
                 if (refresh) {
@@ -482,25 +488,25 @@ public class ChessboardController {
     }
 
     public Piece getKingWhite() {
-        return model.kingWhite;
+        return model.getKingBlack();
     }
 
     public Piece getKingBlack() {
-        return model.kingBlack;
+        return model.getKingWhite();
     }
 
     public boolean pieceUnsavable(Piece piece) {
         if (piece == null)
             return false;
 
-        for (int x = 0; x < model.squares.length; x++)
-            for (int y = 0; y < this.model.squares[x].length; y++) {
+        for (int x = 0; x < model.getSquares().length; x++)
+            for (int y = 0; y < this.model.getSquares()[x].length; y++) {
                 Square sq = getSquare(x, y);
 
-                if (sq.piece.player != piece.player)
+                if (sq.getPiece().player != piece.player)
                     continue;
 
-                if (!getValidTargetSquaresToSavePiece(sq.piece, piece).isEmpty())
+                if (!getValidTargetSquaresToSavePiece(sq.getPiece(), piece).isEmpty())
                     return false;
             }
         return true;
@@ -513,7 +519,7 @@ public class ChessboardController {
 
         for (Iterator<Square> it = ret.iterator(); it.hasNext(); ) {
             Square target = it.next(), start = getSquare(moving);
-            Piece old = target.piece;
+            Piece old = target.getPiece();
 
             model.setPieceOnSquare(moving, target);
             if (pieceThreatened(toSave))
@@ -522,7 +528,6 @@ public class ChessboardController {
             model.setPieceOnSquare(old, target);
             model.setPieceOnSquare(moving, start);
         }
-
         return ret;
     }
 
@@ -530,7 +535,7 @@ public class ChessboardController {
         if (piece == null)
             return false;
 
-        for (Iterator<Map.Entry<Piece, Square>> it = model.pieceToSquare.entrySet().iterator(); it.hasNext(); ) {
+        for (Iterator<Map.Entry<Piece, Square>> it = model.getPieceToSquare().entrySet().iterator(); it.hasNext(); ) {
             Map.Entry<Piece, Square> ent = it.next();
 
             if (ent.getKey().player == piece.player)

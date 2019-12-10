@@ -2,47 +2,57 @@ package jchess.model;
 
 import jchess.Log;
 import jchess.Player;
-import jchess.Settings;
 import jchess.UI.board.Square;
-import jchess.pieces.*;
+import jchess.pieces.Piece;
+import jchess.pieces.PieceFactory;
 
 import java.util.HashMap;
 import java.util.logging.Level;
 
 public class ChessboardModel {
 
-    public Settings settings;
-    public Square squares[][];// squares of chessboard
-    public Piece kingWhite;
-    public Piece kingBlack;
-    public Square activeSquare;
+    private Square[][] squares;// squares of chessboard
+    private Piece kingWhite;
+    private Piece kingBlack;
+    private HashMap<Piece, Square> pieceToSquare = new HashMap<Piece, Square>();
 
-    public HashMap<Piece, PieceVisual> pieceVisuals = new HashMap<Piece, PieceVisual>();
-    public HashMap<Piece, Square> pieceToSquare = new HashMap<Piece, Square>();
+    public Square[][] getSquares() {
+        return squares;
+    }
 
+    public HashMap<Piece, Square> getPieceToSquare() {
+        return pieceToSquare;
+    }
 
-    public ChessboardModel(Settings settings) {
+    public void setActiveSquare(Square activeSquare) {
+        this.activeSquare = activeSquare;
+    }
 
-        this.settings = settings;
+    private Square activeSquare;
+
+    public Piece getKingWhite() {
+        return kingWhite;
+    }
+
+    public Piece getKingBlack() {
+        return kingBlack;
+    }
+
+    public Square getActiveSquare() {
+        return activeSquare;
+    }
+
+    public ChessboardModel() {
         this.squares = new Square[8][8];// initalization of 8x8 chessboard
         for (int i = 0; i < 8; i++) {// create object for each square
             for (int y = 0; y < 8; y++) {
                 this.squares[i][y] = new Square(i, y, null);
             }
         }
-
     }
 
-    public Square getSquare(int x, int y) { // duplicate method with GUI-related getSquare
+    private Square getSquare(int x, int y) { // duplicate method with GUI-related getSquare
         return x < 0 || y < 0 || x >= this.squares.length || y >= this.squares[x].length ? null : this.squares[x][y];
-    }
-
-    public Piece getPiece(int x, int y) {
-        return getPiece(getSquare(x, y));
-    }
-
-    public Piece getPiece(Square square) {
-        return square.piece;
     }
 
     public Piece setPieceOnSquare(Piece piece, Square square) {
@@ -50,16 +60,15 @@ public class ChessboardModel {
             return null;
 
         if (pieceToSquare.containsKey(piece)) {
-            pieceToSquare.get(piece).piece = null;
+            pieceToSquare.get(piece).setPiece(null);
             pieceToSquare.remove(piece);
         }
 
         if (square != null) {
-            setPieceOnSquare(square.piece, null);
-            square.piece = piece;
+            setPieceOnSquare(square.getPiece(), null);
+            square.setPiece(piece);
             pieceToSquare.put(piece, square);
         }
-
         return piece;
     }
 
