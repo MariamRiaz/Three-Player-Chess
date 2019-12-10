@@ -33,11 +33,11 @@ public class RoundChessboardModel {
     }
 
     public Square getSquare(int x, int y) { // duplicate method with GUI-related getSquare
-        return squares.stream().filter(s -> s.pozX == x && s.pozY == y).findFirst().get();
+        return squares.stream().filter(s -> s.getPozX() == x && s.getPozY() == y).findFirst().get();
     }
 
     public Square getSquare(Piece piece) {
-        return squares.stream().filter(s -> s.piece == piece).findFirst().get();
+        return squares.stream().filter(s -> s.getPiece() == piece).findFirst().get();
     }
 
     public void setActiveSquare(Square square) {
@@ -53,7 +53,7 @@ public class RoundChessboardModel {
     }
 
     public Piece getPiece(Square square) {
-        return square.piece;
+        return square.getPiece();
     }
 
 

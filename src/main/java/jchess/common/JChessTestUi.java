@@ -31,15 +31,15 @@ public class JChessTestUi extends SingleFrameApplication{
         frame.setLocationByPlatform(true);
         Settings settings = new Settings();
         RoundChessboardController controller = new RoundChessboardController(settings);
-        frame.add(controller.view);
-        controller.view.addMouseListener(new MouseListener() {
+        frame.add(controller.getView());
+        controller.getView().addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 Square square = controller.getSquareFromClick(e.getX(), e.getY());
                 controller.select(square);
-                if(square.piece != null) {
-                    HashSet<Square> validSquares = controller.getValidTargetSquares(square.piece);
-                    controller.view.setMoves(validSquares);
+                if(square.getPiece() != null) {
+                    HashSet<Square> validSquares = controller.getValidTargetSquares(square.getPiece());
+                    controller.getView().setMoves(validSquares);
                 }
             }
 

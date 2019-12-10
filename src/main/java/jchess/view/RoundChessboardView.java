@@ -233,8 +233,8 @@ public class RoundChessboardView extends JPanel {
     public void setVisuals4NewGame(List<Square> squares, int rows, int cellsPerRow) {
         intializeCells(rows, cellsPerRow);
         for(Square square: squares) {
-            if(square.piece != null) {
-                setVisual(square.piece, square.pozX, square.pozY);
+            if(square.getPiece() != null) {
+                setVisual(square.getPiece(), square.getPozX(), square.getPozY());
             }
         }
     }
