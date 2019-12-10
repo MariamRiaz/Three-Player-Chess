@@ -29,9 +29,7 @@ import jchess.Player;
 import jchess.Settings;
 
 /**
- * Class to representing the full game time
- * 
- * @param game The current game
+ * Class to represent the full game clock logic
  */
 public class GameClock implements Runnable {
 
@@ -40,7 +38,9 @@ public class GameClock implements Runnable {
 	private Thread thread;
 	private Game game;
 	public GameClockView gameClockView;
-
+	/**
+	 * @param game The current game
+	 */
 	public GameClock(Game game) {
 		super();
 		gameClockView = new GameClockView(game);
@@ -50,11 +50,10 @@ public class GameClock implements Runnable {
 		this.runningClock = gameClockView.clock1;// running/active clock
 		this.game = game;
 		this.settings = game.settings;
-		//this.background = new BufferedImage(600, 600, BufferedImage.TYPE_INT_ARGB);
 
 		int time = this.settings.getTimeForGame();
 
-		this.setTimes(time, time, time);
+		this.setTimes(time);
 		this.setPlayers(this.settings.playerBlack, this.settings.playerWhite, this.settings.playerGray);
 
 		this.thread = new Thread(this);
@@ -82,6 +81,7 @@ public class GameClock implements Runnable {
 			Log.log(Level.SEVERE, "Error blocking thread: " + exc);
 		} catch (java.lang.IllegalMonitorStateException exc1) {
 			Log.log(Level.SEVERE, "Error blocking thread: " + exc1);
+			throw exc1;
 		}
 	}
 
@@ -104,17 +104,16 @@ public class GameClock implements Runnable {
 	/**
 	 * Method with is setting the players clocks time
 	 * 
-	 * @param t1 Capt the player time
-	 * @param t2 Capt the player time
+	 * @param time Capt the player time
 	 */
-	public void setTimes(int t1, int t2, int t3) {
+	public void setTimes(int time) {
 		/*
 		 * rather in chess game players got the same time 4 game, so why in
 		 * documentation this method've 2 parameters ?
 		 */
-		gameClockView.clock1.init(t1);
-		gameClockView.clock2.init(t2);
-		gameClockView.clock3.init(t3);
+		gameClockView.clock1.init(time);
+		gameClockView.clock2.init(time);
+		gameClockView.clock3.init(time);
 	}
 
 	/**
