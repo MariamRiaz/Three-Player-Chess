@@ -1,6 +1,7 @@
 package jchess.view;
 
 import jchess.GUI;
+import jchess.Player;
 import jchess.Settings;
 import jchess.UI.board.Square;
 import jchess.controller.ChessboardController;
@@ -226,7 +227,17 @@ public class ChessboardView extends JPanel {
     public void setVisual(Piece piece) {
         if (piece == null)
             return;
-        this.pieceVisuals.put(piece, new PieceVisual(piece.player.color == piece.player.color.black ? piece.type + "-B.png" : piece.type + "-W.png"));
+        String pieceImageExtension = "";
+        switch (piece.player.color) {
+            case black:
+                pieceImageExtension = "-B.png";
+            case white:
+                pieceImageExtension = "-W.png";
+            case gray:
+                pieceImageExtension = "-B.png";
+        }
+        System.out.println(piece.type + pieceImageExtension + "------------------------------------------");
+        this.pieceVisuals.put(piece, new PieceVisual(piece.type + pieceImageExtension));
     }
 
     public void removeVisual(Piece piece) {
@@ -248,10 +259,10 @@ public class ChessboardView extends JPanel {
         if (player == 1) {
             rowPawns = 1;
             rowFigures = 0;
-        } else if (player == 2){
+        } else if (player == 2) {
             rowPawns = 6;
             rowFigures = 7;
-        } else if (player == 3){
+        } else if (player == 3) {
             rowPawns = 4;
             rowFigures = 3;
         }
