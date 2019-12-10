@@ -1,19 +1,25 @@
-package jchess.UI.board;
+package jchess.common;
 
 import java.awt.*;
-import java.awt.geom.AffineTransform;
 
 public class CartesianPolarConverter {
 
-    public double getRadiusFromCartesian(Point point, Point circleCenter) {
+    private double getRadiusFromCartesian(Point point, Point circleCenter) {
         double xDistance = Math.pow(point.getX()-circleCenter.getX(), 2);
         double yDistance = Math.pow(point.getY()-circleCenter.getY(), 2);
         return Math.sqrt(xDistance + yDistance);
     }
 
-    public double getDegreesFromCartesian(Point point, Point circleCenter) {
-       return Math.atan2(point.getY()-circleCenter.getY(),
+    private double getDegreesFromCartesian(Point point, Point circleCenter) {
+       double degrees = Math.atan2(point.getY()-circleCenter.getY(),
                point.getX()-circleCenter.getX()) * 180/Math.PI;
+       return degrees >=0 ? degrees : degrees + 360;
+    }
+
+    public PolarPoint getPolarFromCartesian(Point point, Point circleCenter) {
+        double radius = getRadiusFromCartesian(point, circleCenter);
+        double degrees = getDegreesFromCartesian(point, circleCenter);
+        return new PolarPoint(radius, degrees);
     }
 
     private int getXFromPolar(PolarPoint point) {

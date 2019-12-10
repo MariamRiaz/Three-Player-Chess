@@ -1,4 +1,4 @@
-package jchess.UI.board;
+package jchess.common;
 
 public class PolarPoint {
 

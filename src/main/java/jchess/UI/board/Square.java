@@ -30,4 +30,9 @@ public class Square {
 	public int getY() {
 		return pozY;
 	}
+
+	public void setPiece(Piece piece) {
+		this.piece = piece;
+	}
+
 }

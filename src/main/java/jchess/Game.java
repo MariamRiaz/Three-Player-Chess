@@ -29,8 +29,10 @@ import jchess.UI.Chat;
 import jchess.UI.GameClock;
 import jchess.UI.board.Square;
 import jchess.controller.ChessboardController;
+import jchess.controller.RoundChessboardController;
 import jchess.pieces.MoveHistory;
 import jchess.pieces.Piece;
+import jchess.view.RoundChessboardView;
 
 import java.awt.*;
 import java.io.File;
@@ -51,7 +53,8 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
 
     public Settings settings;
     public boolean blockedChessboard;
-    public ChessboardController chessboardController;
+    public RoundChessboardController chessboardController;
+    private Point circleCenter;
     private Player activePlayer;
     public GameClock gameClock;
     public Client client;
@@ -62,10 +65,10 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
         this.setLayout(null);
         this.moves = new MoveHistory(this);
         settings = new Settings();
-        chessboardController = new ChessboardController(this.settings);
-        chessboardController.initView();
-        chessboardController.view.addMouseListener(this);
+        chessboardController = new RoundChessboardController(this.settings);
+
         this.add(chessboardController.view);
+        chessboardController.view.addMouseListener(this);
         // this.chessboard.
         gameClock = new GameClock(this);
         gameClock.gameClockView.setSize(new Dimension(400, 100));
@@ -230,7 +233,6 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
      * Method to Start new game
      */
     public void newGame() {
-        chessboardController.setPieces4NewGame();
 
         // Log.log("new game, game type: "+settings.gameType.name());
 
@@ -242,11 +244,11 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
         // to fix rendering artefacts on first run
         Game activeGame = JChessApp.jcv.getActiveTabGame();
         if (activeGame != null && JChessApp.jcv.getNumberOfOpenedTabs() == 0) {
-            activeGame.chessboardController.resizeChessboard();
+//            activeGame.chessboardController.resizeChessboard();
             activeGame.chessboardController.repaint();
             activeGame.repaint();
         }
-        chessboardController.repaint();
+//        chessboardController.repaint();
         this.repaint();
         // dirty hacks ends over here :)
     }
@@ -394,6 +396,7 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
                     int y = event.getY();// get Y position of mouse
 
                     Square sq = chessboardController.getSquareFromClick(x, y);
+                    chessboardController.select(sq); //TODO
                     if ((sq == null && sq.getPiece() == null && chessboardController.getActiveSquare() == null)
                             || (this.chessboardController.getActiveSquare() == null && sq.getPiece() != null
                             && sq.getPiece().player != this.activePlayer)) {
@@ -465,7 +468,7 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
     public void componentResized(ComponentEvent e) {
         int height = this.getHeight() >= this.getWidth() ? this.getWidth() : this.getHeight();
         int chess_height = (int) Math.round((height * 0.8) / 8) * 8;
-        this.chessboardController.resizeChessboard((int) chess_height);
+//        this.chessboardController.resizeChessboard((int) chess_height);
         chess_height = this.chessboardController.getHeight();
         this.moves.getScrollPane().setLocation(new Point(chess_height + 5, 100));
         this.moves.getScrollPane().setSize(this.moves.getScrollPane().getWidth(), chess_height - 100);

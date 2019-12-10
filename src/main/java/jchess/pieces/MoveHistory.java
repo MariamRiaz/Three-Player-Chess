@@ -22,6 +22,7 @@ package jchess.pieces;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Stack;
 import javax.swing.JScrollPane;
 import javax.swing.table.*;
@@ -471,23 +472,21 @@ public class MoveHistory extends AbstractTableModel {
             int yTo = 9;
             boolean pieceFound = false;
             if (locMove.length() <= 3) {
-                Square[][] squares = this.game.chessboardController.getSquares();
+                List<Square> squares = this.game.chessboardController.getSquares();
                 xTo = locMove.charAt(from) - 97;// from ASCII
                 yTo = ChessboardController.bottom - (locMove.charAt(from + 1) - 49);// from ASCII
-                for (int i = 0; i < squares.length && !pieceFound; i++) {
-                    for (int j = 0; j < squares[i].length && !pieceFound; j++) {
-                        if (squares[i][j].getPiece() == null
-                                || this.game.getActivePlayer().color != squares[i][j].getPiece().player.color) {
-                            continue;
-                        }
-                        HashSet<Square> pieceMoves = this.game.chessboardController.getValidTargetSquares(squares[i][j].getPiece());
-                        for (Object square : pieceMoves) {
-                            Square currSquare = (Square) square;
-                            if (currSquare.getX() == xTo && currSquare.getY() == yTo) {
-                                xFrom = squares[i][j].getX();
-                                yFrom = squares[i][j].getY();
-                                pieceFound = true;
-                            }
+                for(Square square: squares) {
+                    if (square.getPiece() == null
+                            || this.game.getActivePlayer().color != square.getPiece().player.color) {
+                        continue;
+                    }
+                    HashSet<Square> pieceMoves = this.game.chessboardController.getValidTargetSquares(square.getPiece());
+                    for (Object oldSquare : pieceMoves) {
+                        Square currSquare = (Square) oldSquare;
+                        if (currSquare.getX() == xTo && currSquare.getY() == yTo) {
+                            xFrom = square.getX();
+                            yFrom = square.getY();
+                            pieceFound = true;
                         }
                     }
                 }

@@ -81,7 +81,7 @@ public class ChessboardView extends JPanel {
             if (sq != null && ent.getValue() != null) {
                 p.x = (int) (getTopLeftPoint().x + sq.pozX * square_height);
                 p.y = (int) (getTopLeftPoint().y + sq.pozY * square_height);
-                ent.getValue().draw(g, p.x, p.y, (int) square_height, (int) square_height);// draw image of Piece
+//                ent.getValue().draw(g, p.x, p.y, (int) square_height, (int) square_height);// draw image of Piece
             }
         }
         // --endOf--drawPiecesOnSquares
