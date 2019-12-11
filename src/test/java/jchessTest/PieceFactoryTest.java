@@ -10,31 +10,31 @@ import jchess.Player;
 public class PieceFactoryTest {
     @Test
     public void testRookCreation() {
-        assertTrue(PieceFactory.createRook(new Player()) != null);
+        assertNotNull(PieceFactory.createRook(new Player()));
     }
 
     @Test
     public void testKingCreation() {
-        assertTrue(PieceFactory.createKing(new Player()) != null);
+        assertNotNull(PieceFactory.createKing(new Player()));
     }
 
     @Test
     public void testKnightCreation() {
-        assertTrue(PieceFactory.createKnight(new Player()) != null);
+        assertNotNull(PieceFactory.createKnight(new Player()));
     }
 
     @Test
     public void testQueenCreation() {
-        assertTrue(PieceFactory.createQueen(new Player()) != null);
+        assertNotNull(PieceFactory.createQueen(new Player()));
     }
 
     @Test
     public void testBishopCreation() {
-        assertTrue(PieceFactory.createBishop(new Player()) != null);
+        assertNotNull(PieceFactory.createBishop(new Player()));
     }
 
     @Test
     public void testPawnCreation() {
-        assertTrue(PieceFactory.createPawn(new Player(), false) != null);
+        assertNotNull(PieceFactory.createPawn(new Player(), false));
     }
 }
