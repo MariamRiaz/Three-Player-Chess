@@ -142,7 +142,6 @@ public class Client implements Runnable {
 					game.client = this;
 					game.chat.client = this;
 					game.newGame();// start new Game
-					game.chessboardController.draw();
 				} else if (in.equals("#errorConnection")) {
 					game.chat.addMessage("** " + Settings.lang("error_connecting_one_of_player") + " **");
 				} else if (in.equals("#undoAsk") && !this.isObserver) {

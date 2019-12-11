@@ -9,6 +9,7 @@ import java.util.logging.Level;
 
 import jchess.GUI;
 import jchess.Log;
+import jchess.view.RoundChessboardView;
 
 public class PieceVisual {
 	private final Image image;
@@ -31,17 +32,10 @@ public class PieceVisual {
 	 * @param width The width for the PieceVisual image.
 	 * @param height The height for the PieceVisual image.
 	 */
-	public final void draw(Graphics g, int x, int y, int width, int height) {
+	public final void draw(Graphics g, int x, int y, int width, int height, RoundChessboardView view) {
 		try {
-			Graphics2D g2d = (Graphics2D) g;
-			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			if (image != null && g != null) {
-				BufferedImage resized = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB_PRE);
-				Graphics2D imageGr = (Graphics2D) resized.createGraphics();
-				imageGr.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-				imageGr.drawImage(image, 0, 0, width, height, null);
-				imageGr.dispose();
-				g2d.drawImage(resized.getScaledInstance( width, height, 0), x, y, null);
+				g.drawImage(image, x, y, width, height, view);
 			} else {
 				Log.log(Level.SEVERE, "image is null!");
 			}

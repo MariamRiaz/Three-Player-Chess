@@ -6,8 +6,8 @@ repositories {
     mavenCentral()
 }
 
-sourceCompatibility = 1.6
-targetCompatibility = 1.6
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 jar {
     manifest {
@@ -26,7 +26,6 @@ if (hasProperty('buildScan')) {
 }
 
 dependencies {
-    // https://mvnrepository.com/artifact/org.jdesktop/appframework
     compile group: 'org.jdesktop', name: 'appframework', version: '1.0.3'
     testCompile 'junit:junit:4.12'
 }
