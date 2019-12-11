@@ -116,7 +116,7 @@ public class RoundChessboardModel {
         Player player3 = plGray;
 
         initializePiecesForPlayer(player1, 0);
-        initializePiecesForPlayer(player2, 10);
-        initializePiecesForPlayer(player3, 14);
+        initializePiecesForPlayer(player2, 8);
+        initializePiecesForPlayer(player3, 16);
     }
 }
