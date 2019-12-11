@@ -1,8 +1,7 @@
-package jchess.common;
+package jchess.view;
 
+import jchess.helper.PolarPoint;
 import jchess.pieces.PieceVisual;
-
-import java.awt.*;
 
 public class PolarCell {
 

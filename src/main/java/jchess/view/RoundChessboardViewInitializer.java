@@ -1,14 +1,11 @@
-package jchess.common;
+package jchess.view;
 
-import javafx.util.Pair;
-import jchess.UI.board.Square;
-import jchess.model.ChessboardModel;
+import jchess.helper.CartesianPolarConverter;
+import jchess.helper.PolarPoint;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class RoundChessboardViewInitializer {
 
@@ -18,17 +15,10 @@ public class RoundChessboardViewInitializer {
 
     private int rows;
 
-    private CartesianPolarConverter converter;
-
     public RoundChessboardViewInitializer(int imageSize, int rows, int cellsPerRow) {
-        this.converter = new CartesianPolarConverter();
         this.imageSize = imageSize;
         this.cellsPerRow = cellsPerRow;
         this.rows = rows;
-    }
-
-    private Point getCenter() {
-        return new Point(imageSize/2, imageSize/2);
     }
 
     public List<PolarCell> createCells() {

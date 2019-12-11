@@ -1,11 +1,8 @@
-package jchess.common;
+package jchess.helper;
 
 import jchess.Settings;
 import jchess.UI.board.Square;
-import jchess.controller.ChessboardController;
 import jchess.controller.RoundChessboardController;
-import jchess.view.ChessboardView;
-import jchess.view.RoundChessboardView;
 import org.jdesktop.application.SingleFrameApplication;
 
 import javax.swing.*;

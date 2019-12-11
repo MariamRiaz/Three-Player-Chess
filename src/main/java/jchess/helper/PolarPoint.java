@@ -1,4 +1,4 @@
-package jchess.common;
+package jchess.helper;
 
 public class PolarPoint {
 

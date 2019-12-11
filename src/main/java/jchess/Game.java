@@ -171,7 +171,6 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
         newGUI.blockedChessboard = true;
         newGUI.moves.setMoves(tempStr);
         newGUI.blockedChessboard = false;
-        newGUI.chessboardController.repaint();
         // newGUI.chessboard.draw();
     }
 
@@ -243,7 +242,6 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
         Game activeGame = JChessApp.jcv.getActiveTabGame();
         if (activeGame != null && JChessApp.jcv.getNumberOfOpenedTabs() == 0) {
 //            activeGame.chessboardController.resizeChessboard();
-            activeGame.chessboardController.repaint();
             activeGame.repaint();
         }
 //        chessboardController.repaint();
@@ -327,8 +325,6 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
             status = chessboardController.undo(true);
             if (status) {
                 this.switchActive();
-            } else {
-                chessboardController.repaint();// repaint for sure
             }
         } else if (this.settings.gameType == Settings.gameTypes.network) {
             this.client.sendUndoAsk();
@@ -370,8 +366,6 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
         if (this.settings.gameType == Settings.gameTypes.local) {
             if (status) {
                 this.nextMove();
-            } else {
-                chessboardController.repaint();// repaint for sure
             }
         } else {
             throw new UnsupportedOperationException(Settings.lang("operation_supported_only_in_local_game"));
@@ -389,12 +383,11 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
         {
 
             if (!blockedChessboard) {
-                try {
+//                try {
                     int x = event.getX();// get X position of mouse
                     int y = event.getY();// get Y position of mouse
 
-                    Square sq = chessboardController.getSquareFromClick(x, y);
-                    chessboardController.select(sq); //TODO
+                    Square sq = chessboardController.getSquareFromClick(x, y);//TODO
                     if ((sq == null && sq.getPiece() == null && chessboardController.getActiveSquare() == null)
                             || (this.chessboardController.getActiveSquare() == null && sq.getPiece() != null
                             && sq.getPiece().player != this.activePlayer)) {
@@ -441,12 +434,6 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
 						}*/
 
                     }
-
-                } catch (NullPointerException exc) {
-                    System.err.println(exc.getMessage());
-                    chessboardController.repaint();
-                    return;
-                }
             } else if (blockedChessboard) {
                 Log.log("Chessboard is blocked");
             }
