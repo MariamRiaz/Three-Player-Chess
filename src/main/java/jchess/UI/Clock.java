@@ -50,7 +50,7 @@ public class Clock {
 	/**
 	 * Method to decrement value of left time
 	 * 
-	 * @return bool true if time_left > 0, else returns false
+	 * @return returns true if the time can still be decremented
 	 */
 	public boolean decrement() {
 		if (this.time_left > 0) {

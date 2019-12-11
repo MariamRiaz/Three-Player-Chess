@@ -31,6 +31,7 @@ public class PieceVisual {
 	 * @param y The top-left point's y value.
 	 * @param width The width for the PieceVisual image.
 	 * @param height The height for the PieceVisual image.
+	 * @param view The view where the image will be drawn
 	 */
 	public final void draw(Graphics g, int x, int y, int width, int height, RoundChessboardView view) {
 		try {
