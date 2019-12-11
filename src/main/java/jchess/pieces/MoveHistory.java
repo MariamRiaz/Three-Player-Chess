@@ -32,7 +32,7 @@ import jchess.Log;
 import jchess.Player;
 import jchess.Settings;
 import jchess.UI.board.Square;
-import jchess.UI.MovesHistoryView;
+import jchess.view.MovesHistoryView;
 import jchess.controller.RoundChessboardController;
 
 import javax.swing.JOptionPane;
@@ -50,41 +50,27 @@ public class MoveHistory extends AbstractTableModel {
     private int columnsNum = 3;
     private int rowsNum = 0;
     private String[] names = new String[]{Settings.lang("white"), Settings.lang("black"), Settings.lang("gray")};
-    //private MyDefaultTableModel tableModel;
-    //private JScrollPane scrollPane;
-    //private JTable table;
     private boolean enterBlack = false;
     private Game game;
     protected Stack<PlayedMove> moveBackStack = new Stack<PlayedMove>();
     protected Stack<PlayedMove> moveForwardStack = new Stack<PlayedMove>();
     private MovesHistoryView movesHistoryView;
 
-
     public enum castling {
         none, shortCastling, longCastling
     }
-
     public MoveHistory(Game game) {
         super();
         this.movesHistoryView = new MovesHistoryView();
-
-        //this.tableModel = new MyDefaultTableModel();
-        //this.table = new JTable(this.tableModel);
-        //this.scrollPane = new JScrollPane(this.table);
-        //this.scrollPane.setMaximumSize(new Dimension(100, 100));
-        //this.table.setMinimumSize(new Dimension(100, 100));
         this.game = game;
-
         this.movesHistoryView.addColumn(this.names[0]);
         this.movesHistoryView.addColumn(this.names[1]);
         this.movesHistoryView.addColumn(this.names[2]);
         this.addTableModelListener(null);
-        //this.tableModel.addTableModelListener(null);
-        //this.scrollPane.setAutoscrolls(true);
     }
-
-    public void draw() {
-    }
+//
+//    public void draw() {
+//    }
 
     @Override
     public String getValueAt(int x, int y) {
@@ -100,10 +86,6 @@ public class MoveHistory extends AbstractTableModel {
     public int getColumnCount() {
         return this.columnsNum;
     }
-
-	/*protected void addRow() {
-		this.tableModel.addRow(new String[2]);
-	}*/
 
     protected void addCastling(String move) {
         this.move.remove(this.move.size() - 1);// remove last element (move of Rook)

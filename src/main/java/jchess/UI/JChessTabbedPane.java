@@ -25,6 +25,7 @@ import javax.swing.*;
 import jchess.GUI;
 import jchess.JChessApp;
 import jchess.Log;
+import jchess.view.NewGameWindow;
 
 import java.awt.*;
 import java.awt.event.*;

@@ -18,15 +18,15 @@
  * Mateusz Sławomir Lach ( matlak, msl )
  * Damian Marciniak
  */
-package jchess.UI;
+package jchess.controller;
 
-import java.awt.*;
-import java.awt.image.*;
 import java.util.logging.Level;
 import jchess.Game;
 import jchess.Log;
 import jchess.Player;
 import jchess.Settings;
+import jchess.helper.Clock;
+import jchess.view.GameClockView;
 
 /**
  * Class to represent the full game clock logic

@@ -26,12 +26,11 @@ import java.awt.event.MouseListener;
 import javax.swing.*;
 
 import jchess.UI.Chat;
-import jchess.UI.GameClock;
+import jchess.controller.GameClock;
 import jchess.UI.board.Square;
 import jchess.controller.RoundChessboardController;
 import jchess.pieces.MoveHistory;
 import jchess.pieces.Piece;
-import jchess.view.RoundChessboardView;
 
 import java.awt.*;
 import java.io.File;
