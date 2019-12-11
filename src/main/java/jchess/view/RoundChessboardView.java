@@ -177,7 +177,7 @@ public class RoundChessboardView extends JPanel {
         String pieceVisualExtension = "";
         if (piece.player.color == Player.colors.black) pieceVisualExtension = "-B.png";
         if (piece.player.color == Player.colors.white) pieceVisualExtension = "-W.png";
-        if (piece.player.color == Player.colors.gray) pieceVisualExtension = "-B.png";
+        if (piece.player.color == Player.colors.gray) pieceVisualExtension = "-G.png";
 
         PieceVisual visual = new PieceVisual(piece.type + pieceVisualExtension);
         cell.setPieceVisual(visual);
