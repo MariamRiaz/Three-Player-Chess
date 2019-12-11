@@ -22,6 +22,7 @@ package jchess.pieces;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Stack;
 import javax.swing.JScrollPane;
 import javax.swing.table.*;
@@ -31,8 +32,8 @@ import jchess.Log;
 import jchess.Player;
 import jchess.Settings;
 import jchess.UI.board.Square;
-import jchess.controller.ChessboardController;
 import jchess.UI.MovesHistoryView;
+import jchess.controller.RoundChessboardController;
 
 import javax.swing.JOptionPane;
 
@@ -158,7 +159,7 @@ public class MoveHistory extends AbstractTableModel {
         String locMove = new String(beginState.symbol);
 
         if (game.settings.upsideDown) {
-            locMove += Character.toString((char) ((ChessboardController.bottom - begin.getPozX()) + 97));// add letter of Square from
+            locMove += Character.toString((char) ((RoundChessboardController.bottom - begin.getPozX()) + 97));// add letter of Square from
             // which move was made
             locMove += Integer.toString(begin.getPozY() + 1);// add number of Square from which move was made
         } else {
@@ -173,7 +174,7 @@ public class MoveHistory extends AbstractTableModel {
         }
 
         if (game.settings.upsideDown) {
-            locMove += Character.toString((char) ((ChessboardController.bottom - end.getPozX()) + 97));// add letter of Square to which
+            locMove += Character.toString((char) ((RoundChessboardController.bottom - end.getPozX()) + 97));// add letter of Square to which
             // move was made
             locMove += Integer.toString(end.getPozY() + 1);// add number of Square to which move was made
 
@@ -471,31 +472,29 @@ public class MoveHistory extends AbstractTableModel {
             int yTo = 9;
             boolean pieceFound = false;
             if (locMove.length() <= 3) {
-                Square[][] squares = this.game.chessboardController.getSquares();
+                List<Square> squares = this.game.chessboardController.getSquares();
                 xTo = locMove.charAt(from) - 97;// from ASCII
-                yTo = ChessboardController.bottom - (locMove.charAt(from + 1) - 49);// from ASCII
-                for (int i = 0; i < squares.length && !pieceFound; i++) {
-                    for (int j = 0; j < squares[i].length && !pieceFound; j++) {
-                        if (squares[i][j].getPiece() == null
-                                || this.game.getActivePlayer().color != squares[i][j].getPiece().player.color) {
-                            continue;
-                        }
-                        HashSet<Square> pieceMoves = this.game.chessboardController.getValidTargetSquares(squares[i][j].getPiece());
-                        for (Object square : pieceMoves) {
-                            Square currSquare = (Square) square;
-                            if (currSquare.getPozX() == xTo && currSquare.getPozY() == yTo) {
-                                xFrom = squares[i][j].getPozX();
-                                yFrom = squares[i][j].getPozY();
-                                pieceFound = true;
-                            }
+                yTo = RoundChessboardController.bottom - (locMove.charAt(from + 1) - 49);// from ASCII
+                for(Square square: squares) {
+                    if (square.getPiece() == null
+                            || this.game.getActivePlayer().color != square.getPiece().player.color) {
+                        continue;
+                    }
+                    HashSet<Square> pieceMoves = this.game.chessboardController.getValidTargetSquares(square.getPiece());
+                    for (Object oldSquare : pieceMoves) {
+                        Square currSquare = (Square) oldSquare;
+                        if (currSquare.getPozX() == xTo && currSquare.getPozY() == yTo) {
+                            xFrom = square.getPozX();
+                            yFrom = square.getPozY();
+                            pieceFound = true;
                         }
                     }
                 }
             } else {
                 xFrom = locMove.charAt(from) - 97;// from ASCII
-                yFrom = ChessboardController.bottom - (locMove.charAt(from + 1) - 49);// from ASCII
+                yFrom = RoundChessboardController.bottom - (locMove.charAt(from + 1) - 49);// from ASCII
                 xTo = locMove.charAt(from + 3) - 97;// from ASCII
-                yTo = ChessboardController.bottom - (locMove.charAt(from + 4) - 49);// from ASCII
+                yTo = RoundChessboardController.bottom - (locMove.charAt(from + 4) - 49);// from ASCII
             }
             canMove = this.game.simulateMove(xFrom, yFrom, xTo, yTo);
             if (!canMove) // if move is illegal
