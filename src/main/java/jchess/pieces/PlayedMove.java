@@ -19,8 +19,10 @@
 package jchess.pieces;
 
 import jchess.UI.board.Square;
-import jchess.controller.ChessboardController;
+import jchess.controller.RoundChessboardController;
+import jchess.model.RoundChessboardModel;
 import jchess.pieces.MoveHistory.castling;
+import jchess.view.RoundChessboardViewInitializer;
 
 public class PlayedMove {
 
@@ -48,8 +50,8 @@ public class PlayedMove {
 
 		if (movedPiece.type.equals("Pawn") && Math.abs(to.getPozY() - from.getPozY()) == 2) {
 			this.wasPawnTwoFieldsMove = true;
-		} else if (movedPiece.type.equals("Pawn") && to.getPozY() == ChessboardController.bottom
-				|| to.getPozY() == ChessboardController.top && promotedPiece != null) {
+		} else if (movedPiece.type.equals("Pawn") && to.getPozY() == RoundChessboardController.bottom
+				|| to.getPozY() == RoundChessboardController.top && promotedPiece != null) {
 			this.promotedTo = promotedPiece;
 		}
 	}

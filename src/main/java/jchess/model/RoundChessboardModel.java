@@ -21,6 +21,9 @@ public class RoundChessboardModel {
     private int squaresPerRow;
     private int rows;
 
+    public static int botoom = 5;
+    public static int top = 0;
+
 
     public RoundChessboardModel(int rows, int squaresPerRow, Settings settings) {
         this.squares = new ArrayList<Square>();
