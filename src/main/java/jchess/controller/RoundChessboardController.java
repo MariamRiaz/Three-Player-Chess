@@ -13,14 +13,13 @@ import jchess.pieces.PlayedMove;
 import jchess.view.RoundChessboardView;
 
 import java.awt.*;
-import java.awt.event.MouseAdapter;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class RoundChessboardController extends MouseAdapter {
+public class RoundChessboardController {
 
     private RoundChessboardModel model;
     private RoundChessboardView view;
@@ -42,15 +41,15 @@ public class RoundChessboardController extends MouseAdapter {
     // |-> Pawn whose in last turn moved two square
     public Piece twoSquareMovedPawn = null;
     public Piece twoSquareMovedPawn2 = null;
-    private MoveHistory moves_history;
+    private MoveHistory movesHistory;
 
     public static int bottom = 7;
     public static int top = 0;
 
-    public RoundChessboardController(Settings settings) {
+    public RoundChessboardController(Settings settings, MoveHistory movesHistory) {
         this.model = new RoundChessboardModel(rows, squaresPerRow, settings);
+        this.movesHistory = movesHistory;
         this.view = new RoundChessboardView(600, "3-player-board.png", rows, squaresPerRow, model.squares);
-        view.addMouseListener(this);
         this.settings = settings;
     }
 
@@ -308,12 +307,12 @@ public class RoundChessboardController extends MouseAdapter {
             this.unselect();// unselect square
         }
 
-//        if (clearForwardHistory) {TODO uncomment
-//            this.moves_history.clearMoveForwardStack();
-//            this.moves_history.addMove(begin, end, tempBegin, tempBeginState, tempEnd, tempEndState, true, wasCastling, wasEnPassant, promotedPiece);
-//        } else {
-//            this.moves_history.addMove(begin, end, tempBegin, tempBeginState, tempEnd, tempEndState, false, wasCastling, wasEnPassant, promotedPiece);
-//        }
+        if (clearForwardHistory) {//TODO uncomment
+            this.movesHistory.clearMoveForwardStack();
+            this.movesHistory.addMove(begin, end, tempBegin, tempBeginState, tempEnd, tempEndState, true, wasCastling, wasEnPassant, promotedPiece);
+        } else {
+            this.movesHistory.addMove(begin, end, tempBegin, tempBeginState, tempEnd, tempEndState, false, wasCastling, wasEnPassant, promotedPiece);
+        }
         view.updateAfterMove(end.getPiece(), begin.getPozX(), begin.getPozY(), end.getPozX(), end.getPozY());
         end.getPiece().setHasMoved(true);
     }
@@ -326,7 +325,7 @@ public class RoundChessboardController extends MouseAdapter {
 
     public synchronized boolean undo(boolean refresh) // undo last move
     {
-        PlayedMove last = this.moves_history.undo();
+        PlayedMove last = this.movesHistory.undo();
 
         System.out.print(last != null);
         if (last != null && last.getFrom() != null) {
@@ -370,7 +369,7 @@ public class RoundChessboardController extends MouseAdapter {
                 }
 
                 // check one more move back for en passant
-                PlayedMove oneMoveEarlier = this.moves_history.getLastMoveFromHistory();
+                PlayedMove oneMoveEarlier = this.movesHistory.getLastMoveFromHistory();
                 if (oneMoveEarlier != null && oneMoveEarlier.wasPawnTwoFieldsMove()) {
                     Piece canBeTakenEnPassant = model.getSquare(oneMoveEarlier.getTo().getPozX(),
                             oneMoveEarlier.getTo().getPozY()).getPiece();
@@ -414,7 +413,7 @@ public class RoundChessboardController extends MouseAdapter {
     public boolean redo(boolean refresh) {
         if (this.settings.gameType == Settings.gameTypes.local) // redo only for local game
         {
-            PlayedMove first = this.moves_history.redo();
+            PlayedMove first = this.movesHistory.redo();
 
             Square from = null;
             Square to = null;

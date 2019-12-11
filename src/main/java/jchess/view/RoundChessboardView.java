@@ -115,33 +115,15 @@ public class RoundChessboardView extends JPanel {
             drawImage(activeCell, selectedSquareImage, g);
 
             try {
-                for(Square move: moves) {
+                for (Square move : moves) {
                     PolarCell cell = getCellByPosition(move.getPozX(), move.getPozY());
                     drawImage(cell, ableSquareImage, g);
                 }
-                } catch(NullPointerException e) {
-                    Log.log(Level.SEVERE, "List of moves is empty or not initialized");
-                }
+            } catch (NullPointerException e) {
+                Log.log(Level.SEVERE, "List of moves is empty or not initialized");
+            }
         }
-
-//        // --endOf--drawPiecesOnSquares
-//        if (activeSquare != null) // if some square is active
-////        if (((this.activeSquare.pozX + 1) != 0) && ((this.activeSquare.pozY + 1) != 0)) // if some square is active
-//        {
-//            g2d.drawImage(selectedSquareImage, (this.activeSquare.pozX * (int) square_height) + topLeftPoint.x,
-//                    (this.activeSquare.pozY * (int) square_height) + topLeftPoint.y, null);// draw image of selected
-//            // square
-//            Square tmpSquare = controller.getSquare((int) this.activeSquare.pozX, (int) this.activeSquare.pozY);
-//            if (tmpSquare.piece != null)
-//                this.moves = controller.getValidTargetSquaresToSavePiece(tmpSquare.piece, controller.getKing(tmpSquare.piece.player));
-//
-//            for (Iterator it = moves.iterator(); moves != null && it.hasNext(); ) {
-//                Square sq = (Square) it.next();
-//                g2d.drawImage(ableSquareImage, (sq.pozX * (int) square_height) + topLeftPoint.x,
-//                        (sq.pozY * (int) square_height) + topLeftPoint.y, null);
-//            }
-//        }
-    }/*--endOf-paint--*/
+    }
 
     private void drawPieceVisuals(Graphics g) {
         for (PolarCell cell : cells) {
