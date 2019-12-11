@@ -227,16 +227,18 @@ public class ChessboardView extends JPanel {
     public void setVisual(Piece piece) {
         if (piece == null)
             return;
+
         String pieceImageExtension = "";
-        switch (piece.player.color) {
-            case black:
-                pieceImageExtension = "-B.png";
-            case white:
-                pieceImageExtension = "-W.png";
-            case gray:
-                pieceImageExtension = "-B.png";
+        if (piece.player.color == Player.colors.black) {
+            pieceImageExtension = "-B.png";
         }
-        System.out.println(piece.type + pieceImageExtension + "------------------------------------------");
+        if (piece.player.color == Player.colors.white) {
+            pieceImageExtension = "-W.png";
+        }
+        if (piece.player.color == Player.colors.gray) {
+            pieceImageExtension = "-W.png";
+        }
+
         this.pieceVisuals.put(piece, new PieceVisual(piece.type + pieceImageExtension));
     }
 

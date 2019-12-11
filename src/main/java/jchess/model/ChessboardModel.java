@@ -116,6 +116,7 @@ public class ChessboardModel {
             player.goDown = true;
         }
 
+        setPieceOnSquare(PieceFactory.createRook(player), getSquare(0, i));
         setPieceOnSquare(PieceFactory.createRook(player), getSquare(7, i));
         setPieceOnSquare(PieceFactory.createKnight(player), getSquare(1, i));
         setPieceOnSquare(PieceFactory.createKnight(player), getSquare(6, i));
