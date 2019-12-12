@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 /*
-* Class that will initialze the board and pieces and will have the records where the initail pieces should be once the board is set
-* */
+* Class that holds the state of the RoundChessboard component
+*/
 
 
 public class RoundChessboardModel {

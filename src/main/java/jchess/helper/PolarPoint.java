@@ -1,8 +1,6 @@
 package jchess.helper;
 
-/*
-* Class that provides a template for polar point which will be then used in cartesianpolarconverter and polarcell class
-* to gets the currents coordinates for each square of the board
+/*Class that represents a PolarPoint object, containing a degree and radius, to determine a point in a circle
 * */
 
 public class PolarPoint {
