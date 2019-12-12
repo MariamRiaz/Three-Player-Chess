@@ -1,7 +1,6 @@
 package jchess.controller;
 /*
-* Class to represent the current state of the board, interacts between Model and view of the
-* round chess board.
+* Class that represents the interaction interface for the RoundChessboard component
 * */
 
 import jchess.JChessApp;
