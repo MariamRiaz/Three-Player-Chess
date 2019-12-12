@@ -1,4 +1,4 @@
-package jchess.UI.board;
+package jchess.entities;
 
 import jchess.pieces.Piece;
 

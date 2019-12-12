@@ -2,7 +2,7 @@ package jchess.view;
 /*
 * Class that is used to set the visuals of the pieces on the circular board
 *  */
-import jchess.helper.PolarPoint;
+import jchess.entities.PolarPoint;
 import jchess.pieces.PieceVisual;
 
 public class PolarCell {

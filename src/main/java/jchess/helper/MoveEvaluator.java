@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-import jchess.UI.board.Square;
+import jchess.entities.Square;
 import jchess.model.RoundChessboardModel;
 import jchess.pieces.Piece;
 

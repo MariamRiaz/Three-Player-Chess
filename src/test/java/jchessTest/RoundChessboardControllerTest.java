@@ -2,7 +2,7 @@ package jchessTest;
 
 import jchess.Player;
 import jchess.Settings;
-import jchess.UI.board.Square;
+import jchess.entities.Square;
 import jchess.controller.RoundChessboardController;
 import jchess.model.RoundChessboardModel;
 import jchess.controller.MoveHistory;

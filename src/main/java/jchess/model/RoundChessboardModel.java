@@ -3,7 +3,7 @@ package jchess.model;
 import jchess.Log;
 import jchess.Player;
 import jchess.Settings;
-import jchess.UI.board.Square;
+import jchess.entities.Square;
 import jchess.pieces.Piece;
 import jchess.pieces.PieceFactory;
 

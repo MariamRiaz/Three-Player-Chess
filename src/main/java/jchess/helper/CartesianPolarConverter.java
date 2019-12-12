@@ -1,5 +1,7 @@
 package jchess.helper;
 
+import jchess.entities.PolarPoint;
+
 import java.awt.*;
 
 /*

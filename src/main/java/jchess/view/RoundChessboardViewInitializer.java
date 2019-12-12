@@ -1,9 +1,7 @@
 package jchess.view;
 
-import jchess.helper.CartesianPolarConverter;
-import jchess.helper.PolarPoint;
+import jchess.entities.PolarPoint;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 

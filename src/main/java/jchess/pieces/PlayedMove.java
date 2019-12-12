@@ -19,7 +19,7 @@
  */
 package jchess.pieces;
 
-import jchess.UI.board.Square;
+import jchess.entities.Square;
 import jchess.controller.RoundChessboardController;
 import jchess.controller.MoveHistory.castling;
 

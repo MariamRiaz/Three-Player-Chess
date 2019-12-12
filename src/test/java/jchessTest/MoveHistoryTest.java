@@ -3,7 +3,7 @@ package jchessTest;
 import jchess.Game;
 import jchess.Player;
 import jchess.Settings;
-import jchess.UI.board.Square;
+import jchess.entities.Square;
 import jchess.controller.MoveHistory;
 import jchess.pieces.Piece;
 import jchess.pieces.PieceFactory;

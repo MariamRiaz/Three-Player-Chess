@@ -17,7 +17,7 @@
  * Authors:
  * Mateusz Sławomir Lach ( matlak, msl )
  */
-package jchess.UI;
+package jchess.view;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;

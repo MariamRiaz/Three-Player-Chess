@@ -1,6 +1,6 @@
 package jchess.controller;
 
-import jchess.UI.board.Square;
+import jchess.entities.Square;
 
 import java.util.Observable;
 

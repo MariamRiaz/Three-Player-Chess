@@ -13,14 +13,13 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package jchess.UI;
+package jchess.view;
 
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.ResourceMap;
 
 import javax.swing.*;
-import java.util.ResourceBundle;
 
 public class JChessAboutBox extends javax.swing.JDialog {
 
