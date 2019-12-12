@@ -15,10 +15,9 @@ import java.util.List;
 import java.util.HashSet;
 import java.util.logging.Level;
 
-/*
-* Class to generate the view of a circular board
-* */
-
+/**
+ * Class to generate the view of a circular board
+ */
 public class RoundChessboardView extends JPanel {
 
     private Image boardImage;
@@ -31,6 +30,14 @@ public class RoundChessboardView extends JPanel {
     private Point circleCenter;
     private PolarCell activeCell;
 
+    /**
+     * Constructor
+     * @param chessBoardSize        int     Size of the chessboard to be viewed
+     * @param chessBoardImagePath   String  Path of the chessboard image
+     * @param rows                  int     count of rows
+     * @param cellsPerRow           int     count of cells per row
+     * @param squares               List<Square>    List of square objects from the corresponding model
+     */
     public RoundChessboardView(int chessBoardSize, String chessBoardImagePath, int rows, int cellsPerRow, List<Square> squares) {
         super();
         this.boardImage = GUI.loadImage(chessBoardImagePath);
@@ -44,14 +51,18 @@ public class RoundChessboardView extends JPanel {
         setVisible(true);
     }
 
-    private int getCellHeight() {
-        return (chessBoardSize / 16) - 5;
-    }
-
+    /**
+     * getter for the list of PolarCells of the view
+     * @return  List of PolarCells
+     */
     public List<PolarCell> getCells() {
         return cells;
     }
 
+    /**
+     * getter for the center of the circular chessboard
+     * @return  Point of the center
+     */
     public Point getCircleCenter() {
         return circleCenter;
     }
@@ -86,26 +97,40 @@ public class RoundChessboardView extends JPanel {
     }
 
     /**
-     * Annotations to superclass Game updateing and painting the crossboard
+     * Annotations to superclass Game updating and painting the chessboard
      */
     @Override
     public void update(Graphics g) {
         repaint();
     }
 
-
+    /**
+     * sets the active cell by the selected x and y coordinate
+     * @param x     int x index
+     * @param y     int y index
+     */
     public void setActiveCell(int x, int y) {
         activeCell = getCellByPosition(x, y);
     }
 
+    /**
+     * sets active cell to null
+     */
     public void resetActiveCell() {
         activeCell = null;
     }
 
+    /**
+     * clears all possible moves of the selected piece
+     */
     public void resetPossibleMoves() {
         moves.clear();
     }
 
+    /**
+     * setter for the possible moves of the selected piece
+     * @param moves     HashSet<Square> set of possible squares to move the selected piece to
+     */
     public void setMoves(HashSet<Square> moves) {
         this.moves = moves;
     }
@@ -141,31 +166,14 @@ public class RoundChessboardView extends JPanel {
         g.drawImage(boardImage, topLeft.x, topLeft.y, this);
     }
 
-//    public void resizeChessboard(int height) {
-//        BufferedImage resized = new BufferedImage(height, height, BufferedImage.TYPE_INT_ARGB_PRE);
-//        Graphics g = resized.createGraphics();
-//        g.drawImage(boardImage, 0, 0, height, height, null);
-//        g.dispose();
-//        boardImage = resized.getScaledInstance(height, height, 0);
-//        this.square_height = (float) (height / 8);
-//        if (settings.renderLabels) {
-//            height += 2 * (this.upDownLabel.getHeight(null));
-//        }
-//        this.setSize(height, height);
-//
-//        resized = new BufferedImage((int) square_height, (int) square_height, BufferedImage.TYPE_INT_ARGB_PRE);
-//        g = resized.createGraphics();
-//        g.drawImage(this.ableSquareImage, 0, 0, (int) square_height, (int) square_height, null);
-//        g.dispose();
-//        this.ableSquareImage = resized.getScaledInstance((int) square_height, (int) square_height, 0);
-//
-//        resized = new BufferedImage((int) square_height, (int) square_height, BufferedImage.TYPE_INT_ARGB_PRE);
-//        g = resized.createGraphics();
-//        g.drawImage(this.selectedSquareImage, 0, 0, (int) square_height, (int) square_height, null);
-//        g.dispose();
-//        this.selectedSquareImage = resized.getScaledInstance((int) square_height, (int) square_height, 0);
-//    }
-
+    /**
+     * updates the RoundChessboardView after move was done
+     * @param piece     moved piece
+     * @param oldX      x index before move
+     * @param oldY      y index before move
+     * @param newX      x index after move was done
+     * @param newY      y index after move was done
+     */
     public void updateAfterMove(Piece piece, int oldX, int oldY, int newX, int newY) {
         removeVisual(piece, oldX, oldY);
         setVisual(piece, newX, newY);
@@ -174,6 +182,12 @@ public class RoundChessboardView extends JPanel {
         repaint();
     }
 
+    /**
+     * sets visuals for a piece
+     * @param piece     piece to set the visual of
+     * @param x         x index of the piece
+     * @param y         y index of the piece
+     */
     public void setVisual(Piece piece, int x, int y) {
         if (piece == null)//TODO
             return;
@@ -187,6 +201,12 @@ public class RoundChessboardView extends JPanel {
         cell.setPieceVisual(visual);
     }
 
+    /**
+     * remove  visual for a piece at the given index
+     * @param piece Piece to remove the visual from
+     * @param x     int x index of the piece
+     * @param y     int y index of the piece
+     */
     public void removeVisual(Piece piece, int x, int y) {
         PolarCell cell = getCellByPosition(x, y);
         cell.setPieceVisual(null);
