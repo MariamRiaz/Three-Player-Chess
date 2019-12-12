@@ -22,11 +22,10 @@ public class GameClockView extends JPanel {
     public Clock clock3;
 
     public GameClockView(Game game){
-        this.settings = game.settings;
+        this.settings = game.getSettings();
     }
 
     public void paint(Graphics g) {
-        // Log.log("rysuje zegary");
         super.paint(g);
         white_clock = this.clock1.prepareString();
         black_clock = this.clock2.prepareString();

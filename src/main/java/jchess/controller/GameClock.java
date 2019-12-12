@@ -49,7 +49,7 @@ public class GameClock implements Runnable {
 		gameClockView.clock3 = new Clock();// gray player clock
 		this.runningClock = gameClockView.clock1;// running/active clock
 		this.game = game;
-		this.settings = game.settings;
+		this.settings = game.getSettings();
 
 		int time = this.settings.getTimeForGame();
 
