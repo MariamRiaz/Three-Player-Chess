@@ -20,23 +20,22 @@
  */
 package jchess;
 
-import jchess.entities.Player;
-import jchess.helper.Log;
-import jchess.network.Client;
-import jchess.view.Chat;
-import jchess.entities.Square;
 import jchess.controller.GameClock;
-import jchess.controller.RoundChessboardController;
-import jchess.model.RoundChessboardModel;
 import jchess.controller.MoveHistory;
+import jchess.controller.RoundChessboardController;
+import jchess.entities.Player;
+import jchess.entities.Square;
+import jchess.exceptions.ReadGameError;
+import jchess.helper.Log;
+import jchess.model.RoundChessboardModel;
+import jchess.network.Client;
 import jchess.pieces.Piece;
+import jchess.view.Chat;
 import jchess.view.RoundChessboardView;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -47,33 +46,33 @@ import java.util.Observer;
 import java.util.logging.Level;
 
 /**
- * Class responsible for the starts of new games, loading games, saving it, and
- * for ending it. This class is also responsible for appoing player with have a
- * move at the moment
+ * Class that represents a chess game. It is responsible for starting and ending games
+ * and for storing the currently active player.
+ * It also provides functionality for saving and loading games.
  */
 public class Game extends JPanel implements Observer, ComponentListener {
 
-    public Settings settings;
+    private Settings settings;
     private boolean blockedChessboard;
-    public RoundChessboardController chessboardController;
+    private RoundChessboardController chessboardController;
     private Player activePlayer;
-    public GameClock gameClock;
-    public Client client;
-    public MoveHistory moves;
-    public Chat chat;
-    private int rows = 24;
-    private int squaresPerRow = 6;
-    private static final int chessboardSize = 800;
+    private GameClock gameClock;
+    private Client client;
+    private MoveHistory moveHistory;
+    private Chat chat;
+    private final int rows = 24;
+    private final int squaresPerRow = 6;
+    private final int chessboardSize = 800;
 
 
     public Game() {
         this.setLayout(null);
-        this.moves = new MoveHistory(this);
+        this.moveHistory = new MoveHistory(this);
         settings = new Settings();
 
         RoundChessboardModel model = new RoundChessboardModel(rows, squaresPerRow, true, settings);
         RoundChessboardView view = new RoundChessboardView(chessboardSize, "3-player-board.png", rows, squaresPerRow, model.squares);
-        chessboardController = new RoundChessboardController(model, view, this.settings, this.moves);
+        chessboardController = new RoundChessboardController(model, view, this.settings, this.moveHistory);
 
         this.add(chessboardController.getView());
         chessboardController.addSelectSquareObserver(this);
@@ -82,7 +81,7 @@ public class Game extends JPanel implements Observer, ComponentListener {
         gameClock.gameClockView.setLocation(new Point(500, 0));
         this.add(gameClock.gameClockView);
 
-        JScrollPane movesHistory = this.moves.getScrollPane();
+        JScrollPane movesHistory = this.moveHistory.getScrollPane();
         movesHistory.setSize(new Dimension(245, 350));
         movesHistory.setLocation(new Point(500, 121));
         this.add(movesHistory);
@@ -98,28 +97,53 @@ public class Game extends JPanel implements Observer, ComponentListener {
         this.setDoubleBuffered(true);
     }
 
+    public Settings getSettings() {
+        return settings;
+    }
+
+    public void setSettings(Settings settings) {
+        this.settings = settings;
+    }
+
+    public Chat getChat() {
+        return chat;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
+    public RoundChessboardController getChessboardController() {
+        return chessboardController;
+    }
+
+    public MoveHistory getMoveHistory() {
+        return moveHistory;
+    }
+
+    public GameClock getGameClock() {
+        return gameClock;
+    }
+
     /**
-     * Method to save actual state of game
+     * Method to save current state of the game to disk
      *
      * @param path address of place where game will be saved
      */
     public void saveGame(File path) {
-        File file = path;
         FileWriter fileW = null;
         try {
-            fileW = new FileWriter(file);
+            fileW = new FileWriter(path);
         } catch (java.io.IOException exc) {
             System.err.println("error creating fileWriter: " + exc);
             JOptionPane.showMessageDialog(this, Settings.lang("error_writing_to_file") + ": " + exc);
             return;
         }
         Calendar cal = Calendar.getInstance();
-        String str = new String("");
-        String info = new String("[Event \"Game\"]\n[Date \"" + cal.get(cal.YEAR) + "." + (cal.get(cal.MONTH) + 1) + "."
-                + cal.get(cal.DAY_OF_MONTH) + "\"]\n" + "[White \"" + this.settings.getPlayerWhite().name + "\"]\n[Black \""
+        String info = new String("[Event \"Game\"]\n[Date \"" + cal.get(Calendar.YEAR) + "." + (cal.get(Calendar.MONTH) + 1) + "."
+                + cal.get(Calendar.DAY_OF_MONTH) + "\"]\n" + "[White \"" + this.settings.getPlayerWhite().name + "\"]\n[Black \""
                 + this.settings.getPlayerBlack().name + "\"]\n\n");
-        str += info;
-        str += this.moves.getMovesInString();
+        String str = new String("") + info + this.moveHistory.getMovesInString();
         try {
             fileW.write(str);
             fileW.flush();
@@ -137,15 +161,6 @@ public class Game extends JPanel implements Observer, ComponentListener {
      *
      * @param file File where is saved game
      */
-
-    /*
-     * @Override public void setSize(int width, int height) { Dimension min =
-     * this.getMinimumSize(); if(min.getHeight() < height && min.getWidth() < width)
-     * { super.setSize(width, height); } else if(min.getHeight() < height) {
-     * super.setSize(width, (int)min.getHeight()); } else if(min.getWidth() < width)
-     * { super.setSize((int)min.getWidth(), height); } else { super.setSize(width,
-     * height); } }
-     */
     static public void loadGame(File file) {
         FileReader fileR = null;
         try {
@@ -155,7 +170,7 @@ public class Game extends JPanel implements Observer, ComponentListener {
             return;
         }
         BufferedReader br = new BufferedReader(fileR);
-        String tempStr = new String();
+        String tempStr;
         String blackName, whiteName;
         try {
             tempStr = getLineWithVar(br, new String("[White"));
@@ -178,23 +193,20 @@ public class Game extends JPanel implements Observer, ComponentListener {
 
         newGUI.newGame();
         newGUI.blockedChessboard = true;
-        newGUI.moves.setMoves(tempStr);
+        newGUI.moveHistory.setMoves(tempStr);
         newGUI.blockedChessboard = false;
-        // newGUI.chessboard.draw();
     }
 
     /**
-     * Method checking in with of line there is an error
+     * Plausibility check for loading a saved game
      *
-     * @param br     BufferedReader class object to operate on
-     * @param srcStr String class object with text which variable you want to get in
-     *               file
-     * @return String with searched variable in file (whole line)
-     * @throws ReadGameError class object when something goes wrong when reading
-     *                       file
+     * @param br     BufferedReader object used to read from the saved file
+     * @param srcStr The source string
+     * @return Returns content of the read file as a string
+     * @throws ReadGameError The error thrown if the file cannot be read
      */
-    static public String getLineWithVar(BufferedReader br, String srcStr) throws ReadGameError {
-        String str = new String();
+    private static String getLineWithVar(BufferedReader br, String srcStr) throws ReadGameError {
+        String str = "";
         while (true) {
             try {
                 str = br.readLine();
@@ -211,18 +223,17 @@ public class Game extends JPanel implements Observer, ComponentListener {
     }
 
     /**
-     * Method to get value from loaded txt line
+     * Method to get value from loaded text line
      *
-     * @param line Line which is readed
+     * @param line Line which is read
      * @return result String with loaded value
      * @throws ReadGameError object class when something goes wrong
      */
-    static public String getValue(String line) throws ReadGameError {
-        // Log.log("getValue called with: "+line);
+    private static String getValue(String line) throws ReadGameError {
         int from = line.indexOf("\"");
         int to = line.lastIndexOf("\"");
         int size = line.length() - 1;
-        String result = new String();
+        String result;
         if (to < from || from > size || to > size || to < 0 || from < 0) {
             throw new ReadGameError();
         }
@@ -245,7 +256,7 @@ public class Game extends JPanel implements Observer, ComponentListener {
         }
         Game activeGame = JChessApp.jcv.getActiveTabGame();
         if (activeGame != null && JChessApp.jcv.getNumberOfOpenedTabs() == 0) {
-//            activeGame.chessboardController.resizeChessboard(); TODO resizing
+            //TODO resizing
             activeGame.repaint();
         }
         this.repaint();
@@ -254,8 +265,7 @@ public class Game extends JPanel implements Observer, ComponentListener {
     /**
      * Method to end game
      *
-     * @param message what to show player(s) at end of the game (for example "draw",
-     *                "black wins" etc.)
+     * @param message The message that is shown at the end of the game to each player
      */
     public void endGame(String message) {
         this.blockedChessboard = true;
@@ -264,7 +274,7 @@ public class Game extends JPanel implements Observer, ComponentListener {
     }
 
     /**
-     * Method to swich active players after move
+     * Method to switch active players after move
      */
     public void switchActive() {
         if (activePlayer == settings.getPlayerWhite()) {
@@ -279,39 +289,36 @@ public class Game extends JPanel implements Observer, ComponentListener {
     }
 
     /**
-     * Method of getting accualy active player
+     * Method of getting the currently active player
      *
-     * @return player The player which have a move
+     * @return player The active player
      */
     public Player getActivePlayer() {
         return this.activePlayer;
     }
 
     /**
-     * Method to go to next move (checks if game is local/network etc.)
+     * Method to go to next move
      */
-    public void nextMove() {
+    private void nextMove() {
         switchActive();
-
         Log.log("next move, active player: " + activePlayer.name + ", color: " + activePlayer.color.name() + ", type: "
                 + activePlayer.playerType.name());
         if (activePlayer.playerType == Player.playerTypes.localUser) {
             this.blockedChessboard = false;
         } else if (activePlayer.playerType == Player.playerTypes.networkUser) {
             this.blockedChessboard = true;
-        } else if (activePlayer.playerType == Player.playerTypes.computer) {
         }
     }
 
     /**
-     * Method to simulate Move to check if it's correct etc. (usable for network
-     * game).
+     * Method to simulate Move to check if it's correct etc.
      *
-     * @param beginX from which X (on chessboard) move starts
-     * @param beginY from which Y (on chessboard) move starts
-     * @param endX   to which X (on chessboard) move go
-     * @param endY   to which Y (on chessboard) move go
-     * @return Returns true if the move is correct
+     * @param beginX the initial x coordinate of the square where the move starts
+     * @param beginY the initial y coordinate of the square where the move starts
+     * @param endX   the final x coordinate of the square where the move ends
+     * @param endY   the final y coordinate of the square where the move ends
+     * @return Returns true if the move is valid
      */
     public boolean simulateMove(int beginX, int beginY, int endX, int endY) {
         boolean moveCorrect = chessboardController.moveIsPossible(beginX, beginY, endX, endY);
@@ -319,10 +326,11 @@ public class Game extends JPanel implements Observer, ComponentListener {
         return moveCorrect;
     }
 
-    // MouseListener:
-    public void mouseClicked(MouseEvent arg0) {
-    }
-
+    /**
+     * Checks if the current state can be undone
+     *
+     * @return True if the current state of the game is undoable
+     */
     public boolean undo() {
         boolean status = false;
 
@@ -338,6 +346,11 @@ public class Game extends JPanel implements Observer, ComponentListener {
         return status;
     }
 
+    /**
+     * Checks if the current game can be rewound to the start
+     *
+     * @return True if the game can be rewound
+     */
     public boolean rewindToBegin() {
         boolean result = false;
 
@@ -348,10 +361,15 @@ public class Game extends JPanel implements Observer, ComponentListener {
         } else {
             throw new UnsupportedOperationException(Settings.lang("operation_supported_only_in_local_game"));
         }
-
         return result;
     }
 
+    /**
+     * Checks if the current game can be rewound to the end
+     *
+     * @return Returns true if the current game can be rewound to the end
+     * @throws UnsupportedOperationException When the game cannot be rewound
+     */
     public boolean rewindToEnd() throws UnsupportedOperationException {
         boolean result = false;
 
@@ -362,10 +380,14 @@ public class Game extends JPanel implements Observer, ComponentListener {
         } else {
             throw new UnsupportedOperationException(Settings.lang("operation_supported_only_in_local_game"));
         }
-
         return result;
     }
 
+    /**
+     * Checks if a move can be redone from the current state of the game (undo an undo)
+     *
+     * @return True if the most recent undone move can be redone
+     */
     public boolean redo() {
         boolean status = chessboardController.redo(true);
         if (this.settings.gameType == Settings.gameTypes.local) {
@@ -378,75 +400,55 @@ public class Game extends JPanel implements Observer, ComponentListener {
         return status;
     }
 
-    public void squareSelected(Square sq) {
-///if (event.getButton() == MouseEvent.BUTTON3) // right button
-//        {
-//            this.undo();
-//        } else if (event.getButton() == MouseEvent.BUTTON2 && settings.gameType == Settings.gameTypes.local) {
-//            this.redo();
-//        } else if (event.getButton() == MouseEvent.BUTTON1) // left button
-//        { TODO add action listener
-
+    /**
+     * Includes logic that happens every time a player selects a square
+     *
+     * @param square The selected square
+     */
+    private void selectedSquare(Square square) {
+//        TODO add action listener for buttons
         if (!blockedChessboard) {
-            if ((sq == null && sq.getPiece() == null && chessboardController.getActiveSquare() == null)
-                    || (this.chessboardController.getActiveSquare() == null && sq.getPiece() != null
-                    && sq.getPiece().player != this.activePlayer)) {
+            if ((square == null && square.getPiece() == null && chessboardController.getActiveSquare() == null)
+                    || (this.chessboardController.getActiveSquare() == null && square.getPiece() != null
+                    && square.getPiece().player != this.activePlayer)) {
                 return;
             }
-
-            if (sq.getPiece() != null && sq.getPiece().player == this.activePlayer && sq != chessboardController.getActiveSquare()) {
+            if (square.getPiece() != null && square.getPiece().player == this.activePlayer && square != chessboardController.getActiveSquare()) {
                 chessboardController.unselect();
-                chessboardController.select(sq);
-            } else if (chessboardController.getActiveSquare() == sq) // unselect
+                chessboardController.select(square);
+            } else if (chessboardController.getActiveSquare() == square) // unselect
             {
                 chessboardController.unselect();
             } else if (chessboardController.getActiveSquare() != null && chessboardController.getActiveSquare().getPiece() != null
-                    && chessboardController.movePossible(chessboardController.getActiveSquare(), sq)) // move
+                    && chessboardController.moveIsPossible(chessboardController.getActiveSquare(), square)) // move
             {
                 if (settings.gameType == Settings.gameTypes.local) {
                     //TODO: exception is caught here --> method returns without switching player
-                    chessboardController.move(chessboardController.getActiveSquare(), sq, true, true);
+                    chessboardController.move(chessboardController.getActiveSquare(), square, true, true);
                 } else if (settings.gameType == Settings.gameTypes.network) {
-                    client.sendMove(chessboardController.getActiveSquare().getPozX(), chessboardController.getActiveSquare().getPozY(), sq.getPozX(),
-                            sq.getPozY());
-                    chessboardController.move(chessboardController.getActiveSquare(), sq, true, true);
+                    client.sendMove(chessboardController.getActiveSquare().getPozX(), chessboardController.getActiveSquare().getPozY(), square.getPozX(),
+                            square.getPozY());
+                    chessboardController.move(chessboardController.getActiveSquare(), square, true, true);
                 }
-
                 chessboardController.unselect();
-
-                // switch player
                 this.nextMove();
-
-                // checkmate or stalemate
-                Piece king;
-                if (this.activePlayer == settings.getPlayerWhite()) {
-                    king = chessboardController.getKingWhite();
-                } else {
-                    king = chessboardController.getKingBlack();
-                }
-
+                Piece king = chessboardController.getKing(this.activePlayer);
                 if (chessboardController.pieceIsUnsavable(king))
                     this.endGame("Checkmate! " + king.player.color.toString() + " player lose!");
-
-						/*case 2:
-							this.endGame("Stalemate! Draw!");
-							break;
-						}*/
-
             }
         } else if (blockedChessboard) {
             Log.log("Chessboard is blocked");
         }
     }
 
-
+    @Override
     public void componentResized(ComponentEvent e) {
         int height = this.getHeight() >= this.getWidth() ? this.getWidth() : this.getHeight();
         int chess_height = (int) Math.round((height * 0.8) / 8) * 8;
-//        this.chessboardController.resizeChessboard((int) chess_height);
+        //TODO resize chessview
         chess_height = this.chessboardController.getHeight();
-        this.moves.getScrollPane().setLocation(new Point(chess_height + 5, 100));
-        this.moves.getScrollPane().setSize(this.moves.getScrollPane().getWidth(), chess_height - 100);
+        this.moveHistory.getScrollPane().setLocation(new Point(chess_height + 5, 100));
+        this.moveHistory.getScrollPane().setSize(this.moveHistory.getScrollPane().getWidth(), chess_height - 100);
         this.gameClock.gameClockView.setLocation(new Point(chess_height + 5, 0));
         if (this.chat != null) {
             this.chat.setLocation(new Point(0, chess_height + 5));
@@ -454,22 +456,29 @@ public class Game extends JPanel implements Observer, ComponentListener {
         }
     }
 
+    @Override
     public void componentMoved(ComponentEvent e) {
-    }
 
-    public void componentShown(ComponentEvent e) {
-    }
-
-    public void componentHidden(ComponentEvent e) {
     }
 
     @Override
-    public void update(Observable o, Object arg) {
-        Square square = (Square) arg;
-        squareSelected(square);
+    public void componentShown(ComponentEvent e) {
 
     }
-}
 
-class ReadGameError extends Exception {
+    @Override
+    public void componentHidden(ComponentEvent e) {
+
+    }
+
+    /**
+     * Listens for events that come every time a square is selected
+     * @param o The observable square that generates the events
+     * @param arg The new generated Square
+     */
+    @Override
+    public void update(Observable o, Object arg) {
+        Square square = (Square) arg;
+        selectedSquare(square);
+    }
 }

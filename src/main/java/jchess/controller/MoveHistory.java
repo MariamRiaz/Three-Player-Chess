@@ -202,7 +202,7 @@ public class MoveHistory {
         try {
             PlayedMove last = this.moveBackStack.pop();
             if (last != null) {
-                if (this.game.settings.gameType == Settings.gameTypes.local) // moveForward / redo available only for
+                if (this.game.getSettings().gameType == Settings.gameTypes.local) // moveForward / redo available only for
                 // local game
                 {
                     this.moveForwardStack.push(last);
@@ -244,7 +244,7 @@ public class MoveHistory {
 
     public synchronized PlayedMove redo() {
         try {
-            if (this.game.settings.gameType == Settings.gameTypes.local) {
+            if (this.game.getSettings().gameType == Settings.gameTypes.local) {
                 PlayedMove first = this.moveForwardStack.pop();
                 this.moveBackStack.push(first);
 
@@ -439,7 +439,7 @@ public class MoveHistory {
             int yTo = 9;
             boolean pieceFound = false;
             if (locMove.length() <= 3) {
-                List<Square> squares = this.game.chessboardController.getSquares();
+                List<Square> squares = this.game.getChessboardController().getSquares();
                 xTo = locMove.charAt(from) - 97;// from ASCII
                 yTo = RoundChessboardController.bottom - (locMove.charAt(from + 1) - 49);// from ASCII
                 for (Square square : squares) {
@@ -467,7 +467,7 @@ public class MoveHistory {
             if (!canMove) // if move is illegal
             {
                 JOptionPane.showMessageDialog(this.game, Settings.lang("illegal_move_on") + locMove);
-                this.game.chessboardController.setActiveSquare(null);
+                this.game.getChessboardController().setActiveSquare(null);
                 return;// finish reading game and show message
             }
         }

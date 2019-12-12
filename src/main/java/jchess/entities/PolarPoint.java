@@ -1,8 +1,8 @@
 package jchess.entities;
 
-/*Class that represents a PolarPoint object, containing a degree and radius, to determine a point in a circle
-* */
-
+/**
+ * Class that represents a point on a circle using a polar coordinate system
+ */
 public class PolarPoint {
 
     private double radius;
@@ -14,18 +14,18 @@ public class PolarPoint {
         this.radius = radius;
     }
 
+    /**
+     * Getter for the point radius
+     * @return The radius coordinate of the point
+     */
     public double getRadius() {
         return radius;
     }
 
-    public void setRadius(double radius) {
-        this.radius = radius;
-    }
-
-    public void setDegrees(double degrees) {
-        this.degrees = degrees;
-    }
-
+    /**
+     * Getter for the point degrees
+     * @return The degrees coordinate of the point
+     */
     public double getDegrees() {
         return degrees;
     }
