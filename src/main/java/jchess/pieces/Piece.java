@@ -52,7 +52,7 @@ public class Piece {
 		public final Integer limit;
 		public final HashSet<MoveType> conditions;
 		
-		protected Move(int x, int y, Integer limit, MoveType... conditions) {
+		public Move(int x, int y, Integer limit, MoveType... conditions) {
 			this.x = x;
 			this.y = y;
 			this.limit = limit;
@@ -63,7 +63,8 @@ public class Piece {
 		}
 	}
 	
-	private boolean hasMoved = false;
+	private boolean hasMoved = false, wasPlayedLast = false, mustNotDie = false;
+	private Move lastMove = null;
 	
 	public final Player player;
 	public final int value;
@@ -78,8 +79,9 @@ public class Piece {
 	 * @param symbol Must be non-null. The shorthand symbol of this Piece, e.g. N, K, Q etc.
 	 * @param moves The Moves for this Piece. Each Move must be non-null.
 	 */
-	public Piece(Player player, String type, int value, String symbol, Move... moves) {
+	public Piece(Player player, String type, int value, String symbol, boolean mustNotDie, Move... moves) {
 		this.value = value;
+		this.mustNotDie = mustNotDie;
 		
 		this.moves = new HashSet<Move>(Arrays.asList(moves));
 		
@@ -106,6 +108,8 @@ public class Piece {
 		
 		this.value = other.value;
 		
+		this.wasPlayedLast = other.wasPlayedLast;
+		this.lastMove = other.lastMove;
 		this.moves = new HashSet<Move>(other.moves);
 		this.player = other.player;
 		this.symbol = new String(other.symbol);
@@ -126,6 +130,29 @@ public class Piece {
 		return this;
 	}
 	
+	/** 
+	 * @return Whether or not the Player loses when this Piece is taken.
+	 */
+	public boolean mustNotDie() {
+		return mustNotDie;
+	}
+	
+	/**
+	 * @param move The last Move that was played by this Piece.
+	 * @return This Piece.
+	 */
+	public Piece setLastMove(Move move) {
+		this.lastMove = move;
+		return this;
+	}
+	
+	/**
+	 * @return The last Move that was played by this Piece.
+	 */
+	public Move getLastMove() {
+		return this.lastMove;
+	}
+	
 	/**
 	 * @param val Whether the Piece has moved since its creation or not.
 	 * @return This Piece.
@@ -133,6 +160,22 @@ public class Piece {
 	public Piece setHasMoved(boolean val) {
 		hasMoved = val;
 		return this;
+	}
+	
+	/**
+	 * @param val Whether the Piece was the last Piece that was moved by its owner.
+	 * @return This Piece.
+	 */
+	public Piece setWasPlayedLast(boolean val) {
+		wasPlayedLast = val;
+		return this;
+	}
+
+	/**
+	 * @return Whether the Piece was the last Piece that was moved by its owner.
+	 */
+	public boolean getWasPlayedLast() {
+		return wasPlayedLast;
 	}
 	
 	/**

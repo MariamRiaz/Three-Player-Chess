@@ -9,7 +9,7 @@ public class PieceFactory {
 	 * @return The new rook Piece.
 	 */
 	public static final Piece createRook(Player player) {
-		return new Piece(player, "Rook", 2, "R", new Piece.Move(1, 0, null), new Piece.Move(-1, 0, null), new Piece.Move(0, 1, null), new Piece.Move(0, -1, null));
+		return new Piece(player, "Rook", 2, "R", false, new Piece.Move(1, 0, null), new Piece.Move(-1, 0, null), new Piece.Move(0, 1, null), new Piece.Move(0, -1, null));
 	}
 
 	/**
@@ -17,7 +17,7 @@ public class PieceFactory {
 	 * @return The new king Piece.
 	 */
 	public static final Piece createKing(Player player) {
-		return new Piece(player, "King", 99, "K", new Piece.Move(1, 1, 1), new Piece.Move(1, -1, 1), new Piece.Move(-1, -1, 1), new Piece.Move(-1, 1, 1),
+		return new Piece(player, "King", 99, "K", true, new Piece.Move(1, 1, 1), new Piece.Move(1, -1, 1), new Piece.Move(-1, -1, 1), new Piece.Move(-1, 1, 1),
 				new Piece.Move(1, 0, 1), new Piece.Move(-1, 0, 1), new Piece.Move(0, 1, 1), new Piece.Move(0, -1, 1),
 				new Piece.Move(2, 0, 1, MoveType.Castling, MoveType.OnlyWhenFresh),
 				new Piece.Move(-2, 0, 1, MoveType.Castling, MoveType.OnlyWhenFresh));
@@ -28,7 +28,7 @@ public class PieceFactory {
 	 * @return The new knight Piece.
 	 */
 	public static final Piece createKnight(Player player) {
-		return new Piece(player, "Knight", 3, "N", new Piece.Move(-1, 2, 1), new Piece.Move(-1, -2, 1), new Piece.Move(1, 2, 1), new Piece.Move(1, -2, 1),
+		return new Piece(player, "Knight", 3, "N", false, new Piece.Move(-1, 2, 1), new Piece.Move(-1, -2, 1), new Piece.Move(1, 2, 1), new Piece.Move(1, -2, 1),
 				new Piece.Move(2, -1, 1), new Piece.Move(-2, -1, 1), new Piece.Move(2, 1, 1), new Piece.Move(-2, 1, 1));
 	}
 
@@ -37,7 +37,7 @@ public class PieceFactory {
 	 * @return The new queen Piece.
 	 */
 	public static final Piece createQueen(Player player) {
-		return new Piece(player, "Queen", 4, "Q", new Piece.Move(1, 1, null), new Piece.Move(1, -1, null), new Piece.Move(-1, -1, null), new Piece.Move(-1, 1, null),
+		return new Piece(player, "Queen", 4, "Q", false, new Piece.Move(1, 1, null), new Piece.Move(1, -1, null), new Piece.Move(-1, -1, null), new Piece.Move(-1, 1, null),
 				new Piece.Move(1, 0, null), new Piece.Move(-1, 0, null), new Piece.Move(0, 1, null), new Piece.Move(0, -1, null));
 	}
 
@@ -46,12 +46,13 @@ public class PieceFactory {
 	 * @return The new bishop Piece.
 	 */
 	public static final Piece createBishop(Player player) {
-		return new Piece(player, "Bishop", 3, "B", new Piece.Move(-1, -1, null), new Piece.Move(-1, 1, null),
+		return new Piece(player, "Bishop", 3, "B", false, new Piece.Move(-1, -1, null), new Piece.Move(-1, 1, null),
 				new Piece.Move(1, 1, null), new Piece.Move(1, -1, null));
 	}
 
 	/**
 	 * @param player The new Piece's owning Player. Must be non-null.
+	 * @param direction The direction in which the pawn will move
 	 * @return The new pawn Piece.
 	 */
 	public static final Piece createPawn(Player player, boolean direction) {
@@ -59,7 +60,7 @@ public class PieceFactory {
 		if (direction)
 			y = -1;
 		else y = 1;
-		return new Piece(player, "Pawn", 1, "", new Piece.Move(0, y, 1, MoveType.OnlyMove), new Piece.Move(0, y, 2, MoveType.OnlyMove, MoveType.OnlyWhenFresh),
+		return new Piece(player, "Pawn", 1, "", false, new Piece.Move(0, y, 1, MoveType.OnlyMove), new Piece.Move(0, y, 2, MoveType.OnlyMove, MoveType.OnlyWhenFresh),
 				new Piece.Move(1, y, 1, MoveType.OnlyAttack), new Piece.Move(-1, y, 1, MoveType.OnlyAttack),
 				new Piece.Move(1, y, 1, MoveType.EnPassant), new Piece.Move(-1, y, 1, MoveType.EnPassant));
 	}

@@ -1,7 +1,8 @@
-package jchess.UI;
+package jchess.view;
 
 import jchess.Game;
 import jchess.Settings;
+import jchess.helper.Clock;
 
 import javax.swing.*;
 import java.awt.*;
@@ -54,11 +55,11 @@ public class GameClockView extends JPanel {
 
         g2d.setFont(font);
         g.setColor(Color.BLACK);
-        g.drawString(settings.playerWhite.getName(), 10, 50);
+        g.drawString(settings.getPlayerWhite().getName(), 10, 50);
 
         g.setColor(Color.WHITE);
-        g.drawString(settings.playerBlack.getName(), 90, 50);
-        g.drawString(settings.playerGray.getName(), 170, 50);
+        g.drawString(settings.getPlayerBlack().getName(), 90, 50);
+        g.drawString(settings.getPlayerGray().getName(), 170, 50);
         g2d.setFont(font);
         g.setColor(Color.BLACK);
         g2d.drawString(white_clock, 10, 80);

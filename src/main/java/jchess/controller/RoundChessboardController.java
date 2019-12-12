@@ -1,9 +1,12 @@
 package jchess.controller;
 
-import jchess.*;
+import jchess.JChessApp;
+import jchess.Log;
+import jchess.Player;
+import jchess.Settings;
 import jchess.UI.board.Square;
 import jchess.helper.CartesianPolarConverter;
-import jchess.view.PolarCell;
+import jchess.helper.MoveEvaluator;
 import jchess.helper.PolarPoint;
 import jchess.model.RoundChessboardModel;
 import jchess.pieces.MoveHistory;
@@ -23,12 +26,22 @@ import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class RoundChessboardController {
+import jchess.view.PolarCell;
+import jchess.view.RoundChessboardView;
+
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.List;
+import java.util.Observer;
+
+public class RoundChessboardController extends MouseAdapter {
 
     private RoundChessboardModel model;
     private RoundChessboardView view;
     private Square activeSquare;
     private Settings settings;
+    private SquareObservable squareObservable;
 
     // For undo:
     private Square undo1_sq_begin = null;
@@ -50,11 +63,13 @@ public class RoundChessboardController {
     public static int bottom = 7;
     public static int top = 0;
 
-    public RoundChessboardController(Settings settings, MoveHistory movesHistory) {
-        this.model = new RoundChessboardModel(rows, squaresPerRow, settings);
+    public RoundChessboardController(RoundChessboardModel model, RoundChessboardView view, Settings settings, MoveHistory movesHistory) {
+        this.model = model;
+        this.view = view;
+        view.addMouseListener(this);
         this.movesHistory = movesHistory;
-        this.view = new RoundChessboardView(600, "3-player-board.png", rows, squaresPerRow, model.squares);
         this.settings = settings;
+        this.squareObservable = new SquareObservable();
     }
 
     public RoundChessboardModel getModel() {
@@ -72,129 +87,49 @@ public class RoundChessboardController {
 //        this.view.resizeChessboard(view.get_height(settings.renderLabels));
 //    }
 //
-    public boolean simulateMove(int beginX, int beginY, int endX, int endY) {
 
-        try {
-            select(model.getSquare(beginX, beginY));
-            if (getValidTargetSquares(activeSquare.getPiece()).contains(model.getSquare(endX, endY))) // move
-            {
-                move(model.getSquare(beginX, beginY), model.getSquare(endX, endY), true, true);
-            } else {
-                Log.log("Bad move");
-                return false;
-            }
-            unselect();
-            return true;
+    public void addSelectSquareObserver(Observer observer) {
+        this.squareObservable.addObserver(observer);
+    }
 
-        } catch (StringIndexOutOfBoundsException | NullPointerException | ArrayIndexOutOfBoundsException exc) {
-            return false;
-        } finally {
-            Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, "ERROR");
+    @Override
+    public void mousePressed(MouseEvent mouseEvent) {
+        Square square = getSquareFromClick(mouseEvent.getX(), mouseEvent.getY());
+        if(square != null) {
+            squareObservable.setSquare(square);
         }
+    }
+
+    public boolean moveIsPossible(int x, int y, int toX, int toY) {
+    	Square square = model.getSquare(x, y), to = model.getSquare(toX, toY);
+
+    	if (square == null || to == null || square.getPiece() == null)
+    		return false;
+    	return new MoveEvaluator(model)
+    			.getValidTargetSquaresToSavePiece(square, square.getPiece().player, getKing(square.getPiece().player))
+    			.contains(model.getSquare(to.getPozX(), to.getPozY()));
+    }
+
+    public boolean movePossible(Square square, Square to) {
+    	if (square == null || to == null)
+    		return false;
+
+    	return moveIsPossible(square.getPozX(), square.getPozY(), to.getPozX(), to.getPozY());
     }
 
     public void select(Square sq) {
         setActiveSquare(sq);
-        view.setActiveCell(sq.getPozX(), sq.getPozY());
-        view.setMoves(getValidTargetSquares(sq.getPiece()));
         Log.log("Selected square with X: "
                 + activeSquare.getPozX() + " and Y: " + activeSquare.getPozY());
         view.repaint();
     }
 
-    public HashSet<Square> getValidTargetSquares(Piece piece) {
-        HashSet<Square> ret = new HashSet<>();
-
-        if (piece == null)
-            return ret;//TODO error handling
-
-        HashSet<Piece.Move> moves = piece.getMoves();
-        for (Iterator<Piece.Move> it = moves.iterator(); it.hasNext(); )
-            ret.addAll(evaluateMoveToTargetSquares(it.next(), piece));
-
-        return ret;
+    public boolean pieceIsThreatened(Piece piece) {
+    	return new MoveEvaluator(model).squareIsThreatened(model.getSquare(piece), piece.player);
     }
 
-    private HashSet<Square> evaluateMoveToTargetSquares(Piece.Move move, Piece piece) {
-        HashSet<Square> ret = new HashSet<Square>();
-		
-		if (move == null || piece == null)
-			return ret;
-		
-		int count = 0;
-		for (Square next = nextSquare(getSquare(piece), move.x, move.y); next != null
-				&& (move.limit == null || count < move.limit); next = nextSquare(next, move.x, move.y)) {
-			boolean add = true;
-			
-			if (move.conditions.contains(MoveType.OnlyAttack)) {
-				if (next.getPiece() == null || next.getPiece().player == piece.player)
-					add = false;
-			} else if (move.conditions.contains(MoveType.OnlyMove)) {
-				if (next.getPiece() != null)
-					add = false;
-			} else if (next.getPiece() != null && next.getPiece().player == piece.player)
-				add = false;
-			
-			if (move.conditions.contains(MoveType.OnlyWhenFresh) && piece.hasMoved())
-				add = false;
-
-			if (move.conditions.contains(MoveType.EnPassant)) {
-				add = false;
-				
-				Piece target = getPawnSkippedOverSquareEnPassant(next);
-				if (target != null && target.player != piece.player)
-					add = true;
-			}
-			
-			if (move.conditions.contains(MoveType.Castling)) {
-				Square current = getSquare(piece);
-				
-				if (squareThreatened(current, piece.player, getKingBlack(), getKingWhite()))
-					add = false;
-				else {
-					int start = move.x < 0 ? 0 : current.getPozX() + 1,
-							end = move.x < 0 ? current.getPozX() : squaresPerRow;
-					
-					Piece rk = getSquare(move.x < 0 ? 0 : end - 1, current.getPozY()).getPiece();
-					if (rk == null || rk.hasMoved())
-						add = false;
-					else for (; start < end; start++) {
-							Square sq = getSquare(start, current.getPozY());
-							if ((sq.getPiece() != null && sq.getPiece() != rk) || squareThreatened(sq, piece.player, piece, getKingBlack(), getKingWhite())) {
-								add = false;
-								break;
-							}
-					}
-				}
-			}
-			
-			if (add)
-				ret.add(next);
-			
-			if (!move.conditions.contains(MoveType.Unblockable) && next.getPiece() != null)
-				break;
-			
-			count++;
-		}
-		
-		return ret;
-    }
-    
-	private Piece getPawnSkippedOverSquareEnPassant(Square square) {
-		java.util.List<PlayedMove> lastMoves = movesHistory.getLastMoveOfEachPlayer();
-		for (Iterator<PlayedMove> it = lastMoves.iterator(); it.hasNext();) {
-			PlayedMove lastMove = it.next();
-			
-			if (lastMove.wasPawnTwoFieldsMove() 
-					&& square == getSquare(lastMove.getTo().getPozX(), lastMove.getFrom().getPozY() + (lastMove.getTo().getPozY() - lastMove.getFrom().getPozY()) / 2))
-				return lastMove.getTo().getPiece();
-		}
-		
-		return null;
-	}
-
-    private Square nextSquare(Square current, int x, int y) {
-        return model.getSquare(current.getPozX() + x, current.getPozY() + y);
+    public boolean pieceIsUnsavable(Piece piece) {
+    	return new MoveEvaluator(model).squareUnsavable(model.getSquare(piece));
     }
 
     public Square getActiveSquare() {
@@ -203,6 +138,14 @@ public class RoundChessboardController {
 
     public void setActiveSquare(Square square) {
         this.activeSquare = square;
+        if(square == null) {
+            view.resetActiveCell();
+            view.resetPossibleMoves();
+        } else {
+            view.setActiveCell(square.getPozX(), square.getPozY());
+            view.setMoves(new MoveEvaluator(model)
+                    .getValidTargetSquaresToSavePiece(square, square.getPiece().player, getKing(square.getPiece().player)));
+        }
     }
 
     public Square getSquare(Piece piece) {
@@ -213,14 +156,23 @@ public class RoundChessboardController {
         return this.model.squares;
     }
 
-
-
     public Piece getKing(Player player) {
         if (player == null)
             return null;
         if (player.color == player.color.black)
             return model.kingBlack;
+        else if (player.color == player.color.gray)
+        	return model.kingGray;
         return model.kingWhite;
+    }
+    
+    private void unflagLastMovedPieces(Player player) {
+		for (int i = 0; i < model.getColumns(); i++)
+			for (int j = 0; j < model.getRows(); j++) {
+				Square sq = model.getSquare(i, j);
+				if (sq != null && sq.getPiece() != null && sq.getPiece().player == player)
+					sq.getPiece().setWasPlayedLast(false);
+			}
     }
 
     /**
@@ -237,6 +189,10 @@ public class RoundChessboardController {
 
 		Piece tempBegin = begin.getPiece(), tempBeginState = tempBegin != null ? tempBegin.clone() : null;// 4 moves history
 		Piece tempEnd = end.getPiece(); // 4 moves history
+		
+		tempBegin.setLastMove(null); // TODO change to actual move
+		
+		unflagLastMovedPieces(tempBegin.player);
 		
 		ifWasCastling = null;
 		breakCastling = false;
@@ -261,17 +217,18 @@ public class RoundChessboardController {
 			if (!tempBeginState.hasMoved())
 				breakCastling = true;
 		} else if (tempBegin.type.equals("Pawn")) {
-			Piece pawnForEnPassant = getPawnSkippedOverSquareEnPassant(end);
-			if (pawnForEnPassant != null)
-			{
+			Piece pawnForEnPassant = new MoveEvaluator(model).getPawnSkippedOverSquareEnPassant(end);
+			if (pawnForEnPassant != null) {
 				tempEnd = pawnForEnPassant;
 				model.setPieceOnSquare(tempEnd, null);
 				
 				wasEnPassant = true;
 			}
 
-			if (begin.getPozY() - end.getPozY() == 2 || end.getPozY() - begin.getPozY() == 2) // moved two square
+			if (begin.getPozY() - end.getPozY() == 2 || end.getPozY() - begin.getPozY() == 2) { // moved two square
+				tempBegin.setLastMove(new Piece.Move(end.getPozX() - begin.getPozX(), end.getPozY() - begin.getPozY(), 1, MoveType.EnPassant)); // TODO fix hacky fix
 				breakCastling = true;
+			}
 
 			if (end.getPozY() == 0 || end.getPozY() == 7) // promote Pawn TODO change
 			{
@@ -293,7 +250,7 @@ public class RoundChessboardController {
 					else // transform pawn to knight
 						promoted = PieceFactory.createKing(tempBegin.player);
 					
-					model.removePieceFromSquare(begin);
+					model.setPieceOnSquare(null, begin);
 					view.removeVisual(tempBegin, begin);
 					model.setPieceOnSquare(promoted, end);
 					view.setVisual(promoted, end);
@@ -324,8 +281,6 @@ public class RoundChessboardController {
 
     public void unselect() {
         setActiveSquare(null);
-        view.resetActiveCell();
-        view.resetPossibleMoves();
     }
 
     public synchronized boolean undo(boolean refresh) // undo last move
@@ -367,7 +322,7 @@ public class RoundChessboardController {
 			} else if (moved.type.equals("Pawn") && !last.wasPawnTwoFieldsMove())
 				moved.setHasMoved(true);
 			else if (moved.type.equals("Pawn") && last.getPromotedPiece() != null) {
-				Piece promoted = getSquare(end).getPiece();
+				Piece promoted = model.getSquare(end).getPiece();
 				model.setPieceOnSquare(promoted, null);
 				view.removeVisual(promoted, end);
 			}
@@ -453,78 +408,11 @@ public class RoundChessboardController {
     public Piece getKingBlack() {
         return model.kingBlack;
     }
-
-    public boolean pieceUnsavable(Piece piece) {
-        if (piece == null)
-            return false;
-        for (Square square : model.squares) {
-            if (square.getPiece() == null || square.getPiece().player != piece.player)
-                continue;
-
-            if (!getValidTargetSquaresToSavePiece(square.getPiece(), piece).isEmpty())
-                return false;
-        }
-        return true;
-    }
-
-    public Square getSquare(Square square) {
-    	if (square != null)
-    		return getSquare(square.getPozX(), square.getPozY());
-    	return null;
-    }
     
     public Square getSquare(int x, int y) {
         return model.getSquare(x, y);
     }
-
-    public HashSet<Square> getValidTargetSquaresToSavePiece(Piece moving, Piece toSave) {
-        HashSet<Square> ret = getValidTargetSquares(moving);
-        if (ret.size() == 0 || toSave == null)
-            return ret;
-
-        for (Iterator<Square> it = ret.iterator(); it.hasNext(); ) {
-            Square target = it.next(), start = getSquare(moving);
-            Piece old = target.getPiece();
-
-            model.setPieceOnSquare(moving, target);
-            if (pieceThreatened(toSave))
-                it.remove();
-
-            model.setPieceOnSquare(old, target);
-            model.setPieceOnSquare(moving, start);
-        }
-
-        return ret;
-    }
     
-    public boolean pieceThreatened(Piece piece) {
-    	return squareThreatened(getSquare(piece), piece.player);
-    }
-    
-    public boolean squareThreatened(Square square, Player player, Piece... exclude) {
-        if (square == null)
-			return false;
-		
-		java.util.List<Piece> exclusionList = Arrays.asList(exclude);
-		
-		for (Square el : model.squares) {
-            if (el.getPiece() == null)
-                continue;
-            if (el.getPiece().player == player)
-                continue;
-			
-			if (exclusionList.contains(el.getPiece()) || el.getPiece().player == player)
-				continue;
-
-			HashSet<Square> validMoveSquares = getValidTargetSquares(el.getPiece());
-			for (Iterator<Square> it2 = validMoveSquares.iterator(); it2.hasNext();)
-				if (it2.next() == square)
-					return true;
-		}
-
-		return false;
-    }
-
     public int getHeight() {
         return view.getHeight();
     }

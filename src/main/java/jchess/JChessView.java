@@ -21,8 +21,7 @@ import org.jdesktop.application.SingleFrameApplication;
 import org.jdesktop.application.FrameView;
 import org.jdesktop.application.TaskMonitor;
 import jchess.UI.JChessAboutBox;
-import jchess.UI.JChessTabbedPane;
-import jchess.UI.NewGameWindow;
+import jchess.view.NewGameWindow;
 import jchess.UI.PawnPromotionWindow;
 import jchess.UI.ThemeChooseWindow;
 
@@ -35,9 +34,6 @@ import javax.swing.JFrame;
 import javax.swing.*;
 import java.awt.event.*;
 import java.io.File;
-import java.applet.*;
-import java.io.IOException;
-import java.util.ResourceBundle;
 import java.util.logging.Level;
 
 /**

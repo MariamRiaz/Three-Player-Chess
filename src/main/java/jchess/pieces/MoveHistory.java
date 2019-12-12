@@ -34,61 +34,50 @@ import jchess.Game;
 import jchess.Log;
 import jchess.Player;
 import jchess.Settings;
-import jchess.UI.board.Chessboard;
 import jchess.UI.board.Square;
-import jchess.UI.MovesHistoryView;
+import jchess.view.MovesHistoryView;
 import jchess.controller.RoundChessboardController;
 
 import javax.swing.JOptionPane;
+
 
 /**
  * Class representing the players moves, it's also checking that the moves taken
  * by player are correct. All moves which was taken by current player are saving
  * as List of Strings The history of moves is printing in a table
- *
- * @param game The current game
  */
 public class MoveHistory extends AbstractTableModel {
+    private enum PlayerColumn {
+        player1,
+        player2,
+        player3
+    }
 
-    private ArrayList<String> move = new ArrayList<String>();
+    private ArrayList<String> move = new ArrayList<>();
     private int columnsNum = 3;
     private int rowsNum = 0;
     private String[] names = new String[]{Settings.lang("white"), Settings.lang("black"), Settings.lang("gray")};
-    //private MyDefaultTableModel tableModel;
-    //private JScrollPane scrollPane;
-    //private JTable table;
-    private boolean enterBlack = false;
+    private PlayerColumn activePlayerColumn = PlayerColumn.player1;
     private Game game;
-    protected Stack<PlayedMove> moveBackStack = new Stack<PlayedMove>();
-    protected Stack<PlayedMove> moveForwardStack = new Stack<PlayedMove>();
+    private Stack<PlayedMove> moveBackStack = new Stack<>();
+    private Stack<PlayedMove> moveForwardStack = new Stack<>();
     private MovesHistoryView movesHistoryView;
-
 
     public enum castling {
         none, shortCastling, longCastling
     }
-
     public MoveHistory(Game game) {
         super();
         this.movesHistoryView = new MovesHistoryView();
-
-        //this.tableModel = new MyDefaultTableModel();
-        //this.table = new JTable(this.tableModel);
-        //this.scrollPane = new JScrollPane(this.table);
-        //this.scrollPane.setMaximumSize(new Dimension(100, 100));
-        //this.table.setMinimumSize(new Dimension(100, 100));
         this.game = game;
-
         this.movesHistoryView.addColumn(this.names[0]);
         this.movesHistoryView.addColumn(this.names[1]);
         this.movesHistoryView.addColumn(this.names[2]);
         this.addTableModelListener(null);
-        //this.tableModel.addTableModelListener(null);
-        //this.scrollPane.setAutoscrolls(true);
     }
-
-    public void draw() {
-    }
+//
+//    public void draw() {
+//    }
 
     @Override
     public String getValueAt(int x, int y) {
@@ -111,7 +100,7 @@ public class MoveHistory extends AbstractTableModel {
     
     protected void addCastling(String move) {
         this.move.remove(this.move.size() - 1);// remove last element (move of Rook)
-        if (!this.enterBlack) {
+        if (!this.activePlayerColumn.equals(PlayerColumn.player1)) {
             this.movesHistoryView.setValueAt(move, this.movesHistoryView.getRowCount() - 1, 1);// replace last value
         } else {
             this.movesHistoryView.setValueAt(move, this.movesHistoryView.getRowCount() - 1, 0);// replace last value
@@ -129,47 +118,48 @@ public class MoveHistory extends AbstractTableModel {
      *
      * @param str String which in is saved player move
      */
-    protected void addMove2Table(String str) {
+    private void addMove2Table(String str) {
         try {
-            if (!this.enterBlack) {
+
+            if (activePlayerColumn.equals(PlayerColumn.player1)) {
                 this.movesHistoryView.addRow();
                 this.rowsNum = this.movesHistoryView.getRowCount() - 1;
                 this.movesHistoryView.setValueAt(str, rowsNum, 0);
-            } else {
+                this.activePlayerColumn = PlayerColumn.player2;
+
+            } else if (activePlayerColumn.equals(PlayerColumn.player2)) {
                 this.movesHistoryView.setValueAt(str, rowsNum, 1);
                 this.rowsNum = this.movesHistoryView.getRowCount() - 1;
+                this.activePlayerColumn = PlayerColumn.player3;
+
+            } else if (activePlayerColumn.equals(PlayerColumn.player3)) {
+                this.movesHistoryView.setValueAt(str, rowsNum, 2);
+                this.rowsNum = this.movesHistoryView.getRowCount() - 1;
+                this.activePlayerColumn = PlayerColumn.player1;
             }
-            this.enterBlack = !this.enterBlack;
+
             this.movesHistoryView.table.scrollRectToVisible(this.movesHistoryView.table.getCellRect(this.movesHistoryView.table.getRowCount() - 1, 0, true));// scroll to down
 
-        } catch (java.lang.ArrayIndexOutOfBoundsException exc) {
+        } catch (
+                java.lang.ArrayIndexOutOfBoundsException exc) {
             if (this.rowsNum > 0) {
                 this.rowsNum--;
                 addMove2Table(str);
             }
         }
+
     }
 
     /**
      * Method of adding new move
-     *
-     * @param move String which in is capt player move
      */
-
     public void addMove(Square begin, Square end, Piece beginPiece, Piece beginState, Piece endPiece, boolean registerInHistory, castling castlingMove,
                         boolean wasEnPassant, Piece promotedPiece) {
 
         boolean wasCastling = castlingMove != castling.none;
         String locMove = new String(beginState.symbol);
 
-        if (game.settings.upsideDown) {
-            locMove += Character.toString((char) ((RoundChessboardController.bottom - begin.getPozX()) + 97));// add letter of Square from
-            // which move was made
-            locMove += Integer.toString(begin.getPozY() + 1);// add number of Square from which move was made
-        } else {
-            locMove += Character.toString((char) (begin.getPozX() + 97));// add letter of Square from which move was made
-            locMove += Integer.toString(8 - begin.getPozY());// add number of Square from which move was made
-        }
+        locMove = getPosition(begin, locMove);
 
         if (endPiece != null) {
             locMove += "x";// take down opponent piece
@@ -177,42 +167,38 @@ public class MoveHistory extends AbstractTableModel {
             locMove += "-";// normal move
         }
 
-        if (game.settings.upsideDown) {
-            locMove += Character.toString((char) ((RoundChessboardController.bottom - end.getPozX()) + 97));// add letter of Square to which
-            // move was made
-            locMove += Integer.toString(end.getPozY() + 1);// add number of Square to which move was made
-
-        } else {
-            locMove += Character.toString((char) (end.getPozX() + 97));// add letter of Square to which move was made
-            locMove += Integer.toString(8 - end.getPozY());// add number of Square to which move was made
-        }
+        locMove = getPosition(end, locMove);
+        
+        locMove += Character.toString((char) (end.getPozX() + 97));// add letter of Square to which move was made
+        locMove += Integer.toString(8 - end.getPozY());// add number of Square to which move was made
 
         if (beginState.symbol.equals("") && begin.getPozX() - end.getPozX() != 0 && wasEnPassant) {
             locMove += "(e.p)";// pawn take down opponent en passant
             wasEnPassant = true;
         }
-        if ((!this.enterBlack && this.game.chessboardController.pieceThreatened(this.game.chessboardController.getKingWhite()))
-                || (this.enterBlack && this.game.chessboardController.pieceThreatened(this.game.chessboardController.getKingBlack()))) {// if checked
 
-            if ((!this.enterBlack && this.game.chessboardController.pieceUnsavable(this.game.chessboardController.getKingWhite())) // TODO
-                    || (this.enterBlack && this.game.chessboardController.pieceUnsavable(this.game.chessboardController.getKingBlack()))) {// check if checkmated
-                locMove += "#";// check mate
-            } else {
-                locMove += "+";// check
-            }
-        }
+//        TODO: add Castling and Check & Checkmate marks to Column
+//        if (castlingMove == castling.shortCastling) {
+//
+//        } else if (castlingMove == castling.longCastling) {}
 
-        if (castlingMove == castling.shortCastling) {
-        } else if (castlingMove == castling.longCastling) {
-        } else {
+        else {
             this.move.add(locMove);
             this.addMove2Table(locMove);
         }
         //this.scrollPane.scrollRectToVisible(new Rectangle(0, this.scrollPane.getHeight() - 2, 1, 1));
+
         if (registerInHistory) {
             this.moveBackStack.add(new PlayedMove(begin, end, beginPiece, beginState, endPiece, castlingMove,
                     wasEnPassant, promotedPiece));
         }
+    }
+
+    private String getPosition(Square square, String locMove) {
+        locMove += Character.toString((char) (square.getPozX() + 97));// add letter of Square from which move was made
+        locMove += Integer.toString(square.getPozY() + 1);// add number of Square from which move was made
+
+        return locMove;
     }
 
     public void clearMoveForwardStack() {
@@ -248,7 +234,7 @@ public class MoveHistory extends AbstractTableModel {
 
     public synchronized PlayedMove undo() {
     	if (this.moveBackStack.isEmpty()) {
-    		this.enterBlack = false;
+    		this.activePlayerColumn = PlayerColumn.player1;
     		return null;
     	}
     	
@@ -258,18 +244,28 @@ public class MoveHistory extends AbstractTableModel {
                 if (this.game.settings.gameType == Settings.gameTypes.local) // moveForward / redo available only for
                 // local game
                     this.moveForwardStack.push(last);
-                    
-                if (this.enterBlack) {
+
+                if (activePlayerColumn.equals(PlayerColumn.player1)) {
                     this.movesHistoryView.setValueAt("", this.movesHistoryView.getRowCount() - 1, 0);
                     this.movesHistoryView.removeRow(this.movesHistoryView.getRowCount() - 1);
-
-                    if (this.rowsNum > 0)
+                    if (this.rowsNum > 0) {
                         this.rowsNum--;
-                } else if (this.movesHistoryView.getRowCount() > 0)
-                	this.movesHistoryView.setValueAt("", this.movesHistoryView.getRowCount() - 1, 1);
-                
+                    }
+                    this.activePlayerColumn = PlayerColumn.player2;
+                } else if (activePlayerColumn.equals(PlayerColumn.player2)) {
+                    if (this.movesHistoryView.getRowCount() > 0) {
+                        this.movesHistoryView.setValueAt("", this.movesHistoryView.getRowCount() - 1, 1);
+                    }
+                    this.activePlayerColumn = PlayerColumn.player3;
+
+                } else {
+                    if (this.movesHistoryView.getRowCount() > 0) {
+                        this.movesHistoryView.setValueAt("", this.movesHistoryView.getRowCount() - 1, 2);
+                    }
+                    this.activePlayerColumn = PlayerColumn.player1;
+
+                }
                 this.move.remove(this.move.size() - 1);
-                this.enterBlack = !this.enterBlack;
             }
             return last;
         } 
@@ -277,6 +273,7 @@ public class MoveHistory extends AbstractTableModel {
         	Log.log(Level.SEVERE, "Inconsistency in MoveHistory.move and MoveHistory.moveBackStack. Index out of bounds.");
             return null;
         }
+
     }
 
     public synchronized PlayedMove redo() {
@@ -300,7 +297,7 @@ public class MoveHistory extends AbstractTableModel {
      * @param move String which in is capt player move
      * @return boolean 1 if the move is correct, else 0
      */
-    static public boolean isMoveCorrect(String move) {
+    private static boolean isMoveCorrect(String move) {
         if (move.equals("O-O") || move.equals("O-O-O")) {
             return true;
         }
@@ -354,7 +351,7 @@ public class MoveHistory extends AbstractTableModel {
         return true;
     }
 
-    public void addMove(String move) {
+    private void addMove(String move) {
         if (isMoveCorrect(move)) {
             this.move.add(move);
             this.addMove2Table(move);
@@ -479,12 +476,12 @@ public class MoveHistory extends AbstractTableModel {
                 List<Square> squares = this.game.chessboardController.getSquares();
                 xTo = locMove.charAt(from) - 97;// from ASCII
                 yTo = RoundChessboardController.bottom - (locMove.charAt(from + 1) - 49);// from ASCII
-                for(Square square: squares) {
+                for (Square square : squares) {
                     if (square.getPiece() == null
                             || this.game.getActivePlayer().color != square.getPiece().player.color) {
                         continue;
                     }
-                    HashSet<Square> pieceMoves = this.game.chessboardController.getValidTargetSquares(square.getPiece());
+                    /*HashSet<Square> pieceMoves = this.game.chessboardController.getValidTargetSquares(square);
                     for (Object oldSquare : pieceMoves) {
                         Square currSquare = (Square) oldSquare;
                         if (currSquare.getPozX() == xTo && currSquare.getPozY() == yTo) {
@@ -492,7 +489,7 @@ public class MoveHistory extends AbstractTableModel {
                             yFrom = square.getPozY();
                             pieceFound = true;
                         }
-                    }
+                    }*/
                 }
             } else {
                 xFrom = locMove.charAt(from) - 97;// from ASCII

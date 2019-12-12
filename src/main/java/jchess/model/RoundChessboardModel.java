@@ -11,26 +11,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class RoundChessboardModel {
-
     public List<Square> squares;
     public Piece kingWhite;
     public Piece kingBlack;
+    public Piece kingGray;
     private int squaresPerRow;
     private int rows;
+    private boolean hasContinuousRows;
 
-    public static int botoom = 5;
-    public static int top = 0;
-
-
-    public RoundChessboardModel(int rows, int squaresPerRow, Settings settings) {
+    public RoundChessboardModel(int rows, int squaresPerRow, boolean continuousRows, Settings settings) {
         this.squares = new ArrayList<Square>();
         this.squaresPerRow = squaresPerRow;
         this.rows = rows;
+        this.hasContinuousRows = continuousRows;
+        
         populateSquares(rows, squaresPerRow);
-        intializePieces(settings.playerWhite, settings.playerBlack);
+        initializePieces(settings.getPlayerWhite(), settings.getPlayerBlack(), settings.getPlayerGray());
     }
 
     private void populateSquares(int rows, int squaresPerRow) {
@@ -40,15 +38,32 @@ public class RoundChessboardModel {
             }
         }
     }
-
-    public Square getSquare(int x, int y) {
-        Optional<Square> optionalSquare =  squares.stream().filter(s -> s.getPozX() == x && s.getPozY() == y).findFirst();
+    
+    public int getRows() {
+    	return rows;
+    }
+    
+    public int getColumns() {
+    	return squaresPerRow;
+    }
+    
+    public Square getSquare(int x, int y) { // duplicate method with GUI-related getSquare
+    	int newy = hasContinuousRows ? (y % rows < 0 ? (y % rows) + rows : y % rows) : y;
+    	
+        Optional<Square> optionalSquare = squares.stream().filter(s ->
+        	s.getPozX() == x && s.getPozY() == newy).findFirst();
         if(optionalSquare.equals(Optional.empty()))
             return null;
             
         return optionalSquare.get();//TODO
     }
 
+    public Square getSquare(Square square) {
+    	if (square == null)
+    		return null;
+    	return getSquare(square.getPozX(), square.getPozY());
+    }
+    
     public Square getSquare(Piece piece) {
         Optional<Square> optionalSquare = squares.stream().filter(s -> s.getPiece() == piece).findFirst();
         if(optionalSquare.equals(Optional.empty())) {
@@ -62,30 +77,25 @@ public class RoundChessboardModel {
     }
 
     public Piece getPiece(Square square) {
-        return square.getPiece();
+        return square == null ? null : square.getPiece();
     }
 
 
     public Piece setPieceOnSquare(Piece piece, Square square) {
-        if (piece == null) {
-            Log.log(Level.WARNING, "Piece was not set on square because piece is null");
-            return null;
-        }
         if (square == null) {
             Log.log(Level.WARNING, "Piece was not set on square because square is null");
             return null;
         }
-        removePieceFromSquare(this.getSquare(piece));
+        
+        Square prevSq = this.getSquare(piece);
+        if (prevSq != null)
+        	prevSq.setPiece(null);
+        
         square.setPiece(piece);
         return piece;
     }
-
-    public void removePieceFromSquare(Square square) {
-    	if (square != null)
-    		square.setPiece(null);
-    }
-
-    private void intializePiecesForPlayer(Player player, int row) {
+    
+    private void initializePiecesForPlayer(Player player, int row) {
         initializePawnsForPlayer(player, row);
         initializeHeavyPiecesForPlayer(player, row);
     }
@@ -99,11 +109,11 @@ public class RoundChessboardModel {
         setPieceOnSquare(PieceFactory.createKnight(player), getSquare(4, row + 1));
         setPieceOnSquare(PieceFactory.createRook(player), getSquare(5, row + 1));
 
-        if (player.color == Player.colors.white) {
+        if (player.color == Player.colors.white)
             kingWhite = king;
-        } else {
-            kingBlack = king;
-        }
+        else if (player.color == Player.colors.gray)
+        	kingGray = king;
+        else kingBlack = king;
     }
 
     private void initializePawnsForPlayer(Player player, int row) {
@@ -113,11 +123,13 @@ public class RoundChessboardModel {
         }
     }
 
-    public void intializePieces(Player plWhite, Player plBlack) {
+    public void initializePieces(Player plWhite, Player plBlack, Player plGray) {
         Player player1 = plBlack;
         Player player2 = plWhite;
+        Player player3 = plGray;
 
-        intializePiecesForPlayer(player1, 0);
-        intializePiecesForPlayer(player2, 12);
+        initializePiecesForPlayer(player1, 0);
+        initializePiecesForPlayer(player2, 8);
+        initializePiecesForPlayer(player3, 16);
     }
 }

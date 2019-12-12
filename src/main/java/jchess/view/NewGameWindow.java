@@ -18,11 +18,13 @@
  *
  * Created on 2009-10-20, 15:11:49
  */
-package jchess.UI;
+package jchess.view;
 
 import javax.swing.*;
 
 import jchess.Settings;
+import jchess.UI.DrawLocalSettings;
+import jchess.UI.DrawNetworkSettings;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -82,14 +84,14 @@ public class NewGameWindow extends JDialog {
 	/**
 	 * @param args the command line arguments
 	 */
-	public static void main(String args[]) {
-		java.awt.EventQueue.invokeLater(new Runnable() {
-
-			public void run() {
-				new NewGameWindow().setVisible(true);
-			}
-		});
-	}
+//	public static void main(String args[]) {
+//		java.awt.EventQueue.invokeLater(new Runnable() {
+//
+//			public void run() {
+//				new NewGameWindow().setVisible(true);
+////			}
+//		});
+//	}
 
 	// Variables declaration - do not modify//GEN-BEGIN:variables
 	private javax.swing.JTabbedPane jTabbedPane1;

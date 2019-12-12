@@ -18,6 +18,19 @@ jar {
     }
 }
 
+javadoc {
+    source = sourceSets.main.allJava
+    classpath = configurations.compile
+}
+
+task archiveJavadoc(type: Zip) {
+    from 'build/docs/javadoc/'
+    include '*'
+    include '*/*' //to include contents of a folder present inside Reports directory
+    archiveName 'JChessDocumentation.zip'
+    destinationDir(file('build/docs/'))
+}
+
 if (hasProperty('buildScan')) {
     buildScan {
         termsOfServiceUrl = 'https://gradle.com/terms-of-service'
@@ -28,4 +41,5 @@ if (hasProperty('buildScan')) {
 dependencies {
     compile group: 'org.jdesktop', name: 'appframework', version: '1.0.3'
     testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:2.2.26'
 }
