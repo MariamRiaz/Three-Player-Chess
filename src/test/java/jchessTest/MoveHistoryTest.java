@@ -10,7 +10,6 @@ import jchess.pieces.PieceFactory;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -30,12 +29,6 @@ public class MoveHistoryTest {
         Player testPlayer = new Player("test", "white");
         when(settingsMock.getPlayerWhite()).thenReturn(testPlayer);
         moveHistory = new MoveHistory(game);
-    }
-    @Test
-    public void getRowCount() { assertEquals(0, moveHistory.getRowCount());
-    }
-    @Test
-    public void getColumnCount() { assertEquals(3, moveHistory.getColumnCount());
     }
     @Test
     public void getMoves() {

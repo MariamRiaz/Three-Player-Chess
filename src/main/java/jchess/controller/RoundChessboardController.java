@@ -61,21 +61,9 @@ public class RoundChessboardController extends MouseAdapter {
         this.squareObservable = new SquareObservable();
     }
 
-    public RoundChessboardModel getModel() {
-        return model;
-    }
-
     public RoundChessboardView getView() {
         return view;
     }
-//    public void resizeChessboard(int height) {
-//        this.view.resizeChessboard(height);
-//    }
-
-    //    public void resizeChessboard(){
-//        this.view.resizeChessboard(view.get_height(settings.renderLabels));
-//    }
-//
 
     public void addSelectSquareObserver(Observer observer) {
         this.squareObservable.addObserver(observer);
