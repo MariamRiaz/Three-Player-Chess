@@ -27,7 +27,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import jchess.Client;
+import jchess.network.Client;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 

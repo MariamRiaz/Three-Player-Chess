@@ -22,8 +22,8 @@ package jchess.controller;
 
 import java.util.logging.Level;
 import jchess.Game;
-import jchess.Log;
-import jchess.Player;
+import jchess.helper.Log;
+import jchess.entities.Player;
 import jchess.Settings;
 import jchess.helper.Clock;
 import jchess.view.GameClockView;

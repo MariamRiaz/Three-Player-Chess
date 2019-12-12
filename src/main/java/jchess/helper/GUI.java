@@ -18,20 +18,18 @@
  * Mateusz Sławomir Lach ( matlak, msl )
  * Damian Marciniak
  */
-package jchess;
+package jchess.helper;
+
+import jchess.Game;
+import jchess.JChessApp;
 
 import java.awt.*;
 import java.net.*;
 import java.io.*;
-import java.io.InputStreamReader;
-import javax.swing.*;
-import javax.swing.JPanel;
 
-import java.io.IOException;
 import java.util.Properties;
 import java.io.FileOutputStream;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Class representing the game interface which is seen by a player and where are

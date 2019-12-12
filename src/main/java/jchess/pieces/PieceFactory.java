@@ -1,6 +1,6 @@
 package jchess.pieces;
 
-import jchess.Player;
+import jchess.entities.Player;
 import jchess.pieces.Piece.Move.MoveType;
 
 /*

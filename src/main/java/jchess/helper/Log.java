@@ -1,4 +1,4 @@
-package jchess;
+package jchess.helper;
 
 import java.util.logging.Logger;
 import java.io.IOException;

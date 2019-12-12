@@ -22,9 +22,9 @@ package jchess.view;
 
 import javax.swing.*;
 
-import jchess.GUI;
+import jchess.helper.GUI;
 import jchess.JChessApp;
-import jchess.Log;
+import jchess.helper.Log;
 
 import java.awt.*;
 import java.awt.event.*;

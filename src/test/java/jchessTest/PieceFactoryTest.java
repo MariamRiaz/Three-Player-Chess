@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 import jchess.pieces.PieceFactory;
 import org.junit.Test;
 
-import jchess.Player;
+import jchess.entities.Player;
 
 public class PieceFactoryTest {
     @Test

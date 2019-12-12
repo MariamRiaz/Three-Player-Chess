@@ -18,7 +18,7 @@
  * Mateusz Sławomir Lach ( matlak, msl )
  * Damian Marciniak
  */
-package jchess;
+package jchess.network;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -29,7 +29,10 @@ import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import jchess.server.Connection_info;
+
+import jchess.Game;
+import jchess.helper.Log;
+import jchess.Settings;
 
 /**
  * Class responsible for clients references: for running game, for joing the

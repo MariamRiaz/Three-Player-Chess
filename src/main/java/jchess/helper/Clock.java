@@ -20,7 +20,7 @@
  */
 package jchess.helper;
 
-import jchess.Player;
+import jchess.entities.Player;
 
 /**
  * Class to represent seperate wall-clock for one player. Full ChessClock is

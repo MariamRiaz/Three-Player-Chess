@@ -30,8 +30,8 @@ import javax.swing.text.BadLocationException;
 
 import jchess.Game;
 import jchess.JChessApp;
-import jchess.Log;
-import jchess.Player;
+import jchess.helper.Log;
+import jchess.entities.Player;
 import jchess.Settings;
 
 /**

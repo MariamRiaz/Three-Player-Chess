@@ -24,7 +24,7 @@ import java.security.InvalidParameterException;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import jchess.Player;
+import jchess.entities.Player;
 
 /**
  * Class to represent a Piece of any kind. Each Piece is defined by specific values for its member attributes.

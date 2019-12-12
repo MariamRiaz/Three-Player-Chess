@@ -1,8 +1,8 @@
 package jchess.view;
 
-import jchess.GUI;
-import jchess.Log;
-import jchess.Player;
+import jchess.helper.GUI;
+import jchess.helper.Log;
+import jchess.entities.Player;
 import jchess.entities.Square;
 import jchess.helper.CartesianPolarConverter;
 import jchess.pieces.Piece;

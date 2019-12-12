@@ -1,6 +1,6 @@
 package jchessTest;
 
-import jchess.Player;
+import jchess.entities.Player;
 import jchess.Settings;
 import jchess.entities.Square;
 import jchess.controller.RoundChessboardController;

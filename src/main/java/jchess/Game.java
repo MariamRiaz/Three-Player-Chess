@@ -20,6 +20,9 @@
  */
 package jchess;
 
+import jchess.entities.Player;
+import jchess.helper.Log;
+import jchess.network.Client;
 import jchess.view.Chat;
 import jchess.entities.Square;
 import jchess.controller.GameClock;
@@ -55,8 +58,8 @@ public class Game extends JPanel implements Observer, ComponentListener {
     public RoundChessboardController chessboardController;
     private Player activePlayer;
     public GameClock gameClock;
-    Client client;
-    MoveHistory moves;
+    public Client client;
+    public MoveHistory moves;
     public Chat chat;
     private int rows = 24;
     private int squaresPerRow = 6;
