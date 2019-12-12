@@ -42,7 +42,6 @@ public class RoundChessboardControllerTest {
 
     @Test
     public void testUnselect() {
-
         controller.setActiveSquare(square);
         controller.unselect();
         assertNull(controller.getActiveSquare());
@@ -53,6 +52,10 @@ public class RoundChessboardControllerTest {
     public void testSetActiveSquare(){
         controller.setActiveSquare(square);
         assertEquals(square, controller.getActiveSquare());
+    }
+
+    @Test
+    public void testSimulateMove(){
     }
 
 
