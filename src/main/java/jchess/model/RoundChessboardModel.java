@@ -11,11 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
-/*
-* Class that holds the state of the RoundChessboard component
-*/
 
-
+/**
+ * Class that holds the state of the RoundChessboard component
+ */
 public class RoundChessboardModel {
     public List<Square> squares;
     public Piece kingWhite;
@@ -25,6 +24,13 @@ public class RoundChessboardModel {
     private int rows;
     private boolean hasContinuousRows;
 
+    /**
+     * Constructor
+     * @param rows              int     row count of the chessboard
+     * @param squaresPerRow     int     count of squares per row of the chessboard
+     * @param continuousRows    boolean
+     * @param settings          Settings    settings of the application
+     */
     public RoundChessboardModel(int rows, int squaresPerRow, boolean continuousRows, Settings settings) {
         this.squares = new ArrayList<Square>();
         this.squaresPerRow = squaresPerRow;
@@ -42,18 +48,29 @@ public class RoundChessboardModel {
             }
         }
     }
-    
-    public Square getSquare(int x, int y) { // duplicate method with GUI-related getSquare
-    	int newy = hasContinuousRows ? (y % rows < 0 ? (y % rows) + rows : y % rows) : y;
+
+    /**
+     * gets the Square corresponding to the given x and y index
+     * @param x     int x index of the desired square
+     * @param y     int y index of the desired square
+     * @return      Square corresponding to the given x and y index
+     */
+    public Square getSquare(int x, int y) {
+    	int newY = hasContinuousRows ? (y % rows < 0 ? (y % rows) + rows : y % rows) : y;
     	
         Optional<Square> optionalSquare = squares.stream().filter(s ->
-        	s.getPozX() == x && s.getPozY() == newy).findFirst();
+        	s.getPozX() == x && s.getPozY() == newY).findFirst();
         if(optionalSquare.equals(Optional.empty()))
             return null;
             
         return optionalSquare.get();//TODO
     }
 
+    /**
+     * gets the Square where the given Piece is located on
+     * @param piece     Piece to get the Square from
+     * @return          Square where the given Piece is located on
+     */
     public Square getSquare(Piece piece) {
         Optional<Square> optionalSquare = squares.stream().filter(s -> s.getPiece() == piece).findFirst();
         if(optionalSquare.equals(Optional.empty())) {
@@ -62,15 +79,12 @@ public class RoundChessboardModel {
         return optionalSquare.get();//TODO
     }
 
-    public Piece getPiece(int x, int y) {
-        return getPiece(getSquare(x, y));
-    }
-
-    public Piece getPiece(Square square) {
-        return square == null ? null : square.getPiece();
-    }
-
-
+    /**
+     * sets the given Piece on the given Square
+     * @param piece     Piece   piece to put on the Square
+     * @param square    Square  square where to put the piece on
+     * @return          Piece   after setting it on the Square
+     */
     public Piece setPieceOnSquare(Piece piece, Square square) {
         if (square == null) {
             Log.log(Level.WARNING, "Piece was not set on square because square is null");
@@ -108,6 +122,12 @@ public class RoundChessboardModel {
         }
     }
 
+    /**
+     * initializes Pieces for given players on startup
+     * @param plWhite   Player white player
+     * @param plBlack   Player black player
+     * @param plGray    Player gray player
+     */
     public void initializePieces(Player plWhite, Player plBlack, Player plGray) {
         Player player1 = plBlack;
         Player player2 = plWhite;

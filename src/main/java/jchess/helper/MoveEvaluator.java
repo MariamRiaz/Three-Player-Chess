@@ -9,9 +9,16 @@ import jchess.entities.Square;
 import jchess.model.RoundChessboardModel;
 import jchess.pieces.Piece;
 
+/**
+ * Class that contains method to evaluate if a move is valid and gets possible target Squares
+ */
 public class MoveEvaluator {
 	private RoundChessboardModel model;
-	
+
+    /**
+     * Constructor
+     * @param model     RoundChessboardModel    the model of the chessboard
+     */
 	public MoveEvaluator (RoundChessboardModel model) {
 		this.model = model;
 	}
@@ -68,7 +75,11 @@ public class MoveEvaluator {
         return model.getSquare(current.getPozX() + x, current.getPozY() + y);
     }
 
-
+    /**
+     * evaluates whether the Piece on the given Square is unsavable
+     * @param square    Square  the square on which the piece is located for which the savable check shall be performed
+     * @return          boolean true if a the Piece is unsavable
+     */
     public boolean squareUnsavable(Square square) {
         if (square == null || square.getPiece() == null)
             return false;
@@ -81,7 +92,13 @@ public class MoveEvaluator {
         }
         return true;
     }
-	
+
+    /**
+     * gets all Squares where a Piece can move to in order to be saved
+     * @param moving
+     * @param toSave
+     * @return
+     */
     public HashSet<Square> getValidTargetSquaresToSavePiece(Square moving, Square... toSave) {
         HashSet<Square> ret = getValidTargetSquares(moving);
         if (ret.size() == 0 || toSave == null)
@@ -108,6 +125,11 @@ public class MoveEvaluator {
         return ret;
     }
 
+    /**
+     * determines whether the Piece on the given Square is threatened
+     * @param square    Square  square on which the piece is located that is potentially threatened
+     * @return          boolean true if Piece is threatened
+     */
     public boolean squareIsThreatened(Square square) {
         if (square == null || square.getPiece() == null)
             return false;
