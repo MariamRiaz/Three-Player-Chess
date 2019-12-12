@@ -183,9 +183,9 @@ public class RoundChessboardController extends MouseAdapter {
     public Piece getKing(Player player) {
         if (player == null)
             return null;
-        if (player.color == player.color.black)
+        if (player.color == Player.colors.black)
             return model.kingBlack;
-        else if (player.color == player.color.gray)
+        else if (player.color == Player.colors.gray)
         	return model.kingGray;
         return model.kingWhite;
     }
