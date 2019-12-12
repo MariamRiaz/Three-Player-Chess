@@ -1,4 +1,4 @@
-package jchess.UI;
+package jchess.view;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -39,11 +39,16 @@ public class MovesHistoryView {
     public int getRowCount(){
         return this.tableModel.getRowCount();
     }
+    public int getColumnCount(){
+        return this.tableModel.getColumnCount();
+    }
 
     public void removeRow(int row){
         this.tableModel.removeRow(row);
     }
-
+    public Object getValueAt(int row, int column) {
+        return this.tableModel.getValueAt(row, column);
+    }
 }
 
 class MyDefaultTableModel extends DefaultTableModel {

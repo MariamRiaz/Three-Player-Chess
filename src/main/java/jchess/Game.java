@@ -20,26 +20,27 @@
  */
 package jchess;
 
-import java.awt.event.ComponentEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import javax.swing.*;
-
 import jchess.UI.Chat;
-import jchess.UI.GameClock;
 import jchess.UI.board.Square;
+import jchess.controller.GameClock;
 import jchess.controller.RoundChessboardController;
+import jchess.model.RoundChessboardModel;
 import jchess.pieces.MoveHistory;
 import jchess.pieces.Piece;
 import jchess.view.RoundChessboardView;
 
+import javax.swing.*;
 import java.awt.*;
-import java.io.File;
-import java.io.BufferedReader;
-import java.io.FileWriter;
-import java.io.FileReader;
-import java.util.Calendar;
+import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.util.Calendar;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.logging.Level;
 
 /**
@@ -47,7 +48,7 @@ import java.util.logging.Level;
  * for ending it. This class is also responsible for appoing player with have a
  * move at the moment
  */
-public class Game extends JPanel implements MouseListener, ComponentListener {
+public class Game extends JPanel implements Observer, ComponentListener {
 
     public Settings settings;
     private boolean blockedChessboard;
@@ -57,15 +58,22 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
     Client client;
     MoveHistory moves;
     public Chat chat;
+    private int rows = 24;
+    private int squaresPerRow = 6;
+    private static final int chessboardSize = 800;
+
 
     public Game() {
         this.setLayout(null);
         this.moves = new MoveHistory(this);
         settings = new Settings();
-        chessboardController = new RoundChessboardController(this.settings, this.moves);
+
+        RoundChessboardModel model = new RoundChessboardModel(rows, squaresPerRow, true, settings);
+        RoundChessboardView view = new RoundChessboardView(chessboardSize, "3-player-board.png", rows, squaresPerRow, model.squares);
+        chessboardController = new RoundChessboardController(model, view, this.settings, this.moves);
+
         this.add(chessboardController.getView());
-        chessboardController.getView().addMouseListener(this);
-        // this.chessboard.
+        chessboardController.addSelectSquareObserver(this);
         gameClock = new GameClock(this);
         gameClock.gameClockView.setSize(new Dimension(400, 100));
         gameClock.gameClockView.setLocation(new Point(500, 0));
@@ -105,8 +113,8 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
         Calendar cal = Calendar.getInstance();
         String str = new String("");
         String info = new String("[Event \"Game\"]\n[Date \"" + cal.get(cal.YEAR) + "." + (cal.get(cal.MONTH) + 1) + "."
-                + cal.get(cal.DAY_OF_MONTH) + "\"]\n" + "[White \"" + this.settings.playerWhite.name + "\"]\n[Black \""
-                + this.settings.playerBlack.name + "\"]\n\n");
+                + cal.get(cal.DAY_OF_MONTH) + "\"]\n" + "[White \"" + this.settings.getPlayerWhite().name + "\"]\n[Black \""
+                + this.settings.getPlayerBlack().name + "\"]\n\n");
         str += info;
         str += this.moves.getMovesInString();
         try {
@@ -158,10 +166,10 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
         }
         Game newGUI = JChessApp.jcv.addNewTab(whiteName + " vs. " + blackName);
         Settings locSetts = newGUI.settings;
-        locSetts.playerBlack.name = blackName;
-        locSetts.playerWhite.name = whiteName;
-        locSetts.playerBlack.setType(Player.playerTypes.localUser);
-        locSetts.playerWhite.setType(Player.playerTypes.localUser);
+        locSetts.getPlayerBlack().name = blackName;
+        locSetts.getPlayerWhite().name = whiteName;
+        locSetts.getPlayerBlack().setType(Player.playerTypes.localUser);
+        locSetts.getPlayerWhite().setType(Player.playerTypes.localUser);
         locSetts.gameMode = Settings.gameModes.loadGame;
         locSetts.gameType = Settings.gameTypes.local;
 
@@ -228,23 +236,16 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
      * Method to Start new game
      */
     public void newGame() {
-
-        // Log.log("new game, game type: "+settings.gameType.name());
-
-        activePlayer = settings.playerWhite;
+        activePlayer = settings.getPlayerWhite();
         if (activePlayer.playerType != Player.playerTypes.localUser) {
             this.blockedChessboard = true;
         }
-        // dirty hacks starts over here :)
-        // to fix rendering artefacts on first run
         Game activeGame = JChessApp.jcv.getActiveTabGame();
         if (activeGame != null && JChessApp.jcv.getNumberOfOpenedTabs() == 0) {
-//            activeGame.chessboardController.resizeChessboard();
+//            activeGame.chessboardController.resizeChessboard(); TODO resizing
             activeGame.repaint();
         }
-//        chessboardController.repaint();
         this.repaint();
-        // dirty hacks ends over here :)
     }
 
     /**
@@ -263,12 +264,12 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
      * Method to swich active players after move
      */
     public void switchActive() {
-        if (activePlayer == settings.playerWhite) {
-            activePlayer = settings.playerBlack;
-        } else if (activePlayer == settings.playerBlack){
-            activePlayer = settings.playerGray;
-        } else if (activePlayer == settings.playerGray){
-            activePlayer = settings.playerWhite;
+        if (activePlayer == settings.getPlayerWhite()) {
+            activePlayer = settings.getPlayerBlack();
+        } else if (activePlayer == settings.getPlayerBlack()) {
+            activePlayer = settings.getPlayerGray();
+        } else if (activePlayer == settings.getPlayerGray()) {
+            activePlayer = settings.getPlayerWhite();
         }
 
         this.gameClock.switch_clocks();
@@ -310,7 +311,7 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
      * @return Returns true if the move is correct
      */
     public boolean simulateMove(int beginX, int beginY, int endX, int endY) {
-        boolean moveCorrect = chessboardController.simulateMove(beginX, beginY, endX, endY);
+        boolean moveCorrect = chessboardController.moveIsPossible(beginX, beginY, endX, endY);
         nextMove();
         return moveCorrect;
     }
@@ -374,82 +375,67 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
         return status;
     }
 
-    public void mousePressed(MouseEvent event) {
-        if (event.getButton() == MouseEvent.BUTTON3) // right button
-        {
-            this.undo();
-        } else if (event.getButton() == MouseEvent.BUTTON2 && settings.gameType == Settings.gameTypes.local) {
-            this.redo();
-        } else if (event.getButton() == MouseEvent.BUTTON1) // left button
-        {
+    public void squareSelected(Square sq) {
+///if (event.getButton() == MouseEvent.BUTTON3) // right button
+//        {
+//            this.undo();
+//        } else if (event.getButton() == MouseEvent.BUTTON2 && settings.gameType == Settings.gameTypes.local) {
+//            this.redo();
+//        } else if (event.getButton() == MouseEvent.BUTTON1) // left button
+//        { TODO add action listener
 
-            if (!blockedChessboard) {
-//                try {
-                int x = event.getX();// get X position of mouse
-                int y = event.getY();// get Y position of mouse
+        if (!blockedChessboard) {
+            if ((sq == null && sq.getPiece() == null && chessboardController.getActiveSquare() == null)
+                    || (this.chessboardController.getActiveSquare() == null && sq.getPiece() != null
+                    && sq.getPiece().player != this.activePlayer)) {
+                return;
+            }
 
-                Square sq = chessboardController.getSquareFromClick(x, y);//TODO
-                if ((sq == null && sq.getPiece() == null && chessboardController.getActiveSquare() == null)
-                        || (this.chessboardController.getActiveSquare() == null && sq.getPiece() != null
-                        && sq.getPiece().player != this.activePlayer)) {
-                    return;
+            if (sq.getPiece() != null && sq.getPiece().player == this.activePlayer && sq != chessboardController.getActiveSquare()) {
+                chessboardController.unselect();
+                chessboardController.select(sq);
+            } else if (chessboardController.getActiveSquare() == sq) // unselect
+            {
+                chessboardController.unselect();
+            } else if (chessboardController.getActiveSquare() != null && chessboardController.getActiveSquare().getPiece() != null
+                    && chessboardController.movePossible(chessboardController.getActiveSquare(), sq)) // move
+            {
+                if (settings.gameType == Settings.gameTypes.local) {
+                    //TODO: exception is caught here --> method returns without switching player
+                    chessboardController.move(chessboardController.getActiveSquare(), sq, true, true);
+                } else if (settings.gameType == Settings.gameTypes.network) {
+                    client.sendMove(chessboardController.getActiveSquare().getPozX(), chessboardController.getActiveSquare().getPozY(), sq.getPozX(),
+                            sq.getPozY());
+                    chessboardController.move(chessboardController.getActiveSquare(), sq, true, true);
                 }
 
-                if (sq.getPiece() != null && sq.getPiece().player == this.activePlayer && sq != chessboardController.getActiveSquare()) {
-                    chessboardController.unselect();
-                    chessboardController.select(sq);
-                } else if (chessboardController.getActiveSquare() == sq) // unselect
-                {
-                    chessboardController.unselect();
-                } else if (chessboardController.getActiveSquare() != null && chessboardController.getActiveSquare().getPiece() != null
-                        && chessboardController.getValidTargetSquares(chessboardController.getActiveSquare().getPiece()).contains(sq)) // move
-                {
-                    if (settings.gameType == Settings.gameTypes.local) {
-                        //TODO: exception is caught here --> method returns without switching player
-                        chessboardController.move(chessboardController.getActiveSquare(), sq, true, true);
-                    } else if (settings.gameType == Settings.gameTypes.network) {
-                        client.sendMove(chessboardController.getActiveSquare().getPozX(), chessboardController.getActiveSquare().getPozY(), sq.getPozX(),
-                                sq.getPozY());
-                        chessboardController.move(chessboardController.getActiveSquare(), sq, true, true);
-                    }
+                chessboardController.unselect();
 
-                    chessboardController.unselect();
+                // switch player
+                this.nextMove();
 
-                    // switch player
-                    this.nextMove();
+                // checkmate or stalemate
+                Piece king;
+                if (this.activePlayer == settings.getPlayerWhite()) {
+                    king = chessboardController.getKingWhite();
+                } else {
+                    king = chessboardController.getKingBlack();
+                }
 
-                    // checkmate or stalemate
-                    Piece king;
-                    if (this.activePlayer == settings.playerWhite) {
-                        king = chessboardController.getKingWhite();
-                    } else {
-                        king = chessboardController.getKingBlack();
-                    }
-
-                    if (chessboardController.pieceUnsavable(king))
-                        this.endGame("Checkmate! " + king.player.color.toString() + " player lose!");
+                if (chessboardController.pieceIsUnsavable(king))
+                    this.endGame("Checkmate! " + king.player.color.toString() + " player lose!");
 
 						/*case 2:
 							this.endGame("Stalemate! Draw!");
 							break;
 						}*/
 
-                }
-            } else if (blockedChessboard) {
-                Log.log("Chessboard is blocked");
             }
+        } else if (blockedChessboard) {
+            Log.log("Chessboard is blocked");
         }
-        // chessboard.repaint();
     }
 
-    public void mouseReleased(MouseEvent arg0) {
-    }
-
-    public void mouseEntered(MouseEvent arg0) {
-    }
-
-    public void mouseExited(MouseEvent arg0) {
-    }
 
     public void componentResized(ComponentEvent e) {
         int height = this.getHeight() >= this.getWidth() ? this.getWidth() : this.getHeight();
@@ -472,6 +458,13 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
     }
 
     public void componentHidden(ComponentEvent e) {
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        Square square = (Square) arg;
+        squareSelected(square);
+
     }
 }
 

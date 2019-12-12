@@ -129,9 +129,9 @@ public class DrawLocalSettings extends JPanel implements ActionListener, TextLis
 			}
 			Game newGUI = JChessApp.jcv.addNewTab(this.firstName.getText() + " vs " + this.secondName.getText() + " vs " + this.thirdName.getText());
 			Settings sett = newGUI.settings;// sett local settings variable
-			Player pl1 = sett.playerWhite;// set local player variable
-			Player pl2 = sett.playerBlack;// set local player variable
-			Player pl3 = sett.playerGray;// set local player variable
+			Player pl1 = sett.getPlayerWhite();// set local player variable
+			Player pl2 = sett.getPlayerBlack();// set local player variable
+			Player pl3 = sett.getPlayerGray();// set local player variable
 			sett.gameMode = Settings.gameModes.newGame;
 			// if(this.firstName.getText().length() >9 )
 			// this.firstName.setText(this.firstName.getText(0,8));
