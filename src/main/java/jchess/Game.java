@@ -25,7 +25,7 @@ import jchess.UI.board.Square;
 import jchess.controller.GameClock;
 import jchess.controller.RoundChessboardController;
 import jchess.model.RoundChessboardModel;
-import jchess.pieces.MoveHistory;
+import jchess.controller.MoveHistory;
 import jchess.pieces.Piece;
 import jchess.view.RoundChessboardView;
 

@@ -8,13 +8,13 @@ import java.awt.*;
 * it a view for Move History class.
 * */
 
-public class MovesHistoryView {
+public class MoveHistoryView {
 
     public MyDefaultTableModel tableModel;
     public JScrollPane scrollPane;
     public JTable table;
 
-    public MovesHistoryView(){
+    public MoveHistoryView(){
         this.tableModel = new MyDefaultTableModel();
         this.table = new JTable(this.tableModel);
         this.scrollPane = new JScrollPane(this.table);

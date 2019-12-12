@@ -21,7 +21,7 @@ package jchess.pieces;
 
 import jchess.UI.board.Square;
 import jchess.controller.RoundChessboardController;
-import jchess.pieces.MoveHistory.castling;
+import jchess.controller.MoveHistory.castling;
 
 public class PlayedMove {
 
@@ -34,8 +34,8 @@ public class PlayedMove {
 	protected castling castlingMove = castling.none;
 	protected boolean wasPawnTwoFieldsMove = false;
 
-	PlayedMove(Square from, Square to, Piece movedPiece, Piece movedPieceState, Piece takenPiece, castling castlingMove, boolean wasEnPassant,
-			Piece promotedPiece) {
+	public PlayedMove(Square from, Square to, Piece movedPiece, Piece movedPieceState, Piece takenPiece, castling castlingMove, boolean wasEnPassant,
+					  Piece promotedPiece) {
 		this.from = from;
 		this.to = to;
 
