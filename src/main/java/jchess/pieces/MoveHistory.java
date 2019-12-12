@@ -42,7 +42,6 @@ import javax.swing.JOptionPane;
  * by player are correct. All moves which was taken by current player are saving
  * as List of Strings The history of moves is printing in a table
  *
- * @param game The current game
  */
 public class MoveHistory extends AbstractTableModel {
 
@@ -148,10 +147,7 @@ public class MoveHistory extends AbstractTableModel {
 
     /**
      * Method of adding new move
-     *
-     * @param move String which in is capt player move
      */
-
     public void addMove(Square begin, Square end, Piece beginPiece, Piece beginState, Piece endPiece, Piece endState, boolean registerInHistory, castling castlingMove,
                         boolean wasEnPassant, Piece promotedPiece) {
 
