@@ -1,5 +1,7 @@
 package jchess.view;
-
+/*
+*
+* */
 import jchess.helper.PolarPoint;
 import jchess.pieces.PieceVisual;
 

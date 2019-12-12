@@ -1,4 +1,8 @@
 package jchess.controller;
+/*
+* Class to represent the current state of the board, interacts between Model and view of the
+* round chess board.
+* */
 
 import jchess.*;
 import jchess.UI.board.Square;

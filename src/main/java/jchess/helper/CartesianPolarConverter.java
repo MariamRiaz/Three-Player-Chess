@@ -2,6 +2,9 @@ package jchess.helper;
 
 import java.awt.*;
 
+
+
+
 public class CartesianPolarConverter {
 
     private double getRadiusFromCartesian(Point point, Point circleCenter) {
