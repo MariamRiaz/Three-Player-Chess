@@ -65,8 +65,6 @@ public class Game extends JPanel implements Observer, ComponentListener {
         chessboardController = new RoundChessboardController(this.settings, this.moves);
         this.add(chessboardController.getView());
         chessboardController.addSelectSquareObserver(this);
-//        chessboardController.getView().addMouseListener(this);
-        // this.chessboard.
         gameClock = new GameClock(this);
         gameClock.gameClockView.setSize(new Dimension(400, 100));
         gameClock.gameClockView.setLocation(new Point(500, 0));
@@ -235,7 +233,7 @@ public class Game extends JPanel implements Observer, ComponentListener {
         }
         Game activeGame = JChessApp.jcv.getActiveTabGame();
         if (activeGame != null && JChessApp.jcv.getNumberOfOpenedTabs() == 0) {
-//            activeGame.chessboardController.resizeChessboard();
+//            activeGame.chessboardController.resizeChessboard(); TODO resizing
             activeGame.repaint();
         }
         this.repaint();
@@ -374,7 +372,7 @@ public class Game extends JPanel implements Observer, ComponentListener {
 //            this.undo();
 //        } else if (event.getButton() == MouseEvent.BUTTON2 && settings.gameType == Settings.gameTypes.local) {
 //            this.redo();
-//        } else if (event.getButton() == MouseEvent.BUTTON1) // left button
+//        } else if (event.getButton() == MouseEvent.BUTTON1) // left button TODO add action listener
 //        {
 
         if (!blockedChessboard) {
