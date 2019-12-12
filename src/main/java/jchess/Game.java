@@ -229,23 +229,16 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
      * Method to Start new game
      */
     public void newGame() {
-
-        // Log.log("new game, game type: "+settings.gameType.name());
-
         activePlayer = settings.playerWhite;
         if (activePlayer.playerType != Player.playerTypes.localUser) {
             this.blockedChessboard = true;
         }
-        // dirty hacks starts over here :)
-        // to fix rendering artefacts on first run
         Game activeGame = JChessApp.jcv.getActiveTabGame();
         if (activeGame != null && JChessApp.jcv.getNumberOfOpenedTabs() == 0) {
 //            activeGame.chessboardController.resizeChessboard();
             activeGame.repaint();
         }
-//        chessboardController.repaint();
         this.repaint();
-        // dirty hacks ends over here :)
     }
 
     /**
@@ -390,6 +383,7 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
                 if ((sq == null && sq.getPiece() == null && chessboardController.getActiveSquare() == null)
                         || (this.chessboardController.getActiveSquare() == null && sq.getPiece() != null
                         && sq.getPiece().player != this.activePlayer)) {
+
                     return;
                 }
 
