@@ -32,20 +32,18 @@ import jchess.entities.Player;
 public class Piece {
 	/**
 	 * Class representing a potential Move of a Piece. It describes the direction, limit and conditions for this Move.
-	 * @author Stefan
 	 */
 	public static class Move {
 		/**
 		 * Enum describing constraints, conditions, and move types to be observed when evaluating this Move.
-		 * @author Stefan
 		 */
 		public enum MoveType {
 			OnlyAttack,
 			OnlyMove,
 			Unblockable,
 			OnlyWhenFresh,
-			Castling, //TODO: Add relevant Move instance to King implementation and code in Chessboard.recurseMove
-			EnPassant //TODO: Add relevant Move instance to Pawn implementation and code in Chessboard.recurseMove
+			Castling, 
+			EnPassant
 		}
 		
 		public final int x, y;
@@ -113,7 +111,7 @@ public class Piece {
 	}
 	
 	/**
-	 * Returns a copy of this Piece.
+	 * Returns a deep copy of this Piece.
 	 */
 	public Piece clone() {
 		return new Piece(this);

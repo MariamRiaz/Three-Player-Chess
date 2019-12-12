@@ -13,16 +13,16 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- * A model class for getting the current place and the new place of a piece once its moved
- * also will have the record for the pieces that are moved, taken or promoted
- */
 package jchess.entities;
 
-import jchess.entities.Square;
 import jchess.controller.RoundChessboardController;
 import jchess.controller.MoveHistory.castling;
 import jchess.pieces.Piece;
+
+/**
+ * A model class for getting the current place and the new place of a piece once its moved
+ * also will have the record for the pieces that are moved, taken or promoted
+ */
 
 public class PlayedMove {
 
@@ -35,6 +35,17 @@ public class PlayedMove {
 	protected castling castlingMove = castling.none;
 	protected boolean wasPawnTwoFieldsMove = false;
 
+	/**
+	 * Constructor of PlayedMove class
+	 * @param from Square from which the piece is moved
+	 * @param to Square to which the piece is moved
+	 * @param movedPiece type of moved piece
+	 * @param movedPieceState previous state of moved piece
+	 * @param takenPiece piece that was killed by the moved piece
+	 * @param castlingMove is the current move a castling move?
+	 * @param wasEnPassant is the current move an EnPassant?
+	 * @param promotedPiece promoted piece
+	 */
 	public PlayedMove(Square from, Square to, Piece movedPiece, Piece movedPieceState, Piece takenPiece, castling castlingMove, boolean wasEnPassant,
 					  Piece promotedPiece) {
 		this.from = from;
@@ -55,38 +66,65 @@ public class PlayedMove {
 		}
 	}
 
+	/**
+	 * Get the Square from which the piece is moved
+	 */
 	public Square getFrom() {
 		return this.from;
 	}
 
+	/**
+	 * Get the Square to which the piece is moved
+	 */
 	public Square getTo() {
 		return this.to;
 	}
 
+	/**
+	 * Get the Piece which is moved
+	 */
 	public Piece getMovedPiece() {
 		return this.movedPiece;
 	}
-	
+
+	/**
+	 * Get the previous state of the Piece which is moved
+	 */
 	public Piece getMovedPieceState() {
 		return this.movedPieceState;
 	}
 
+	/**
+	 * Get the Piece which is taken
+	 */
 	public Piece getTakenPiece() {
 		return this.takenPiece;
 	}
 
+	/**
+	 * To check if the move was an EnPassant
+	 */
 	public boolean wasEnPassant() {
 		return this.wasEnPassant;
 	}
 
+	/**
+	 * To check if the move was a pawn two fields move
+	 */
 	public boolean wasPawnTwoFieldsMove() {
 		return this.wasPawnTwoFieldsMove;
 	}
 
+	/**
+	 * To get the type of Castling move
+	 */
 	public castling getCastlingMove() {
 		return this.castlingMove;
 	}
 
+	/**
+	 * To get the Promoted Piece
+	 */
 	public Piece getPromotedPiece() {
 		return this.promotedTo;
 	}

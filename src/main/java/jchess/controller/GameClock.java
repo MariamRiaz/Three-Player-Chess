@@ -101,10 +101,7 @@ public class GameClock implements Runnable {
 	}
 
 	public void setTimes(int time) {
-		/*
-		 * rather in chess game players got the same time 4 game, so why in
-		 * documentation this method've 2 parameters ?
-		 */
+
 		gameClockView.clock1.init(time);
 		gameClockView.clock2.init(time);
 		gameClockView.clock3.init(time);
