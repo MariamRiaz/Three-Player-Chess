@@ -59,6 +59,7 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
     public Chat chat;
     private int rows = 24;
     private int squaresPerRow = 6;
+    private static final int chessboardSize = 800;
 
 
     public Game() {
@@ -67,7 +68,7 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
         settings = new Settings();
 
         RoundChessboardModel model = new RoundChessboardModel(rows, squaresPerRow, true, settings);
-        RoundChessboardView view = new RoundChessboardView(600, "3-player-board.png", rows, squaresPerRow, model.squares);
+        RoundChessboardView view = new RoundChessboardView(chessboardSize, "3-player-board.png", rows, squaresPerRow, model.squares);
         chessboardController = new RoundChessboardController(model, view, this.settings, this.moves);
 
         this.add(chessboardController.getView());
