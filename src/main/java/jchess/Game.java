@@ -304,7 +304,7 @@ public class Game extends JPanel implements Observer, ComponentListener {
      * @return Returns true if the move is correct
      */
     public boolean simulateMove(int beginX, int beginY, int endX, int endY) {
-        boolean moveCorrect = chessboardController.simulateMove(beginX, beginY, endX, endY);
+        boolean moveCorrect = chessboardController.moveIsPossible(beginX, beginY, endX, endY);
         nextMove();
         return moveCorrect;
     }
@@ -378,11 +378,9 @@ public class Game extends JPanel implements Observer, ComponentListener {
 //        {
 
         if (!blockedChessboard) {
-//                try {
             if ((sq == null && sq.getPiece() == null && chessboardController.getActiveSquare() == null)
                     || (this.chessboardController.getActiveSquare() == null && sq.getPiece() != null
                     && sq.getPiece().player != this.activePlayer)) {
-
                 return;
             }
 
@@ -393,7 +391,7 @@ public class Game extends JPanel implements Observer, ComponentListener {
             {
                 chessboardController.unselect();
             } else if (chessboardController.getActiveSquare() != null && chessboardController.getActiveSquare().getPiece() != null
-                    && chessboardController.getValidTargetSquares(chessboardController.getActiveSquare().getPiece()).contains(sq)) // move
+                    && chessboardController.movePossible(chessboardController.getActiveSquare(), sq)) // move
             {
                 if (settings.gameType == Settings.gameTypes.local) {
                     //TODO: exception is caught here --> method returns without switching player
@@ -417,7 +415,7 @@ public class Game extends JPanel implements Observer, ComponentListener {
                     king = chessboardController.getKingBlack();
                 }
 
-                if (chessboardController.pieceUnsavable(king))
+                if (chessboardController.pieceIsUnsavable(king))
                     this.endGame("Checkmate! " + king.player.color.toString() + " player lose!");
 
 						/*case 2:
@@ -430,7 +428,6 @@ public class Game extends JPanel implements Observer, ComponentListener {
             Log.log("Chessboard is blocked");
         }
     }
-    // chessboard.repaint();
 
 
     public void componentResized(ComponentEvent e) {
