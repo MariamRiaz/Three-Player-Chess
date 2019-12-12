@@ -66,7 +66,7 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
         this.moves = new MoveHistory(this);
         settings = new Settings();
 
-        RoundChessboardModel model = new RoundChessboardModel(rows, squaresPerRow, settings);
+        RoundChessboardModel model = new RoundChessboardModel(rows, squaresPerRow, true, settings);
         RoundChessboardView view = new RoundChessboardView(600, "3-player-board.png", rows, squaresPerRow, model.squares);
         chessboardController = new RoundChessboardController(model, view, this.settings, this.moves);
 
@@ -317,7 +317,7 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
      * @return Returns true if the move is correct
      */
     public boolean simulateMove(int beginX, int beginY, int endX, int endY) {
-        boolean moveCorrect = chessboardController.simulateMove(beginX, beginY, endX, endY);
+        boolean moveCorrect = chessboardController.moveIsPossible(beginX, beginY, endX, endY);
         nextMove();
         return moveCorrect;
     }
@@ -409,7 +409,7 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
                 {
                     chessboardController.unselect();
                 } else if (chessboardController.getActiveSquare() != null && chessboardController.getActiveSquare().getPiece() != null
-                        && chessboardController.getValidTargetSquares(chessboardController.getActiveSquare().getPiece()).contains(sq)) // move
+                        && chessboardController.movePossible(chessboardController.getActiveSquare(), sq)) // move
                 {
                     if (settings.gameType == Settings.gameTypes.local) {
                         //TODO: exception is caught here --> method returns without switching player
@@ -433,7 +433,7 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
                         king = chessboardController.getKingBlack();
                     }
 
-                    if (chessboardController.pieceUnsavable(king))
+                    if (chessboardController.pieceIsUnsavable(king))
                         this.endGame("Checkmate! " + king.player.color.toString() + " player lose!");
 
 						/*case 2:

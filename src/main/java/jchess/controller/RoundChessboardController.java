@@ -3,6 +3,7 @@ package jchess.controller;
 import jchess.*;
 import jchess.UI.board.Square;
 import jchess.helper.CartesianPolarConverter;
+import jchess.helper.MoveEvaluator;
 import jchess.view.PolarCell;
 import jchess.helper.PolarPoint;
 import jchess.model.RoundChessboardModel;
@@ -68,86 +69,38 @@ public class RoundChessboardController {
 //        this.view.resizeChessboard(view.get_height(settings.renderLabels));
 //    }
 //
-    public boolean simulateMove(int beginX, int beginY, int endX, int endY) {
-
-        try {
-            select(model.getSquare(beginX, beginY));
-            if (getValidTargetSquares(activeSquare.getPiece()).contains(model.getSquare(endX, endY))) // move
-            {
-                move(model.getSquare(beginX, beginY), model.getSquare(endX, endY), true, true);
-            } else {
-                Log.log("Bad move");
-                return false;
-            }
-            unselect();
-            return true;
-
-        } catch (StringIndexOutOfBoundsException | NullPointerException | ArrayIndexOutOfBoundsException exc) {
-            return false;
-        } finally {
-            Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, "ERROR");
-        }
+    public boolean moveIsPossible(int x, int y, int toX, int toY) {
+    	Square square = model.getSquare(x, y), to = model.getSquare(toX, toY);
+    	
+    	if (square == null || to == null || square.getPiece() == null)
+    		return false;
+    	return new MoveEvaluator(model)
+    			.getValidTargetSquaresToSavePiece(square, model.getSquare(getKing(square.getPiece().player)))
+    			.contains(model.getSquare(to.getPozX(), to.getPozY()));
     }
-
+    
+    public boolean movePossible(Square square, Square to) {
+    	if (square == null || to == null)
+    		return false;
+    	
+    	return moveIsPossible(square.getPozX(), square.getPozY(), to.getPozX(), to.getPozY());
+    }
+    
     public void select(Square sq) {
         setActiveSquare(sq);
         view.setActiveCell(sq.getPozX(), sq.getPozY());
-        view.setMoves(getValidTargetSquares(sq.getPiece()));
+        view.setMoves(new MoveEvaluator(model).getValidTargetSquaresToSavePiece(sq, model.getSquare(getKing(sq.getPiece().player))));
         Log.log("Selected square with X: "
                 + activeSquare.getPozX() + " and Y: " + activeSquare.getPozY());
         view.repaint();
     }
 
-    public HashSet<Square> getValidTargetSquares(Piece piece) {
-        HashSet<Square> ret = new HashSet<>();
-
-        if (piece == null)
-            return ret;//TODO error handling
-
-        HashSet<Piece.Move> moves = piece.getMoves();
-        for (Iterator<Piece.Move> it = moves.iterator(); it.hasNext(); )
-            ret.addAll(evaluateMoveToTargetSquares(it.next(), piece));
-
-        return ret;
+    public boolean pieceIsThreatened(Piece piece) {
+    	return new MoveEvaluator(model).squareIsThreatened(model.getSquare(piece));
     }
-
-    private HashSet<Square> evaluateMoveToTargetSquares(Piece.Move move, Piece piece) {
-        HashSet<Square> ret = new HashSet<>();
-
-        if (move == null || piece == null)
-            return ret;//TODO error handling
-
-        int count = 0;
-        for (Square next = nextSquare(getSquare(piece), move.x, move.y); next != null
-                && (move.limit == null || count < move.limit); next = nextSquare(next, move.x, move.y)) {
-            boolean add = true;
-
-            if (move.conditions.contains(Piece.Move.MoveType.OnlyAttack)) {
-                if (next.getPiece() == null || next.getPiece().player == piece.player)
-                    add = false;
-            } else if (move.conditions.contains(Piece.Move.MoveType.OnlyMove)) {
-                if (next.getPiece() != null)
-                    add = false;
-            } else if (next.getPiece() != null && next.getPiece().player == piece.player)
-                add = false;
-
-            if (move.conditions.contains(Piece.Move.MoveType.OnlyWhenFresh) && piece.hasMoved())
-                add = false;
-
-            if (add)
-                ret.add(next);
-
-            if (!move.conditions.contains(Piece.Move.MoveType.Unblockable) && next.getPiece() != null)
-                break;
-
-            count++;
-        }
-
-        return ret;
-    }
-
-    private Square nextSquare(Square current, int x, int y) {
-        return model.getSquare(current.getPozX() + x, current.getPozY() + y);
+    
+    public boolean pieceIsUnsavable(Piece piece) {
+    	return new MoveEvaluator(model).squareUnsavable(model.getSquare(piece));
     }
 
     public Square getActiveSquare() {
@@ -166,12 +119,13 @@ public class RoundChessboardController {
         return this.model.squares;
     }
 
-
     public Piece getKing(Player player) {
         if (player == null)
             return null;
         if (player.color == player.color.black)
             return model.kingBlack;
+        else if (player.color == player.color.gray)
+        	return model.kingGray;
         return model.kingWhite;
     }
 
@@ -183,7 +137,6 @@ public class RoundChessboardController {
      * @param refresh chessboard, default: true
      */
     public void move(Square begin, Square end, boolean refresh, boolean clearForwardHistory) {
-
         MoveHistory.castling wasCastling = MoveHistory.castling.none;
         Piece promotedPiece = null;
         boolean wasEnPassant = false;
@@ -206,7 +159,7 @@ public class RoundChessboardController {
         twoSquareMovedPawn2 = twoSquareMovedPawn;
 
         model.setPieceOnSquare(begin.getPiece(), end);
-        model.removePieceFromSquare(begin);
+        model.setPieceOnSquare(null, begin);
 
         System.out.print(end.getPiece().type);
         if (end.getPiece().type.equals("King")) {
@@ -308,9 +261,9 @@ public class RoundChessboardController {
 
         if (clearForwardHistory) {//TODO uncomment
             this.movesHistory.clearMoveForwardStack();
-            this.movesHistory.addMove(begin, end, tempBegin, tempBeginState, tempEnd, tempEndState, true, wasCastling, wasEnPassant, promotedPiece);
+            this.movesHistory.addMove(begin, end, tempBegin, tempBeginState, tempEnd, true, wasCastling, wasEnPassant, promotedPiece);
         } else {
-            this.movesHistory.addMove(begin, end, tempBegin, tempBeginState, tempEnd, tempEndState, false, wasCastling, wasEnPassant, promotedPiece);
+            this.movesHistory.addMove(begin, end, tempBegin, tempBeginState, tempEnd, false, wasCastling, wasEnPassant, promotedPiece);
         }
         view.updateAfterMove(end.getPiece(), begin.getPozX(), begin.getPozY(), end.getPozX(), end.getPozY());
         end.getPiece().setHasMoved(true);
@@ -380,10 +333,9 @@ public class RoundChessboardController {
                 if (taken != null && !last.wasEnPassant()) {
                     model.setPieceOnSquare(taken, null);
                     view.removeVisual(taken, last.getTo().getPozX(), last.getTo().getPozY());
-
-                    Piece takenState = last.getTakenPieceState();
-                    model.setPieceOnSquare(takenState, end);
-                    view.setVisual(takenState, end.getPozX(), end.getPozY());
+                    
+                    model.setPieceOnSquare(taken, end);
+                    view.setVisual(taken, end.getPozX(), end.getPozY());
                 } else {
                     view.removeVisual(end.getPiece(), end.getPozX(), end.getPozY());
                     model.setPieceOnSquare(end.getPiece(), null);
@@ -467,61 +419,8 @@ public class RoundChessboardController {
         return model.kingBlack;
     }
 
-    public boolean pieceUnsavable(Piece piece) {
-        if (piece == null)
-            return false;
-        for (Square square : model.squares) {
-            if (square.getPiece().player != piece.player)
-                continue;
-
-            if (!getValidTargetSquaresToSavePiece(square.getPiece(), piece).isEmpty())
-                return false;
-        }
-        return true;
-    }
-
     public Square getSquare(int x, int y) {
         return model.getSquare(x, y);
-    }
-
-    public HashSet<Square> getValidTargetSquaresToSavePiece(Piece moving, Piece toSave) {
-        HashSet<Square> ret = getValidTargetSquares(moving);
-        if (ret.size() == 0 || toSave == null)
-            return ret;
-
-        for (Iterator<Square> it = ret.iterator(); it.hasNext(); ) {
-            Square target = it.next(), start = getSquare(moving);
-            Piece old = target.getPiece();
-
-            model.setPieceOnSquare(moving, target);
-            if (pieceThreatened(toSave))
-                it.remove();
-
-            model.setPieceOnSquare(old, target);
-            model.setPieceOnSquare(moving, start);
-        }
-
-        return ret;
-    }
-
-    public boolean pieceThreatened(Piece piece) {
-        if (piece == null)
-            return false;
-
-        for (Square square : model.squares) {
-            if (square.getPiece() == null) {
-                continue;
-            }
-            if (square.getPiece().player == piece.player) {
-                continue;
-            }
-
-            HashSet<Square> validMoveSquares = getValidTargetSquares(piece);
-            for (Iterator<Square> it2 = validMoveSquares.iterator(); it2.hasNext(); )
-                if (it2.next() == getSquare(piece))
-                    return true;
-        }
-        return false;
     }
 
     public int getHeight() {

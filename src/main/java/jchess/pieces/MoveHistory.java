@@ -21,7 +21,6 @@
 package jchess.pieces;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Stack;
 import javax.swing.JScrollPane;
@@ -150,7 +149,7 @@ public class MoveHistory extends AbstractTableModel {
     /**
      * Method of adding new move
      */
-    public void addMove(Square begin, Square end, Piece beginPiece, Piece beginState, Piece endPiece, Piece endState, boolean registerInHistory, castling castlingMove,
+    public void addMove(Square begin, Square end, Piece beginPiece, Piece beginState, Piece endPiece, boolean registerInHistory, castling castlingMove,
                         boolean wasEnPassant, Piece promotedPiece) {
 
         boolean wasCastling = castlingMove != castling.none;
@@ -158,7 +157,7 @@ public class MoveHistory extends AbstractTableModel {
 
         locMove = getPosition(begin, locMove);
 
-        if (endState != null) {
+        if (endPiece != null) {
             locMove += "x";// take down opponent piece
         } else {
             locMove += "-";// normal move
@@ -166,7 +165,7 @@ public class MoveHistory extends AbstractTableModel {
 
         locMove = getPosition(end, locMove);
 
-        if (beginState.symbol.equals("") && begin.getPozX() - end.getPozX() != 0 && endState == null) {
+        if (beginState.symbol.equals("") && begin.getPozX() - end.getPozX() != 0 && endPiece == null) {
             locMove += "(e.p)";// pawn take down opponent en passant
             wasEnPassant = true;
         }
@@ -183,7 +182,7 @@ public class MoveHistory extends AbstractTableModel {
         //this.scrollPane.scrollRectToVisible(new Rectangle(0, this.scrollPane.getHeight() - 2, 1, 1));
 
         if (registerInHistory) {
-            this.moveBackStack.add(new PlayedMove(begin, end, beginPiece, beginState, endPiece, endState, castlingMove,
+            this.moveBackStack.add(new PlayedMove(begin, end, beginPiece, beginState, endPiece, castlingMove,
                     wasEnPassant, promotedPiece));
         }
     }
@@ -475,7 +474,7 @@ public class MoveHistory extends AbstractTableModel {
                             || this.game.getActivePlayer().color != square.getPiece().player.color) {
                         continue;
                     }
-                    HashSet<Square> pieceMoves = this.game.chessboardController.getValidTargetSquares(square.getPiece());
+                    /*HashSet<Square> pieceMoves = this.game.chessboardController.getValidTargetSquares(square);
                     for (Object oldSquare : pieceMoves) {
                         Square currSquare = (Square) oldSquare;
                         if (currSquare.getPozX() == xTo && currSquare.getPozY() == yTo) {
@@ -483,7 +482,7 @@ public class MoveHistory extends AbstractTableModel {
                             yFrom = square.getPozY();
                             pieceFound = true;
                         }
-                    }
+                    }*/
                 }
             } else {
                 xFrom = locMove.charAt(from) - 97;// from ASCII
