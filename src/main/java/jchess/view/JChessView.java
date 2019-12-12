@@ -13,18 +13,16 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package jchess;
+package jchess.view;
 
-import jchess.view.JChessTabbedPane;
+import jchess.*;
+import jchess.helper.GUI;
+import jchess.helper.Log;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.ResourceMap;
 import org.jdesktop.application.SingleFrameApplication;
 import org.jdesktop.application.FrameView;
 import org.jdesktop.application.TaskMonitor;
-import jchess.view.JChessAboutBox;
-import jchess.view.NewGameWindow;
-import jchess.view.PawnPromotionWindow;
-import jchess.view.ThemeChooseWindow;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

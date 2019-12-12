@@ -4,8 +4,8 @@ package jchess.controller;
 * */
 
 import jchess.JChessApp;
-import jchess.Log;
-import jchess.Player;
+import jchess.helper.Log;
+import jchess.entities.Player;
 import jchess.Settings;
 import jchess.entities.Square;
 import jchess.entities.SquareObservable;

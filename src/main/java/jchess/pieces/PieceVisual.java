@@ -1,14 +1,11 @@
 package jchess.pieces;
 
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.RenderingHints;
-import java.awt.image.BufferedImage;
 import java.util.logging.Level;
 
-import jchess.GUI;
-import jchess.Log;
+import jchess.helper.GUI;
+import jchess.helper.Log;
 import jchess.view.RoundChessboardView;
 
 public class PieceVisual {

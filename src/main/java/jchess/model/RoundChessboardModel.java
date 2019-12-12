@@ -1,7 +1,7 @@
 package jchess.model;
 
-import jchess.Log;
-import jchess.Player;
+import jchess.helper.Log;
+import jchess.entities.Player;
 import jchess.Settings;
 import jchess.entities.Square;
 import jchess.pieces.Piece;

@@ -23,7 +23,7 @@ package jchess.view;
 import java.awt.*;
 import javax.swing.*;
 
-import jchess.GUI;
+import jchess.helper.GUI;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
