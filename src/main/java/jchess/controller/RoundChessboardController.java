@@ -132,7 +132,7 @@ public class RoundChessboardController extends MouseAdapter {
      * @see RoundChessboardController.pieceIsThreatened
      */
     public boolean pieceIsUnsavable(Piece piece) {
-    	return new MoveEvaluator(model).squareUnsavable(model.getSquare(piece));
+    	return new MoveEvaluator(model).squareIsUnsavable(model.getSquare(piece));
     }
 
     /**

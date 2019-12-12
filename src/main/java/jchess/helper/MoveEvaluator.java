@@ -23,6 +23,11 @@ public class MoveEvaluator {
 		this.model = model;
 	}
 	
+	/**
+	 * Retrieves a HashSet of the valid Squares, to which a Piece on the given Square can move, disregarding the constraint to keep certain Pieces non-threatened.
+	 * @param square The Square on which the Piece to be moved is located.
+	 * @return The valid target Squares for the Piece on the given Square.
+	 */
     private HashSet<Square> getValidTargetSquares(Square square) {
         HashSet<Square> ret = new HashSet<>();
 
@@ -36,6 +41,12 @@ public class MoveEvaluator {
         return ret;
     }
 
+    /**
+     * Evaluates which of the potential Squares are actually possible to move to with the current board status, the given Move definition instance, and the Piece on the given Square.
+     * @param move The Move definition by which to select potential target Squares.
+     * @param square The Square on which the Piece to be moved is located.
+     * @return A HashSet of the concrete Squares to which the Piece can move with the given Move definition.
+     */
     private HashSet<Square> evaluateMoveToTargetSquares(Piece.Move move, Square square) {
         HashSet<Square> ret = new HashSet<>();
 
@@ -71,16 +82,23 @@ public class MoveEvaluator {
         return ret;
     }
 
+    /**
+     * Gets the next Square when incrementing the indices of the given one by the given x and y values.
+     * @param current The current Square.
+     * @param x The x incrementation.
+     * @param y The y incrementation.
+     * @return The next Square, if any.
+     */
     private Square nextSquare(Square current, int x, int y) {
         return model.getSquare(current.getPozX() + x, current.getPozY() + y);
     }
 
     /**
-     * evaluates whether the Piece on the given Square is unsavable
-     * @param square    Square  the square on which the piece is located for which the savable check shall be performed
-     * @return          boolean true if a the Piece is unsavable
+     * Evaluates whether the Piece on the given Square cannot be made non-threatened regardless of the moves its owning Player undertakes.
+     * @param square    Square  The Square on which the Piece is located which is to be checked.
+     * @return          boolean true if a the Piece is unsavable.
      */
-    public boolean squareUnsavable(Square square) {
+    public boolean squareIsUnsavable(Square square) {
         if (square == null || square.getPiece() == null)
             return false;
         for (Square sq : model.squares) {
@@ -94,10 +112,10 @@ public class MoveEvaluator {
     }
 
     /**
-     * gets all Squares where a Piece can move to in order to be saved
-     * @param moving
-     * @param toSave
-     * @return
+     * Gets all Squares to which the Piece on the given Square can move such that the given Squares to be saved are all non-threatened by other Players.
+     * @param moving The Square on which the Piece to be moved is located.
+     * @param toSave The Squares which must be non-threatened by other Players.
+     * @return The possible Squares to which this Piece can be moved under these constraints.
      */
     public HashSet<Square> getValidTargetSquaresToSavePiece(Square moving, Square... toSave) {
         HashSet<Square> ret = getValidTargetSquares(moving);
@@ -126,7 +144,7 @@ public class MoveEvaluator {
     }
 
     /**
-     * determines whether the Piece on the given Square is threatened
+     * Determines whether the Piece on the given Square is threatened
      * @param square    Square  square on which the piece is located that is potentially threatened
      * @return          boolean true if Piece is threatened
      */
