@@ -15,7 +15,7 @@ public class PieceVisual {
 	private final Image image;
 	
 	/**
-	 * Creates a new PieceVisual instnace.
+	 * Creates a new PieceVisual instance.
 	 * @param imageID The String ID of the image to use when drawing this PieceVisual. Must be non-null and containted in GUI.loadImage().
 	 */
 	public PieceVisual(String imageID) {

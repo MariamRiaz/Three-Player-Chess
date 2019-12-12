@@ -2,7 +2,9 @@ package jchess.helper;
 
 import java.awt.*;
 
-
+/*
+* Class that translate polar coordinates into X and Y coordinates
+* */
 
 
 public class CartesianPolarConverter {

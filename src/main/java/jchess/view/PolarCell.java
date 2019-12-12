@@ -1,7 +1,7 @@
 package jchess.view;
 /*
-*
-* */
+* Class that will be used to set the pieces on the circular board
+*  */
 import jchess.helper.PolarPoint;
 import jchess.pieces.PieceVisual;
 

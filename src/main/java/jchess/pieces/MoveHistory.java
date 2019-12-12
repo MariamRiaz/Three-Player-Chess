@@ -39,9 +39,7 @@ import javax.swing.JOptionPane;
 
 /**
  * Class representing the players moves, it's also checking that the moves taken
- * by player are correct. All moves which was taken by current player are saving
- * as List of Strings The history of moves is printing in a table
- *
+ * by player are correct.
  */
 public class MoveHistory extends AbstractTableModel {
 
