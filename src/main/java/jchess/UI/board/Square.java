@@ -19,6 +19,13 @@ public class Square {
 		this.piece = square.getPiece();
 	}
 	
+	@Override
+	public boolean equals(Object other) {
+		if (other == null || !(other instanceof Square))
+			return false;
+		return ((Square)other).getPozX() == getPozX() && ((Square)other).getPozY() == getPozY();
+	}
+	
 	public Piece getPiece() {
 		return piece;
 	}
@@ -34,5 +41,4 @@ public class Square {
 	public int getPozY() {
 		return pozY;
 	}
-
 }

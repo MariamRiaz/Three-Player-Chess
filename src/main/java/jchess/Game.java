@@ -310,7 +310,7 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
      * @return Returns true if the move is correct
      */
     public boolean simulateMove(int beginX, int beginY, int endX, int endY) {
-        boolean moveCorrect = chessboardController.simulateMove(beginX, beginY, endX, endY);
+        boolean moveCorrect = chessboardController.movePossible(beginX, beginY, endX, endY);
         nextMove();
         return moveCorrect;
     }
@@ -402,7 +402,7 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
                 {
                     chessboardController.unselect();
                 } else if (chessboardController.getActiveSquare() != null && chessboardController.getActiveSquare().getPiece() != null
-                        && chessboardController.getValidTargetSquares(chessboardController.getActiveSquare().getPiece()).contains(sq)) // move
+                        && chessboardController.movePossible(chessboardController.getActiveSquare(), sq)) // move
                 {
                     if (settings.gameType == Settings.gameTypes.local) {
                         //TODO: exception is caught here --> method returns without switching player
