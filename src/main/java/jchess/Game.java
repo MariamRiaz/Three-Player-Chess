@@ -52,7 +52,6 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
     public Settings settings;
     private boolean blockedChessboard;
     public RoundChessboardController chessboardController;
-    private Point circleCenter;
     private Player activePlayer;
     public GameClock gameClock;
     Client client;
@@ -266,7 +265,9 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
     public void switchActive() {
         if (activePlayer == settings.playerWhite) {
             activePlayer = settings.playerBlack;
-        } else {
+        } else if (activePlayer == settings.playerBlack){
+            activePlayer = settings.playerGray;
+        } else if (activePlayer == settings.playerGray){
             activePlayer = settings.playerWhite;
         }
 
@@ -306,6 +307,7 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
      * @param beginY from which Y (on chessboard) move starts
      * @param endX   to which X (on chessboard) move go
      * @param endY   to which Y (on chessboard) move go
+     * @return Returns true if the move is correct
      */
     public boolean simulateMove(int beginX, int beginY, int endX, int endY) {
         boolean moveCorrect = chessboardController.simulateMove(beginX, beginY, endX, endY);
