@@ -19,13 +19,13 @@ public class RoundChessboardModel {
     public Piece kingGray;
     private int squaresPerRow;
     private int rows;
-    private boolean continuousRows;
+    private boolean hasContinuousRows;
 
     public RoundChessboardModel(int rows, int squaresPerRow, boolean continuousRows, Settings settings) {
         this.squares = new ArrayList<Square>();
         this.squaresPerRow = squaresPerRow;
         this.rows = rows;
-        this.continuousRows = continuousRows;
+        this.hasContinuousRows = continuousRows;
         
         populateSquares(rows, squaresPerRow);
         initializePieces(settings.playerWhite, settings.playerBlack, settings.playerGray);
@@ -40,7 +40,7 @@ public class RoundChessboardModel {
     }
     
     public Square getSquare(int x, int y) { // duplicate method with GUI-related getSquare
-    	int newy = continuousRows ? (y % rows < 0 ? (y % rows) + rows : y % rows) : y;
+    	int newy = hasContinuousRows ? (y % rows < 0 ? (y % rows) + rows : y % rows) : y;
     	
         Optional<Square> optionalSquare = squares.stream().filter(s ->
         	s.getPozX() == x && s.getPozY() == newy).findFirst();

@@ -10,7 +10,7 @@ import jchess.model.RoundChessboardModel;
 import jchess.pieces.Piece;
 
 public class MoveEvaluator {
-	RoundChessboardModel model;
+	private RoundChessboardModel model;
 	
 	public MoveEvaluator (RoundChessboardModel model) {
 		this.model = model;
@@ -23,8 +23,8 @@ public class MoveEvaluator {
             return ret;//TODO error handling
 
         HashSet<Piece.Move> moves = square.getPiece().getMoves();
-        for (Iterator<Piece.Move> it = moves.iterator(); it.hasNext(); )
-            ret.addAll(evaluateMoveToTargetSquares(it.next(), square));
+        for (Piece.Move it : moves)
+            ret.addAll(evaluateMoveToTargetSquares(it, square));
 
         return ret;
     }
@@ -96,9 +96,9 @@ public class MoveEvaluator {
 			
             model.setPieceOnSquare(moving.getPiece(), target);
             for (Square square : temp)
-            	if (movingPieceToBeSaved && squareThreatened(target))
+            	if (movingPieceToBeSaved && squareIsThreatened(target))
             		it.remove();
-            	else if (squareThreatened(square))
+            	else if (squareIsThreatened(square))
                     it.remove();
 
             model.setPieceOnSquare(old, target);
@@ -108,7 +108,7 @@ public class MoveEvaluator {
         return ret;
     }
 
-    public boolean squareThreatened(Square square) {
+    public boolean squareIsThreatened(Square square) {
         if (square == null || square.getPiece() == null)
             return false;
 		
@@ -117,8 +117,8 @@ public class MoveEvaluator {
                 continue;
 			
             HashSet<Square> validMoveSquares = getValidTargetSquares(sq);
-            for (Iterator<Square> it2 = validMoveSquares.iterator(); it2.hasNext();)
-                if (it2.next().equals(square))
+            for (Square it2 : validMoveSquares)
+                if (it2.equals(square))
                     return true;
         }
         return false;

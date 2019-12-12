@@ -69,7 +69,7 @@ public class RoundChessboardController {
 //        this.view.resizeChessboard(view.get_height(settings.renderLabels));
 //    }
 //
-    public boolean movePossible(int x, int y, int toX, int toY) {
+    public boolean moveIsPossible(int x, int y, int toX, int toY) {
     	Square square = model.getSquare(x, y), to = model.getSquare(toX, toY);
     	
     	if (square == null || to == null || square.getPiece() == null)
@@ -83,7 +83,7 @@ public class RoundChessboardController {
     	if (square == null || to == null)
     		return false;
     	
-    	return movePossible(square.getPozX(), square.getPozY(), to.getPozX(), to.getPozY());
+    	return moveIsPossible(square.getPozX(), square.getPozY(), to.getPozX(), to.getPozY());
     }
     
     public void select(Square sq) {
@@ -95,11 +95,11 @@ public class RoundChessboardController {
         view.repaint();
     }
 
-    public boolean pieceThreatened(Piece piece) {
-    	return new MoveEvaluator(model).squareThreatened(model.getSquare(piece));
+    public boolean pieceIsThreatened(Piece piece) {
+    	return new MoveEvaluator(model).squareIsThreatened(model.getSquare(piece));
     }
     
-    public boolean pieceUnsavable(Piece piece) {
+    public boolean pieceIsUnsavable(Piece piece) {
     	return new MoveEvaluator(model).squareUnsavable(model.getSquare(piece));
     }
 
