@@ -14,15 +14,14 @@
  */
 
 /*
- * Author: Mateusz Sławomir Lach ( matlak, msl )
+ * A model class for getting the current place and the new place of a piece once its moved
+ * also will have the record for the pieces that are moved, taken or promoted
  */
 package jchess.pieces;
 
 import jchess.UI.board.Square;
 import jchess.controller.RoundChessboardController;
-import jchess.model.RoundChessboardModel;
 import jchess.pieces.MoveHistory.castling;
-import jchess.view.RoundChessboardViewInitializer;
 
 public class PlayedMove {
 

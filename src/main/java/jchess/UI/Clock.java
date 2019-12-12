@@ -24,7 +24,7 @@ import jchess.Player;
 
 /**
  * Class to represent seperate wall-clock for one player. Full ChessClock is
- * represented by GameClock object (two clock - one for each player)
+ * represented by GameClock object (three clocks - one for each player)
  */
 public class Clock {
 	private int time_left;

@@ -29,7 +29,7 @@ import jchess.Player;
 import jchess.Settings;
 
 /**
- * Class to represent the full game clock logic
+ * Class to represent the full game clock logic interacts with game clock view to generate the clocks on the game window
  */
 public class GameClock implements Runnable {
 
@@ -86,25 +86,20 @@ public class GameClock implements Runnable {
 	}
 
 	/**
-	 * Method of swiching the players clocks
+	 * Method of switching the players clocks
 	 */
 	public void switch_clocks() {
-		/*
-		 * in documentation this method is called 'switch', but it's restricted name to
-		 * switch block (in pascal called "case") - this've to be repaired in
-		 * documentation by Wąsu:P
-		 */
+
 		if (this.runningClock == gameClockView.clock1) {
 			this.runningClock = gameClockView.clock2;
-		} else {
+		} else if (this.runningClock == gameClockView.clock2) {
+			this.runningClock = gameClockView.clock3;
+		}
+		else {
 			this.runningClock = gameClockView.clock1;
 		}
 	}
 
-	/**
-	 * Method with is setting the players clocks time
-	 *
-	 */
 	public void setTimes(int time) {
 		/*
 		 * rather in chess game players got the same time 4 game, so why in

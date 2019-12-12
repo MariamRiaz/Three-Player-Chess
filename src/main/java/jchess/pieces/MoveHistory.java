@@ -40,7 +40,7 @@ import javax.swing.JOptionPane;
 
 /**
  * Class representing the players moves, it's also checking that the moves taken
- * by player are correct.
+ * by player are correct. and save all the moves into a string
  */
 public class MoveHistory extends AbstractTableModel {
 

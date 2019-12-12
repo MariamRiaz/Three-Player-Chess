@@ -53,7 +53,6 @@ public class DrawLocalSettings extends JPanel implements ActionListener, TextLis
 	JLabel firstNameLab;
 	JLabel secondNameLab;
 	JLabel thirdNameLab;
-	JCheckBox upsideDown;// if true draw chessboard upsideDown(white on top)
 	GridBagLayout gbl;
 	GridBagConstraints gbc;
 	Container cont;
@@ -120,7 +119,7 @@ public class DrawLocalSettings extends JPanel implements ActionListener, TextLis
 				this.thirdName.setText(this.trimString(thirdName, 9));
 			}
 			if (!this.oponentComp.isSelected()
-					&& (this.firstName.getText().length() == 0 || this.secondName.getText().length() == 0)) {
+					&& (this.firstName.getText().length() == 0 || this.secondName.getText().length() == 0 || this.thirdName.getText().length() == 0)) {
 				JOptionPane.showMessageDialog(this, Settings.lang("fill_names"));
 				return;
 			}
@@ -155,12 +154,7 @@ public class DrawLocalSettings extends JPanel implements ActionListener, TextLis
 			{
 				pl2.setType(Player.playerTypes.computer);
 			}
-			if (this.upsideDown.isSelected()) // if upsideDown is checked
-			{
-				sett.upsideDown = true;
-			} else {
-				sett.upsideDown = false;
-			}
+
 			if (this.timeGame.isSelected()) // if timeGame is checked
 			{
 				String value = this.times[this.time4Game.getSelectedIndex()];// set time for game
@@ -174,7 +168,7 @@ public class DrawLocalSettings extends JPanel implements ActionListener, TextLis
 			// this.time4Game.getComponent(this.time4Game.getSelectedIndex());
 			Log.log("****************\nStarting new game: " + pl1.name + " vs. " + pl2.name + "\ntime 4 game: "
 					+ sett.timeForGame + "\ntime limit set: " + sett.timeLimitSet + "\nwhite on top?: "
-					+ sett.upsideDown + "\n****************");// 4test
+					+ "\n****************");// 4test
 			newGUI.newGame();// start new Game
 			this.parent.setVisible(false);// hide parent
 		}
@@ -203,7 +197,6 @@ public class DrawLocalSettings extends JPanel implements ActionListener, TextLis
 		this.thirdNameLab = new JLabel(Settings.lang("third_player_name") + ": ");
 		this.oponentChoos = new ButtonGroup();
 		this.computerLevel = new JSlider();
-		this.upsideDown = new JCheckBox(Settings.lang("upside_down"));
 		this.timeGame = new JCheckBox(Settings.lang("time_game_min"));
 		this.time4Game = new JComboBox(times);
 
@@ -266,9 +259,6 @@ public class DrawLocalSettings extends JPanel implements ActionListener, TextLis
 		this.gbl.setConstraints(computerLevel, gbc);
 		this.add(computerLevel);
 		this.gbc.gridy = 9;
-		this.gbl.setConstraints(upsideDown, gbc);
-		this.add(upsideDown);
-		this.gbc.gridy = 10;
 		this.gbc.gridwidth = 1;
 		this.gbl.setConstraints(timeGame, gbc);
 		this.add(timeGame);

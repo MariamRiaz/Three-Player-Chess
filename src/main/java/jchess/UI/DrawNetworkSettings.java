@@ -46,7 +46,7 @@ import jchess.server.MD5;
 import jchess.server.Server;
 
 /**
- * Class responible for drawing Network Settings, when player want to start a
+ * Class responsible for drawing Network Settings, when player want to start a
  * game on a network
  *
  */
