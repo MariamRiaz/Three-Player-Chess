@@ -1,25 +1,26 @@
 package jchess.controller;
 
-import jchess.*;
+import jchess.JChessApp;
+import jchess.Log;
+import jchess.Player;
+import jchess.Settings;
 import jchess.UI.board.Square;
 import jchess.helper.CartesianPolarConverter;
 import jchess.helper.MoveEvaluator;
-import jchess.view.PolarCell;
 import jchess.helper.PolarPoint;
 import jchess.model.RoundChessboardModel;
 import jchess.pieces.MoveHistory;
 import jchess.pieces.Piece;
 import jchess.pieces.PieceFactory;
 import jchess.pieces.PlayedMove;
+import jchess.view.PolarCell;
 import jchess.view.RoundChessboardView;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.*;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Observer;
 
 public class RoundChessboardController extends MouseAdapter {
 
@@ -45,8 +46,6 @@ public class RoundChessboardController extends MouseAdapter {
     public Piece twoSquareMovedPawn = null;
     public Piece twoSquareMovedPawn2 = null;
     private MoveHistory movesHistory;
-
-    private boolean isSelected;
 
     public static int bottom = 7;
     public static int top = 0;
@@ -81,7 +80,7 @@ public class RoundChessboardController extends MouseAdapter {
     }
 
     @Override
-    public void mouseClicked(MouseEvent mouseEvent) {
+    public void mousePressed(MouseEvent mouseEvent) {
         Square square = getSquareFromClick(mouseEvent.getX(), mouseEvent.getY());
         if(square != null) {
             squareObservable.setSquare(square);
