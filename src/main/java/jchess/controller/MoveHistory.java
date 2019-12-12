@@ -31,7 +31,7 @@ import jchess.Player;
 import jchess.Settings;
 import jchess.entities.Square;
 import jchess.pieces.Piece;
-import jchess.pieces.PlayedMove;
+import jchess.entities.PlayedMove;
 import jchess.view.MoveHistoryView;
 
 import javax.swing.JOptionPane;

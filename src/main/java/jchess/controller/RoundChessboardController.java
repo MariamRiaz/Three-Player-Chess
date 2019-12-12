@@ -15,7 +15,7 @@ import jchess.entities.PolarPoint;
 import jchess.model.RoundChessboardModel;
 import jchess.pieces.Piece;
 import jchess.pieces.PieceFactory;
-import jchess.pieces.PlayedMove;
+import jchess.entities.PlayedMove;
 import jchess.view.PolarCell;
 import jchess.view.RoundChessboardView;
 
