@@ -7,14 +7,15 @@ import jchess.JChessApp;
 import jchess.Log;
 import jchess.Player;
 import jchess.Settings;
-import jchess.UI.board.Square;
+import jchess.entities.Square;
+import jchess.entities.SquareObservable;
 import jchess.helper.CartesianPolarConverter;
 import jchess.helper.MoveEvaluator;
-import jchess.helper.PolarPoint;
+import jchess.entities.PolarPoint;
 import jchess.model.RoundChessboardModel;
 import jchess.pieces.Piece;
 import jchess.pieces.PieceFactory;
-import jchess.pieces.PlayedMove;
+import jchess.entities.PlayedMove;
 import jchess.view.PolarCell;
 import jchess.view.RoundChessboardView;
 

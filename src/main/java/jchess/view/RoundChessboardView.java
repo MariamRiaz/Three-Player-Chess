@@ -3,11 +3,11 @@ package jchess.view;
 import jchess.GUI;
 import jchess.Log;
 import jchess.Player;
-import jchess.UI.board.Square;
+import jchess.entities.Square;
 import jchess.helper.CartesianPolarConverter;
 import jchess.pieces.Piece;
 import jchess.pieces.PieceVisual;
-import jchess.helper.PolarPoint;
+import jchess.entities.PolarPoint;
 
 import javax.swing.*;
 import java.awt.*;

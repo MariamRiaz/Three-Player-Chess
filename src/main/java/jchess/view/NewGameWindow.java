@@ -23,15 +23,6 @@ package jchess.view;
 import javax.swing.*;
 
 import jchess.Settings;
-import jchess.UI.DrawLocalSettings;
-import jchess.UI.DrawNetworkSettings;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.*;
-import java.util.ResourceBundle;
-import java.util.PropertyResourceBundle;
-import java.util.Locale;
 
 /**
  *

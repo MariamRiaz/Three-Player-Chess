@@ -20,8 +20,8 @@
  */
 package jchess;
 
-import jchess.UI.Chat;
-import jchess.UI.board.Square;
+import jchess.view.Chat;
+import jchess.entities.Square;
 import jchess.controller.GameClock;
 import jchess.controller.RoundChessboardController;
 import jchess.model.RoundChessboardModel;

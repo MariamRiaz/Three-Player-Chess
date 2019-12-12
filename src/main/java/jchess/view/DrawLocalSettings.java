@@ -17,7 +17,7 @@
  * Authors:
  * Mateusz Sławomir Lach ( matlak, msl )
  */
-package jchess.UI;
+package jchess.view;
 
 import javax.swing.*;
 import java.awt.event.ActionListener;

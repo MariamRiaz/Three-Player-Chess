@@ -15,15 +15,16 @@
 
 package jchess;
 
+import jchess.view.JChessTabbedPane;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.ResourceMap;
 import org.jdesktop.application.SingleFrameApplication;
 import org.jdesktop.application.FrameView;
 import org.jdesktop.application.TaskMonitor;
-import jchess.UI.JChessAboutBox;
+import jchess.view.JChessAboutBox;
 import jchess.view.NewGameWindow;
-import jchess.UI.PawnPromotionWindow;
-import jchess.UI.ThemeChooseWindow;
+import jchess.view.PawnPromotionWindow;
+import jchess.view.ThemeChooseWindow;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -218,7 +219,7 @@ public class JChessView extends FrameView implements ActionListener, ComponentLi
     private void initComponents() {
 
         mainPanel = new javax.swing.JPanel();
-        gamesPane = new jchess.UI.JChessTabbedPane();
+        gamesPane = new JChessTabbedPane();
         menuBar = new javax.swing.JMenuBar();
         javax.swing.JMenu fileMenu = new javax.swing.JMenu();
         newGameItem = new javax.swing.JMenuItem();

@@ -17,11 +17,12 @@
  * A model class for getting the current place and the new place of a piece once its moved
  * also will have the record for the pieces that are moved, taken or promoted
  */
-package jchess.pieces;
+package jchess.entities;
 
-import jchess.UI.board.Square;
+import jchess.entities.Square;
 import jchess.controller.RoundChessboardController;
 import jchess.controller.MoveHistory.castling;
+import jchess.pieces.Piece;
 
 public class PlayedMove {
 

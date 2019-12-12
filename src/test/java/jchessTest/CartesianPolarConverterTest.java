@@ -1,12 +1,10 @@
 package jchessTest;
 
 import jchess.helper.CartesianPolarConverter;
-import jchess.helper.PolarPoint;
+import jchess.entities.PolarPoint;
 import org.junit.Test;
 
 import java.awt.*;
-
-import static org.junit.Assert.*;
 
 public class CartesianPolarConverterTest {
 
