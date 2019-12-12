@@ -29,7 +29,7 @@ public class RoundChessboardModel {
         this.squaresPerRow = squaresPerRow;
         this.rows = rows;
         populateSquares(rows, squaresPerRow);
-        initializePieces(settings.playerWhite, settings.playerBlack, settings.playerGray);
+        initializePieces(settings.getPlayerWhite(), settings.getPlayerBlack(), settings.getPlayerGray());
     }
 
     private void populateSquares(int rows, int squaresPerRow) {

@@ -46,10 +46,10 @@ public class RoundChessboardController {
     public static int bottom = 7;
     public static int top = 0;
 
-    public RoundChessboardController(Settings settings, MoveHistory movesHistory) {
-        this.model = new RoundChessboardModel(rows, squaresPerRow, settings);
+    public RoundChessboardController(RoundChessboardModel model, RoundChessboardView view, Settings settings, MoveHistory movesHistory) {
+        this.model = model;
+        this.view = view;
         this.movesHistory = movesHistory;
-        this.view = new RoundChessboardView(600, "3-player-board.png", rows, squaresPerRow, model.squares);
         this.settings = settings;
     }
 

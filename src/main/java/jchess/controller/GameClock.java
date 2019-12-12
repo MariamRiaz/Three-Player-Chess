@@ -54,7 +54,7 @@ public class GameClock implements Runnable {
 		int time = this.settings.getTimeForGame();
 
 		this.setTimes(time);
-		this.setPlayers(this.settings.playerBlack, this.settings.playerWhite, this.settings.playerGray);
+		this.setPlayers(this.settings.getPlayerBlack(), this.settings.getPlayerWhite(), this.settings.getPlayerGray());
 
 		this.thread = new Thread(this);
 		if (this.settings.timeLimitSet) {

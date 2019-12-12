@@ -30,7 +30,7 @@ public class Clock {
 	private int time_left;
 	private Player player;
 
-	Clock() {
+	public Clock() {
 		this.init(time_left);
 	}
 

@@ -20,25 +20,26 @@
  */
 package jchess;
 
-import java.awt.event.ComponentEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import javax.swing.*;
-
 import jchess.UI.Chat;
-import jchess.controller.GameClock;
 import jchess.UI.board.Square;
+import jchess.controller.GameClock;
 import jchess.controller.RoundChessboardController;
+import jchess.model.RoundChessboardModel;
 import jchess.pieces.MoveHistory;
 import jchess.pieces.Piece;
+import jchess.view.RoundChessboardView;
 
+import javax.swing.*;
 import java.awt.*;
-import java.io.File;
-import java.io.BufferedReader;
-import java.io.FileWriter;
-import java.io.FileReader;
-import java.util.Calendar;
+import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.util.Calendar;
 import java.util.logging.Level;
 
 /**
@@ -56,12 +57,19 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
     Client client;
     MoveHistory moves;
     public Chat chat;
+    private int rows = 24;
+    private int squaresPerRow = 6;
+
 
     public Game() {
         this.setLayout(null);
         this.moves = new MoveHistory(this);
         settings = new Settings();
-        chessboardController = new RoundChessboardController(this.settings, this.moves);
+
+        RoundChessboardModel model = new RoundChessboardModel(rows, squaresPerRow, settings);
+        RoundChessboardView view = new RoundChessboardView(600, "3-player-board.png", rows, squaresPerRow, model.squares);
+        chessboardController = new RoundChessboardController(model, view, this.settings, this.moves);
+
         this.add(chessboardController.getView());
         chessboardController.getView().addMouseListener(this);
         // this.chessboard.
@@ -104,8 +112,8 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
         Calendar cal = Calendar.getInstance();
         String str = new String("");
         String info = new String("[Event \"Game\"]\n[Date \"" + cal.get(cal.YEAR) + "." + (cal.get(cal.MONTH) + 1) + "."
-                + cal.get(cal.DAY_OF_MONTH) + "\"]\n" + "[White \"" + this.settings.playerWhite.name + "\"]\n[Black \""
-                + this.settings.playerBlack.name + "\"]\n\n");
+                + cal.get(cal.DAY_OF_MONTH) + "\"]\n" + "[White \"" + this.settings.getPlayerWhite().name + "\"]\n[Black \""
+                + this.settings.getPlayerBlack().name + "\"]\n\n");
         str += info;
         str += this.moves.getMovesInString();
         try {
@@ -157,10 +165,10 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
         }
         Game newGUI = JChessApp.jcv.addNewTab(whiteName + " vs. " + blackName);
         Settings locSetts = newGUI.settings;
-        locSetts.playerBlack.name = blackName;
-        locSetts.playerWhite.name = whiteName;
-        locSetts.playerBlack.setType(Player.playerTypes.localUser);
-        locSetts.playerWhite.setType(Player.playerTypes.localUser);
+        locSetts.getPlayerBlack().name = blackName;
+        locSetts.getPlayerWhite().name = whiteName;
+        locSetts.getPlayerBlack().setType(Player.playerTypes.localUser);
+        locSetts.getPlayerWhite().setType(Player.playerTypes.localUser);
         locSetts.gameMode = Settings.gameModes.loadGame;
         locSetts.gameType = Settings.gameTypes.local;
 
@@ -230,7 +238,7 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
 
         // Log.log("new game, game type: "+settings.gameType.name());
 
-        activePlayer = settings.playerWhite;
+        activePlayer = settings.getPlayerWhite();
         if (activePlayer.playerType != Player.playerTypes.localUser) {
             this.blockedChessboard = true;
         }
@@ -262,12 +270,12 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
      * Method to swich active players after move
      */
     public void switchActive() {
-        if (activePlayer == settings.playerWhite) {
-            activePlayer = settings.playerBlack;
-        } else if (activePlayer == settings.playerBlack){
-            activePlayer = settings.playerGray;
-        } else if (activePlayer == settings.playerGray){
-            activePlayer = settings.playerWhite;
+        if (activePlayer == settings.getPlayerWhite()) {
+            activePlayer = settings.getPlayerBlack();
+        } else if (activePlayer == settings.getPlayerBlack()) {
+            activePlayer = settings.getPlayerGray();
+        } else if (activePlayer == settings.getPlayerGray()) {
+            activePlayer = settings.getPlayerWhite();
         }
 
         this.gameClock.switch_clocks();
@@ -419,7 +427,7 @@ public class Game extends JPanel implements MouseListener, ComponentListener {
 
                     // checkmate or stalemate
                     Piece king;
-                    if (this.activePlayer == settings.playerWhite) {
+                    if (this.activePlayer == settings.getPlayerWhite()) {
                         king = chessboardController.getKingWhite();
                     } else {
                         king = chessboardController.getKingBlack();
