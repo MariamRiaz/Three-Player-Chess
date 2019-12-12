@@ -203,10 +203,11 @@ public class RoundChessboardView extends JPanel {
 
     /**
      * remove  visual for a piece at the given index
+     * @param piece Piece to remove the visual from
      * @param x     int x index of the piece
      * @param y     int y index of the piece
      */
-    public void removeVisual(int x, int y) {
+    public void removeVisual(Piece piece, int x, int y) {
         PolarCell cell = getCellByPosition(x, y);
         cell.setPieceVisual(null);
     }
