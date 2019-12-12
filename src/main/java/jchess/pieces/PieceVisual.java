@@ -8,6 +8,9 @@ import jchess.helper.GUI;
 import jchess.helper.Log;
 import jchess.view.RoundChessboardView;
 
+/**
+ * Class to represent the visual of a Piece.
+ */
 public class PieceVisual {
 	private final Image image;
 	

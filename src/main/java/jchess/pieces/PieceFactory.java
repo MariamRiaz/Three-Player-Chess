@@ -4,10 +4,8 @@ import jchess.entities.Player;
 import jchess.pieces.Piece.Move.MoveType;
 
 /*
-* A factory class to generate all the pieces of each player and get the possible move values
-*  for each player at the current timestamp
+* A factory class to generate specific pre-defined Pieces.
 * */
-
 public class PieceFactory {
 	/**
 	 * @param player The new Piece's owning Player. Must be non-null.

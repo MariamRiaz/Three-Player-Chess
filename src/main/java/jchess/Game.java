@@ -401,7 +401,7 @@ public class Game extends JPanel implements Observer, ComponentListener {
             {
                 chessboardController.unselect();
             } else if (chessboardController.getActiveSquare() != null && chessboardController.getActiveSquare().getPiece() != null
-                    && chessboardController.movePossible(chessboardController.getActiveSquare(), sq)) // move
+                    && chessboardController.moveIsPossible(chessboardController.getActiveSquare(), sq)) // move
             {
                 if (settings.gameType == Settings.gameTypes.local) {
                     //TODO: exception is caught here --> method returns without switching player
@@ -418,12 +418,7 @@ public class Game extends JPanel implements Observer, ComponentListener {
                 this.nextMove();
 
                 // checkmate or stalemate
-                Piece king;
-                if (this.activePlayer == settings.getPlayerWhite()) {
-                    king = chessboardController.getKingWhite();
-                } else {
-                    king = chessboardController.getKingBlack();
-                }
+                Piece king = chessboardController.getKing(this.activePlayer);
 
                 if (chessboardController.pieceIsUnsavable(king))
                     this.endGame("Checkmate! " + king.player.color.toString() + " player lose!");
