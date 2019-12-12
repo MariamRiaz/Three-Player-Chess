@@ -18,31 +18,29 @@
  * Mateusz Sławomir Lach ( matlak, msl )
  * Damian Marciniak
  */
-package jchess.pieces;
+package jchess.controller;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 import javax.swing.JScrollPane;
-import javax.swing.table.*;
 
 import jchess.Game;
 import jchess.Log;
 import jchess.Player;
 import jchess.Settings;
 import jchess.UI.board.Square;
-import jchess.view.MovesHistoryView;
-import jchess.controller.RoundChessboardController;
+import jchess.pieces.Piece;
+import jchess.pieces.PlayedMove;
+import jchess.view.MoveHistoryView;
 
 import javax.swing.JOptionPane;
 
 
 /**
- * Class representing the players moves, it's also checking that the moves taken
- * by player are correct. All moves which was taken by current player are saving
- * as List of Strings The history of moves is printing in a table
+ * Class that holds all the move history of the game, and all the necessary methods to undo and redo a move
  */
-public class MoveHistory extends AbstractTableModel {
+public class MoveHistory {
 
 
     private enum PlayerColumn {
@@ -59,55 +57,30 @@ public class MoveHistory extends AbstractTableModel {
     private Game game;
     private Stack<PlayedMove> moveBackStack = new Stack<>();
     private Stack<PlayedMove> moveForwardStack = new Stack<>();
-    private MovesHistoryView movesHistoryView;
+    private MoveHistoryView moveHistoryView;
 
     public enum castling {
         none, shortCastling, longCastling
     }
     public MoveHistory(Game game) {
         super();
-        this.movesHistoryView = new MovesHistoryView();
+        this.moveHistoryView = new MoveHistoryView();
         this.game = game;
-        this.movesHistoryView.addColumn(this.names[0]);
-        this.movesHistoryView.addColumn(this.names[1]);
-        this.movesHistoryView.addColumn(this.names[2]);
-        this.addTableModelListener(null);
-    }
-//
-//    public void draw() {
-//    }
-
-    @Override
-    public String getValueAt(int x, int y) {
-        return this.move.get((y * 2) - 1 + (x - 1));
-    }
-
-    @Override
-    public int getRowCount() {
-        return this.rowsNum;
-    }
-
-    @Override
-    public int getColumnCount() {
-        return this.columnsNum;
+        this.moveHistoryView.addColumn(this.names[0]);
+        this.moveHistoryView.addColumn(this.names[1]);
+        this.moveHistoryView.addColumn(this.names[2]);
     }
 
 //    TODO: fix Castling
 //    protected void addCastling(String move) {
 //        this.move.remove(this.move.size() - 1);// remove last element (move of Rook)
 //        if (!this.enterBlack) {
-//            this.movesHistoryView.setValueAt(move, this.movesHistoryView.getRowCount() - 1, 1);// replace last value
+//            this.moveHistoryView.setValueAt(move, this.moveHistoryView.getRowCount() - 1, 1);// replace last value
 //        } else {
-//            this.movesHistoryView.setValueAt(move, this.movesHistoryView.getRowCount() - 1, 0);// replace last value
+//            this.moveHistoryView.setValueAt(move, this.moveHistoryView.getRowCount() - 1, 0);// replace last value
 //        }
 //        this.move.add(move);// add new move (O-O or O-O-O)
 //    }
-
-
-    @Override
-    public boolean isCellEditable(int a, int b) {
-        return false;
-    }
 
     /**
      * Method of adding new moves to the table
@@ -118,23 +91,23 @@ public class MoveHistory extends AbstractTableModel {
         try {
 
             if (activePlayerColumn.equals(PlayerColumn.player1)) {
-                this.movesHistoryView.addRow();
-                this.rowsNum = this.movesHistoryView.getRowCount() - 1;
-                this.movesHistoryView.setValueAt(str, rowsNum, 0);
+                this.moveHistoryView.addRow();
+                this.rowsNum = this.moveHistoryView.getRowCount() - 1;
+                this.moveHistoryView.setValueAt(str, rowsNum, 0);
                 this.activePlayerColumn = PlayerColumn.player2;
 
             } else if (activePlayerColumn.equals(PlayerColumn.player2)) {
-                this.movesHistoryView.setValueAt(str, rowsNum, 1);
-                this.rowsNum = this.movesHistoryView.getRowCount() - 1;
+                this.moveHistoryView.setValueAt(str, rowsNum, 1);
+                this.rowsNum = this.moveHistoryView.getRowCount() - 1;
                 this.activePlayerColumn = PlayerColumn.player3;
 
             } else if (activePlayerColumn.equals(PlayerColumn.player3)) {
-                this.movesHistoryView.setValueAt(str, rowsNum, 2);
-                this.rowsNum = this.movesHistoryView.getRowCount() - 1;
+                this.moveHistoryView.setValueAt(str, rowsNum, 2);
+                this.rowsNum = this.moveHistoryView.getRowCount() - 1;
                 this.activePlayerColumn = PlayerColumn.player1;
             }
 
-            this.movesHistoryView.table.scrollRectToVisible(this.movesHistoryView.table.getCellRect(this.movesHistoryView.table.getRowCount() - 1, 0, true));// scroll to down
+            this.moveHistoryView.table.scrollRectToVisible(this.moveHistoryView.table.getCellRect(this.moveHistoryView.table.getRowCount() - 1, 0, true));// scroll to down
 
         } catch (
                 java.lang.ArrayIndexOutOfBoundsException exc) {
@@ -199,7 +172,7 @@ public class MoveHistory extends AbstractTableModel {
     }
 
     public JScrollPane getScrollPane() {
-        return this.movesHistoryView.scrollPane;
+        return this.moveHistoryView.scrollPane;
     }
 
     public ArrayList<String> getMoves() {
@@ -236,21 +209,21 @@ public class MoveHistory extends AbstractTableModel {
                 }
 
                 if (activePlayerColumn.equals(PlayerColumn.player1)) {
-                    this.movesHistoryView.setValueAt("", this.movesHistoryView.getRowCount() - 1, 0);
-                    this.movesHistoryView.removeRow(this.movesHistoryView.getRowCount() - 1);
+                    this.moveHistoryView.setValueAt("", this.moveHistoryView.getRowCount() - 1, 0);
+                    this.moveHistoryView.removeRow(this.moveHistoryView.getRowCount() - 1);
                     if (this.rowsNum > 0) {
                         this.rowsNum--;
                     }
                     this.activePlayerColumn = PlayerColumn.player2;
                 } else if (activePlayerColumn.equals(PlayerColumn.player2)) {
-                    if (this.movesHistoryView.getRowCount() > 0) {
-                        this.movesHistoryView.setValueAt("", this.movesHistoryView.getRowCount() - 1, 1);
+                    if (this.moveHistoryView.getRowCount() > 0) {
+                        this.moveHistoryView.setValueAt("", this.moveHistoryView.getRowCount() - 1, 1);
                     }
                     this.activePlayerColumn = PlayerColumn.player3;
 
                 } else {
-                    if (this.movesHistoryView.getRowCount() > 0) {
-                        this.movesHistoryView.setValueAt("", this.movesHistoryView.getRowCount() - 1, 2);
+                    if (this.moveHistoryView.getRowCount() > 0) {
+                        this.moveHistoryView.setValueAt("", this.moveHistoryView.getRowCount() - 1, 2);
                     }
                     this.activePlayerColumn = PlayerColumn.player1;
 

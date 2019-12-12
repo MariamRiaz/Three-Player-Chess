@@ -3,6 +3,11 @@ package jchess.pieces;
 import jchess.Player;
 import jchess.pieces.Piece.Move.MoveType;
 
+/*
+* A factory class to generate all the pieces of each player and get the possible move values
+*  for each player at the current timestamp
+* */
+
 public class PieceFactory {
 	/**
 	 * @param player The new Piece's owning Player. Must be non-null.

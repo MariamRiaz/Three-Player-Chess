@@ -1,4 +1,7 @@
 package jchess.controller;
+/*
+* Class that represents the interaction interface for the RoundChessboard component
+* */
 
 import jchess.JChessApp;
 import jchess.Log;
@@ -9,7 +12,6 @@ import jchess.helper.CartesianPolarConverter;
 import jchess.helper.MoveEvaluator;
 import jchess.helper.PolarPoint;
 import jchess.model.RoundChessboardModel;
-import jchess.pieces.MoveHistory;
 import jchess.pieces.Piece;
 import jchess.pieces.PieceFactory;
 import jchess.pieces.PlayedMove;

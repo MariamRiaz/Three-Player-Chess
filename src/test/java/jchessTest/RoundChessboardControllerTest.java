@@ -5,7 +5,7 @@ import jchess.Settings;
 import jchess.UI.board.Square;
 import jchess.controller.RoundChessboardController;
 import jchess.model.RoundChessboardModel;
-import jchess.pieces.MoveHistory;
+import jchess.controller.MoveHistory;
 import jchess.pieces.PieceFactory;
 import jchess.view.RoundChessboardView;
 import org.junit.Before;

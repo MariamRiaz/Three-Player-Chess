@@ -7,6 +7,8 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/* Class to generate the view according to the reducing size of the circular rows */
+
 public class RoundChessboardViewInitializer {
 
     private int imageSize;

@@ -8,6 +8,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+/*
+* Class to generate the view of game clock
+* */
+
 public class GameClockView extends JPanel {
 
     private Settings settings;

@@ -11,6 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
+/*
+* Class that holds the state of the RoundChessboard component
+*/
+
 
 public class RoundChessboardModel {
     public List<Square> squares;

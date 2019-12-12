@@ -1,5 +1,8 @@
 package jchess.helper;
 
+/*Class that represents a PolarPoint object, containing a degree and radius, to determine a point in a circle
+* */
+
 public class PolarPoint {
 
     private double radius;
