@@ -167,7 +167,6 @@ public class RoundChessboardController {
     }
 
 
-
     public Piece getKing(Player player) {
         if (player == null)
             return null;

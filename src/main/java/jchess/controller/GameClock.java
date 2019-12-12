@@ -103,8 +103,7 @@ public class GameClock implements Runnable {
 
 	/**
 	 * Method with is setting the players clocks time
-	 * 
-	 * @param time Capt the player time
+	 *
 	 */
 	public void setTimes(int time) {
 		/*

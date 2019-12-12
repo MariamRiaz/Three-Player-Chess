@@ -50,6 +50,7 @@ public class PieceFactory {
 
 	/**
 	 * @param player The new Piece's owning Player. Must be non-null.
+	 * @param direction The direction in which the pawn will move
 	 * @return The new pawn Piece.
 	 */
 	public static final Piece createPawn(Player player, boolean direction) {

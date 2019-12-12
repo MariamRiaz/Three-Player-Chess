@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class RoundChessboardModel {
 
@@ -30,7 +29,7 @@ public class RoundChessboardModel {
         this.squaresPerRow = squaresPerRow;
         this.rows = rows;
         populateSquares(rows, squaresPerRow);
-        intializePieces(settings.playerWhite, settings.playerBlack);
+        initializePieces(settings.playerWhite, settings.playerBlack, settings.playerGray);
     }
 
     private void populateSquares(int rows, int squaresPerRow) {
@@ -83,7 +82,7 @@ public class RoundChessboardModel {
         square.setPiece(null);
     }
 
-    private void intializePiecesForPlayer(Player player, int row) {
+    private void initializePiecesForPlayer(Player player, int row) {
         initializePawnsForPlayer(player, row);
         initializeHeavyPiecesForPlayer(player, row);
     }
@@ -111,11 +110,13 @@ public class RoundChessboardModel {
         }
     }
 
-    public void intializePieces(Player plWhite, Player plBlack) {
+    public void initializePieces(Player plWhite, Player plBlack, Player plGray) {
         Player player1 = plBlack;
         Player player2 = plWhite;
+        Player player3 = plGray;
 
-        intializePiecesForPlayer(player1, 0);
-        intializePiecesForPlayer(player2, 12);
+        initializePiecesForPlayer(player1, 0);
+        initializePiecesForPlayer(player2, 8);
+        initializePiecesForPlayer(player3, 16);
     }
 }
