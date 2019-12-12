@@ -41,7 +41,7 @@ import javax.swing.JOptionPane;
  * Class representing the players moves, it's also checking that the moves taken
  * by player are correct. and save all the moves into a string
  */
-public class MoveHistory extends AbstractTableModel {
+public class MoveHistory {
 
 
     private enum PlayerColumn {
@@ -70,25 +70,6 @@ public class MoveHistory extends AbstractTableModel {
         this.movesHistoryView.addColumn(this.names[0]);
         this.movesHistoryView.addColumn(this.names[1]);
         this.movesHistoryView.addColumn(this.names[2]);
-        this.addTableModelListener(null);
-    }
-//
-//    public void draw() {
-//    }
-
-    @Override
-    public String getValueAt(int x, int y) {
-        return this.move.get((y * 2) - 1 + (x - 1));
-    }
-
-    @Override
-    public int getRowCount() {
-        return this.rowsNum;
-    }
-
-    @Override
-    public int getColumnCount() {
-        return this.columnsNum;
     }
 
 //    TODO: fix Castling
@@ -101,12 +82,6 @@ public class MoveHistory extends AbstractTableModel {
 //        }
 //        this.move.add(move);// add new move (O-O or O-O-O)
 //    }
-
-
-    @Override
-    public boolean isCellEditable(int a, int b) {
-        return false;
-    }
 
     /**
      * Method of adding new moves to the table
