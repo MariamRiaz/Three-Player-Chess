@@ -33,9 +33,6 @@ import jchess.JChessApp;
 import jchess.Log;
 import jchess.Player;
 import jchess.Settings;
-import jchess.Player.playerTypes;
-import jchess.Settings.gameModes;
-import jchess.Settings.gameTypes;
 
 /**
  * Class responsible for drawing the fold with local game settings
@@ -170,7 +167,7 @@ public class DrawLocalSettings extends JPanel implements ActionListener, TextLis
 				Integer val = new Integer(value);
 				sett.timeLimitSet = true;
 				sett.timeForGame = (int) val * 60;// set time for game and mult it to seconds
-				newGUI.gameClock.setTimes(sett.timeForGame, sett.timeForGame);
+				newGUI.gameClock.setTimes(sett.timeForGame, sett.timeForGame, sett.timeForGame);
 				newGUI.gameClock.start();
 			}
 			Log.log(this.time4Game.getActionCommand());
@@ -180,8 +177,6 @@ public class DrawLocalSettings extends JPanel implements ActionListener, TextLis
 					+ sett.upsideDown + "\n****************");// 4test
 			newGUI.newGame();// start new Game
 			this.parent.setVisible(false);// hide parent
-			newGUI.chessboard.repaint();
-			newGUI.chessboard.draw();
 		}
 
 	}

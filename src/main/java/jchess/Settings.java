@@ -76,7 +76,6 @@ public class Settings implements Serializable {
         } catch (java.util.MissingResourceException exc) {
             result = key;
         }
-        Log.log(Settings.loc.getLocale().toString());
         return result;
     }
 
