@@ -1,4 +1,4 @@
-package jchess.controller;
+package jchess.entities;
 
 import jchess.entities.Square;
 

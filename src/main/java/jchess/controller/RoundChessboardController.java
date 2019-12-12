@@ -8,6 +8,7 @@ import jchess.Log;
 import jchess.Player;
 import jchess.Settings;
 import jchess.entities.Square;
+import jchess.entities.SquareObservable;
 import jchess.helper.CartesianPolarConverter;
 import jchess.helper.MoveEvaluator;
 import jchess.entities.PolarPoint;
