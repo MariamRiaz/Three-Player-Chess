@@ -15,6 +15,10 @@ import java.util.List;
 import java.util.HashSet;
 import java.util.logging.Level;
 
+/*
+* Class to generate the view of a circular board
+* */
+
 public class RoundChessboardView extends JPanel {
 
     private Image boardImage;
