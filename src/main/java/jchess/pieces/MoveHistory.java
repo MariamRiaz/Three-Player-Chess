@@ -188,15 +188,9 @@ public class MoveHistory extends AbstractTableModel {
     }
 
     private String getPosition(Square square, String locMove) {
+        locMove += Character.toString((char) (square.getPozX() + 97));// add letter of Square from which move was made
+        locMove += Integer.toString(square.getPozY() + 1);// add number of Square from which move was made
 
-        if (game.settings.upsideDown) {
-            locMove += Character.toString((char) square.getPozX());// add letter of Square from
-            // which move was made
-            locMove += Integer.toString(square.getPozY());// add number of Square from which move was made
-        } else {
-            locMove += Character.toString((char) (square.getPozX() + 97));// add letter of Square from which move was made
-            locMove += Integer.toString(square.getPozY());// add number of Square from which move was made
-        }
         return locMove;
     }
 
