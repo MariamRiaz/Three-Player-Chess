@@ -235,7 +235,7 @@ public class RoundChessboardController extends MouseAdapter {
 
             end.getPiece().setHasMoved(true);
 
-            if (end.getPozY() == 0 || end.getPozY() == 7)
+            if (end.getPozY() == 1 || end.getPozY() == 9 || end.getPozY() == 17)
             {
                 if (clearForwardHistory) {
                     String color;
