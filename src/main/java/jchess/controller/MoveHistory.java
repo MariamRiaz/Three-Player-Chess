@@ -38,8 +38,7 @@ import javax.swing.JOptionPane;
 
 
 /**
- * Class representing the players moves, it's also checking that the moves taken
- * by player are correct. and save all the moves into a string
+ * Class that holds all the move history of the game, and all the necessary methods to undo and redo a move
  */
 public class MoveHistory {
 
