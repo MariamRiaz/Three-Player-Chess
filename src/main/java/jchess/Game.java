@@ -20,24 +20,25 @@
  */
 package jchess;
 
-import java.awt.event.ComponentEvent;
-import java.awt.event.MouseEvent;
-import javax.swing.*;
-
 import jchess.UI.Chat;
-import jchess.UI.GameClock;
 import jchess.UI.board.Square;
+import jchess.controller.GameClock;
 import jchess.controller.RoundChessboardController;
+import jchess.model.RoundChessboardModel;
 import jchess.pieces.MoveHistory;
 import jchess.pieces.Piece;
+import jchess.view.RoundChessboardView;
 
+import javax.swing.*;
 import java.awt.*;
-import java.io.File;
-import java.io.BufferedReader;
-import java.io.FileWriter;
-import java.io.FileReader;
-import java.util.Calendar;
+import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.util.Calendar;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.logging.Level;
@@ -57,12 +58,20 @@ public class Game extends JPanel implements Observer, ComponentListener {
     Client client;
     MoveHistory moves;
     public Chat chat;
+    private int rows = 24;
+    private int squaresPerRow = 6;
+    private static final int chessboardSize = 800;
+
 
     public Game() {
         this.setLayout(null);
         this.moves = new MoveHistory(this);
         settings = new Settings();
-        chessboardController = new RoundChessboardController(this.settings, this.moves);
+
+        RoundChessboardModel model = new RoundChessboardModel(rows, squaresPerRow, true, settings);
+        RoundChessboardView view = new RoundChessboardView(chessboardSize, "3-player-board.png", rows, squaresPerRow, model.squares);
+        chessboardController = new RoundChessboardController(model, view, this.settings, this.moves);
+
         this.add(chessboardController.getView());
         chessboardController.addSelectSquareObserver(this);
         gameClock = new GameClock(this);
@@ -104,8 +113,8 @@ public class Game extends JPanel implements Observer, ComponentListener {
         Calendar cal = Calendar.getInstance();
         String str = new String("");
         String info = new String("[Event \"Game\"]\n[Date \"" + cal.get(cal.YEAR) + "." + (cal.get(cal.MONTH) + 1) + "."
-                + cal.get(cal.DAY_OF_MONTH) + "\"]\n" + "[White \"" + this.settings.playerWhite.name + "\"]\n[Black \""
-                + this.settings.playerBlack.name + "\"]\n\n");
+                + cal.get(cal.DAY_OF_MONTH) + "\"]\n" + "[White \"" + this.settings.getPlayerWhite().name + "\"]\n[Black \""
+                + this.settings.getPlayerBlack().name + "\"]\n\n");
         str += info;
         str += this.moves.getMovesInString();
         try {
@@ -157,10 +166,10 @@ public class Game extends JPanel implements Observer, ComponentListener {
         }
         Game newGUI = JChessApp.jcv.addNewTab(whiteName + " vs. " + blackName);
         Settings locSetts = newGUI.settings;
-        locSetts.playerBlack.name = blackName;
-        locSetts.playerWhite.name = whiteName;
-        locSetts.playerBlack.setType(Player.playerTypes.localUser);
-        locSetts.playerWhite.setType(Player.playerTypes.localUser);
+        locSetts.getPlayerBlack().name = blackName;
+        locSetts.getPlayerWhite().name = whiteName;
+        locSetts.getPlayerBlack().setType(Player.playerTypes.localUser);
+        locSetts.getPlayerWhite().setType(Player.playerTypes.localUser);
         locSetts.gameMode = Settings.gameModes.loadGame;
         locSetts.gameType = Settings.gameTypes.local;
 
@@ -227,7 +236,7 @@ public class Game extends JPanel implements Observer, ComponentListener {
      * Method to Start new game
      */
     public void newGame() {
-        activePlayer = settings.playerWhite;
+        activePlayer = settings.getPlayerWhite();
         if (activePlayer.playerType != Player.playerTypes.localUser) {
             this.blockedChessboard = true;
         }
@@ -255,12 +264,12 @@ public class Game extends JPanel implements Observer, ComponentListener {
      * Method to swich active players after move
      */
     public void switchActive() {
-        if (activePlayer == settings.playerWhite) {
-            activePlayer = settings.playerBlack;
-        } else if (activePlayer == settings.playerBlack) {
-            activePlayer = settings.playerGray;
-        } else if (activePlayer == settings.playerGray) {
-            activePlayer = settings.playerWhite;
+        if (activePlayer == settings.getPlayerWhite()) {
+            activePlayer = settings.getPlayerBlack();
+        } else if (activePlayer == settings.getPlayerBlack()) {
+            activePlayer = settings.getPlayerGray();
+        } else if (activePlayer == settings.getPlayerGray()) {
+            activePlayer = settings.getPlayerWhite();
         }
 
         this.gameClock.switch_clocks();
@@ -367,13 +376,13 @@ public class Game extends JPanel implements Observer, ComponentListener {
     }
 
     public void squareSelected(Square sq) {
-//        if (event.getButton() == MouseEvent.BUTTON3) // right button
+///if (event.getButton() == MouseEvent.BUTTON3) // right button
 //        {
 //            this.undo();
 //        } else if (event.getButton() == MouseEvent.BUTTON2 && settings.gameType == Settings.gameTypes.local) {
 //            this.redo();
-//        } else if (event.getButton() == MouseEvent.BUTTON1) // left button TODO add action listener
-//        {
+//        } else if (event.getButton() == MouseEvent.BUTTON1) // left button
+//        { TODO add action listener
 
         if (!blockedChessboard) {
             if ((sq == null && sq.getPiece() == null && chessboardController.getActiveSquare() == null)
@@ -407,7 +416,7 @@ public class Game extends JPanel implements Observer, ComponentListener {
 
                 // checkmate or stalemate
                 Piece king;
-                if (this.activePlayer == settings.playerWhite) {
+                if (this.activePlayer == settings.getPlayerWhite()) {
                     king = chessboardController.getKingWhite();
                 } else {
                     king = chessboardController.getKingBlack();

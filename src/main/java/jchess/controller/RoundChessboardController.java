@@ -51,11 +51,11 @@ public class RoundChessboardController extends MouseAdapter {
     public static int bottom = 7;
     public static int top = 0;
 
-    public RoundChessboardController(Settings settings, MoveHistory movesHistory) {
-        this.model = new RoundChessboardModel(rows, squaresPerRow, true, settings);
+    public RoundChessboardController(RoundChessboardModel model, RoundChessboardView view, Settings settings, MoveHistory movesHistory) {
+        this.model = model;
+        this.view = view;
+        view.addMouseListener(this);
         this.movesHistory = movesHistory;
-        this.view = new RoundChessboardView(600, "3-player-board.png", rows, squaresPerRow, model.squares);
-        this.view.addMouseListener(this);
         this.settings = settings;
         this.squareObservable = new SquareObservable();
     }
@@ -90,21 +90,21 @@ public class RoundChessboardController extends MouseAdapter {
 
     public boolean moveIsPossible(int x, int y, int toX, int toY) {
     	Square square = model.getSquare(x, y), to = model.getSquare(toX, toY);
-    	
+
     	if (square == null || to == null || square.getPiece() == null)
     		return false;
     	return new MoveEvaluator(model)
     			.getValidTargetSquaresToSavePiece(square, model.getSquare(getKing(square.getPiece().player)))
     			.contains(model.getSquare(to.getPozX(), to.getPozY()));
     }
-    
+
     public boolean movePossible(Square square, Square to) {
     	if (square == null || to == null)
     		return false;
-    	
+
     	return moveIsPossible(square.getPozX(), square.getPozY(), to.getPozX(), to.getPozY());
     }
-    
+
     public void select(Square sq) {
         setActiveSquare(sq);
         Log.log("Selected square with X: "
@@ -116,7 +116,7 @@ public class RoundChessboardController extends MouseAdapter {
     public boolean pieceIsThreatened(Piece piece) {
     	return new MoveEvaluator(model).squareIsThreatened(model.getSquare(piece));
     }
-    
+
     public boolean pieceIsUnsavable(Piece piece) {
     	return new MoveEvaluator(model).squareUnsavable(model.getSquare(piece));
     }
@@ -357,7 +357,7 @@ public class RoundChessboardController extends MouseAdapter {
                 if (taken != null && !last.wasEnPassant()) {
                     model.setPieceOnSquare(taken, null);
                     view.removeVisual(taken, last.getTo().getPozX(), last.getTo().getPozY());
-                    
+
                     model.setPieceOnSquare(taken, end);
                     view.setVisual(taken, end.getPozX(), end.getPozY());
                 } else {

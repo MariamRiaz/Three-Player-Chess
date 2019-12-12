@@ -31,7 +31,7 @@ import jchess.Log;
 import jchess.Player;
 import jchess.Settings;
 import jchess.UI.board.Square;
-import jchess.UI.MovesHistoryView;
+import jchess.view.MovesHistoryView;
 import jchess.controller.RoundChessboardController;
 
 import javax.swing.JOptionPane;
@@ -61,21 +61,21 @@ public class MoveHistory extends AbstractTableModel {
     private Stack<PlayedMove> moveForwardStack = new Stack<>();
     private MovesHistoryView movesHistoryView;
 
-
     public enum castling {
         none, shortCastling, longCastling
     }
-
     public MoveHistory(Game game) {
         super();
         this.movesHistoryView = new MovesHistoryView();
         this.game = game;
-
         this.movesHistoryView.addColumn(this.names[0]);
         this.movesHistoryView.addColumn(this.names[1]);
         this.movesHistoryView.addColumn(this.names[2]);
         this.addTableModelListener(null);
     }
+//
+//    public void draw() {
+//    }
 
     @Override
     public String getValueAt(int x, int y) {
@@ -102,6 +102,7 @@ public class MoveHistory extends AbstractTableModel {
 //        }
 //        this.move.add(move);// add new move (O-O or O-O-O)
 //    }
+
 
     @Override
     public boolean isCellEditable(int a, int b) {

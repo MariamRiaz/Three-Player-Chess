@@ -44,9 +44,34 @@ public class Settings implements Serializable {
     }
 
     public gameModes gameMode;
-    public Player playerWhite;
-    public Player playerBlack;
-    public Player playerGray;
+    private Player playerWhite;
+    private Player playerBlack;
+    private Player playerGray;
+
+    public Player getPlayerWhite() {
+        return playerWhite;
+    }
+
+    public void setPlayerWhite(Player playerWhite) {
+        this.playerWhite = playerWhite;
+    }
+
+    public Player getPlayerBlack() {
+        return playerBlack;
+    }
+
+    public void setPlayerBlack(Player playerBlack) {
+        this.playerBlack = playerBlack;
+    }
+
+    public Player getPlayerGray() {
+        return playerGray;
+    }
+
+    public void setPlayerGray(Player playerGray) {
+        this.playerGray = playerGray;
+    }
+
 
     public enum gameTypes {
 

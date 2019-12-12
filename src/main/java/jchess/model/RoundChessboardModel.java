@@ -28,7 +28,7 @@ public class RoundChessboardModel {
         this.hasContinuousRows = continuousRows;
         
         populateSquares(rows, squaresPerRow);
-        initializePieces(settings.playerWhite, settings.playerBlack, settings.playerGray);
+        initializePieces(settings.getPlayerWhite(), settings.getPlayerBlack(), settings.getPlayerGray());
     }
 
     private void populateSquares(int rows, int squaresPerRow) {
