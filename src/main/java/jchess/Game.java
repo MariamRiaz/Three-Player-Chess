@@ -52,7 +52,7 @@ import java.util.logging.Level;
  */
 public class Game extends JPanel implements Observer, ComponentListener {
 
-    private Settings settings;
+    public Settings settings;
     private boolean blockedChessboard;
     private RoundChessboardController chessboardController;
     private Player activePlayer;

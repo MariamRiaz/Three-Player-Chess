@@ -4,8 +4,9 @@ import jchess.helper.Log;
 import jchess.entities.Player;
 import jchess.Settings;
 import jchess.entities.Square;
+import jchess.pieces.Orientation;
 import jchess.pieces.Piece;
-import jchess.pieces.PieceFactory;
+import jchess.pieces.PieceLoader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,13 +101,14 @@ public class RoundChessboardModel {
     }
 
     private void initializeHeavyPiecesForPlayer(Player player, int row) {
-        Piece king = PieceFactory.createKing(player);
-        setPieceOnSquare(PieceFactory.createRook(player), getSquare(0, row + 1));
-        setPieceOnSquare(PieceFactory.createKnight(player), getSquare(1, row + 1));
-        setPieceOnSquare(PieceFactory.createQueen(player), getSquare(2, row + 1));
+        Piece king = new Piece(PieceLoader.getPieceDefinition("King"), player, new Orientation());
+        
+        setPieceOnSquare(new Piece(PieceLoader.getPieceDefinition("Rook"), player, new Orientation()), getSquare(0, row + 1));
+        setPieceOnSquare(new Piece(PieceLoader.getPieceDefinition("Knight"), player, new Orientation()), getSquare(1, row + 1));
+        setPieceOnSquare(new Piece(PieceLoader.getPieceDefinition("Queen"), player, new Orientation()), getSquare(2, row + 1));
         setPieceOnSquare(king, getSquare(3, row + 1));
-        setPieceOnSquare(PieceFactory.createKnight(player), getSquare(4, row + 1));
-        setPieceOnSquare(PieceFactory.createRook(player), getSquare(5, row + 1));
+        setPieceOnSquare(new Piece(PieceLoader.getPieceDefinition("Knight"), player, new Orientation()), getSquare(4, row + 1));
+        setPieceOnSquare(new Piece(PieceLoader.getPieceDefinition("Rook"), player, new Orientation()), getSquare(5, row + 1));
 
         if (player.color == Player.colors.white)
             kingWhite = king;
@@ -117,8 +119,8 @@ public class RoundChessboardModel {
 
     private void initializePawnsForPlayer(Player player, int row) {
         for (int i = 0; i < squaresPerRow; i++) {
-            setPieceOnSquare(PieceFactory.createPawn(player, true), getSquare(i, row));
-            setPieceOnSquare(PieceFactory.createPawn(player, false), getSquare(i, row + 2));
+            setPieceOnSquare(new Piece(PieceLoader.getPieceDefinition("Pawn"), player, new Orientation().reverse()), getSquare(i, row));
+            setPieceOnSquare(new Piece(PieceLoader.getPieceDefinition("Pawn"), player, new Orientation()), getSquare(i, row + 2));
         }
     }
 

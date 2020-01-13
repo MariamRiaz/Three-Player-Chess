@@ -5,8 +5,10 @@ import jchess.entities.Player;
 import jchess.Settings;
 import jchess.entities.Square;
 import jchess.controller.MoveHistory;
+import jchess.pieces.Orientation;
 import jchess.pieces.Piece;
-import jchess.pieces.PieceFactory;
+import jchess.pieces.PieceLoader;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -36,7 +38,7 @@ public class MoveHistoryTest {
     }
     @Test
     public void addMove() {
-        Piece piece = PieceFactory.createKing(settingsMock.getPlayerWhite());
+        Piece piece = new Piece(PieceLoader.getPieceDefinition("King"), settingsMock.getPlayerWhite(), new Orientation());
         square1 = new Square(10, 10, piece);
         square2 = new Square(11, 11, null);
         Piece pieceClone = piece.clone();

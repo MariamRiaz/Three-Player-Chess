@@ -126,7 +126,7 @@ public class MoveHistory {
                         boolean wasEnPassant, Piece promotedPiece) {
 
         boolean wasCastling = castlingMove != castling.none;
-        String locMove = new String(beginState.symbol);
+        String locMove = new String(beginState.getDefinition().symbol);
 
         locMove = getPosition(begin, locMove);
 
@@ -138,7 +138,7 @@ public class MoveHistory {
 
         locMove = getPosition(end, locMove);
 
-        if (beginState.symbol.equals("") && begin.getPozX() - end.getPozX() != 0 && endPiece == null) {
+        if (beginState.getDefinition().symbol.equals("") && begin.getPozX() - end.getPozX() != 0 && endPiece == null) {
             locMove += "(e.p)";// pawn take down opponent en passant
             wasEnPassant = true;
         }
