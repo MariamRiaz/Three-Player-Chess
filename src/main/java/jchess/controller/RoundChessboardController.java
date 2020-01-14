@@ -235,7 +235,7 @@ public class RoundChessboardController extends MouseAdapter {
 
             end.getPiece().setHasMoved(true);
 
-            if (end.getPozY() == 1 || end.getPozY() == 9 || end.getPozY() == 17)
+            if (end.getPozX() == 5)
             {
                 if (clearForwardHistory) {
                     String color;
@@ -264,6 +264,8 @@ public class RoundChessboardController extends MouseAdapter {
         
         view.updateAfterMove(end.getPiece(), begin.getPozX(), begin.getPozY(), end.getPozX(), end.getPozY());
         end.getPiece().setHasMoved(true);
+        
+        // TODO: Reverse orientation on jump across board center.
     }
 
     /**

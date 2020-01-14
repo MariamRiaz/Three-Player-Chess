@@ -6,17 +6,32 @@ import jchess.Settings;
 import jchess.entities.Square;
 import jchess.pieces.Orientation;
 import jchess.pieces.Piece;
+import jchess.pieces.PieceDefinition;
 import jchess.pieces.PieceLoader;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 
 /**
  * Class that holds the state of the RoundChessboard component
  */
 public class RoundChessboardModel {
+	private static final String boardPath = System.getProperty("user.dir") + File.separator + "boards" + File.separator + "circle_rim.bd";
+	
     public List<Square> squares;
     public Piece kingWhite;
     public Piece kingBlack;
@@ -34,16 +49,21 @@ public class RoundChessboardModel {
      */
     public RoundChessboardModel(int rows, int squaresPerRow, boolean continuousRows, boolean connectedInnerRim, Settings settings) {
         this.squares = new ArrayList<Square>();
-        this.squaresPerRow = squaresPerRow;
-        this.rows = rows;
-        this.hasContinuousRows = continuousRows;
-        this.innerRimConnected = connectedInnerRim;
         
-        populateSquares(rows, squaresPerRow);
-        initializePieces(settings.getPlayerWhite(), settings.getPlayerBlack(), settings.getPlayerGray());
+        try {
+			initializeFromJSON(new JsonParser().parse(new BufferedReader(new FileReader(boardPath))), settings);
+		} catch (JsonIOException e) {
+			e.printStackTrace();
+		} catch (JsonSyntaxException e) {
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
     }
 
-    private void populateSquares(int rows, int squaresPerRow) {
+    private void populateSquares() {
+    	squares.clear();
+    	
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < squaresPerRow; j++) {
                 squares.add(new Square(j, i, null));
@@ -128,49 +148,72 @@ public class RoundChessboardModel {
         square.setPiece(piece);
         return piece;
     }
+    
+    private void initializeFromJSON(JsonElement jsonBody, Settings settings) {
+		if (jsonBody == null || !jsonBody.isJsonObject())
+			return;
+		
+		JsonObject json = jsonBody.getAsJsonObject();
+		HashMap<String, Player> players = new HashMap<String, Player>();
+		
+		if (json.get("rows") != null && json.get("rows").isJsonPrimitive())
+			rows = json.get("rows").getAsInt();
+			
+		if (json.get("columns") != null && json.get("columns").isJsonPrimitive())
+			squaresPerRow = json.get("columns").getAsInt();
+			
+		if (json.get("continuous-rows") != null && json.get("continuous-rows").isJsonPrimitive())
+			hasContinuousRows = json.get("continuous-rows").getAsBoolean();
+			
+		if (json.get("connected-inner-rim") != null && json.get("connected-inner-rim").isJsonPrimitive())
+			innerRimConnected = json.get("connected-inner-rim").getAsBoolean();
+		
+		populateSquares();
 
-    private void initializePiecesForPlayer(Player player, int row) {
-        initializePawnsForPlayer(player, row);
-        initializeHeavyPiecesForPlayer(player, row);
+		if (json.get("players") != null && json.get("players").isJsonArray())
+			for (JsonElement element : json.get("players").getAsJsonArray()) 
+				if (element.isJsonPrimitive())
+					switch (element.getAsString()) {
+					case "WH":
+						players.put("WH", settings.getPlayerWhite());
+						break;
+					case "BL":
+						players.put("BL", settings.getPlayerBlack());
+						break;
+					case "GR":
+						players.put("GR", settings.getPlayerGray());
+						break;
+					}
+		
+		if (json.get("pieces") != null && json.get("pieces").isJsonArray())
+			loadPieces(json.get("pieces").getAsJsonArray(), players);
     }
-
-    private void initializeHeavyPiecesForPlayer(Player player, int row) {
-        Piece king = new Piece(PieceLoader.getPieceDefinition("King"), player, new Orientation());
-        
-        setPieceOnSquare(new Piece(PieceLoader.getPieceDefinition("Rook"), player, new Orientation()), getSquare(0, row + 1));
-        setPieceOnSquare(new Piece(PieceLoader.getPieceDefinition("Knight"), player, new Orientation()), getSquare(1, row + 1));
-        setPieceOnSquare(new Piece(PieceLoader.getPieceDefinition("Queen"), player, new Orientation()), getSquare(2, row + 1));
-        setPieceOnSquare(king, getSquare(3, row + 1));
-        setPieceOnSquare(new Piece(PieceLoader.getPieceDefinition("Knight"), player, new Orientation()), getSquare(4, row + 1));
-        setPieceOnSquare(new Piece(PieceLoader.getPieceDefinition("Rook"), player, new Orientation()), getSquare(5, row + 1));
-
-        if (player.color == Player.colors.white)
-            kingWhite = king;
-        else if (player.color == Player.colors.gray)
-        	kingGray = king;
-        else kingBlack = king;
-    }
-
-    private void initializePawnsForPlayer(Player player, int row) {
-        for (int i = 0; i < squaresPerRow; i++) {
-            setPieceOnSquare(new Piece(PieceLoader.getPieceDefinition("Pawn"), player, new Orientation().reverse()), getSquare(i, row));
-            setPieceOnSquare(new Piece(PieceLoader.getPieceDefinition("Pawn"), player, new Orientation()), getSquare(i, row + 2));
-        }
-    }
-
-    /**
-     * initializes Pieces for given players on startup
-     * @param plWhite   Player white player
-     * @param plBlack   Player black player
-     * @param plGray    Player gray player
-     */
-    public void initializePieces(Player plWhite, Player plBlack, Player plGray) {
-        Player player1 = plBlack;
-        Player player2 = plWhite;
-        Player player3 = plGray;
-
-        initializePiecesForPlayer(player1, 0);
-        initializePiecesForPlayer(player2, 8);
-        initializePiecesForPlayer(player3, 16);
+    
+    private void loadPieces(JsonArray pieces, HashMap<String, Player> players) {
+    	for (JsonElement el : pieces) {
+    		if (!el.isJsonObject())
+    			continue;
+    		
+    		JsonObject piece = el.getAsJsonObject();
+    		Square square = null;
+    		PieceDefinition type = null;
+    		Player player = null;
+    		
+    		if (piece.get("square") != null && piece.get("square").isJsonArray() && piece.get("square").getAsJsonArray().size() == 2) {
+    			int x = piece.get("square").getAsJsonArray().get(0).getAsInt(),
+    					y = piece.get("square").getAsJsonArray().get(1).getAsInt();
+    			
+    			square = getSquare(x, y);
+    		}
+    		
+    		if (piece.get("type") != null && piece.get("type").isJsonPrimitive())
+    			type = PieceLoader.getPieceDefinition(piece.get("type").getAsString());
+    		
+    		if (piece.get("player") != null && piece.get("player").isJsonPrimitive())
+    			player = players.get(piece.get("player").getAsString());
+    		
+    		if (square != null && type != null && player != null)
+    			setPieceOnSquare(new Piece(type, player, new Orientation()), square);
+    	}
     }
 }
