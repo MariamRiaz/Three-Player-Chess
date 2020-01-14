@@ -57,8 +57,10 @@ public class MoveEvaluator {
             return ret;//TODO error handling
 
         int count = 0;
-        for (Square next = nextSquare(square, move.x, move.y, square.getPiece().getOrientation()); next != null
-                && (move.limit == null || count < move.limit) && !ret.contains(next); next = nextSquare(next, move.x, move.y, square.getPiece().getOrientation())) {
+        Orientation otn = square.getPiece().getOrientation().clone();
+        for (Square next = nextSquare(square, move.x, move.y, otn); next != null
+                && (move.limit == null || count < move.limit) && !ret.contains(next); 
+        		next = nextSquare(next, move.x, move.y, otn)) {
             boolean add = true;
 
             if (move.conditions.contains(MoveType.OnlyAttack)) {
@@ -94,7 +96,6 @@ public class MoveEvaluator {
      * @return The next Square, if any.
      */
     private Square nextSquare(Square current, int x, int y, Orientation orientation) {
-    	
     	if (orientation != null) {
 	    	if (orientation.x)
 	    		x = -x;
@@ -102,7 +103,12 @@ public class MoveEvaluator {
 	    		y = -y;
 	    }
     	
-        return model.getSquare(current.getPozX() + x, current.getPozY() + y);
+        Square retVal = model.getSquare(current.getPozX() + x, current.getPozY() + y);
+        
+        if (model.getInnerRimConnected() && current.getPozX() + x < 0)
+        	orientation.reverseX();
+        
+        return retVal;
     }
 
     /**

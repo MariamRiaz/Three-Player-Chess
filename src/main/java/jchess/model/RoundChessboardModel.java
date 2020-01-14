@@ -23,7 +23,7 @@ public class RoundChessboardModel {
     public Piece kingGray;
     private int squaresPerRow;
     private int rows;
-    private boolean hasContinuousRows;
+    private boolean hasContinuousRows, innerRimConnected;
 
     /**
      * Constructor
@@ -32,11 +32,12 @@ public class RoundChessboardModel {
      * @param continuousRows    boolean
      * @param settings          Settings    settings of the application
      */
-    public RoundChessboardModel(int rows, int squaresPerRow, boolean continuousRows, Settings settings) {
+    public RoundChessboardModel(int rows, int squaresPerRow, boolean continuousRows, boolean connectedInnerRim, Settings settings) {
         this.squares = new ArrayList<Square>();
         this.squaresPerRow = squaresPerRow;
         this.rows = rows;
         this.hasContinuousRows = continuousRows;
+        this.innerRimConnected = connectedInnerRim;
         
         populateSquares(rows, squaresPerRow);
         initializePieces(settings.getPlayerWhite(), settings.getPlayerBlack(), settings.getPlayerGray());
@@ -49,6 +50,10 @@ public class RoundChessboardModel {
             }
         }
     }
+    
+    private int normalizeY(int y) {
+    	return y % rows < 0 ? (y % rows) + rows : y % rows;
+    }
 
     /**
      * gets the Square corresponding to the given x and y index
@@ -57,14 +62,42 @@ public class RoundChessboardModel {
      * @return      Square corresponding to the given x and y index
      */
     public Square getSquare(int x, int y) {
-    	int newY = hasContinuousRows ? (y % rows < 0 ? (y % rows) + rows : y % rows) : y;
+    	if (hasContinuousRows) {
+	    	y = normalizeY(y);
+
+	    	System.out.println("A:");
+	    	System.out.println("Trying for (" + Integer.toString(x) + ", " + Integer.toString(y) + ")");
+	    	if (innerRimConnected) {
+	    		if (x < 0) {
+	    			x = -x - 1;
+	    			y = normalizeY(y + rows / 2);
+	    		}
+	    	}
+
+	    	System.out.println("Got " + Integer.toString(x) + ", " + Integer.toString(y));
+    	}
     	
+    	final int newX = x, newY = y;
         Optional<Square> optionalSquare = squares.stream().filter(s ->
-        	s.getPozX() == x && s.getPozY() == newY).findFirst();
+        	s.getPozX() == newX && s.getPozY() == newY).findFirst();
         if(optionalSquare.equals(Optional.empty()))
             return null;
             
         return optionalSquare.get();//TODO
+    }
+
+    /**
+     * @return Whether or not the board has continuous rows, i.e. is circular.
+     */
+    public boolean getHasContinuousRows() {
+    	return hasContinuousRows;
+    }
+    
+    /**
+     * @return Whether or not the board inner rim is connected, if circular. I.e. whether jumps across the middle are possible.
+     */
+    public boolean getInnerRimConnected() {
+    	return hasContinuousRows && innerRimConnected;
     }
 
     /**

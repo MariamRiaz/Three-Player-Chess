@@ -70,7 +70,7 @@ public class Game extends JPanel implements Observer, ComponentListener {
         this.moveHistory = new MoveHistory(this);
         settings = new Settings();
 
-        RoundChessboardModel model = new RoundChessboardModel(rows, squaresPerRow, true, settings);
+        RoundChessboardModel model = new RoundChessboardModel(rows, squaresPerRow, true, true, settings);
         RoundChessboardView view = new RoundChessboardView(chessboardSize, "3-player-board.png", rows, squaresPerRow, model.squares);
         chessboardController = new RoundChessboardController(model, view, this.settings, this.moveHistory);
 

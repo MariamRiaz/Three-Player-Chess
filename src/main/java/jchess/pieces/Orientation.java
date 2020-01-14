@@ -13,6 +13,10 @@ public class Orientation {
 		this.y = y;
 	}
 	
+	public Orientation clone() {
+		return new Orientation(x, y);
+	}
+	
 	public Orientation reverse() {
 		x = !x;
 		y = !y;
