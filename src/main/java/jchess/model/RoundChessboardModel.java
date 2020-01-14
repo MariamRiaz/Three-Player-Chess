@@ -64,17 +64,13 @@ public class RoundChessboardModel {
     public Square getSquare(int x, int y) {
     	if (hasContinuousRows) {
 	    	y = normalizeY(y);
-
-	    	System.out.println("A:");
-	    	System.out.println("Trying for (" + Integer.toString(x) + ", " + Integer.toString(y) + ")");
+	    	
 	    	if (innerRimConnected) {
 	    		if (x < 0) {
 	    			x = -x - 1;
 	    			y = normalizeY(y + rows / 2);
 	    		}
 	    	}
-
-	    	System.out.println("Got " + Integer.toString(x) + ", " + Integer.toString(y));
     	}
     	
     	final int newX = x, newY = y;
@@ -107,9 +103,9 @@ public class RoundChessboardModel {
      */
     public Square getSquare(Piece piece) {
         Optional<Square> optionalSquare = squares.stream().filter(s -> s.getPiece() == piece).findFirst();
-        if(optionalSquare.equals(Optional.empty())) {
+        if(optionalSquare.equals(Optional.empty()))
             return null;
-        }
+        
         return optionalSquare.get();//TODO
     }
 
@@ -124,6 +120,11 @@ public class RoundChessboardModel {
             Log.log(Level.WARNING, "Piece was not set on square because square is null");
             return null;
         }
+        
+        Square prev = getSquare(piece);
+        if (prev != null)
+        	prev.setPiece(null);
+        
         square.setPiece(piece);
         return piece;
     }

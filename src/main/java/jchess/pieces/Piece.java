@@ -65,6 +65,7 @@ public class Piece {
 		this.player = other.player;
 		this.definition = other.definition;
 		this.hasMoved = other.hasMoved;
+		this.orientation = other.orientation;
 	}
 	
 	/**

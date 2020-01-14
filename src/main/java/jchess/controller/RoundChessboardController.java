@@ -91,7 +91,7 @@ public class RoundChessboardController extends MouseAdapter {
     	if (square == null || to == null || square.getPiece() == null)
     		return false;
     	return new MoveEvaluator(model)
-    			.getValidTargetSquaresToSavePiece(square, model.getSquare(getKing(square.getPiece().player)))
+    			.getValidTargetSquaresToSavePiece(square.getPiece(), getKing(square.getPiece().player))
     			.contains(model.getSquare(to.getPozX(), to.getPozY()));
     }
 
@@ -133,7 +133,7 @@ public class RoundChessboardController extends MouseAdapter {
      * @see RoundChessboardController.pieceIsThreatened
      */
     public boolean pieceIsUnsavable(Piece piece) {
-    	return new MoveEvaluator(model).squareIsUnsavable(model.getSquare(piece));
+    	return new MoveEvaluator(model).pieceIsUnsavable(piece);
     }
 
     /**
@@ -155,7 +155,7 @@ public class RoundChessboardController extends MouseAdapter {
         } else {
             view.setActiveCell(square.getPozX(), square.getPozY());
             view.setMoves(new MoveEvaluator(model)
-                    .getValidTargetSquaresToSavePiece(square, model.getSquare(getKing(square.getPiece().player))));
+                    .getValidTargetSquaresToSavePiece(square.getPiece(), getKing(square.getPiece().player)));
         }
     }
 
