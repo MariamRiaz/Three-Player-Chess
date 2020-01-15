@@ -9,7 +9,6 @@ import jchess.helper.CartesianPolarConverter;
 import jchess.helper.MoveEvaluator;
 import jchess.entities.PolarPoint;
 import jchess.model.RoundChessboardModel;
-import jchess.pieces.Orientation;
 import jchess.pieces.Piece;
 import jchess.pieces.PieceLoader;
 import jchess.entities.PlayedMove;

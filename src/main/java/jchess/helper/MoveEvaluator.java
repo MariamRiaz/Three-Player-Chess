@@ -34,7 +34,7 @@ public class MoveEvaluator {
 	 */
     private HashSet<Square> getValidTargetSquares(Piece piece) {
         HashSet<Square> ret = new HashSet<>();
-
+        
         if (piece == null)
             return ret;//TODO error handling
 
@@ -75,6 +75,18 @@ public class MoveEvaluator {
 
             if (move.conditions.contains(MoveType.OnlyWhenFresh) && piece.hasMoved())
                 add = false;
+            
+            if (move.conditions.contains(MoveType.Castling)) {
+            	if (piece.hasMoved())
+            		add = false;
+            	else {
+            		
+            	}
+            }
+            
+            if (move.conditions.contains(MoveType.EnPassant)) {
+            	
+            }
 
             if (add)
                 ret.add(next);
@@ -102,12 +114,12 @@ public class MoveEvaluator {
 	    		x = -x;
 	    	if (orientation.y)
 	    		y = -y;
+	    	
+            if (model.getInnerRimConnected() && current.getPozX() + x < 0)
+            	orientation.reverseX();
 	    }
     	
         Square retVal = model.getSquare(current.getPozX() + x, current.getPozY() + y);
-        
-        if (model.getInnerRimConnected() && current.getPozX() + x < 0)
-        	orientation.reverseX();
         
         return retVal;
     }
