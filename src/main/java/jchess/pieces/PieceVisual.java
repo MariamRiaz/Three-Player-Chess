@@ -4,7 +4,7 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.util.logging.Level;
 
-import jchess.helper.GUI;
+import jchess.helper.ResourceLoader;
 import jchess.helper.Log;
 import jchess.view.RoundChessboardView;
 
@@ -19,7 +19,7 @@ public class PieceVisual {
 	 * @param imageID The String ID of the image to use when drawing this PieceVisual. Must be non-null and containted in GUI.loadImage().
 	 */
 	public PieceVisual(String imageID) {
-		this.image = GUI.loadImage(imageID);
+		this.image = ResourceLoader.loadImage(imageID);
 		if (this.image == null)
 			throw new NullPointerException("PieceVisual image is null. Argument 'imageID' was " + new String(imageID));
 	}

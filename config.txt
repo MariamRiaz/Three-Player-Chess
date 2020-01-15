@@ -1,2 +1,0 @@
-#Thu Nov 21 11:16:14 CET 2019
-THEME=default
