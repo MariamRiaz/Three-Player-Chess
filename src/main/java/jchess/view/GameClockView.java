@@ -70,9 +70,15 @@ public class GameClockView extends JPanel {
 
     public void updateClocks(int[] timeSpentByPlayers){
         this.repaint();
-        whiteClock = Integer.toString(timeSpentByPlayers[0]);
-        blackClock = Integer.toString(timeSpentByPlayers[1]);
-        grayClock = Integer.toString(timeSpentByPlayers[2]);
+        int whiteMinutes = (int) timeSpentByPlayers[0]/60;
+        int whiteSeconds = (int) timeSpentByPlayers[0]%60;
+        whiteClock = String.format("%02d", whiteMinutes) + ":" + String.format("%02d", whiteSeconds);
+        int blackMinutes = (int) timeSpentByPlayers[1]/60;
+        int blackSeconds = (int) timeSpentByPlayers[1]%60;
+        blackClock = String.format("%02d", blackMinutes) + ":" + String.format("%02d", blackSeconds);
+        int grayMinutes = (int) timeSpentByPlayers[2]/60;
+        int graySeconds = (int) timeSpentByPlayers[2]%60;
+        grayClock = String.format("%02d", grayMinutes) + ":" + String.format("%02d", graySeconds);
     }
 
 }
