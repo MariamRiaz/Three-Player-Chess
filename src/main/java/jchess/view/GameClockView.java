@@ -52,10 +52,10 @@ public class GameClockView extends JPanel {
 
         g2d.setFont(font);
         g.setColor(Color.BLACK);
-        g.drawString(settings.getPlayerWhite().getName(), 10, 50);
+        g.drawString(settings.getPlayerBlack().getName(), 10, 50);
 
         g.setColor(Color.WHITE);
-        g.drawString(settings.getPlayerBlack().getName(), 90, 50);
+        g.drawString(settings.getPlayerWhite().getName(), 90, 50);
         g.drawString(settings.getPlayerGray().getName(), 170, 50);
         g2d.setFont(font);
         g.setColor(Color.BLACK);
