@@ -9,17 +9,20 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /*
- * Class to generate the view of game clock
- * */
+* Class to generate the view of game clock
+* */
 
 public class GameClockView extends JPanel {
 
     private Settings settings;
     private BufferedImage background;
     private String white_clock, black_clock, gray_clock;
-    public Clock clock1;
-    public Clock clock2;
-    public Clock clock3;
+//    public Clock clock1;
+//    public Clock clock2;
+//    public Clock clock3;
+    public int timeSpentPlayerW;
+    public int timeSpentPlayerB;
+    public int timeSpentPlayerG;
 
     public GameClockView(Game game){
         this.settings = game.getSettings();
@@ -27,9 +30,9 @@ public class GameClockView extends JPanel {
 
     public void paint(Graphics g) {
         super.paint(g);
-        white_clock = this.clock1.prepareString();
-        black_clock = this.clock2.prepareString();
-        gray_clock = this.clock3.prepareString();
+        white_clock = Integer.toString(timeSpentPlayerW);
+        black_clock = Integer.toString(timeSpentPlayerB);
+        gray_clock = Integer.toString(timeSpentPlayerG);
         Graphics2D g2d = (Graphics2D) g;
         g2d.drawImage(this.background, 0, 0, this);
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
