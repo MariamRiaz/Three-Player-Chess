@@ -2,8 +2,6 @@ package jchess.view;
 
 import jchess.Game;
 import jchess.Settings;
-import jchess.helper.Clock;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;

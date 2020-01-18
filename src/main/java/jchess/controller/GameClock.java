@@ -19,14 +19,10 @@
  * Damian Marciniak
  */
 package jchess.controller;
-
-import java.util.Timer;
 import java.util.logging.Level;
 import jchess.Game;
 import jchess.helper.Log;
-import jchess.entities.Player;
 import jchess.Settings;
-import jchess.helper.Clock;
 import jchess.helper.GameRoundTimer;
 import jchess.view.GameClockView;
 
