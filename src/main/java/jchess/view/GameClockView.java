@@ -9,8 +9,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /*
-* Class to generate the view of game clock
-* */
+ * Class to generate the view of game clock
+ * */
 
 public class GameClockView extends JPanel {
 

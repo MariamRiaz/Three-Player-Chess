@@ -109,7 +109,7 @@ public class GameClock implements Runnable {
 
 	/**
 	 * Method with is setting the players clocks
-	 * 
+	 *
 	 * @param p1 Capt player information
 	 * @param p2 Capt player information
 	 */
@@ -121,9 +121,9 @@ public class GameClock implements Runnable {
 		 */
 		if (p1.color == p1.color.white) {
 			if (p2.color == p2.color.black) {
-			gameClockView.clock1.setPlayer(p1);
-			gameClockView.clock2.setPlayer(p2);
-			gameClockView.clock3.setPlayer(p3);
+				gameClockView.clock1.setPlayer(p1);
+				gameClockView.clock2.setPlayer(p2);
+				gameClockView.clock3.setPlayer(p3);
 			}
 			else if (p2.color == p2.color.gray) {
 				gameClockView.clock1.setPlayer(p1);
