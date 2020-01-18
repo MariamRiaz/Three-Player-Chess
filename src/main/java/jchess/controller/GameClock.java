@@ -191,10 +191,10 @@ public class GameClock implements Runnable {
 					gameClockView.timeSpentPlayerW = gameClockView.timeSpentPlayerW + 1;
 				}
 				if(this.activePlayer == PlayerColors.BLACK){
-					gameClockView.timeSpentPlayerW = gameClockView.timeSpentPlayerW + 1;
+					gameClockView.timeSpentPlayerB = gameClockView.timeSpentPlayerB + 1;
 				}
-				if(this.activePlayer == PlayerColors.WHITE){
-					gameClockView.timeSpentPlayerW = gameClockView.timeSpentPlayerW + 1;
+				if(this.activePlayer == PlayerColors.GRAY){
+					gameClockView.timeSpentPlayerG = gameClockView.timeSpentPlayerG + 1;
 				}
 					gameClockView.repaint();
 					try {
