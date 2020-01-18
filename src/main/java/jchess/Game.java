@@ -285,7 +285,7 @@ public class Game extends JPanel implements Observer, ComponentListener {
             activePlayer = settings.getPlayerWhite();
         }
 
-        this.gameClock.switch_clocks();
+        this.gameClock.switchPlayers();
     }
 
     /**

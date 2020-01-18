@@ -61,11 +61,11 @@ public class GameClock implements Runnable {
 		this.game = game;
 		this.settings = game.getSettings();
 
-		totalPlayerTimeLimit = this.settings.getTimeForGame();
+		int time = this.settings.getTimeForGame();
 		timeSpentByPlayers = new int[]{0, 0, 0};
 		activePlayer = PlayerColors.WHITE;
 
-//		this.setTimes(time);
+		this.setTimes(time);
 //		this.setPlayers(this.settings.getPlayerBlack(), this.settings.getPlayerWhite(), this.settings.getPlayerGray());
 
 		this.thread = new Thread(this);
@@ -127,12 +127,9 @@ public class GameClock implements Runnable {
 		}
 	}
 
-//	public void setTimes(int time) {
-//
-//		gameClockView.clock1.init(time);
-//		gameClockView.clock2.init(time);
-//		gameClockView.clock3.init(time);
-//	}
+	public void setTimes(int time) {
+		this.totalPlayerTimeLimit = time;
+	}
 
 	/**
 	 * Method with is setting the players clocks
