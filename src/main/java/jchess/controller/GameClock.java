@@ -52,11 +52,7 @@ public class GameClock implements Runnable {
 	public GameClock(Game game) {
 		super();
 		gameClockView = new GameClockView(game);
-//		gameClockView.clock1 = new Clock();// white player clock
-//		gameClockView.clock2 = new Clock();// black player clock
-//		gameClockView.clock3 = new Clock();// gray player clock
 		// this.gameRoundTimer = new GameRoundTimer();
-		// this.runningClock = gameClockView.clock1;// running/active clock
 		this.runningClock = new GameRoundTimer();
 		this.game = game;
 		this.settings = game.getSettings();
@@ -97,21 +93,6 @@ public class GameClock implements Runnable {
 		}
 	}
 
-	/**
-	 * Method of switching the players clocks
-	 */
-//	public void switch_clocks() {
-//
-//		if (this.runningClock == gameClockView.clock1) {
-//			this.runningClock = gameClockView.clock2;
-//		} else if (this.runningClock == gameClockView.clock2) {
-//			this.runningClock = gameClockView.clock3;
-//		}
-//		else {
-//			this.runningClock = gameClockView.clock1;
-//		}
-//	}
-
 	public void switchPlayers() {
 
 		if (this.activePlayer == PlayerColors.WHITE) {
@@ -128,57 +109,8 @@ public class GameClock implements Runnable {
 	}
 
 	public void setTimes(int time) {
-		this.totalPlayerTimeLimit = time;
+		totalPlayerTimeLimit = time;
 	}
-
-	/**
-	 * Method with is setting the players clocks
-	 *
-	 * @param p1 Capt player information
-	 * @param p2 Capt player information
-	 */
-//	private void setPlayers(Player p1, Player p2, Player p3) {
-//		/*
-//		 * in documentation it's called 'setPlayer' but when we've 'setTimes' better to
-//		 * use one convention of naming methods - this've to be repaired in
-//		 * documentation by Wąsu:P dojdziemy do tego:D:D:D
-//		 */
-//		if (p1.color == p1.color.white) {
-//			if (p2.color == p2.color.black) {
-//			gameClockView.clock1.setPlayer(p1);
-//			gameClockView.clock2.setPlayer(p2);
-//			gameClockView.clock3.setPlayer(p3);
-//			}
-//			else if (p2.color == p2.color.gray) {
-//				gameClockView.clock1.setPlayer(p1);
-//				gameClockView.clock2.setPlayer(p3);
-//				gameClockView.clock3.setPlayer(p2);
-//			}}
-//
-//		if (p1.color == p1.color.black) {
-//			if (p2.color == p2.color.white) {
-//				gameClockView.clock1.setPlayer(p2);
-//				gameClockView.clock2.setPlayer(p1);
-//				gameClockView.clock3.setPlayer(p3);
-//			}
-//			else if (p2.color == p2.color.gray){
-//				gameClockView.clock1.setPlayer(p3);
-//				gameClockView.clock2.setPlayer(p1);
-//				gameClockView.clock3.setPlayer(p2);
-//			}}
-//
-//		if (p1.color == p1.color.gray) {
-//			if (p2.color == p2.color.white) {
-//				gameClockView.clock1.setPlayer(p2);
-//				gameClockView.clock2.setPlayer(p3);
-//				gameClockView.clock3.setPlayer(p1);
-//			}
-//			else if (p2.color == p2.color.black){
-//				gameClockView.clock1.setPlayer(p3);
-//				gameClockView.clock2.setPlayer(p2);
-//				gameClockView.clock3.setPlayer(p1);
-//			}}
-//	}
 
 	/**
 	 * Method with is running the time on clock
@@ -188,26 +120,26 @@ public class GameClock implements Runnable {
 			if (this.runningClock != null) {
 				this.runningClock.increment();
 				if(this.activePlayer == PlayerColors.WHITE){
-					gameClockView.timeSpentPlayerW = gameClockView.timeSpentPlayerW + 1;
+					this.timeSpentByPlayers[0] = this.timeSpentByPlayers[0]  + 1;
 				}
 				if(this.activePlayer == PlayerColors.BLACK){
-					gameClockView.timeSpentPlayerB = gameClockView.timeSpentPlayerB + 1;
+					this.timeSpentByPlayers[1]  = this.timeSpentByPlayers[1] + 1;
 				}
 				if(this.activePlayer == PlayerColors.GRAY){
-					gameClockView.timeSpentPlayerG = gameClockView.timeSpentPlayerG + 1;
+					this.timeSpentByPlayers[2] = this.timeSpentByPlayers[2] + 1;
 				}
-					gameClockView.repaint();
-					try {
-						thread.sleep(1000);
-					} catch (InterruptedException e) {
-						Log.log(Level.SEVERE, "Some error in gameClock thread: " + e);
-					}
-					// if(this.game.blockedChessboard)
-					// this.game.blockedChessboard = false;
+				gameClockView.updateClocks(this.timeSpentByPlayers);
+				try {
+					thread.sleep(1000);
+				} catch (InterruptedException e) {
+					Log.log(Level.SEVERE, "Some error in gameClock thread: " + e);
+				}
+				// if(this.game.blockedChessboard)
+				// this.game.blockedChessboard = false;
 
-				if ((this.timeSpentByPlayers[0] == this.totalPlayerTimeLimit) ||
-						(this.timeSpentByPlayers[1] == this.totalPlayerTimeLimit) ||
-						(this.timeSpentByPlayers[2] == this.totalPlayerTimeLimit) ) {
+				if ((this.timeSpentByPlayers[0]  == this.totalPlayerTimeLimit) ||
+						(this.timeSpentByPlayers[1]  == this.totalPlayerTimeLimit) ||
+						(this.timeSpentByPlayers[2]  == this.totalPlayerTimeLimit) ) {
 					this.timeOver();
 				}
 			}
@@ -219,14 +151,14 @@ public class GameClock implements Runnable {
 	 */
 	private void  timeOver() {
 		String color = new String();
-		if (this.timeSpentByPlayers[0] == this.totalPlayerTimeLimit) {// Check which player win
+		if (this.timeSpentByPlayers[0]  == this.totalPlayerTimeLimit) {// Check which player win
 			color = PlayerColors.BLACK.toString();
-		} else if (this.timeSpentByPlayers[1] == this.totalPlayerTimeLimit) {
+		} else if (this.timeSpentByPlayers[1]  == this.totalPlayerTimeLimit) {
 			color = PlayerColors.WHITE.toString();
 		} else {// if called in wrong moment
 			Log.log("Time over called when player got time 2 play");
 		}
-		this.game.endGame("Time is over! " + color + " player win the game.");
+		this.game.endGame("Time is over! " + color + " player wins the game.");
 		this.stop();
 
 		// JOptionPane.showMessageDialog(this, "koniec czasu");

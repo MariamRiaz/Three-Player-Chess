@@ -9,20 +9,14 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /*
-* Class to generate the view of game clock
-* */
+ * Class to generate the view of game clock
+ * */
 
 public class GameClockView extends JPanel {
 
     private Settings settings;
     private BufferedImage background;
-    private String white_clock, black_clock, gray_clock;
-//    public Clock clock1;
-//    public Clock clock2;
-//    public Clock clock3;
-    public int timeSpentPlayerW;
-    public int timeSpentPlayerB;
-    public int timeSpentPlayerG;
+    private String whiteClock, blackClock, grayClock;
 
     public GameClockView(Game game){
         this.settings = game.getSettings();
@@ -30,9 +24,6 @@ public class GameClockView extends JPanel {
 
     public void paint(Graphics g) {
         super.paint(g);
-        white_clock = Integer.toString(timeSpentPlayerW);
-        black_clock = Integer.toString(timeSpentPlayerB);
-        gray_clock = Integer.toString(timeSpentPlayerG);
         Graphics2D g2d = (Graphics2D) g;
         g2d.drawImage(this.background, 0, 0, this);
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -68,13 +59,20 @@ public class GameClockView extends JPanel {
         g.drawString(settings.getPlayerGray().getName(), 170, 50);
         g2d.setFont(font);
         g.setColor(Color.BLACK);
-        g2d.drawString(white_clock, 10, 80);
-        g2d.drawString(black_clock, 90, 80);
-        g2d.drawString(gray_clock, 170, 80);
+        g2d.drawString(whiteClock, 10, 80);
+        g2d.drawString(blackClock, 90, 80);
+        g2d.drawString(grayClock, 170, 80);
     }
 
     public void update(Graphics g) {
         paint(g);
+    }
+
+    public void updateClocks(int[] timeSpentByPlayers){
+        this.repaint();
+        whiteClock = Integer.toString(timeSpentByPlayers[0]);
+        blackClock = Integer.toString(timeSpentByPlayers[1]);
+        grayClock = Integer.toString(timeSpentByPlayers[2]);
     }
 
 }
