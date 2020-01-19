@@ -3,6 +3,7 @@ package jchess.model;
 import jchess.helper.Log;
 import jchess.move.Orientation;
 import jchess.entities.Player;
+import jchess.JChessApp;
 import jchess.Settings;
 import jchess.entities.Square;
 import jchess.pieces.Piece;
@@ -10,9 +11,9 @@ import jchess.pieces.PieceDefinition;
 import jchess.pieces.PieceLoader;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,7 +32,7 @@ import com.google.gson.JsonSyntaxException;
  * Class that holds the state of the RoundChessboard component
  */
 public class RoundChessboardModel {
-	private static final String boardPath = System.getProperty("user.dir") + File.separator + "boards" + File.separator + "circle_rim.bd";
+	private static final URL boardPath = JChessApp.class.getClassLoader().getResource("boards/circle_rim.bd");
 	
     public List<Square> squares;
     public HashSet<Piece> crucialPieces = new HashSet<>();
@@ -50,7 +51,9 @@ public class RoundChessboardModel {
         this.squares = new ArrayList<Square>();
         
         try {
-			initializeFromJSON(new JsonParser().parse(new BufferedReader(new FileReader(boardPath))), settings);
+        	System.out.println(boardPath);
+        	if (boardPath != null)
+        		initializeFromJSON(new JsonParser().parse(new BufferedReader(new FileReader(boardPath.getPath()))), settings);
 		} catch (JsonIOException e) {
 			e.printStackTrace();
 		} catch (JsonSyntaxException e) {
