@@ -15,6 +15,7 @@
 
 package jchess;
 
+import jchess.controller.JChessController;
 import jchess.helper.Log;
 import jchess.view.JChessView;
 import org.jdesktop.application.Application;
@@ -33,6 +34,7 @@ public class JChessApp extends SingleFrameApplication {
     protected void startup() {
         Log.init();
         jcv = new JChessView(this);
+        JChessController jcc = new JChessController(jcv);
         show(jcv);
     }
 
