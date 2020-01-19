@@ -124,6 +124,9 @@ public class MoveEvaluator {
      * @return The next Square, if any.
      */
     private Square nextSquare(Square current, int x, int y, Orientation orientation) {
+    	if (current == null)
+    		return null;
+    	
     	if (orientation != null) {
 	    	if (orientation.x)
 	    		x = -x;
