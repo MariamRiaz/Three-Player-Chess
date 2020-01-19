@@ -4,8 +4,8 @@ import jchess.Game;
 import jchess.entities.Player;
 import jchess.Settings;
 import jchess.entities.Square;
+import jchess.move.Orientation;
 import jchess.controller.MoveHistory;
-import jchess.pieces.Orientation;
 import jchess.pieces.Piece;
 import jchess.pieces.PieceLoader;
 

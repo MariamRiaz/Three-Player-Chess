@@ -1,7 +1,9 @@
-package jchess.pieces;
+package jchess.move;
 
 import java.security.InvalidParameterException;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map.Entry;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -10,6 +12,13 @@ import com.google.gson.JsonObject;
  * Class representing a potential Move of a Piece. It describes the direction, limit and conditions for this Move.
  */
 public class Move {
+	public static final String formatStringPiece = "Piece", formatStringFrom = "From", formatStringTo = "To";
+	
+	private static final HashMap<MoveType, String> defaultFormatStrings = new HashMap<MoveType, String>() {{
+			put(MoveType.OnlyMove, "${" + formatStringPiece + "}${" + formatStringFrom + "}-${" + formatStringTo + "}");
+			put(MoveType.OnlyAttack, "${" + formatStringPiece + "}${" + formatStringFrom + "}x${" + formatStringTo + "}");
+	}};
+	
 	private static MoveType parseMoveType(String str) {
 		switch (str) {
 		case "OnlyAttack":
@@ -33,6 +42,7 @@ public class Move {
 		int x = 0, y = 0;
 		Integer limit = null;
 		HashSet<MoveType> conditions = new HashSet<MoveType>();
+		HashMap<MoveType, String> formatStrings = new HashMap<>();
 
 		if (jsonBody.get("x") != null)
 			x = jsonBody.get("x").getAsInt();
@@ -51,14 +61,22 @@ public class Move {
 						conditions.add(mt);
 				}
 		
-		return new Move(x, y, limit, conditions);
+		if (jsonBody.get("format") != null && jsonBody.get("format").isJsonObject())
+			for (Entry<String, JsonElement> element : jsonBody.get("format").getAsJsonObject().entrySet()) {
+				final MoveType mt = parseMoveType(element.getKey());
+				if (mt != null && element.getValue().isJsonPrimitive())
+					formatStrings.put(mt, element.getValue().getAsString());
+			}
+		
+		return new Move(x, y, limit, conditions, formatStrings.isEmpty() ? defaultFormatStrings : formatStrings);
 	}
 	
 	public final int x, y;
 	public final Integer limit;
 	public final HashSet<MoveType> conditions;
+	public final HashMap<MoveType, String> formatStrings;
 	
-	private Move(int x, int y, Integer limit, HashSet<MoveType> conditions) {
+	private Move(int x, int y, Integer limit, HashSet<MoveType> conditions, HashMap<MoveType, String> formatStrings) {
 		this.x = x;
 		this.y = y;
 		this.limit = limit;
@@ -69,5 +87,10 @@ public class Move {
 		
 		if (this.conditions.contains(MoveType.OnlyAttack) && this.conditions.contains(MoveType.OnlyMove))
 			throw new InvalidParameterException("Move conditions cannot include 'OnlyAttack' and 'OnlyMove' simultaneously.");
+		
+		if (formatStrings == null)
+			throw new NullPointerException("Argument 'formatStrings' is null.");
+		this.formatStrings = formatStrings;
+			
 	}
 }

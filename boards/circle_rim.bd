@@ -23,7 +23,8 @@
     {
         "square": [5, 3],
         "type": "King",
-        "player": "WH"
+        "player": "WH",
+        "crucial": true
     },
     {
         "square": [5, 4],
@@ -82,7 +83,8 @@
     {
         "square": [5, 11],
         "type": "King",
-        "player": "BL"
+        "player": "BL",
+        "crucial": true
     },
     {
         "square": [5, 12],
@@ -142,7 +144,8 @@
     {
         "square": [5, 19],
         "type": "King",
-        "player": "GR"
+        "player": "GR",
+        "crucial": true
     },
     {
         "square": [5, 20],

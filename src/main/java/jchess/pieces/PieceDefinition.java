@@ -5,7 +5,11 @@ import java.util.HashSet;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import jchess.move.Move;
+
 public class PieceDefinition {
+	public static final PieceDefinition PLACEHOLDER = new PieceDefinition("Placeholder", 0, "", new HashSet<>());
+	
 	public static PieceDefinition loadFromJSON(JsonElement jsonBody) {
 		int value = 0;
 		String type = null, symbol = null;

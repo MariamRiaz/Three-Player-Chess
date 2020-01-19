@@ -1,10 +1,10 @@
 package jchess.model;
 
 import jchess.helper.Log;
+import jchess.move.Orientation;
 import jchess.entities.Player;
 import jchess.Settings;
 import jchess.entities.Square;
-import jchess.pieces.Orientation;
 import jchess.pieces.Piece;
 import jchess.pieces.PieceDefinition;
 import jchess.pieces.PieceLoader;
@@ -15,6 +15,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -33,9 +34,7 @@ public class RoundChessboardModel {
 	private static final String boardPath = System.getProperty("user.dir") + File.separator + "boards" + File.separator + "circle_rim.bd";
 	
     public List<Square> squares;
-    public Piece kingWhite;
-    public Piece kingBlack;
-    public Piece kingGray;
+    public HashSet<Piece> crucialPieces = new HashSet<>();
     private int squaresPerRow;
     private int rows;
     private boolean hasContinuousRows, innerRimConnected;
@@ -74,6 +73,18 @@ public class RoundChessboardModel {
     private int normalizeY(int y) {
     	return y % rows < 0 ? (y % rows) + rows : y % rows;
     }
+    
+    public HashSet<Piece> getCrucialPieces(Player player) {
+    	if (player == null)
+    		return new HashSet<>();
+    	
+    	HashSet<Piece> retVal = new HashSet<>();
+    	for (Piece el : crucialPieces)
+    		if (el.player.color.equals(player.color))
+    			retVal.add(el);
+    	
+    	return retVal;
+    }
 
     /**
      * gets the Square corresponding to the given x and y index
@@ -101,6 +112,10 @@ public class RoundChessboardModel {
             
         return optionalSquare.get();//TODO
     }
+    
+    public boolean isEnemyStart(Square square, Player.colors color) {
+    	return square != null && square.getPozX() == 5;
+    }
 
     /**
      * @return Whether or not the board has continuous rows, i.e. is circular.
@@ -122,7 +137,19 @@ public class RoundChessboardModel {
      * @return          Square where the given Piece is located on
      */
     public Square getSquare(Piece piece) {
-        Optional<Square> optionalSquare = squares.stream().filter(s -> s.getPiece() == piece).findFirst();
+    	if (piece == null)
+    		return null;
+    	
+    	return getSquare(piece.id);
+    }
+    
+    /**
+     * gets the Square where the given Piece is located on
+     * @param id     	id of Piece to get the Square from
+     * @return          Square where the given Piece is located on
+     */
+    public Square getSquare(int id) {
+        Optional<Square> optionalSquare = squares.stream().filter(s -> s.getPiece() != null && s.getPiece().id == id).findFirst();
         if(optionalSquare.equals(Optional.empty()))
             return null;
         
@@ -149,6 +176,18 @@ public class RoundChessboardModel {
         return piece;
     }
     
+    private Player parsePlayerCode(String code, Settings settings) {
+    	switch (code) {
+		case "WH":
+			return settings.getPlayerWhite();
+		case "BL":
+			return settings.getPlayerBlack();
+		case "GR":
+			return settings.getPlayerGray();
+		}
+    	return null;
+    }
+    
     private void initializeFromJSON(JsonElement jsonBody, Settings settings) {
 		if (jsonBody == null || !jsonBody.isJsonObject())
 			return;
@@ -173,17 +212,7 @@ public class RoundChessboardModel {
 		if (json.get("players") != null && json.get("players").isJsonArray())
 			for (JsonElement element : json.get("players").getAsJsonArray()) 
 				if (element.isJsonPrimitive())
-					switch (element.getAsString()) {
-					case "WH":
-						players.put("WH", settings.getPlayerWhite());
-						break;
-					case "BL":
-						players.put("BL", settings.getPlayerBlack());
-						break;
-					case "GR":
-						players.put("GR", settings.getPlayerGray());
-						break;
-					}
+					players.put(element.getAsString(), parsePlayerCode(element.getAsString(), settings));
 		
 		if (json.get("pieces") != null && json.get("pieces").isJsonArray())
 			loadPieces(json.get("pieces").getAsJsonArray(), players);
@@ -212,8 +241,13 @@ public class RoundChessboardModel {
     		if (piece.get("player") != null && piece.get("player").isJsonPrimitive())
     			player = players.get(piece.get("player").getAsString());
     		
-    		if (square != null && type != null && player != null)
-    			setPieceOnSquare(new Piece(type, player, new Orientation()), square);
+    		if (square != null && type != null && player != null) {
+    			final Piece toAdd = new Piece(type, player, new Orientation());
+    			setPieceOnSquare(toAdd, square);
+    			
+    			if (piece.get("crucial") != null && piece.get("crucial").isJsonPrimitive() && piece.get("crucial").getAsBoolean() == true)
+    				crucialPieces.add(toAdd);
+    		}
     	}
     }
 }

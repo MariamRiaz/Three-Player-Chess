@@ -1,4 +1,4 @@
-package jchess.pieces;
+package jchess.move;
 
 public class Orientation {
 	public boolean x, y;

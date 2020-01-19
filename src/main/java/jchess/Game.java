@@ -41,6 +41,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.logging.Level;
@@ -432,9 +433,11 @@ public class Game extends JPanel implements Observer, ComponentListener {
                 }
                 chessboardController.unselect();
                 this.nextMove();
-                Piece king = chessboardController.getKing(this.activePlayer);
-                if (chessboardController.pieceIsUnsavable(king))
-                    this.endGame("Checkmate! " + king.player.color.toString() + " player lose!");
+                
+                HashSet<Piece> cp = chessboardController.getCrucialPieces(this.activePlayer);
+                for (Piece piece : cp)
+                	if (chessboardController.pieceIsUnsavable(piece))
+                		this.endGame("Checkmate! " + piece.player.color.toString() + " player lose!");
             }
         } else if (blockedChessboard) {
             Log.log("Chessboard is blocked");

@@ -9,15 +9,19 @@ import jchess.helper.CartesianPolarConverter;
 import jchess.helper.MoveEvaluator;
 import jchess.entities.PolarPoint;
 import jchess.model.RoundChessboardModel;
+import jchess.move.effects.MoveEffects;
+import jchess.move.effects.PositionChange;
+import jchess.move.effects.StateChange;
 import jchess.pieces.Piece;
+import jchess.pieces.PieceDefinition;
 import jchess.pieces.PieceLoader;
-import jchess.entities.PlayedMove;
 import jchess.view.PolarCell;
 import jchess.view.RoundChessboardView;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Observer;
 
@@ -30,9 +34,9 @@ public class RoundChessboardController extends MouseAdapter {
     private Square activeSquare;
     private Settings settings;
     private SquareObservable squareObservable;
-    private Piece twoSquareMovedPawn = null;
     private MoveHistory movesHistory;
-
+    private HashSet<MoveEffects> moveEffects = null;
+    
     public static int bottom = 7;
     public static int top = 0;
 
@@ -89,9 +93,13 @@ public class RoundChessboardController extends MouseAdapter {
 
     	if (square == null || to == null || square.getPiece() == null)
     		return false;
-    	return new MoveEvaluator(model)
-    			.getValidTargetSquaresToSavePiece(square.getPiece(), getKing(square.getPiece().player))
-    			.contains(model.getSquare(to.getPozX(), to.getPozY()));
+    	
+        HashSet<Square> squares = new HashSet<>();
+        for (MoveEffects me : new MoveEvaluator(model)
+    			.getValidTargetSquaresToSavePiece(square.getPiece(), getCrucialPieces(square.getPiece().player))) 
+        	squares.add(me.trigger);
+        
+    	return squares.contains(model.getSquare(to.getPozX(), to.getPozY()));
     }
 
     /**
@@ -134,6 +142,10 @@ public class RoundChessboardController extends MouseAdapter {
     public boolean pieceIsUnsavable(Piece piece) {
     	return new MoveEvaluator(model).pieceIsUnsavable(piece);
     }
+    
+    public HashSet<Piece> getCrucialPieces(Player player) {
+    	return model.getCrucialPieces(player);
+    }
 
     /**
      * @return The currently selected Square.
@@ -151,10 +163,16 @@ public class RoundChessboardController extends MouseAdapter {
         if(square == null) {
             view.resetActiveCell();
             view.resetPossibleMoves();
+            moveEffects = null;
         } else {
             view.setActiveCell(square.getPozX(), square.getPozY());
-            view.setMoves(new MoveEvaluator(model)
-                    .getValidTargetSquaresToSavePiece(square.getPiece(), getKing(square.getPiece().player)));
+            moveEffects = new MoveEvaluator(model)
+                    .getValidTargetSquaresToSavePiece(square.getPiece(), getCrucialPieces(square.getPiece().player));
+            
+            HashSet<Square> squares = new HashSet<>();
+            for (MoveEffects me : moveEffects) 
+            	squares.add(me.trigger);
+            view.setMoves(squares);
         }
     }
 
@@ -174,20 +192,56 @@ public class RoundChessboardController extends MouseAdapter {
     public List<Square> getSquares() {
         return this.model.squares;
     }
+    
+    private String colorToLetter(Player.colors color) {
+    	switch (color) {
+    	case black:
+    		return "B";
+    	case white:
+    		return "W";
+    	case gray:
+    		return "G";
+    	}
+    	
+		return "";
+    }
+    
+    private void apply(MoveEffects me) {
+    	for (PositionChange ent : me.positionChanges) {
+    		view.removeVisual(model.getSquare(ent.piece));
+    		model.setPieceOnSquare(ent.piece, ent.square);
+    		view.setVisual(ent.square.getPiece(), ent.square);
+    	}
+    	
+    	for (StateChange ent : me.stateChanges) {
+    		final Square sq = model.getSquare(ent.id);
+    		if (sq == null)
+    			continue;
 
-    /**
-     * Gets the king Piece of a given Player.
-     * @param player The Player whose King to retrieve.
-     * @return The given Player's King.
-     */
-    public Piece getKing(Player player) {
-        if (player == null)
-            return null;
-        if (player.color == Player.colors.black)
-            return model.kingBlack;
-        else if (player.color == Player.colors.gray)
-        	return model.kingGray;
-        return model.kingWhite;
+    		if (ent.state.getDefinition() == PieceDefinition.PLACEHOLDER)
+    			ent.state.setDefinition(PieceLoader.getPieceDefinition(
+    					JChessApp.jcv.showPawnPromotionBox(colorToLetter(ent.state.player.color))));
+    		
+    		model.setPieceOnSquare(ent.state, sq);
+    		view.setVisual(ent.state, sq.getPozX(), sq.getPozY());
+    	}
+    }
+    
+    private void reverse(MoveEffects me) {
+    	for (StateChange ent : me.scReverse) {
+    		final Square sq = model.getSquare(ent.id);
+    		if (sq == null)
+    			continue;
+    		
+    		model.setPieceOnSquare(ent.state, sq);
+    		view.setVisual(ent.state, sq.getPozX(), sq.getPozY());
+    	}
+    	
+    	for (PositionChange ent : me.pcReverse) {
+    		view.removeVisual(model.getSquare(ent.piece));
+    		model.setPieceOnSquare(ent.piece, ent.square);
+    		view.setVisual(ent.square.getPiece(), ent.square);
+    	}
     }
 
     /**
@@ -198,72 +252,27 @@ public class RoundChessboardController extends MouseAdapter {
      * @param clearForwardHistory Whether or not to clear the forward history of the MoveHistory instance for this game.
      */
     public void move(Square begin, Square end, boolean refresh, boolean clearForwardHistory) {
-        MoveHistory.castling wasCastling = MoveHistory.castling.none;
-        Piece promotedPiece = null;
-        boolean wasEnPassant = false;
-
-        Piece tempBegin = begin.getPiece(), tempBeginState = tempBegin != null ? tempBegin.clone() : null;
-        Piece tempEnd = end.getPiece();
-
-        model.setPieceOnSquare(begin.getPiece(), end);
-        model.setPieceOnSquare(null, begin);
-        
-        if (end.getPiece().getDefinition().type.equals("King")) {
-            end.getPiece().setHasMoved(true);
-
-            if (begin.getPozX() + 2 == end.getPozX()) {
-                move(model.getSquare(7, begin.getPozY()), model.getSquare(end.getPozX() - 1, begin.getPozY()), false, false);
-                wasCastling = MoveHistory.castling.shortCastling;
-            } else if (begin.getPozX() - 2 == end.getPozX()) {
-                move(model.getSquare(0, begin.getPozY()), model.getSquare(end.getPozX() + 1, begin.getPozY()), false, false);
-                wasCastling = MoveHistory.castling.longCastling;
-            }
-        } else if (end.getPiece().getDefinition().type.equals("Rook")) 
-            end.getPiece().setHasMoved(true);
-        else if (end.getPiece().getDefinition().type.equals("Pawn")) {
-            if (twoSquareMovedPawn != null && model.getSquare(end.getPozX(), begin.getPozY()) == getSquare(twoSquareMovedPawn)) {
-                tempEnd = model.getSquare(end.getPozX(), begin.getPozY()).getPiece();
-
-                model.getSquare(end.getPozX(), begin.getPozY()).setPiece(null);
-                wasEnPassant = true;
-            }
-
-            if (begin.getPozY() - end.getPozY() == 2 || end.getPozY() - begin.getPozY() == 2)
-                twoSquareMovedPawn = end.getPiece();
-            else twoSquareMovedPawn = null;
-
-            end.getPiece().setHasMoved(true);
-
-            if (end.getPozX() == 5)
-            {
-                if (clearForwardHistory) {
-                    String color;
-                    if (end.getPiece().player.color == Player.colors.white)
-                        color = "W";
-                    else color = "B";
-
-                    String newPiece = JChessApp.jcv.showPawnPromotionBox(color);
-                    
-                	end.getPiece().setDefinition(PieceLoader.getPieceDefinition(newPiece));
-                	
-                    view.setVisual(end.getPiece(), end.getPozX(), end.getPozY());
-                    promotedPiece = end.getPiece();
-                }
-            }
-        } else if (!end.getPiece().getDefinition().type.equals("Pawn"))
-            twoSquareMovedPawn = null;
+    	MoveEffects move = null;
+    	
+    	for (MoveEffects me : moveEffects)
+    		if (model.getSquare(me.moving) == begin && me.trigger == end) {
+    			move = me;
+    			break;
+    		}
+    	
+    	apply(move);
         
         if (refresh)
             this.unselect();
 
         if (clearForwardHistory) {
             this.movesHistory.clearMoveForwardStack();
-            this.movesHistory.addMove(begin, end, tempBegin, tempBeginState, tempEnd, true, wasCastling, wasEnPassant, promotedPiece);
-        } else this.movesHistory.addMove(begin, end, tempBegin, tempBeginState, tempEnd, false, wasCastling, wasEnPassant, promotedPiece);
+            this.movesHistory.addMove(move, begin, true);
+        } else this.movesHistory.addMove(move, begin, false);
         
-        view.updateAfterMove(end.getPiece(), begin.getPozX(), begin.getPozY(), end.getPozX(), end.getPozY());
-        end.getPiece().setHasMoved(true);
-        
+    	view.updateAfterMove();
+    	
+        //end.getPiece().setHasMoved(true);
         // TODO: Reverse orientation on jump across board center.
     }
 
@@ -281,78 +290,16 @@ public class RoundChessboardController extends MouseAdapter {
      */
     public synchronized boolean undo(boolean refresh)
     {
-        PlayedMove last = this.movesHistory.undo();
+        MoveEffects last = this.movesHistory.undo();
         
-        if (last != null && last.getFrom() != null) {
-            Square begin = last.getFrom();
-            Square end = last.getTo();
-            
-            try {
-                Piece moved = last.getMovedPiece(), movedState = last.getMovedPieceState();
-                
-                model.setPieceOnSquare(moved, null);
-                view.removeVisual(moved, end.getPozX(), end.getPozY());
-                model.setPieceOnSquare(movedState, begin);
-                view.setVisual(movedState, begin.getPozX(), begin.getPozY());
+        if (last != null) {
+            reverse(last);
 
-                Piece taken = last.getTakenPiece();
-                if (last.getCastlingMove() != MoveHistory.castling.none) {
-                    Piece rook = null;
-                    if (last.getCastlingMove() == MoveHistory.castling.shortCastling) {
-                        rook = model.getSquare(end.getPozX() - 1, end.getPozY()).getPiece();
-                        model.setPieceOnSquare(rook, model.getSquare(7, begin.getPozY()));
-
-                        view.setVisual(rook, 7, begin.getPozY());
-                    } else {
-                        rook = model.getSquare(end.getPozX() + 1, end.getPozY()).getPiece();
-                        model.setPieceOnSquare(rook, model.getSquare(0, begin.getPozY()));
-                        view.setVisual(rook, 0, begin.getPozY());
-                    }
-                    movedState.setHasMoved(false);
-                    rook.setHasMoved(false);
-                } else if (movedState.getDefinition().type.equals("Rook"))
-                    movedState.setHasMoved(false);
-                else if (movedState.getDefinition().type.equals("Pawn") && last.wasEnPassant()) {
-                    Piece pawn = last.getTakenPiece();
-                    model.setPieceOnSquare(pawn, model.getSquare(end.getPozX(), begin.getPozY()));
-                    view.setVisual(pawn, end.getPozX(), end.getPozY());
-
-                } else if (movedState.getDefinition().type.equals("Pawn") && last.getPromotedPiece() != null) {
-                    Piece promoted = model.getSquare(end.getPozX(), end.getPozY()).getPiece();
-                    model.setPieceOnSquare(promoted, null);
-                    view.removeVisual(promoted, end.getPozX(), end.getPozY());
-                }
-                
-                PlayedMove oneMoveEarlier = this.movesHistory.getLastMoveFromHistory();
-                if (oneMoveEarlier != null && oneMoveEarlier.wasPawnTwoFieldsMove()) {
-                    Piece canBeTakenEnPassant = model.getSquare(oneMoveEarlier.getTo().getPozX(),
-                            oneMoveEarlier.getTo().getPozY()).getPiece();
-                    if (canBeTakenEnPassant.getDefinition().type.equals("Pawn"))
-                        this.twoSquareMovedPawn = canBeTakenEnPassant;
-                }
-
-                if (taken != null && !last.wasEnPassant()) {
-                    model.setPieceOnSquare(taken, null);
-                    view.removeVisual(taken, last.getTo().getPozX(), last.getTo().getPozY());
-
-                    model.setPieceOnSquare(taken, end);
-                    view.setVisual(taken, end.getPozX(), end.getPozY());
-                } else {
-                    view.removeVisual(end.getPiece(), end.getPozX(), end.getPozY());
-                    model.setPieceOnSquare(end.getPiece(), null);
-                }
-
-                if (refresh) {
-                    this.unselect();
-                    view.repaint();
-                }
-
-            } catch (java.lang.ArrayIndexOutOfBoundsException exc) {
-                return false;
-            } catch (java.lang.NullPointerException exc) {
-                return false;
+            if (refresh) {
+            	this.unselect();
+                view.repaint();
             }
-
+            
             return true;
         } else return false;
     }
@@ -364,28 +311,20 @@ public class RoundChessboardController extends MouseAdapter {
      */
     public boolean redo(boolean refresh) {
         if (this.settings.gameType == Settings.gameTypes.local) {
-            PlayedMove first = this.movesHistory.redo();
-
-            Square from = null;
-            Square to = null;
+        	MoveEffects first = this.movesHistory.redo();
 
             if (first != null) {
-                from = first.getFrom();
-                to = first.getTo();
-
-                this.move(from, to, true, false);
-                if (first.getPromotedPiece() != null) {
-                    Piece promoted = model.setPieceOnSquare(first.getPromotedPiece(), to);
-                    view.setVisual(promoted, to.getPozX(), to.getPozY());
-                }
+                apply(first);
                 
                 if (refresh) {
                     this.unselect();
                     view.repaint();
                 }
+                
                 return true;
             }
         }
+        
         return false;
     }
 

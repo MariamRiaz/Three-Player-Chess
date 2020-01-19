@@ -21,17 +21,21 @@
 package jchess.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
 import javax.swing.JScrollPane;
 
+import org.apache.commons.text.StringSubstitutor;
+
 import jchess.Game;
 import jchess.helper.Log;
+import jchess.move.Move;
+import jchess.move.MoveType;
+import jchess.move.effects.MoveEffects;
 import jchess.entities.Player;
 import jchess.Settings;
 import jchess.entities.Square;
-import jchess.pieces.Piece;
-import jchess.entities.PlayedMove;
 import jchess.view.MoveHistoryView;
 
 import javax.swing.JOptionPane;
@@ -55,8 +59,8 @@ public class MoveHistory {
     private String[] names = new String[]{Settings.lang("white"), Settings.lang("black"), Settings.lang("gray")};
     private PlayerColumn activePlayerColumn = PlayerColumn.player1;
     private Game game;
-    private Stack<PlayedMove> moveBackStack = new Stack<>();
-    private Stack<PlayedMove> moveForwardStack = new Stack<>();
+    private Stack<MoveEffects> moveBackStack = new Stack<>();
+    private Stack<MoveEffects> moveForwardStack = new Stack<>();
     private MoveHistoryView moveHistoryView;
 
     public enum castling {
@@ -122,49 +126,30 @@ public class MoveHistory {
     /**
      * Method of adding new move
      */
-    public void addMove(Square begin, Square end, Piece beginPiece, Piece beginState, Piece endPiece, boolean registerInHistory, castling castlingMove,
-                        boolean wasEnPassant, Piece promotedPiece) {
-
-        boolean wasCastling = castlingMove != castling.none;
-        String locMove = new String(beginState.getDefinition().symbol);
-
-        locMove = getPosition(begin, locMove);
-
-        if (endPiece != null) {
-            locMove += "x";// take down opponent piece
-        } else {
-            locMove += "-";// normal move
-        }
-
-        locMove = getPosition(end, locMove);
-
-        if (beginState.getDefinition().symbol.equals("") && begin.getPozX() - end.getPozX() != 0 && endPiece == null) {
-            locMove += "(e.p)";// pawn take down opponent en passant
-            wasEnPassant = true;
-        }
-
-//        TODO: add Castling and Check & Checkmate marks to Column
-//        if (castlingMove == castling.shortCastling) {
-//
-//        } else if (castlingMove == castling.longCastling) {}
-
-        else {
-            this.move.add(locMove);
-            this.addMove2Table(locMove);
-        }
-        //this.scrollPane.scrollRectToVisible(new Rectangle(0, this.scrollPane.getHeight() - 2, 1, 1));
-
-        if (registerInHistory) {
-            this.moveBackStack.add(new PlayedMove(begin, end, beginPiece, beginState, endPiece, castlingMove,
-                    wasEnPassant, promotedPiece));
-        }
+    public void addMove(MoveEffects moveEffects, Square from, boolean registerInHistory) {
+    	HashMap<String, String> values = new HashMap<String, String>() {{ 
+    		put(Move.formatStringPiece, moveEffects.moving.definition.symbol);
+    		put(Move.formatStringFrom, getPosition(from));
+    		put(Move.formatStringTo, getPosition(moveEffects.trigger));
+    	}};
+    	
+    	String formatString = "-";
+    	if (moveEffects.move.formatStrings.containsKey(moveEffects.flag))
+    		formatString = moveEffects.move.formatStrings.get(moveEffects.flag);
+    	else if (moveEffects.move.formatStrings.containsKey(MoveType.OnlyMove))
+    		formatString = moveEffects.move.formatStrings.get(MoveType.OnlyMove);
+    	else if (!moveEffects.move.formatStrings.isEmpty())
+    		formatString = moveEffects.move.formatStrings.entrySet().iterator().next().getValue();
+    	
+    	addMove(new StringSubstitutor(values).replace(formatString));
+    	
+        if (registerInHistory)
+            this.moveBackStack.add(moveEffects);
     }
-
-    private String getPosition(Square square, String locMove) {
-        locMove += Character.toString((char) (square.getPozX() + 97));// add letter of Square from which move was made
-        locMove += Integer.toString(square.getPozY() + 1);// add number of Square from which move was made
-
-        return locMove;
+    
+    private String getPosition(Square square) {
+        return Character.toString((char) (square.getPozX() + 97)) // add letter of Square from which move was made
+        	+ Integer.toString(square.getPozY() + 1);// add number of Square from which move was made
     }
 
     public void clearMoveForwardStack() {
@@ -179,18 +164,18 @@ public class MoveHistory {
         return this.move;
     }
 
-    public synchronized PlayedMove getLastMoveFromHistory() {
+    public synchronized MoveEffects getLastMoveFromHistory() {
         try {
-            PlayedMove last = this.moveBackStack.get(this.moveBackStack.size() - 1);
+            MoveEffects last = this.moveBackStack.get(this.moveBackStack.size() - 1);
             return last;
         } catch (java.lang.ArrayIndexOutOfBoundsException exc) {
             return null;
         }
     }
 
-    public synchronized PlayedMove getNextMoveFromHistory() {
+    public synchronized MoveEffects getNextMoveFromHistory() {
         try {
-            PlayedMove next = this.moveForwardStack.get(this.moveForwardStack.size() - 1);
+        	MoveEffects next = this.moveForwardStack.get(this.moveForwardStack.size() - 1);
             return next;
         } catch (java.lang.ArrayIndexOutOfBoundsException exc) {
             return null;
@@ -198,38 +183,36 @@ public class MoveHistory {
 
     }
 
-    public synchronized PlayedMove undo() {
+    public synchronized MoveEffects undo() {
         try {
-            PlayedMove last = this.moveBackStack.pop();
+        	MoveEffects last = this.moveBackStack.pop();
             if (last != null) {
-                if (this.game.getSettings().gameType == Settings.gameTypes.local) // moveForward / redo available only for
-                // local game
-                {
+                if (this.game.getSettings().gameType == Settings.gameTypes.local) // moveForward / redo available only for local game
                     this.moveForwardStack.push(last);
-                }
 
                 if (activePlayerColumn.equals(PlayerColumn.player1)) {
                     this.moveHistoryView.setValueAt("", this.moveHistoryView.getRowCount() - 1, 0);
                     this.moveHistoryView.removeRow(this.moveHistoryView.getRowCount() - 1);
-                    if (this.rowsNum > 0) {
+                    if (this.rowsNum > 0) 
                         this.rowsNum--;
-                    }
+                    
                     this.activePlayerColumn = PlayerColumn.player2;
                 } else if (activePlayerColumn.equals(PlayerColumn.player2)) {
-                    if (this.moveHistoryView.getRowCount() > 0) {
+                    if (this.moveHistoryView.getRowCount() > 0)
                         this.moveHistoryView.setValueAt("", this.moveHistoryView.getRowCount() - 1, 1);
-                    }
+                        
                     this.activePlayerColumn = PlayerColumn.player3;
 
                 } else {
-                    if (this.moveHistoryView.getRowCount() > 0) {
+                    if (this.moveHistoryView.getRowCount() > 0)
                         this.moveHistoryView.setValueAt("", this.moveHistoryView.getRowCount() - 1, 2);
-                    }
+                        
                     this.activePlayerColumn = PlayerColumn.player1;
 
                 }
                 this.move.remove(this.move.size() - 1);
             }
+            
             return last;
         } catch (
                 java.util.EmptyStackException exc) {
@@ -242,10 +225,10 @@ public class MoveHistory {
 
     }
 
-    public synchronized PlayedMove redo() {
+    public synchronized MoveEffects redo() {
         try {
             if (this.game.getSettings().gameType == Settings.gameTypes.local) {
-                PlayedMove first = this.moveForwardStack.pop();
+            	MoveEffects first = this.moveForwardStack.pop();
                 this.moveBackStack.push(first);
 
                 return first;
@@ -318,20 +301,17 @@ public class MoveHistory {
     }
 
     private void addMove(String move) {
-        if (isMoveCorrect(move)) {
+        //if (isMoveCorrect(move)) {
             this.move.add(move);
             this.addMove2Table(move);
             this.moveForwardStack.clear();
-        }
+        //}
     }
 
     public void addMoves(ArrayList<String> list) {
-        for (String singleMove : list) {
-            if (isMoveCorrect(singleMove)) {
+        for (String singleMove : list)
+            if (isMoveCorrect(singleMove))
                 this.addMove(singleMove);
-
-            }
-        }
     }
 
     /**
@@ -364,7 +344,7 @@ public class MoveHistory {
         int from = 0;
         int to = 0;
         int n = 1;
-        ArrayList<String> tempArray = new ArrayList();
+        ArrayList<String> tempArray = new ArrayList<>();
         int tempStrSize = moves.length() - 1;
         while (true) {
             from = moves.indexOf(" ", from);
@@ -437,7 +417,7 @@ public class MoveHistory {
             int yFrom = 9;
             int xTo = 9;
             int yTo = 9;
-            boolean pieceFound = false;
+            
             if (locMove.length() <= 3) {
                 List<Square> squares = this.game.getChessboardController().getSquares();
                 xTo = locMove.charAt(from) - 97;// from ASCII

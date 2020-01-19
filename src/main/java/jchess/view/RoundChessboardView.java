@@ -168,20 +168,25 @@ public class RoundChessboardView extends JPanel {
 
     /**
      * updates the RoundChessboardView after move was done
-     * @param piece     moved piece
-     * @param oldX      x index before move
-     * @param oldY      y index before move
-     * @param newX      x index after move was done
-     * @param newY      y index after move was done
      */
-    public void updateAfterMove(Piece piece, int oldX, int oldY, int newX, int newY) {
-        removeVisual(piece, oldX, oldY);
-        setVisual(piece, newX, newY);
+    public void updateAfterMove() {
         moves.clear();
         activeCell = null;
         repaint();
     }
-
+    
+    /**
+     * sets visuals for a piece
+     * @param piece     piece to set the visual of
+     * @param square 	Square on which to show Piece
+     */
+    public void setVisual(Piece piece, Square square) {
+        if (piece == null || square == null)//TODO
+            return;
+        
+        setVisual(piece, square.getPozX(), square.getPozY());
+    }
+    
     /**
      * sets visuals for a piece
      * @param piece     piece to set the visual of
@@ -200,14 +205,23 @@ public class RoundChessboardView extends JPanel {
         PieceVisual visual = new PieceVisual(piece.getDefinition().type + pieceVisualExtension);
         cell.setPieceVisual(visual);
     }
+    
+    /**
+     * remove  visual for a piece at the given index
+     * @param square Square on which the Piece is shown
+     */
+    public void removeVisual(Square square) {
+    	if (square == null)
+    		return;
+    	removeVisual(square.getPozX(), square.getPozY());
+    }
 
     /**
      * remove  visual for a piece at the given index
-     * @param piece Piece to remove the visual from
      * @param x     int x index of the piece
      * @param y     int y index of the piece
      */
-    public void removeVisual(Piece piece, int x, int y) {
+    public void removeVisual(int x, int y) {
         PolarCell cell = getCellByPosition(x, y);
         cell.setPieceVisual(null);
     }

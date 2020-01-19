@@ -1,17 +1,20 @@
 package jchess.helper;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 
 import jchess.entities.Player;
 import jchess.entities.Square;
 import jchess.model.RoundChessboardModel;
-import jchess.pieces.Move;
-import jchess.pieces.MoveType;
-import jchess.pieces.Orientation;
+import jchess.move.Move;
+import jchess.move.MoveType;
+import jchess.move.Orientation;
+import jchess.move.effects.MoveEffects;
+import jchess.move.effects.MoveEffectsBuilder;
+import jchess.move.effects.PositionChange;
+import jchess.move.effects.StateChange;
 import jchess.pieces.Piece;
+import jchess.pieces.PieceDefinition;
 
 /**
  * Class that contains method to evaluate if a move is valid and gets possible target Squares
@@ -32,8 +35,8 @@ public class MoveEvaluator {
 	 * @param piece The Piece to be moved.
 	 * @return The valid target Squares for the Piece on the given Square.
 	 */
-    private HashSet<Square> getValidTargetSquares(Piece piece) {
-        HashSet<Square> ret = new HashSet<>();
+    private HashSet<MoveEffects> getValidTargetSquares(Piece piece) {
+        HashSet<MoveEffects> ret = new HashSet<>();
         
         if (piece == null)
             return ret;//TODO error handling
@@ -51,18 +54,21 @@ public class MoveEvaluator {
      * @param piece The Piece to be moved.
      * @return A HashSet of the concrete Squares to which the Piece can move with the given Move definition.
      */
-    private HashSet<Square> evaluateMoveToTargetSquares(Move move, Piece piece) {
-        HashSet<Square> ret = new HashSet<>();
-
+    private HashSet<MoveEffects> evaluateMoveToTargetSquares(Move move, Piece piece) {
+        HashSet<MoveEffects> ret = new HashSet<>();
+        HashSet<Square> traversed = new HashSet<Square>();
+        
         if (move == null || piece == null)
             return ret;//TODO error handling
 
         int count = 0;
         Orientation otn = piece.getOrientation().clone();
         for (Square next = nextSquare(model.getSquare(piece), move.x, move.y, otn); next != null
-                && (move.limit == null || count < move.limit) && !ret.contains(next); 
+                && (move.limit == null || count < move.limit) && !traversed.contains(next); 
         		next = nextSquare(next, move.x, move.y, otn)) {
+        	
             boolean add = true;
+            MoveEffectsBuilder meb = new MoveEffectsBuilder(piece, next, move);
 
             if (move.conditions.contains(MoveType.OnlyAttack)) {
                 if (next.getPiece() == null || next.getPiece().player == piece.player)
@@ -72,9 +78,9 @@ public class MoveEvaluator {
                     add = false;
             } else if (next.getPiece() != null && next.getPiece().player == piece.player)
                 add = false;
-
+            
             if (move.conditions.contains(MoveType.OnlyWhenFresh) && piece.hasMoved())
-                add = false;
+            	add = false;
             
             if (move.conditions.contains(MoveType.Castling)) {
             	if (piece.hasMoved())
@@ -87,10 +93,19 @@ public class MoveEvaluator {
             if (move.conditions.contains(MoveType.EnPassant)) {
             	
             }
-
-            if (add)
-                ret.add(next);
-
+            
+            if (add) {
+                if (meb.isEmpty())
+                	meb.addPosChange(model.getSquare(piece), next)
+                		.addStateChange(piece, piece.clone().setHasMoved(true).setOrientation(otn.clone()));
+            	
+                if (piece.getDefinition().type.equals("Pawn") && model.isEnemyStart(next, piece.player.color))
+                	meb.addStateChange(piece, piece.clone().setDefinition(PieceDefinition.PLACEHOLDER));
+                
+                ret.add(meb.build());
+            	traversed.add(next);
+            }
+                
             if (!move.conditions.contains(MoveType.Unblockable) && next.getPiece() != null)
                 break;
 
@@ -136,36 +151,59 @@ public class MoveEvaluator {
             if (sq.getPiece() == null || sq.getPiece().player != piece.player)
                 continue;
 			
-            if (!getValidTargetSquaresToSavePiece(sq.getPiece(), piece).isEmpty())
+            if (!getValidTargetSquaresToSavePiece(sq.getPiece(), new HashSet<Piece>() {{ add(piece); }} ).isEmpty())
                 return false;
         }
         return true;
     }
 
+    private void apply(MoveEffects me) {
+    	for (PositionChange ent : me.positionChanges)
+    		model.setPieceOnSquare(ent.piece, ent.square);
+    	
+    	for (StateChange ent : me.stateChanges) {
+    		final Square sq = model.getSquare(ent.id);
+    		if (sq == null)
+    			continue;
+    		
+    		model.setPieceOnSquare(ent.state, sq);
+    	}
+    }
+    
+    private void reverse(MoveEffects me) {
+    	for (StateChange ent : me.scReverse) 
+    		if (model.getSquare(ent.id) != null)
+    			model.setPieceOnSquare(ent.state, model.getSquare(ent.id));
+    	
+    	for (PositionChange ent : me.pcReverse) 
+    		model.setPieceOnSquare(ent.piece, ent.square);
+    }
+    
     /**
      * Gets all Squares to which the Piece on the given Square can move such that the given Squares to be saved are all non-threatened by other Players.
      * @param moving The Piece to be moved.
      * @param toSave The Pieces which must be non-threatened by other Players.
      * @return The possible Squares to which this Piece can be moved under these constraints.
      */
-    public HashSet<Square> getValidTargetSquaresToSavePiece(Piece moving, Piece... toSave) {
-        HashSet<Square> ret = getValidTargetSquares(moving);
+    public HashSet<MoveEffects> getValidTargetSquaresToSavePiece(Piece moving, HashSet<Piece> toSave) {
+        HashSet<MoveEffects> ret = getValidTargetSquares(moving);
         if (ret.size() == 0 || toSave == null)
             return ret;
 		
-		final List<Piece> temp = Arrays.asList(toSave);
-		
-        for (Iterator<Square> it = ret.iterator(); it.hasNext(); ) {
-            final Square target = it.next(), start = model.getSquare(moving);
-            final Piece old = target.getPiece();
-			
-            model.setPieceOnSquare(moving, target);
-            for (Piece piece : temp)
-            	if (squareIsThreatened(model.getSquare(piece)))
-            		it.remove();
-
-            model.setPieceOnSquare(old, target);
-            model.setPieceOnSquare(moving, start);
+        for (Iterator<MoveEffects> it = ret.iterator(); it.hasNext(); ) {
+            final MoveEffects me = it.next();
+        	
+            apply(me);
+            boolean rm = false;
+            for (Piece piece : toSave) 
+            	if (squareIsThreatened(model.getSquare(piece))) {
+            		rm = true;
+            		break;
+            	}
+            reverse(me);
+            
+            if (rm)
+            	it.remove();
         }
 
         return ret;
@@ -192,15 +230,21 @@ public class MoveEvaluator {
     public boolean squareIsThreatened(Square square, Player player) {
         if (square == null)
             return false;
-		
+        
+        Piece piece = square.getPiece();
         for (Square sq : model.squares) {
             if (sq.getPiece() == null || sq.getPiece().player == player)
                 continue;
 			
-            HashSet<Square> validMoveSquares = getValidTargetSquares(sq.getPiece());
-            for (Square it2 : validMoveSquares)
-                if (it2.equals(square))
-                    return true;
+            HashSet<MoveEffects> validMoveSquares = getValidTargetSquares(sq.getPiece());
+            for (MoveEffects it2 : validMoveSquares) {
+            	apply(it2);
+            	if ((piece == null && square.getPiece() != null) || (piece != null && model.getSquare(piece) == null)) {
+            		reverse(it2);
+            		return true;
+            	}
+            	reverse(it2);
+            }
         }
         return false;
     }

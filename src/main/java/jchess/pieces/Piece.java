@@ -21,14 +21,18 @@
 package jchess.pieces;
 
 import jchess.entities.Player;
+import jchess.move.Orientation;
 
 /**
  * Class to represent a Piece of any kind. Each Piece is defined by specific values for its member attributes.
  */
 public class Piece {
+	private static int idIncrement = 0;
+	
 	private boolean hasMoved = false;
 	private Orientation orientation;
 	
+	public final int id;
 	public final Player player;
 	public PieceDefinition definition;
 	
@@ -52,6 +56,8 @@ public class Piece {
 		if (orientation == null)
 			throw new NullPointerException("Argument 'orientation' is null.");
 		this.orientation = orientation;
+		
+		id = idIncrement++;
 	}
 	
 	/**
@@ -66,6 +72,7 @@ public class Piece {
 		this.definition = other.definition;
 		this.hasMoved = other.hasMoved;
 		this.orientation = other.orientation;
+		this.id = other.id;
 	}
 	
 	/**
@@ -96,6 +103,17 @@ public class Piece {
 	 */
 	public Orientation getOrientation() {
 		return orientation;
+	}
+	
+	/**
+	 * Sets this Piece's Orientation to the given non-null Orientation.
+	 * @param orientation The new Orientation.
+	 * @return This Piece.
+	 */
+	public Piece setOrientation(Orientation orientation) {
+		if (orientation != null)
+			this.orientation = orientation;
+		return this;
 	}
 	
 	/**
