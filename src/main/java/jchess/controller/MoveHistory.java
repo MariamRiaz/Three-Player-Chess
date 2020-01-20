@@ -128,18 +128,18 @@ public class MoveHistory {
      */
     public void addMove(MoveEffects moveEffects, Square from, boolean registerInHistory) {
     	HashMap<String, String> values = new HashMap<String, String>() {{ 
-    		put(Move.formatStringPiece, moveEffects.moving.definition.symbol);
+    		put(Move.formatStringPiece, moveEffects.moving.definition.getSymbol());
     		put(Move.formatStringFrom, getPosition(from));
     		put(Move.formatStringTo, getPosition(moveEffects.trigger));
     	}};
     	
-    	String formatString = "-";
-    	if (moveEffects.move.formatStrings.containsKey(moveEffects.flag))
-    		formatString = moveEffects.move.formatStrings.get(moveEffects.flag);
-    	else if (moveEffects.move.formatStrings.containsKey(MoveType.OnlyMove))
-    		formatString = moveEffects.move.formatStrings.get(MoveType.OnlyMove);
-    	else if (!moveEffects.move.formatStrings.isEmpty())
-    		formatString = moveEffects.move.formatStrings.entrySet().iterator().next().getValue();
+    	String formatString = moveEffects.move.getFormatString(moveEffects.flag);
+    	if (formatString == null)
+    		formatString = moveEffects.move.getFormatString(MoveType.OnlyMove);
+    	if (formatString == null)
+    		formatString = moveEffects.move.getDefaultFormatString();
+    	if (formatString == null)
+    		formatString = "-";
     	
     	addMove(new StringSubstitutor(values).replace(formatString));
     	

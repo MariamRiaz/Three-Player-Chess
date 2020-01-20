@@ -61,26 +61,26 @@ public class MoveEvaluator {
 
         int count = 0;
         Orientation otn = piece.getOrientation().clone();
-        for (Square next = nextSquare(model.getSquare(piece), move.x, move.y, otn); next != null
-                && (move.limit == null || count < move.limit) && !traversed.contains(next); 
-        		next = nextSquare(next, move.x, move.y, otn)) {
+        for (Square next = nextSquare(model.getSquare(piece), move.getX(), move.getY(), otn); next != null
+                && (move.getLimit() == null || count < move.getLimit()) && !traversed.contains(next); 
+        		next = nextSquare(next, move.getX(), move.getY(), otn)) {
         	
             boolean add = true;
             MoveEffectsBuilder meb = new MoveEffectsBuilder(piece, next, move);
 
-            if (move.conditions.contains(MoveType.OnlyAttack)) {
+            if (move.getConditions().contains(MoveType.OnlyAttack)) {
                 if (next.getPiece() == null || next.getPiece().player == piece.player)
                     add = false;
-            } else if (move.conditions.contains(MoveType.OnlyMove)) {
+            } else if (move.getConditions().contains(MoveType.OnlyMove)) {
                 if (next.getPiece() != null)
                     add = false;
             } else if (next.getPiece() != null && next.getPiece().player == piece.player)
                 add = false;
             
-            if (move.conditions.contains(MoveType.OnlyWhenFresh) && piece.hasMoved())
+            if (move.getConditions().contains(MoveType.OnlyWhenFresh) && piece.hasMoved())
             	add = false;
             
-            if (move.conditions.contains(MoveType.Castling)) {
+            if (move.getConditions().contains(MoveType.Castling)) {
             	if (piece.hasMoved())
             		add = false;
             	else {
@@ -88,7 +88,7 @@ public class MoveEvaluator {
             	}
             }
             
-            if (move.conditions.contains(MoveType.EnPassant)) {
+            if (move.getConditions().contains(MoveType.EnPassant)) {
             	
             }
             
@@ -97,14 +97,14 @@ public class MoveEvaluator {
                 	meb.addPosChange(model.getSquare(piece), next)
                 		.addStateChange(piece, piece.clone().setHasMoved(true).setOrientation(otn.clone()));
             	
-                if (piece.getDefinition().type.equals("Pawn") && model.isEnemyStart(next, piece.player.color))
+                if (piece.getDefinition().getType().equals("Pawn") && model.isEnemyStart(next, piece.player.color))
                 	meb.addStateChange(piece, piece.clone().setDefinition(PieceDefinition.PLACEHOLDER));
                 
                 ret.add(meb.build());
             	traversed.add(next);
             }
                 
-            if (!move.conditions.contains(MoveType.Unblockable) && next.getPiece() != null)
+            if (!move.getConditions().contains(MoveType.Unblockable) && next.getPiece() != null)
                 break;
 
             count++;

@@ -60,7 +60,7 @@ public class PieceLoader {
 				
 				PieceDefinition pd = PieceDefinition.loadFromJSON(
 						new JsonParser().parse(new BufferedReader(new InputStreamReader(file.openStream()))));
-				retVal.put(pd.type, pd);
+				retVal.put(pd.getType(), pd);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -69,10 +69,18 @@ public class PieceLoader {
 		return retVal;
 	}
 	
+	/**
+	 * Gets the PieceDefinition of a given type.
+	 * @param type The PieceDefinition type, e.g. "King".
+	 * @return The corresponding PieceDefinition or null.
+	 */
 	public static PieceDefinition getPieceDefinition(String type) {
 		return pieces.get(type);
 	}
 	
+	/**
+	 * @return The types of the loaded PieceDefinitions.
+	 */
 	public static Set<String> getPieceTypes() {
 		return pieces.keySet();
 	}
