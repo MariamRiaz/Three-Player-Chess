@@ -36,7 +36,6 @@ public class GameClock implements Runnable {
 	private Thread thread;
 	private Game game;
 	public GameClockView gameClockView;
-	public GameRoundTimer gameRoundTimer;
 	private GameRoundTimer runningClock;
 	private int totalPlayerTimeLimit;
 	private int timeSpentByPlayers[];
