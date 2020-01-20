@@ -75,17 +75,6 @@ public class MoveHistory {
         this.moveHistoryView.addColumn(this.names[2]);
     }
 
-//    TODO: fix Castling
-//    protected void addCastling(String move) {
-//        this.move.remove(this.move.size() - 1);// remove last element (move of Rook)
-//        if (!this.enterBlack) {
-//            this.moveHistoryView.setValueAt(move, this.moveHistoryView.getRowCount() - 1, 1);// replace last value
-//        } else {
-//            this.moveHistoryView.setValueAt(move, this.moveHistoryView.getRowCount() - 1, 0);// replace last value
-//        }
-//        this.move.add(move);// add new move (O-O or O-O-O)
-//    }
-
     /**
      * Method of adding new moves to the table
      *
