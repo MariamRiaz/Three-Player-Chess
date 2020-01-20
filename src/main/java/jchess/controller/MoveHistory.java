@@ -32,7 +32,7 @@ import jchess.Game;
 import jchess.helper.Log;
 import jchess.move.Move;
 import jchess.move.MoveType;
-import jchess.move.effects.MoveEffects;
+import jchess.move.effects.MoveEffect;
 import jchess.entities.Player;
 import jchess.Settings;
 import jchess.entities.Square;
@@ -59,8 +59,8 @@ public class MoveHistory {
     private String[] names = new String[]{Settings.lang("white"), Settings.lang("black"), Settings.lang("gray")};
     private PlayerColumn activePlayerColumn = PlayerColumn.player1;
     private Game game;
-    private Stack<MoveEffects> moveBackStack = new Stack<>();
-    private Stack<MoveEffects> moveForwardStack = new Stack<>();
+    private Stack<MoveEffect> moveBackStack = new Stack<>();
+    private Stack<MoveEffect> moveForwardStack = new Stack<>();
     private MoveHistoryView moveHistoryView;
 
     public enum castling {
@@ -126,18 +126,18 @@ public class MoveHistory {
     /**
      * Method of adding new move
      */
-    public void addMove(MoveEffects moveEffects, Square from, boolean registerInHistory) {
+    public void addMove(MoveEffect moveEffects, Square from, boolean registerInHistory) {
     	HashMap<String, String> values = new HashMap<String, String>() {{ 
-    		put(Move.formatStringPiece, moveEffects.moving.definition.getSymbol());
+    		put(Move.formatStringPiece, moveEffects.getMoving().getDefinition().getSymbol());
     		put(Move.formatStringFrom, getPosition(from));
-    		put(Move.formatStringTo, getPosition(moveEffects.trigger));
+    		put(Move.formatStringTo, getPosition(moveEffects.getTrigger()));
     	}};
     	
-    	String formatString = moveEffects.move.getFormatString(moveEffects.flag);
+    	String formatString = moveEffects.getMove().getFormatString(moveEffects.getFlag());
     	if (formatString == null)
-    		formatString = moveEffects.move.getFormatString(MoveType.OnlyMove);
+    		formatString = moveEffects.getMove().getFormatString(MoveType.OnlyMove);
     	if (formatString == null)
-    		formatString = moveEffects.move.getDefaultFormatString();
+    		formatString = moveEffects.getMove().getDefaultFormatString();
     	if (formatString == null)
     		formatString = "-";
     	
@@ -164,18 +164,18 @@ public class MoveHistory {
         return this.move;
     }
 
-    public synchronized MoveEffects getLastMoveFromHistory() {
+    public synchronized MoveEffect getLastMoveFromHistory() {
         try {
-            MoveEffects last = this.moveBackStack.get(this.moveBackStack.size() - 1);
+            MoveEffect last = this.moveBackStack.get(this.moveBackStack.size() - 1);
             return last;
         } catch (java.lang.ArrayIndexOutOfBoundsException exc) {
             return null;
         }
     }
 
-    public synchronized MoveEffects getNextMoveFromHistory() {
+    public synchronized MoveEffect getNextMoveFromHistory() {
         try {
-        	MoveEffects next = this.moveForwardStack.get(this.moveForwardStack.size() - 1);
+        	MoveEffect next = this.moveForwardStack.get(this.moveForwardStack.size() - 1);
             return next;
         } catch (java.lang.ArrayIndexOutOfBoundsException exc) {
             return null;
@@ -183,9 +183,9 @@ public class MoveHistory {
 
     }
 
-    public synchronized MoveEffects undo() {
+    public synchronized MoveEffect undo() {
         try {
-        	MoveEffects last = this.moveBackStack.pop();
+        	MoveEffect last = this.moveBackStack.pop();
             if (last != null) {
                 if (this.game.getSettings().gameType == Settings.gameTypes.local) // moveForward / redo available only for local game
                     this.moveForwardStack.push(last);
@@ -225,10 +225,10 @@ public class MoveHistory {
 
     }
 
-    public synchronized MoveEffects redo() {
+    public synchronized MoveEffect redo() {
         try {
             if (this.game.getSettings().gameType == Settings.gameTypes.local) {
-            	MoveEffects first = this.moveForwardStack.pop();
+            	MoveEffect first = this.moveForwardStack.pop();
                 this.moveBackStack.push(first);
 
                 return first;
@@ -424,7 +424,7 @@ public class MoveHistory {
                 yTo = RoundChessboardController.bottom - (locMove.charAt(from + 1) - 49);// from ASCII
                 for (Square square : squares) {
                     if (square.getPiece() == null
-                            || this.game.getActivePlayer().color != square.getPiece().player.color) {
+                            || this.game.getActivePlayer().color != square.getPiece().getPlayer().color) {
                         continue;
                     }
                     /*HashSet<Square> pieceMoves = this.game.chessboardController.getValidTargetSquares(square);

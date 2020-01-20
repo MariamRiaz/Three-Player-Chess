@@ -12,7 +12,6 @@ import jchess.pieces.PieceLoader;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -38,7 +37,7 @@ public class RoundChessboardModel {
 	private static final URL boardPath = JChessApp.class.getClassLoader().getResource(boardsFolder + "/" + boardFile);
 	
     public List<Square> squares;
-    public HashSet<Piece> crucialPieces = new HashSet<>();
+    private HashSet<Piece> crucialPieces = new HashSet<>();
     private int squaresPerRow;
     private int rows;
     private boolean hasContinuousRows, innerRimConnected;
@@ -81,13 +80,17 @@ public class RoundChessboardModel {
     	return y % rows < 0 ? (y % rows) + rows : y % rows;
     }
     
+    /**
+     * @param player The Player whose Pieces to return.
+     * @return The Pieces of the given Player, which cause him to lose if they are taken.
+     */
     public HashSet<Piece> getCrucialPieces(Player player) {
     	if (player == null)
     		return new HashSet<>();
     	
     	HashSet<Piece> retVal = new HashSet<>();
     	for (Piece el : crucialPieces)
-    		if (el.player.color.equals(player.color))
+    		if (el.getPlayer().color.equals(player.color))
     			retVal.add(el);
     	
     	return retVal;
@@ -147,7 +150,7 @@ public class RoundChessboardModel {
     	if (piece == null)
     		return null;
     	
-    	return getSquare(piece.id);
+    	return getSquare(piece.getID());
     }
     
     /**
@@ -156,7 +159,7 @@ public class RoundChessboardModel {
      * @return          Square where the given Piece is located on
      */
     public Square getSquare(int id) {
-        Optional<Square> optionalSquare = squares.stream().filter(s -> s.getPiece() != null && s.getPiece().id == id).findFirst();
+        Optional<Square> optionalSquare = squares.stream().filter(s -> s.getPiece() != null && s.getPiece().getID() == id).findFirst();
         if(optionalSquare.equals(Optional.empty()))
             return null;
         

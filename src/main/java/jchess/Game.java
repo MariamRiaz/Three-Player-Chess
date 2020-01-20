@@ -411,10 +411,10 @@ public class Game extends JPanel implements Observer, ComponentListener {
         if (!blockedChessboard) {
             if ((square == null && square.getPiece() == null && chessboardController.getActiveSquare() == null)
                     || (this.chessboardController.getActiveSquare() == null && square.getPiece() != null
-                    && square.getPiece().player != this.activePlayer)) {
+                    && square.getPiece().getPlayer() != this.activePlayer)) {
                 return;
             }
-            if (square.getPiece() != null && square.getPiece().player == this.activePlayer && square != chessboardController.getActiveSquare()) {
+            if (square.getPiece() != null && square.getPiece().getPlayer() == this.activePlayer && square != chessboardController.getActiveSquare()) {
                 chessboardController.unselect();
                 chessboardController.select(square);
             } else if (chessboardController.getActiveSquare() == square) // unselect
@@ -437,7 +437,7 @@ public class Game extends JPanel implements Observer, ComponentListener {
                 HashSet<Piece> cp = chessboardController.getCrucialPieces(this.activePlayer);
                 for (Piece piece : cp)
                 	if (chessboardController.pieceIsUnsavable(piece))
-                		this.endGame("Checkmate! " + piece.player.color.toString() + " player lose!");
+                		this.endGame("Checkmate! " + piece.getPlayer().color.toString() + " player lose!");
             }
         } else if (blockedChessboard) {
             Log.log("Chessboard is blocked");

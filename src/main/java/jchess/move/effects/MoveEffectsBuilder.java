@@ -39,8 +39,8 @@ public class MoveEffectsBuilder {
 		if (one == null || two == null)
 			return this;
 		
-		stateChanges.add(new StateChange(one.id, two));
-		scReverse.add(new StateChange(two.id, one));
+		stateChanges.add(new StateChange(one.getID(), two));
+		scReverse.add(new StateChange(two.getID(), one));
 		
 		return this;
 	}
@@ -64,7 +64,7 @@ public class MoveEffectsBuilder {
 		return positionChanges.isEmpty() && stateChanges.isEmpty();
 	}
 	
-	public MoveEffects build() {
-		return new MoveEffects(moving, trigger, move, flag, positionChanges, stateChanges, pcReverse, scReverse);
+	public MoveEffect build() {
+		return new MoveEffect(moving, trigger, move, flag, positionChanges, stateChanges, pcReverse, scReverse);
 	}
 }
