@@ -1,6 +1,5 @@
 package jchess.controller;
 
-import jchess.JChessApp;
 import jchess.entities.Player;
 import jchess.Settings;
 import jchess.entities.Square;
@@ -10,11 +9,7 @@ import jchess.helper.MoveEvaluator;
 import jchess.entities.PolarPoint;
 import jchess.model.RoundChessboardModel;
 import jchess.move.effects.MoveEffects;
-import jchess.move.effects.PositionChange;
-import jchess.move.effects.StateChange;
 import jchess.pieces.Piece;
-import jchess.pieces.PieceDefinition;
-import jchess.pieces.PieceLoader;
 import jchess.view.PolarCell;
 import jchess.view.RoundChessboardView;
 
@@ -192,57 +187,6 @@ public class RoundChessboardController extends MouseAdapter {
     public List<Square> getSquares() {
         return this.model.squares;
     }
-    
-    private String colorToLetter(Player.colors color) {
-    	switch (color) {
-    	case black:
-    		return "B";
-    	case white:
-    		return "W";
-    	case gray:
-    		return "G";
-    	}
-    	
-		return "";
-    }
-    
-    private void apply(MoveEffects me) {
-    	for (PositionChange ent : me.positionChanges) {
-    		view.removeVisual(model.getSquare(ent.piece));
-    		model.setPieceOnSquare(ent.piece, ent.square);
-    		view.setVisual(ent.square.getPiece(), ent.square);
-    	}
-    	
-    	for (StateChange ent : me.stateChanges) {
-    		final Square sq = model.getSquare(ent.id);
-    		if (sq == null)
-    			continue;
-
-    		if (ent.state.getDefinition() == PieceDefinition.PLACEHOLDER)
-    			ent.state.setDefinition(PieceLoader.getPieceDefinition(
-    					JChessApp.jcv.showPawnPromotionBox(colorToLetter(ent.state.player.color))));
-    		
-    		model.setPieceOnSquare(ent.state, sq);
-    		view.setVisual(ent.state, sq.getPozX(), sq.getPozY());
-    	}
-    }
-    
-    private void reverse(MoveEffects me) {
-    	for (StateChange ent : me.scReverse) {
-    		final Square sq = model.getSquare(ent.id);
-    		if (sq == null)
-    			continue;
-    		
-    		model.setPieceOnSquare(ent.state, sq);
-    		view.setVisual(ent.state, sq.getPozX(), sq.getPozY());
-    	}
-    	
-    	for (PositionChange ent : me.pcReverse) {
-    		view.removeVisual(model.getSquare(ent.piece));
-    		model.setPieceOnSquare(ent.piece, ent.square);
-    		view.setVisual(ent.square.getPiece(), ent.square);
-    	}
-    }
 
     /**
      * Method move a Piece from the given Square to a new Square, as defined by their x and y indices.
@@ -260,7 +204,7 @@ public class RoundChessboardController extends MouseAdapter {
     			break;
     		}
     	
-    	apply(move);
+    	move.apply(model, view);
         
         if (refresh)
             this.unselect();
@@ -293,7 +237,7 @@ public class RoundChessboardController extends MouseAdapter {
         MoveEffects last = this.movesHistory.undo();
         
         if (last != null) {
-            reverse(last);
+        	last.reverse(model, view);
 
             if (refresh) {
             	this.unselect();
@@ -314,7 +258,7 @@ public class RoundChessboardController extends MouseAdapter {
         	MoveEffects first = this.movesHistory.redo();
 
             if (first != null) {
-                apply(first);
+            	first.apply(model, view);
                 
                 if (refresh) {
                     this.unselect();

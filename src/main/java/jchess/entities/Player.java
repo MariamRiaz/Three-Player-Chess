@@ -26,6 +26,18 @@ import java.io.Serializable;
  * Class representing the player in the game
  */
 public class Player implements Serializable {
+    public static String colorToLetter(Player.colors color) {
+    	switch (color) {
+    	case black:
+    		return "B";
+    	case white:
+    		return "W";
+    	case gray:
+    		return "G";
+    	}
+    	
+		return "";
+    }
 
 	public String name;
 

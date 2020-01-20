@@ -11,8 +11,6 @@ import jchess.move.MoveType;
 import jchess.move.Orientation;
 import jchess.move.effects.MoveEffects;
 import jchess.move.effects.MoveEffectsBuilder;
-import jchess.move.effects.PositionChange;
-import jchess.move.effects.StateChange;
 import jchess.pieces.Piece;
 import jchess.pieces.PieceDefinition;
 
@@ -159,28 +157,6 @@ public class MoveEvaluator {
         }
         return true;
     }
-
-    private void apply(MoveEffects me) {
-    	for (PositionChange ent : me.positionChanges)
-    		model.setPieceOnSquare(ent.piece, ent.square);
-    	
-    	for (StateChange ent : me.stateChanges) {
-    		final Square sq = model.getSquare(ent.id);
-    		if (sq == null)
-    			continue;
-    		
-    		model.setPieceOnSquare(ent.state, sq);
-    	}
-    }
-    
-    private void reverse(MoveEffects me) {
-    	for (StateChange ent : me.scReverse) 
-    		if (model.getSquare(ent.id) != null)
-    			model.setPieceOnSquare(ent.state, model.getSquare(ent.id));
-    	
-    	for (PositionChange ent : me.pcReverse) 
-    		model.setPieceOnSquare(ent.piece, ent.square);
-    }
     
     /**
      * Gets all Squares to which the Piece on the given Square can move such that the given Squares to be saved are all non-threatened by other Players.
@@ -196,14 +172,14 @@ public class MoveEvaluator {
         for (Iterator<MoveEffects> it = ret.iterator(); it.hasNext(); ) {
             final MoveEffects me = it.next();
         	
-            apply(me);
+            me.apply(model, null);
             boolean rm = false;
             for (Piece piece : toSave) 
             	if (squareIsThreatened(model.getSquare(piece))) {
             		rm = true;
             		break;
             	}
-            reverse(me);
+            me.reverse(model, null);
             
             if (rm)
             	it.remove();
@@ -241,12 +217,12 @@ public class MoveEvaluator {
 			
             HashSet<MoveEffects> validMoveSquares = getValidTargetSquares(sq.getPiece());
             for (MoveEffects it2 : validMoveSquares) {
-            	apply(it2);
+            	it2.apply(model, null);
             	if ((piece == null && square.getPiece() != null) || (piece != null && model.getSquare(piece) == null)) {
-            		reverse(it2);
+            		it2.reverse(model, null);
             		return true;
             	}
-            	reverse(it2);
+            	it2.reverse(model, null);
             }
         }
         return false;
