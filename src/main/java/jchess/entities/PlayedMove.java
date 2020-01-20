@@ -58,9 +58,9 @@ public class PlayedMove {
 		this.castlingMove = castlingMove;
 		this.wasEnPassant = wasEnPassant;
 
-		if (movedPiece.getDefinition().type.equals("Pawn") && Math.abs(to.getPozY() - from.getPozY()) == 2) {
+		if (movedPiece.getDefinition().getType().equals("Pawn") && Math.abs(to.getPozY() - from.getPozY()) == 2) {
 			this.wasPawnTwoFieldsMove = true;
-		} else if (movedPiece.getDefinition().type.equals("Pawn") && to.getPozY() == RoundChessboardController.bottom
+		} else if (movedPiece.getDefinition().getType().equals("Pawn") && to.getPozY() == RoundChessboardController.bottom
 				|| to.getPozY() == RoundChessboardController.top && promotedPiece != null) {
 			this.promotedTo = promotedPiece;
 		}
