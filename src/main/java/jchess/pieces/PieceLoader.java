@@ -5,21 +5,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
 
 import jchess.JChessApp;
 import jchess.helper.Log;
@@ -66,7 +59,7 @@ public class PieceLoader {
 				PieceDefinition pd = PieceDefinition.loadFromJSON(
 						new JsonParser().parse(new BufferedReader(new FileReader(
 								file.getPath()))));
-				retVal.put(pd.type, pd);
+				retVal.put(pd.getType(), pd);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -75,10 +68,18 @@ public class PieceLoader {
 		return retVal;
 	}
 	
+	/**
+	 * Gets the PieceDefinition of a given type.
+	 * @param type The PieceDefinition type, e.g. "King".
+	 * @return The corresponding PieceDefinition or null.
+	 */
 	public static PieceDefinition getPieceDefinition(String type) {
 		return pieces.get(type);
 	}
 	
+	/**
+	 * @return The types of the loaded PieceDefinitions.
+	 */
 	public static Set<String> getPieceTypes() {
 		return pieces.keySet();
 	}

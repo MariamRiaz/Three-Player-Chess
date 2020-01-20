@@ -57,26 +57,27 @@ public class MoveEvaluator {
             return ret;//TODO error handling
 
         int count = 0;
-        for (Square next = nextSquare(square, move.x, move.y, square.getPiece().getOrientation()); next != null
-                && (move.limit == null || count < move.limit) && !ret.contains(next); next = nextSquare(next, move.x, move.y, square.getPiece().getOrientation())) {
+        for (Square next = nextSquare(square, move.getX(), move.getY(), square.getPiece().getOrientation()); next != null
+                && (move.getLimit() == null || count < move.getLimit()) && !ret.contains(next);
+        		next = nextSquare(next, move.getX(), move.getY(), square.getPiece().getOrientation())) {
             boolean add = true;
-
-            if (move.conditions.contains(MoveType.OnlyAttack)) {
-                if (next.getPiece() == null || next.getPiece().player == square.getPiece().player)
-                    add = false;
-            } else if (move.conditions.contains(MoveType.OnlyMove)) {
-                if (next.getPiece() != null)
-                    add = false;
-            } else if (next.getPiece() != null && next.getPiece().player == square.getPiece().player)
-                add = false;
-
-            if (move.conditions.contains(MoveType.OnlyWhenFresh) && square.getPiece().hasMoved())
-                add = false;
-
+            
+	        if (move.getConditions().contains(MoveType.OnlyAttack)) {
+	            if (next.getPiece() == null || next.getPiece().player == square.getPiece().player)
+	                add = false;
+	        } else if (move.getConditions().contains(MoveType.OnlyMove)) {
+	            if (next.getPiece() != null)
+	                add = false;
+	        } else if (next.getPiece() != null && next.getPiece().player == square.getPiece().player)
+	            add = false;
+	        
+	        if (move.getConditions().contains(MoveType.OnlyWhenFresh) && square.getPiece().hasMoved())
+	            add = false;
+            
             if (add)
                 ret.add(next);
 
-            if (!move.conditions.contains(MoveType.Unblockable) && next.getPiece() != null)
+            if (!move.getConditions().contains(MoveType.Unblockable) && next.getPiece() != null)
                 break;
 
             count++;
