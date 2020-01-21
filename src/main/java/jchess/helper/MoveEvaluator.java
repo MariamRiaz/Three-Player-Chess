@@ -61,12 +61,14 @@ public class MoveEvaluator {
 
         int count = 0;
         Orientation otn = piece.getOrientation().clone();
-        for (Square next = nextSquare(model.getSquare(piece), move.getX(), move.getY(), otn); next != null
+        Square from = model.getSquare(piece);
+        
+        for (Square next = nextSquare(from, move.getX(), move.getY(), otn); next != null
                 && (move.getLimit() == null || count < move.getLimit()) && !traversed.contains(next); 
         		next = nextSquare(next, move.getX(), move.getY(), otn)) {
         	
             boolean add = true;
-            MoveEffectsBuilder meb = new MoveEffectsBuilder(piece, next, move);
+            MoveEffectsBuilder meb = new MoveEffectsBuilder(piece, next, from, move);
 
             if (move.getConditions().contains(MoveType.OnlyAttack)) {
                 if (next.getPiece() == null || next.getPiece().getPlayer() == piece.getPlayer())
@@ -95,9 +97,9 @@ public class MoveEvaluator {
             if (add) {
                 if (meb.isEmpty())
                 	meb.addPosChange(model.getSquare(piece), next)
-                		.addStateChange(piece, piece.clone().setHasMoved(true).setOrientation(otn.clone()));
+                		.addStateChange(piece, piece.clone().setHasMoved(true).reorient(otn.clone()));
             	
-                if (piece.getDefinition().getType().equals("Pawn") && model.isEnemyStart(next, piece.getPlayer().color))
+                if (piece.getDefinition().getType().equals("Pawn") && model.isInPromotionArea(next, piece.getPlayer().color))
                 	meb.addStateChange(piece, piece.clone().setDefinition(PieceDefinition.PLACEHOLDER));
                 
                 ret.add(meb.build());

@@ -211,8 +211,8 @@ public class RoundChessboardController extends MouseAdapter {
 
         if (clearForwardHistory) {
             this.movesHistory.clearMoveForwardStack();
-            this.movesHistory.addMove(move, begin, true);
-        } else this.movesHistory.addMove(move, begin, false);
+            this.movesHistory.addMove(move, true);
+        } else this.movesHistory.addMove(move, false);
         
     	view.updateAfterMove();
     	
@@ -256,7 +256,7 @@ public class RoundChessboardController extends MouseAdapter {
     public boolean redo(boolean refresh) {
         if (this.settings.gameType == Settings.gameTypes.local) {
         	MoveEffect first = this.movesHistory.redo();
-
+        	
             if (first != null) {
             	first.apply(model, view);
                 

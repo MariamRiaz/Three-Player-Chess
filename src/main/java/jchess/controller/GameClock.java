@@ -88,15 +88,20 @@ public class GameClock implements Runnable {
 	/**
 	 * Method of switching the players clocks
 	 */
-	public void switch_clocks() {
-
-		if (this.runningClock == gameClockView.clock1) {
-			this.runningClock = gameClockView.clock2;
-		} else if (this.runningClock == gameClockView.clock2) {
-			this.runningClock = gameClockView.clock3;
+	public void switch_clocks(boolean forward) {
+		if (forward) {
+			if (this.runningClock == gameClockView.clock1)
+				this.runningClock = gameClockView.clock2;
+			else if (this.runningClock == gameClockView.clock2)
+				this.runningClock = gameClockView.clock3;
+			else this.runningClock = gameClockView.clock1;
 		}
 		else {
-			this.runningClock = gameClockView.clock1;
+			if (this.runningClock == gameClockView.clock1)
+				this.runningClock = gameClockView.clock3;
+			else if (this.runningClock == gameClockView.clock2)
+				this.runningClock = gameClockView.clock1;
+			else this.runningClock = gameClockView.clock2;
 		}
 	}
 

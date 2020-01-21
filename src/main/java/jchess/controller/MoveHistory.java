@@ -45,9 +45,7 @@ import javax.swing.JOptionPane;
  * Class that holds all the move history of the game, and all the necessary methods to undo and redo a move
  */
 public class MoveHistory {
-
-
-    private enum PlayerColumn {
+    public static enum PlayerColumn {
         player1,
         player2,
         player3
@@ -82,22 +80,18 @@ public class MoveHistory {
      */
     private void addMove2Table(String str) {
         try {
-
             if (activePlayerColumn.equals(PlayerColumn.player1)) {
                 this.moveHistoryView.addRow();
                 this.rowsNum = this.moveHistoryView.getRowCount() - 1;
                 this.moveHistoryView.setValueAt(str, rowsNum, 0);
-                this.activePlayerColumn = PlayerColumn.player2;
 
             } else if (activePlayerColumn.equals(PlayerColumn.player2)) {
                 this.moveHistoryView.setValueAt(str, rowsNum, 1);
                 this.rowsNum = this.moveHistoryView.getRowCount() - 1;
-                this.activePlayerColumn = PlayerColumn.player3;
 
             } else if (activePlayerColumn.equals(PlayerColumn.player3)) {
                 this.moveHistoryView.setValueAt(str, rowsNum, 2);
                 this.rowsNum = this.moveHistoryView.getRowCount() - 1;
-                this.activePlayerColumn = PlayerColumn.player1;
             }
 
             this.moveHistoryView.table.scrollRectToVisible(this.moveHistoryView.table.getCellRect(this.moveHistoryView.table.getRowCount() - 1, 0, true));// scroll to down
@@ -115,10 +109,10 @@ public class MoveHistory {
     /**
      * Method of adding new move
      */
-    public void addMove(MoveEffect moveEffects, Square from, boolean registerInHistory) {
+    public void addMove(MoveEffect moveEffects, boolean registerInHistory) {
     	HashMap<String, String> values = new HashMap<String, String>() {{ 
     		put(Move.formatStringPiece, moveEffects.getMoving().getDefinition().getSymbol());
-    		put(Move.formatStringFrom, getPosition(from));
+    		put(Move.formatStringFrom, getPosition(moveEffects.getFrom()));
     		put(Move.formatStringTo, getPosition(moveEffects.getTrigger()));
     	}};
     	
@@ -173,45 +167,35 @@ public class MoveHistory {
     }
 
     public synchronized MoveEffect undo() {
+    	MoveEffect last = null;
         try {
-        	MoveEffect last = this.moveBackStack.pop();
-            if (last != null) {
-                if (this.game.getSettings().gameType == Settings.gameTypes.local) // moveForward / redo available only for local game
-                    this.moveForwardStack.push(last);
-
-                if (activePlayerColumn.equals(PlayerColumn.player1)) {
-                    this.moveHistoryView.setValueAt("", this.moveHistoryView.getRowCount() - 1, 0);
-                    this.moveHistoryView.removeRow(this.moveHistoryView.getRowCount() - 1);
-                    if (this.rowsNum > 0) 
-                        this.rowsNum--;
-                    
-                    this.activePlayerColumn = PlayerColumn.player2;
-                } else if (activePlayerColumn.equals(PlayerColumn.player2)) {
-                    if (this.moveHistoryView.getRowCount() > 0)
-                        this.moveHistoryView.setValueAt("", this.moveHistoryView.getRowCount() - 1, 1);
-                        
-                    this.activePlayerColumn = PlayerColumn.player3;
-
-                } else {
-                    if (this.moveHistoryView.getRowCount() > 0)
-                        this.moveHistoryView.setValueAt("", this.moveHistoryView.getRowCount() - 1, 2);
-                        
-                    this.activePlayerColumn = PlayerColumn.player1;
-
-                }
-                this.move.remove(this.move.size() - 1);
-            }
+        	last = this.moveBackStack.pop();
+        } catch (java.util.EmptyStackException exc) {
+        	exc.printStackTrace();
+        } catch (java.lang.ArrayIndexOutOfBoundsException exc) {
+            exc.printStackTrace();
+        }
+        
+        if (last != null) {
+            if (this.game.getSettings().gameType == Settings.gameTypes.local) // moveForward / redo available only for local game 
+                this.moveForwardStack.push(last);
             
-            return last;
-        } catch (
-                java.util.EmptyStackException exc) {
-            this.activePlayerColumn = PlayerColumn.player1;
-            return null;
-        } catch (
-                java.lang.ArrayIndexOutOfBoundsException exc) {
-            return null;
+            if (activePlayerColumn.equals(PlayerColumn.player1)) {
+                if (this.moveHistoryView.getRowCount() > 0)
+                    this.moveHistoryView.setValueAt("", this.moveHistoryView.getRowCount() - 1, 2);
+            } else if (activePlayerColumn.equals(PlayerColumn.player2)) {
+                this.moveHistoryView.setValueAt("", this.moveHistoryView.getRowCount() - 1, 0);
+                this.moveHistoryView.removeRow(this.moveHistoryView.getRowCount() - 1);
+                if (this.rowsNum > 0)
+                    this.rowsNum--;
+            } else {
+                if (this.moveHistoryView.getRowCount() > 0)
+                    this.moveHistoryView.setValueAt("", this.moveHistoryView.getRowCount() - 1, 1);
+            }
+            this.move.remove(this.move.size() - 1);
         }
 
+        return last;
     }
 
     public synchronized MoveEffect redo() {
@@ -219,7 +203,9 @@ public class MoveHistory {
             if (this.game.getSettings().gameType == Settings.gameTypes.local) {
             	MoveEffect first = this.moveForwardStack.pop();
                 this.moveBackStack.push(first);
-
+                
+                addMove(first, false);
+                
                 return first;
             }
             return null;
@@ -293,7 +279,6 @@ public class MoveHistory {
         //if (isMoveCorrect(move)) {
             this.move.add(move);
             this.addMove2Table(move);
-            this.moveForwardStack.clear();
         //}
     }
 
@@ -440,5 +425,9 @@ public class MoveHistory {
                 return;// finish reading game and show message
             }
         }
+    }
+    
+    public void setActivePlayerColumn(PlayerColumn column) {
+    	this.activePlayerColumn = column;
     }
 }

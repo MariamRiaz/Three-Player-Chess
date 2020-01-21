@@ -120,11 +120,11 @@ public class Piece {
 	}
 	
 	/**
-	 * Sets this Piece's Orientation to the given non-null Orientation.
+	 * Changes this Piece's Orientation to the given non-null Orientation.
 	 * @param orientation The new Orientation.
 	 * @return This Piece.
 	 */
-	public Piece setOrientation(Orientation orientation) {
+	public Piece reorient(Orientation orientation) {
 		if (orientation != null)
 			this.orientation = orientation;
 		return this;

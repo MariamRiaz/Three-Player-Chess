@@ -9,16 +9,17 @@ import jchess.pieces.Piece;
 
 public class MoveEffectsBuilder {
 	private final Piece moving;
-	private final Square trigger;
+	private final Square trigger, from;
 	private final Move move;
 	private MoveType flag = null;
 	
 	private ArrayList<PositionChange> positionChanges = new ArrayList<>(), pcReverse = new ArrayList<>();
 	private ArrayList<StateChange> stateChanges = new ArrayList<>(), scReverse = new ArrayList<>();
 	
-	public MoveEffectsBuilder(Piece moving, Square trigger, Move move) {
+	public MoveEffectsBuilder(Piece moving, Square trigger, Square from, Move move) {
 		this.moving = moving;
 		this.trigger = trigger;
+		this.from = from;
 		this.move = move;
 	}
 
@@ -65,6 +66,6 @@ public class MoveEffectsBuilder {
 	}
 	
 	public MoveEffect build() {
-		return new MoveEffect(moving, trigger, move, flag, positionChanges, stateChanges, pcReverse, scReverse);
+		return new MoveEffect(moving, trigger, from, move, flag, positionChanges, stateChanges, pcReverse, scReverse);
 	}
 }
