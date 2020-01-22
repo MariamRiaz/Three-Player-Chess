@@ -5,7 +5,11 @@ import java.util.HashSet;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 
+import jchess.move.Move;
+
 public class PieceDefinition {
+	public static final PieceDefinition PLACEHOLDER = new PieceDefinition("Placeholder", 0, "", new HashSet<>());
+	
 	/**
      * Loads a PieceDefinition from the given JsonElement.
 	 * @param jsonBody The source.
@@ -31,6 +35,13 @@ public class PieceDefinition {
 		this.moves = new HashSet<Move>(other.moves);
 		this.symbol = new String(other.symbol);
 		this.type = new String(other.type);
+	}
+
+	private PieceDefinition(String type, int value, String symbol, HashSet<Move> moves) {
+		this.type = type;
+		this.value = value;
+		this.symbol = symbol;
+		this.moves = moves;
 	}
 
 	/**

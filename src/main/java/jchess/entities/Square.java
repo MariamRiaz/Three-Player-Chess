@@ -27,6 +27,12 @@ public class Square {
 			return false;
 		return ((Square)other).getPozX() == getPozX() && ((Square)other).getPozY() == getPozY();
 	}
+	
+	@Override
+	public String toString() {
+		return "(" + Integer.toString(pozX) + ", " + Integer.toString(pozY) + ")";
+	}
+	
 	/**
 	* getter method for piece
 	 **/

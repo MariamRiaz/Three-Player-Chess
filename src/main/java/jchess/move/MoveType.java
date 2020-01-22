@@ -1,4 +1,4 @@
-package jchess.pieces;
+package jchess.move;
 
 /**
  * Enum describing constraints, conditions, and move types to be observed when evaluating this Move.

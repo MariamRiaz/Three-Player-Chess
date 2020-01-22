@@ -67,7 +67,7 @@ public class GUI {
             img = tk.getImage(url);
 
         } catch (Exception e) {
-            Log.log(Level.SEVERE, "some error loading image!");
+            Log.log(Level.SEVERE, "some error loading image " + name);
             e.printStackTrace();
         }
         return img;
