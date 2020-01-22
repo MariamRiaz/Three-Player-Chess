@@ -7,6 +7,9 @@ import java.util.List;
 
 import jchess.entities.Square;
 import jchess.model.RoundChessboardModel;
+import jchess.pieces.Move;
+import jchess.pieces.MoveType;
+import jchess.pieces.Orientation;
 import jchess.pieces.Piece;
 
 /**
@@ -34,8 +37,8 @@ public class MoveEvaluator {
         if (square == null || square.getPiece() == null)
             return ret;//TODO error handling
 
-        HashSet<Piece.Move> moves = square.getPiece().getMoves();
-        for (Piece.Move it : moves)
+        HashSet<Move> moves = square.getPiece().getDefinition().getMoves();
+        for (Move it : moves)
             ret.addAll(evaluateMoveToTargetSquares(it, square));
 
         return ret;
@@ -47,33 +50,34 @@ public class MoveEvaluator {
      * @param square The Square on which the Piece to be moved is located.
      * @return A HashSet of the concrete Squares to which the Piece can move with the given Move definition.
      */
-    private HashSet<Square> evaluateMoveToTargetSquares(Piece.Move move, Square square) {
+    private HashSet<Square> evaluateMoveToTargetSquares(Move move, Square square) {
         HashSet<Square> ret = new HashSet<>();
 
         if (move == null || square == null || square.getPiece() == null)
             return ret;//TODO error handling
 
         int count = 0;
-        for (Square next = nextSquare(square, move.x, move.y); next != null
-                && (move.limit == null || count < move.limit) && !ret.contains(next); next = nextSquare(next, move.x, move.y)) {
+        for (Square next = nextSquare(square, move.getX(), move.getY(), square.getPiece().getOrientation()); next != null
+                && (move.getLimit() == null || count < move.getLimit()) && !ret.contains(next);
+        		next = nextSquare(next, move.getX(), move.getY(), square.getPiece().getOrientation())) {
             boolean add = true;
-
-            if (move.conditions.contains(Piece.Move.MoveType.OnlyAttack)) {
-                if (next.getPiece() == null || next.getPiece().player == square.getPiece().player)
-                    add = false;
-            } else if (move.conditions.contains(Piece.Move.MoveType.OnlyMove)) {
-                if (next.getPiece() != null)
-                    add = false;
-            } else if (next.getPiece() != null && next.getPiece().player == square.getPiece().player)
-                add = false;
-
-            if (move.conditions.contains(Piece.Move.MoveType.OnlyWhenFresh) && square.getPiece().hasMoved())
-                add = false;
-
+            
+	        if (move.getConditions().contains(MoveType.OnlyAttack)) {
+	            if (next.getPiece() == null || next.getPiece().player == square.getPiece().player)
+	                add = false;
+	        } else if (move.getConditions().contains(MoveType.OnlyMove)) {
+	            if (next.getPiece() != null)
+	                add = false;
+	        } else if (next.getPiece() != null && next.getPiece().player == square.getPiece().player)
+	            add = false;
+	        
+	        if (move.getConditions().contains(MoveType.OnlyWhenFresh) && square.getPiece().hasMoved())
+	            add = false;
+            
             if (add)
                 ret.add(next);
 
-            if (!move.conditions.contains(Piece.Move.MoveType.Unblockable) && next.getPiece() != null)
+            if (!move.getConditions().contains(MoveType.Unblockable) && next.getPiece() != null)
                 break;
 
             count++;
@@ -87,9 +91,18 @@ public class MoveEvaluator {
      * @param current The current Square.
      * @param x The x incrementation.
      * @param y The y incrementation.
+     * @param orientation The Orientation of the Piece that is moving.
      * @return The next Square, if any.
      */
-    private Square nextSquare(Square current, int x, int y) {
+    private Square nextSquare(Square current, int x, int y, Orientation orientation) {
+    	
+    	if (orientation != null) {
+	    	if (orientation.x)
+	    		x = -x;
+	    	if (orientation.y)
+	    		y = -y;
+	    }
+    	
         return model.getSquare(current.getPozX() + x, current.getPozY() + y);
     }
 

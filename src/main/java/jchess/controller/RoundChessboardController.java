@@ -10,7 +10,7 @@ import jchess.helper.MoveEvaluator;
 import jchess.entities.PolarPoint;
 import jchess.model.RoundChessboardModel;
 import jchess.pieces.Piece;
-import jchess.pieces.PieceFactory;
+import jchess.pieces.PieceLoader;
 import jchess.entities.PlayedMove;
 import jchess.view.PolarCell;
 import jchess.view.RoundChessboardView;
@@ -207,9 +207,8 @@ public class RoundChessboardController extends MouseAdapter {
 
         model.setPieceOnSquare(begin.getPiece(), end);
         model.setPieceOnSquare(null, begin);
-
-        System.out.print(end.getPiece().type);
-        if (end.getPiece().type.equals("King")) {
+        
+        if (end.getPiece().getDefinition().getType().equals("King")) {
             end.getPiece().setHasMoved(true);
 
             if (begin.getPozX() + 2 == end.getPozX()) {
@@ -219,9 +218,9 @@ public class RoundChessboardController extends MouseAdapter {
                 move(model.getSquare(0, begin.getPozY()), model.getSquare(end.getPozX() + 1, begin.getPozY()), false, false);
                 wasCastling = MoveHistory.castling.longCastling;
             }
-        } else if (end.getPiece().type.equals("Rook")) 
+        } else if (end.getPiece().getDefinition().getType().equals("Rook")) 
             end.getPiece().setHasMoved(true);
-        else if (end.getPiece().type.equals("Pawn")) {
+        else if (end.getPiece().getDefinition().getType().equals("Pawn")) {
             if (twoSquareMovedPawn != null && model.getSquare(end.getPozX(), begin.getPozY()) == getSquare(twoSquareMovedPawn)) {
                 tempEnd = model.getSquare(end.getPozX(), begin.getPozY()).getPiece();
 
@@ -244,28 +243,14 @@ public class RoundChessboardController extends MouseAdapter {
                     else color = "B";
 
                     String newPiece = JChessApp.jcv.showPawnPromotionBox(color);
-
-                    if (newPiece.equals("Queen")) {
-                        Piece queen = PieceFactory.createQueen(end.getPiece().player);
-                        model.setPieceOnSquare(queen, end);
-                        view.setVisual(queen, end.getPozX(), end.getPozY());
-                    } else if (newPiece.equals("Rook")) {
-                        Piece rook = PieceFactory.createRook(end.getPiece().player);
-                        model.setPieceOnSquare(rook, end);
-                        view.setVisual(rook, end.getPozX(), end.getPozY());
-                    } else if (newPiece.equals("Bishop")) {
-                        Piece bishop = PieceFactory.createBishop(end.getPiece().player);
-                        model.setPieceOnSquare(bishop, end);
-                        view.setVisual(bishop, end.getPozX(), end.getPozY());
-                    } else {
-                        Piece knight = PieceFactory.createKing(end.getPiece().player);
-                        model.setPieceOnSquare(knight, end);
-                        view.setVisual(knight, end.getPozX(), end.getPozY());
-                    }
+                    
+                	end.getPiece().setDefinition(PieceLoader.getPieceDefinition(newPiece));
+                	
+                    view.setVisual(end.getPiece(), end.getPozX(), end.getPozY());
                     promotedPiece = end.getPiece();
                 }
             }
-        } else if (!end.getPiece().type.equals("Pawn"))
+        } else if (!end.getPiece().getDefinition().getType().equals("Pawn"))
             twoSquareMovedPawn = null;
         
         if (refresh)
@@ -323,14 +308,14 @@ public class RoundChessboardController extends MouseAdapter {
                     }
                     movedState.setHasMoved(false);
                     rook.setHasMoved(false);
-                } else if (movedState.type.equals("Rook"))
+                } else if (movedState.getDefinition().getType().equals("Rook"))
                     movedState.setHasMoved(false);
-                else if (movedState.type.equals("Pawn") && last.wasEnPassant()) {
+                else if (movedState.getDefinition().getType().equals("Pawn") && last.wasEnPassant()) {
                     Piece pawn = last.getTakenPiece();
                     model.setPieceOnSquare(pawn, model.getSquare(end.getPozX(), begin.getPozY()));
                     view.setVisual(pawn, end.getPozX(), end.getPozY());
 
-                } else if (movedState.type.equals("Pawn") && last.getPromotedPiece() != null) {
+                } else if (movedState.getDefinition().getType().equals("Pawn") && last.getPromotedPiece() != null) {
                     Piece promoted = model.getSquare(end.getPozX(), end.getPozY()).getPiece();
                     model.setPieceOnSquare(promoted, null);
                     view.removeVisual(promoted, end.getPozX(), end.getPozY());
@@ -340,7 +325,7 @@ public class RoundChessboardController extends MouseAdapter {
                 if (oneMoveEarlier != null && oneMoveEarlier.wasPawnTwoFieldsMove()) {
                     Piece canBeTakenEnPassant = model.getSquare(oneMoveEarlier.getTo().getPozX(),
                             oneMoveEarlier.getTo().getPozY()).getPiece();
-                    if (canBeTakenEnPassant.type.equals("Pawn"))
+                    if (canBeTakenEnPassant.getDefinition().getType().equals("Pawn"))
                         this.twoSquareMovedPawn = canBeTakenEnPassant;
                 }
 
