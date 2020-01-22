@@ -53,7 +53,7 @@ public class GameClock implements Runnable {
 		this.settings = game.getSettings();
 
 		int time = this.settings.getTimeForGame();
-		timeSpentByPlayers = new int[]{0, 0, 0};
+
 		activePlayer = PlayerColors.WHITE;
 
 		this.setTimes(time);
@@ -105,6 +105,7 @@ public class GameClock implements Runnable {
 
 	public void setTimes(int time) {
 		totalPlayerTimeLimit = time;
+		timeSpentByPlayers = new int[]{totalPlayerTimeLimit, totalPlayerTimeLimit, totalPlayerTimeLimit};
 	}
 
 	/**
@@ -115,13 +116,13 @@ public class GameClock implements Runnable {
 			if (this.runningClock != null) {
 				this.runningClock.increment();
 				if(this.activePlayer == PlayerColors.WHITE){
-					this.timeSpentByPlayers[0] = this.timeSpentByPlayers[0]  + 1;
+					this.timeSpentByPlayers[0] = this.timeSpentByPlayers[0]  - 1;
 				}
 				if(this.activePlayer == PlayerColors.BLACK){
-					this.timeSpentByPlayers[1]  = this.timeSpentByPlayers[1] + 1;
+					this.timeSpentByPlayers[1]  = this.timeSpentByPlayers[1] - 1;
 				}
 				if(this.activePlayer == PlayerColors.GRAY){
-					this.timeSpentByPlayers[2] = this.timeSpentByPlayers[2] + 1;
+					this.timeSpentByPlayers[2] = this.timeSpentByPlayers[2] - 1;
 				}
 				gameClockView.updateClocks(this.timeSpentByPlayers);
 				try {
@@ -132,9 +133,9 @@ public class GameClock implements Runnable {
 				// if(this.game.blockedChessboard)
 				// this.game.blockedChessboard = false;
 
-				if ((this.timeSpentByPlayers[0]  == this.totalPlayerTimeLimit) ||
-						(this.timeSpentByPlayers[1]  == this.totalPlayerTimeLimit) ||
-						(this.timeSpentByPlayers[2]  == this.totalPlayerTimeLimit) ) {
+				if ((this.timeSpentByPlayers[0]  == 0) ||
+						(this.timeSpentByPlayers[1]  == 0) ||
+						(this.timeSpentByPlayers[2]  == 0) ) {
 					this.timeOver();
 				}
 			}
@@ -146,9 +147,9 @@ public class GameClock implements Runnable {
 	 */
 	private void  timeOver() {
 		String color = new String();
-		if (this.timeSpentByPlayers[0]  == this.totalPlayerTimeLimit) {// Check which player win
+		if (this.timeSpentByPlayers[0]  == 0) {// Check which player win
 			color = PlayerColors.BLACK.toString();
-		} else if (this.timeSpentByPlayers[1]  == this.totalPlayerTimeLimit) {
+		} else if (this.timeSpentByPlayers[1]  == 0) {
 			color = PlayerColors.WHITE.toString();
 		} else {// if called in wrong moment
 			Log.log("Time over called when player got time 2 play");
