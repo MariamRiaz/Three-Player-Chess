@@ -13,7 +13,7 @@ public class GameMenuView {
     private javax.swing.JMenuItem rewindToBegin;
     private javax.swing.JMenuItem rewindToEnd;
     private GUI gui = null;
-    public javax.swing.JTabbedPane gamesPane;
+    private javax.swing.JTabbedPane gamesPane;
 
     public GameMenuView(ResourceMap resourceMap, GUI gui, JTabbedPane gamesPane) {
         this.gameMenu = new javax.swing.JMenu();

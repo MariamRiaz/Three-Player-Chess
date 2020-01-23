@@ -38,19 +38,17 @@ import java.util.logging.Level;
 /**
  * The application's main frame.
  */
-public class JChessView extends FrameView {
+public class JChessView extends FrameView implements ActionListener {
     // Variables declaration - do not modify//GEN-BEGIN:variables
 
     public javax.swing.JTabbedPane gamesPane;
-    public javax.swing.JMenuItem loadGameItem;
+
     public javax.swing.JPanel mainPanel;
     private javax.swing.JMenuBar menuBar;
 
-    public javax.swing.JMenuItem newGameItem;
     private javax.swing.JMenu optionsMenu;
     private javax.swing.JProgressBar progressBar;
 
-    public javax.swing.JMenuItem saveGameItem;
     private javax.swing.JLabel statusAnimationLabel;
     private javax.swing.JLabel statusMessageLabel;
     private javax.swing.JPanel statusPanel;
@@ -68,6 +66,8 @@ public class JChessView extends FrameView {
     public JDialog newGameFrame;
     static GUI gui = null;
     GUI activeGUI;//in future it will be reference to active tab
+
+    private FileMenuView fileMenuView;
 
     public JChessView(SingleFrameApplication app) {
         super(app);
@@ -187,11 +187,7 @@ public class JChessView extends FrameView {
         mainPanel = new javax.swing.JPanel();
         gamesPane = new JChessTabbedPane();
         menuBar = new javax.swing.JMenuBar();
-        javax.swing.JMenu fileMenu = new javax.swing.JMenu();
-        newGameItem = new javax.swing.JMenuItem();
-        loadGameItem = new javax.swing.JMenuItem();
-        saveGameItem = new javax.swing.JMenuItem();
-        javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
+
 
 
         optionsMenu = new javax.swing.JMenu();
@@ -233,37 +229,9 @@ public class JChessView extends FrameView {
 //        ResourceMap parentMap = new ResourceMap(null, JChessView.class.getClassLoader(), "JChessApp");
         ResourceMap resourceMap = new ResourceMap(getResourceMap(), JChessView.class.getClassLoader(), "JChessView", "JChessApp");
         //new ResourceMap(getResourceMap(), JChessView.class.getClassLoader(), "JChessView");
-        fileMenu.setText(resourceMap.getString("fileMenu.text")); // NOI18N
-        fileMenu.setName("fileMenu"); // NOI18N
 
-        newGameItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
-        newGameItem.setText(resourceMap.getString("newGameItem.text")); // NOI18N
-        newGameItem.setName("newGameItem"); // NOI18N
-        fileMenu.add(newGameItem);
-
-
-        loadGameItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, java.awt.event.InputEvent.CTRL_MASK));
-        loadGameItem.setText(resourceMap.getString("loadGameItem.text")); // NOI18N
-        loadGameItem.setName("loadGameItem"); // NOI18N
-        fileMenu.add(loadGameItem);
-
-
-        saveGameItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
-        saveGameItem.setText(resourceMap.getString("saveGameItem.text")); // NOI18N
-        saveGameItem.setName("saveGameItem"); // NOI18N
-        fileMenu.add(saveGameItem);
-
-
-        javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(jchess.JChessApp.class).getContext().getActionMap(JChessView.class, this);
-        exitMenuItem.setAction(actionMap.get("quit")); // NOI18N
-        exitMenuItem.setName("exitMenuItem"); // NOI18N
-        fileMenu.add(exitMenuItem);
-
-        menuBar.add(fileMenu);
-
-
-
-
+        fileMenuView = new FileMenuView(resourceMap);
+        menuBar.add(fileMenuView.fileMenu);
 
         GameMenuView gameMenuView = new GameMenuView(resourceMap, gui, gamesPane);
         menuBar.add(gameMenuView.gameMenu);
@@ -280,6 +248,7 @@ public class JChessView extends FrameView {
         helpMenu.setText(resourceMap.getString("helpMenu.text")); // NOI18N
         helpMenu.setName("helpMenu"); // NOI18N
 
+        javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(jchess.JChessApp.class).getContext().getActionMap(JChessView.class, this);
         aboutMenuItem.setAction(actionMap.get("showAboutBox")); // NOI18N
         aboutMenuItem.setName("aboutMenuItem"); // NOI18N
         helpMenu.add(aboutMenuItem);
@@ -326,6 +295,11 @@ public class JChessView extends FrameView {
         setComponent(mainPanel);
         setMenuBar(menuBar);
         setStatusBar(statusPanel);
+
+        fileMenuView.newGameItem.addActionListener(this);
+        fileMenuView.loadGameItem.addActionListener(this);
+        fileMenuView.saveGameItem.addActionListener(this);
+        this.themeSettingsMenu.addActionListener(this);
     }// </editor-fold>//GEN-END:initComponents
 
     public Game getActiveTabGame() throws ArrayIndexOutOfBoundsException {
@@ -335,6 +309,68 @@ public class JChessView extends FrameView {
 
     public int getNumberOfOpenedTabs() {
         return this.gamesPane.getTabCount();
+    }
+
+    public void actionPerformed(ActionEvent event) {
+        Object target = event.getSource();
+        if (target == fileMenuView.newGameItem) {
+            this.newGameFrame = new NewGameWindow();
+            JChessApp.getApplication().show(this.newGameFrame);
+        } else if (target == fileMenuView.saveGameItem) { //saveGame
+            if (this.gamesPane.getTabCount() == 0) {
+                JOptionPane.showMessageDialog(null, Settings.lang("save_not_called_for_tab"));
+                return;
+            }
+            while (true) {//until
+                JFileChooser fc = new JFileChooser();
+                int retVal = fc.showSaveDialog(this.gamesPane);
+                if (retVal == JFileChooser.APPROVE_OPTION) {
+                    File selFile = fc.getSelectedFile();
+                    Game tempGUI = (Game) this.gamesPane.getComponentAt(this.gamesPane.getSelectedIndex());
+                    if (!selFile.exists()) {
+                        try {
+                            selFile.createNewFile();
+                        } catch (java.io.IOException exc) {
+                            Log.log(Level.SEVERE, "error creating file: " + exc);
+                        }
+                    } else if (selFile.exists()) {
+                        int opt = JOptionPane.showConfirmDialog(tempGUI, Settings.lang("file_exists"), Settings.lang("file_exists"), JOptionPane.YES_NO_OPTION);
+                        if (opt == JOptionPane.NO_OPTION)//if user choose to now overwrite
+                        {
+                            continue; // go back to file choose
+                        }
+                    }
+                    if (selFile.canWrite()) {
+                        tempGUI.saveGame(selFile);
+                    }
+                    Log.log(fc.getSelectedFile().isFile());
+                    break;
+                } else if (retVal == JFileChooser.CANCEL_OPTION) {
+                    break;
+                }
+                ///JChessView.gui.game.saveGame(fc.);
+            }
+        } else if (target == fileMenuView.loadGameItem) { //loadGame
+            JFileChooser fc = new JFileChooser();
+            int retVal = fc.showOpenDialog(this.gamesPane);
+            if (retVal == JFileChooser.APPROVE_OPTION) {
+                File file = fc.getSelectedFile();
+                if (file.exists() && file.canRead()) {
+                    Game.loadGame(file);
+                }
+            }
+        } else if (target == this.themeSettingsMenu) {
+            try {
+                ThemeChooseWindow choose = new ThemeChooseWindow(this.getFrame());
+                JChessApp.getApplication().show(choose);
+            } catch (Exception exc) {
+                JOptionPane.showMessageDialog(
+                        JChessApp.getApplication().getMainFrame(),
+                        exc.getMessage()
+                );
+                Log.log(Level.SEVERE, "Something wrong creating window - perhaps themeList is null");
+            }
+        }
     }
 
 }
