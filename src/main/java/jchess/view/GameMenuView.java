@@ -14,21 +14,17 @@ public class GameMenuView {
     private javax.swing.JMenuItem rewindToEnd;
     private GUI gui = null;
     private javax.swing.JTabbedPane gamesPane;
-
     public GameMenuView(ResourceMap resourceMap, GUI gui, JTabbedPane gamesPane) {
         this.gameMenu = new javax.swing.JMenu();
         this.gui = gui;
         this.gamesPane = gamesPane;
-
         moveBackItem = new javax.swing.JMenuItem();
         moveForwardItem = new javax.swing.JMenuItem();
         rewindToBegin = new javax.swing.JMenuItem();
         rewindToEnd = new javax.swing.JMenuItem();
-
         gameMenu.setText(resourceMap.getString("gameMenu.text")); // NOI18N
         gameMenu.setName("gameMenu"); // NOI18N
         gameMenu.add(moveBackItem);
-
         moveBackItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Z, java.awt.event.InputEvent.CTRL_MASK));
         moveBackItem.setText(resourceMap.getString("moveBackItem.text")); // NOI18N
         moveBackItem.setName("moveBackItem"); // NOI18N
@@ -42,8 +38,6 @@ public class GameMenuView {
                 moveBackItemActionPerformed(evt);
             }
         });
-
-
         moveForwardItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Y, java.awt.event.InputEvent.CTRL_MASK));
         moveForwardItem.setText(resourceMap.getString("moveForwardItem.text")); // NOI18N
         moveForwardItem.setName("moveForwardItem"); // NOI18N
@@ -111,15 +105,9 @@ public class GameMenuView {
         return activeGame;
     }
 
-    private void moveForwardItemMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_moveForwardItemMouseClicked
-    {//GEN-HEADEREND:event_moveForwardItemMouseClicked
-        // TODO add your handling code here:
-
-    }//GEN-LAST:event_moveForwardItemMouseClicked
-
+    private void moveForwardItemMouseClicked(java.awt.event.MouseEvent evt){ }
     private void moveForwardItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_moveForwardItemActionPerformed
-    {//GEN-HEADEREND:event_moveForwardItemActionPerformed
-        // TODO add your handling code here:
+    {
         if (gui != null && gui.game != null) {
             gui.game.redo();
         } else {
@@ -135,7 +123,6 @@ public class GameMenuView {
             }
         }
     }//GEN-LAST:event_moveForwardItemActionPerformed
-
     private void rewindToBeginActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_rewindToBeginActionPerformed
     {//GEN-HEADEREND:event_rewindToBeginActionPerformed
         try {
@@ -149,7 +136,6 @@ public class GameMenuView {
             JOptionPane.showMessageDialog(null, exc.getMessage());
         }
     }//GEN-LAST:event_rewindToBeginActionPerformed
-
     private void rewindToEndActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_rewindToEndActionPerformed
     {//GEN-HEADEREND:event_rewindToEndActionPerformed
         try {
@@ -163,6 +149,4 @@ public class GameMenuView {
             JOptionPane.showMessageDialog(null, exc.getMessage());
         }
     }//GEN-LAST:event_rewindToEndActionPerformed
-
-
 }
