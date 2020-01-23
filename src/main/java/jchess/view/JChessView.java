@@ -46,13 +46,13 @@ public class JChessView extends FrameView implements ActionListener {
     public javax.swing.JPanel mainPanel;
     private javax.swing.JMenuBar menuBar;
 
-    private javax.swing.JMenu optionsMenu;
+
     private javax.swing.JProgressBar progressBar;
 
     private javax.swing.JLabel statusAnimationLabel;
     private javax.swing.JLabel statusMessageLabel;
     private javax.swing.JPanel statusPanel;
-    public javax.swing.JMenuItem themeSettingsMenu;
+
     // End of variables declaration//GEN-END:variables
     //private JTabbedPaneWithIcon gamesPane;
     private final Timer messageTimer;
@@ -68,6 +68,7 @@ public class JChessView extends FrameView implements ActionListener {
     GUI activeGUI;//in future it will be reference to active tab
 
     private FileMenuView fileMenuView;
+    private OptionsMenuView optionsMenuView;
 
     public JChessView(SingleFrameApplication app) {
         super(app);
@@ -187,11 +188,7 @@ public class JChessView extends FrameView implements ActionListener {
         mainPanel = new javax.swing.JPanel();
         gamesPane = new JChessTabbedPane();
         menuBar = new javax.swing.JMenuBar();
-
-
-
-        optionsMenu = new javax.swing.JMenu();
-        themeSettingsMenu = new javax.swing.JMenuItem();
+        
         javax.swing.JMenu helpMenu = new javax.swing.JMenu();
         javax.swing.JMenuItem aboutMenuItem = new javax.swing.JMenuItem();
         statusPanel = new javax.swing.JPanel();
@@ -236,14 +233,8 @@ public class JChessView extends FrameView implements ActionListener {
         GameMenuView gameMenuView = new GameMenuView(resourceMap, gui, gamesPane);
         menuBar.add(gameMenuView.gameMenu);
 
-        optionsMenu.setText(resourceMap.getString("optionsMenu.text")); // NOI18N
-        optionsMenu.setName("optionsMenu"); // NOI18N
-
-        themeSettingsMenu.setText(resourceMap.getString("themeSettingsMenu.text")); // NOI18N
-        themeSettingsMenu.setName("themeSettingsMenu"); // NOI18N
-        optionsMenu.add(themeSettingsMenu);
-
-        menuBar.add(optionsMenu);
+        optionsMenuView = new OptionsMenuView(resourceMap);
+        menuBar.add(optionsMenuView.optionsMenu);
 
         helpMenu.setText(resourceMap.getString("helpMenu.text")); // NOI18N
         helpMenu.setName("helpMenu"); // NOI18N
@@ -299,7 +290,7 @@ public class JChessView extends FrameView implements ActionListener {
         fileMenuView.newGameItem.addActionListener(this);
         fileMenuView.loadGameItem.addActionListener(this);
         fileMenuView.saveGameItem.addActionListener(this);
-        this.themeSettingsMenu.addActionListener(this);
+        optionsMenuView.themeSettingsMenu.addActionListener(this);
     }// </editor-fold>//GEN-END:initComponents
 
     public Game getActiveTabGame() throws ArrayIndexOutOfBoundsException {
@@ -359,7 +350,7 @@ public class JChessView extends FrameView implements ActionListener {
                     Game.loadGame(file);
                 }
             }
-        } else if (target == this.themeSettingsMenu) {
+        } else if (target == optionsMenuView.themeSettingsMenu) {
             try {
                 ThemeChooseWindow choose = new ThemeChooseWindow(this.getFrame());
                 JChessApp.getApplication().show(choose);
