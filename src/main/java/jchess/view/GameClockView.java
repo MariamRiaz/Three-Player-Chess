@@ -18,6 +18,7 @@ public class GameClockView extends JPanel {
 
     public GameClockView(Game game){
         this.settings = game.getSettings();
+        this.updateClocks(new int[]{0, 0, 0});
     }
 
     public void paint(Graphics g) {
@@ -67,7 +68,6 @@ public class GameClockView extends JPanel {
     }
 
     public void updateClocks(int[] timeSpentByPlayers){
-        this.repaint();
         int whiteMinutes = (int) timeSpentByPlayers[0]/60;
         int whiteSeconds = (int) timeSpentByPlayers[0]%60;
         whiteClock = String.format("%02d", whiteMinutes) + ":" + String.format("%02d", whiteSeconds);
@@ -77,6 +77,7 @@ public class GameClockView extends JPanel {
         int grayMinutes = (int) timeSpentByPlayers[2]/60;
         int graySeconds = (int) timeSpentByPlayers[2]%60;
         grayClock = String.format("%02d", grayMinutes) + ":" + String.format("%02d", graySeconds);
+        this.repaint();
     }
 
 }

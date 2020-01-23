@@ -115,6 +115,7 @@ public class GameClock implements Runnable {
 		while (true) {
 			if (this.runningClock != null) {
 				this.runningClock.increment();
+				if((this.timeSpentByPlayers[0] > 0) && (this.timeSpentByPlayers[1] > 0) && (this.timeSpentByPlayers[2] > 0)){
 				if(this.activePlayer == PlayerColors.WHITE){
 					this.timeSpentByPlayers[0] = this.timeSpentByPlayers[0]  - 1;
 				}
@@ -130,12 +131,13 @@ public class GameClock implements Runnable {
 				} catch (InterruptedException e) {
 					Log.log(Level.SEVERE, "Some error in gameClock thread: " + e);
 				}
+				}
 				// if(this.game.blockedChessboard)
 				// this.game.blockedChessboard = false;
 
-				if ((this.timeSpentByPlayers[0]  == 0) ||
+				if (this.runningClock != null && ((this.timeSpentByPlayers[0]  == 0) ||
 						(this.timeSpentByPlayers[1]  == 0) ||
-						(this.timeSpentByPlayers[2]  == 0) ) {
+						(this.timeSpentByPlayers[2]  == 0) )) {
 					this.timeOver();
 				}
 			}
