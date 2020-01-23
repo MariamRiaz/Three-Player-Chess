@@ -42,7 +42,6 @@ public class JChessView extends FrameView implements ActionListener {
     // Variables declaration - do not modify//GEN-BEGIN:variables
 
     public javax.swing.JTabbedPane gamesPane;
-
     public javax.swing.JPanel mainPanel;
     private javax.swing.JMenuBar menuBar;
 
@@ -61,7 +60,7 @@ public class JChessView extends FrameView implements ActionListener {
     private final Icon[] busyIcons = new Icon[15];
     private int busyIconIndex = 0;
 
-    private JDialog aboutBox;
+
     private PawnPromotionWindow promotionBox;
     public JDialog newGameFrame;
     static GUI gui = null;
@@ -69,6 +68,7 @@ public class JChessView extends FrameView implements ActionListener {
 
     private FileMenuView fileMenuView;
     private OptionsMenuView optionsMenuView;
+    private HelpMenuView helpMenuView;
 
     public JChessView(SingleFrameApplication app) {
         super(app);
@@ -145,15 +145,7 @@ public class JChessView extends FrameView implements ActionListener {
 
 
 
-    @Action
-    public void showAboutBox() {
-        if (aboutBox == null) {
-            JFrame mainFrame = JChessApp.getApplication().getMainFrame();
-            aboutBox = new JChessAboutBox(mainFrame);
-            aboutBox.setLocationRelativeTo(mainFrame);
-        }
-        JChessApp.getApplication().show(aboutBox);
-    }
+
 
     public String showPawnPromotionBox(String color) {
         if (promotionBox == null) {
@@ -188,9 +180,8 @@ public class JChessView extends FrameView implements ActionListener {
         mainPanel = new javax.swing.JPanel();
         gamesPane = new JChessTabbedPane();
         menuBar = new javax.swing.JMenuBar();
-        
-        javax.swing.JMenu helpMenu = new javax.swing.JMenu();
-        javax.swing.JMenuItem aboutMenuItem = new javax.swing.JMenuItem();
+
+
         statusPanel = new javax.swing.JPanel();
         javax.swing.JSeparator statusPanelSeparator = new javax.swing.JSeparator();
         statusMessageLabel = new javax.swing.JLabel();
@@ -236,22 +227,12 @@ public class JChessView extends FrameView implements ActionListener {
         optionsMenuView = new OptionsMenuView(resourceMap);
         menuBar.add(optionsMenuView.optionsMenu);
 
-        helpMenu.setText(resourceMap.getString("helpMenu.text")); // NOI18N
-        helpMenu.setName("helpMenu"); // NOI18N
-
-        javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(jchess.JChessApp.class).getContext().getActionMap(JChessView.class, this);
-        aboutMenuItem.setAction(actionMap.get("showAboutBox")); // NOI18N
-        aboutMenuItem.setName("aboutMenuItem"); // NOI18N
-        helpMenu.add(aboutMenuItem);
-
-        menuBar.add(helpMenu);
+        helpMenuView = new HelpMenuView(resourceMap);
+        menuBar.add(helpMenuView.helpMenu);
 
         statusPanel.setName("statusPanel"); // NOI18N
-
         statusPanelSeparator.setName("statusPanelSeparator"); // NOI18N
-
         statusMessageLabel.setName("statusMessageLabel"); // NOI18N
-
         statusAnimationLabel.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         statusAnimationLabel.setName("statusAnimationLabel"); // NOI18N
 
