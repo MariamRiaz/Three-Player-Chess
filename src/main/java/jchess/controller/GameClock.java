@@ -100,6 +100,7 @@ public class GameClock implements Runnable {
 		else {
 			this.activePlayer = PlayerColors.WHITE;
 			this.runningClock.resetTimer();
+
 		}
 	}
 

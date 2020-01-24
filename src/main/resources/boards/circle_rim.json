@@ -1,0 +1,190 @@
+{
+"rows": 24,
+"columns": 6,
+"continuous-rows": true,
+"connected-inner-rim": true,
+"players": ["WH", "BL", "GR"],
+"pieces": [
+    {
+        "square": [5, 0],
+        "type": "Rook",
+        "player": "WH"
+    },
+    {
+        "square": [5, 1],
+        "type": "Knight",
+        "player": "WH"
+    },
+    {
+        "square": [5, 2],
+        "type": "Queen",
+        "player": "WH"
+    },
+    {
+        "square": [5, 3],
+        "type": "King",
+        "player": "WH",
+        "crucial": true
+    },
+    {
+        "square": [5, 4],
+        "type": "Knight",
+        "player": "WH"
+    },{
+        "square": [5, 5],
+        "type": "Rook",
+        "player": "WH"
+    },
+    {
+        "square": [4, 0],
+        "type": "Pawn",
+        "player": "WH"
+    },
+    {
+        "square": [4, 1],
+        "type": "Pawn",
+        "player": "WH"
+    },
+    {
+        "square": [4, 2],
+        "type": "Pawn",
+        "player": "WH"
+    },
+    {
+        "square": [4, 3],
+        "type": "Pawn",
+        "player": "WH"
+    },
+    {
+        "square": [4, 4],
+        "type": "Pawn",
+        "player": "WH"
+    },{
+        "square": [4, 5],
+        "type": "Pawn",
+        "player": "WH"
+    },
+    
+    {
+        "square": [5, 8],
+        "type": "Rook",
+        "player": "BL"
+    },
+    {
+        "square": [5, 9],
+        "type": "Knight",
+        "player": "BL"
+    },
+    {
+        "square": [5, 10],
+        "type": "Queen",
+        "player": "BL"
+    },
+    {
+        "square": [5, 11],
+        "type": "King",
+        "player": "BL",
+        "crucial": true
+    },
+    {
+        "square": [5, 12],
+        "type": "Knight",
+        "player": "BL"
+    },
+    {
+        "square": [5, 13],
+        "type": "Rook",
+        "player": "BL"
+    },
+    {
+        "square": [4, 8],
+        "type": "Pawn",
+        "player": "BL"
+    },
+    {
+        "square": [4, 9],
+        "type": "Pawn",
+        "player": "BL"
+    },
+    {
+        "square": [4, 10],
+        "type": "Pawn",
+        "player": "BL"
+    },
+    {
+        "square": [4, 11],
+        "type": "Pawn",
+        "player": "BL"
+    },
+    {
+        "square": [4, 12],
+        "type": "Pawn",
+        "player": "BL"
+    },{
+        "square": [4, 13],
+        "type": "Pawn",
+        "player": "BL"
+    },
+    
+    {
+        "square": [5, 16],
+        "type": "Rook",
+        "player": "GR"
+    },
+    {
+        "square": [5, 17],
+        "type": "Knight",
+        "player": "GR"
+    },
+    {
+        "square": [5, 18],
+        "type": "Queen",
+        "player": "GR"
+    },
+    {
+        "square": [5, 19],
+        "type": "King",
+        "player": "GR",
+        "crucial": true
+    },
+    {
+        "square": [5, 20],
+        "type": "Knight",
+        "player": "GR"
+    },{
+        "square": [5, 21],
+        "type": "Rook",
+        "player": "GR"
+    },
+    {
+        "square": [4, 16],
+        "type": "Pawn",
+        "player": "GR"
+    },
+    {
+        "square": [4, 17],
+        "type": "Pawn",
+        "player": "GR"
+    },
+    {
+        "square": [4, 18],
+        "type": "Pawn",
+        "player": "GR"
+    },
+    {
+        "square": [4, 19],
+        "type": "Pawn",
+        "player": "GR"
+    },
+    {
+        "square": [4, 20],
+        "type": "Pawn",
+        "player": "GR"
+    },
+    {
+        "square": [4, 21],
+        "type": "Pawn",
+        "player": "GR"
+    },
+    ]
+}

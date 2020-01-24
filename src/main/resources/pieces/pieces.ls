@@ -1,0 +1,1 @@
+bishop.json|king.json|knight.json|pawn.json|queen.json|rook.json

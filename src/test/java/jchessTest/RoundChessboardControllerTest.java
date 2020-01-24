@@ -5,8 +5,10 @@ import jchess.Settings;
 import jchess.entities.Square;
 import jchess.controller.RoundChessboardController;
 import jchess.model.RoundChessboardModel;
+import jchess.move.Orientation;
+import jchess.pieces.Piece;
+import jchess.pieces.PieceLoader;
 import jchess.controller.MoveHistory;
-import jchess.pieces.PieceFactory;
 import jchess.view.RoundChessboardView;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,7 +37,7 @@ public class RoundChessboardControllerTest {
         moveHistoryMock = mock(MoveHistory.class);
         modelMock = mock(RoundChessboardModel.class);
         viewMock = mock(RoundChessboardView.class);
-        square = new Square(10, 10, PieceFactory.createKing(settingsMock.getPlayerWhite()));
+        square = new Square(10, 10, new Piece(PieceLoader.getPieceDefinition("King"), settingsMock.getPlayerWhite(), new Orientation()));
 
         controller = new RoundChessboardController(modelMock, viewMock, settingsMock, moveHistoryMock);
     }
