@@ -279,10 +279,13 @@ public class Game extends JPanel implements Observer, ComponentListener {
     public void switchActive() {
         if (activePlayer == settings.getPlayerWhite()) {
             activePlayer = settings.getPlayerBlack();
+            moveHistory.setActivePlayerColumn(MoveHistory.PlayerColumn.player2);
         } else if (activePlayer == settings.getPlayerBlack()) {
             activePlayer = settings.getPlayerGray();
+            moveHistory.setActivePlayerColumn(MoveHistory.PlayerColumn.player3);
         } else if (activePlayer == settings.getPlayerGray()) {
             activePlayer = settings.getPlayerWhite();
+            moveHistory.setActivePlayerColumn(MoveHistory.PlayerColumn.player1);
         }
         this.gameClock.switchPlayers();
     }
