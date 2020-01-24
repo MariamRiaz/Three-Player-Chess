@@ -88,19 +88,30 @@ public class GameClock implements Runnable {
 		}
 	}
 
-	public void switchPlayers() {
+	public void switchPlayers(boolean forward) {
+		if (forward) {
+			if (this.activePlayer == PlayerColors.WHITE) {
+				this.activePlayer = PlayerColors.BLACK;
+				this.runningClock.resetTimer();
+			} else if (this.activePlayer == PlayerColors.BLACK) {
+				this.activePlayer = PlayerColors.GRAY;
+				this.runningClock.resetTimer();
+			} else {
+				this.activePlayer = PlayerColors.WHITE;
+				this.runningClock.resetTimer();
 
-		if (this.activePlayer == PlayerColors.WHITE) {
-			this.activePlayer = PlayerColors.BLACK;
-			this.runningClock.resetTimer();
-		} else if (this.activePlayer == PlayerColors.BLACK) {
-			this.activePlayer = PlayerColors.GRAY;
-			this.runningClock.resetTimer();
-		}
-		else {
-			this.activePlayer = PlayerColors.WHITE;
-			this.runningClock.resetTimer();
-
+			}
+		} else {
+			if (this.activePlayer == PlayerColors.WHITE) {
+				this.activePlayer = PlayerColors.GRAY;
+				this.runningClock.resetTimer();
+			} else if (this.activePlayer == PlayerColors.BLACK) {
+				this.activePlayer = PlayerColors.WHITE;
+				this.runningClock.resetTimer();
+			} else {
+				this.activePlayer = PlayerColors.BLACK;
+				this.runningClock.resetTimer();
+			}
 		}
 	}
 
