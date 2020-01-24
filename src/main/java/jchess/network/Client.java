@@ -154,7 +154,7 @@ public class Client implements Runnable {
 
 					if (result == JOptionPane.YES_OPTION) {
 						game.getChessboardController().undo(true);
-						game.switchActive(false);
+						game.switchActive();
 						this.sendUndoAnswerPositive();
 					} else {
 						this.sendUndoAnswerNegative();

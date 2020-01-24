@@ -276,32 +276,15 @@ public class Game extends JPanel implements Observer, ComponentListener {
     /**
      * Method to switch active players after move
      */
-    public void switchActive(boolean forward) {
-    	if (forward) {
-	        if (activePlayer == settings.getPlayerWhite())
-	            activePlayer = settings.getPlayerBlack();
-	        else if (activePlayer == settings.getPlayerBlack())
-	            activePlayer = settings.getPlayerGray();
-	        else if (activePlayer == settings.getPlayerGray())
-	            activePlayer = settings.getPlayerWhite();
-    	}
-    	else {
-	        if (activePlayer == settings.getPlayerWhite())
-	            activePlayer = settings.getPlayerGray();
-	        else if (activePlayer == settings.getPlayerBlack())
-	            activePlayer = settings.getPlayerWhite();
-	        else if (activePlayer == settings.getPlayerGray())
-	            activePlayer = settings.getPlayerBlack();
-    	}
-        
-        this.gameClock.switch_clocks(forward);
-
-        if (activePlayer == settings.getPlayerWhite())
-        	moveHistory.setActivePlayerColumn(MoveHistory.PlayerColumn.player1);
-        else if (activePlayer == settings.getPlayerBlack())
-        	moveHistory.setActivePlayerColumn(MoveHistory.PlayerColumn.player2);
-        else if (activePlayer == settings.getPlayerGray())
-        	moveHistory.setActivePlayerColumn(MoveHistory.PlayerColumn.player3);
+    public void switchActive() {
+        if (activePlayer == settings.getPlayerWhite()) {
+            activePlayer = settings.getPlayerBlack();
+        } else if (activePlayer == settings.getPlayerBlack()) {
+            activePlayer = settings.getPlayerGray();
+        } else if (activePlayer == settings.getPlayerGray()) {
+            activePlayer = settings.getPlayerWhite();
+        }
+        this.gameClock.switchPlayers();
     }
 
     /**
@@ -317,7 +300,7 @@ public class Game extends JPanel implements Observer, ComponentListener {
      * Method to go to next move
      */
     private void nextMove() {
-        switchActive(true);
+        switchActive();
         Log.log("next move, active player: " + activePlayer.name + ", color: " + activePlayer.color.name() + ", type: "
                 + activePlayer.playerType.name());
         if (activePlayer.playerType == Player.playerTypes.localUser) {
@@ -353,7 +336,7 @@ public class Game extends JPanel implements Observer, ComponentListener {
         if (this.settings.gameType == Settings.gameTypes.local) {
             status = chessboardController.undo(true);
             if (status)
-                this.switchActive(false);
+                this.switchActive();
         } else if (this.settings.gameType == Settings.gameTypes.network) {
             this.client.sendUndoAsk();
             status = true;
