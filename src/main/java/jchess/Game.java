@@ -26,6 +26,7 @@ import jchess.controller.RoundChessboardController;
 import jchess.entities.Player;
 import jchess.entities.Square;
 import jchess.exceptions.ReadGameError;
+import jchess.helper.Images;
 import jchess.helper.Log;
 import jchess.helper.RoundChessboardLoader;
 import jchess.model.RoundChessboardModel;
@@ -73,7 +74,7 @@ public class Game extends JPanel implements Observer, ComponentListener {
         RoundChessboardView view =
                 new RoundChessboardView(
                         chessboardSize,
-                        "3-player-board.png",
+                        Images.BOARD,
                         model.getRows(),
                         model.getColumns(),
                         model.squares);
@@ -137,8 +138,8 @@ public class Game extends JPanel implements Observer, ComponentListener {
         }
         Calendar cal = Calendar.getInstance();
         String info = new String("[Event \"Game\"]\n[Date \"" + cal.get(Calendar.YEAR) + "." + (cal.get(Calendar.MONTH) + 1) + "."
-                + cal.get(Calendar.DAY_OF_MONTH) + "\"]\n" + "[White \"" + this.settings.getPlayerWhite().name + "\"]\n[Black \""
-                + this.settings.getPlayerBlack().name + "\"]\n\n");
+                + cal.get(Calendar.DAY_OF_MONTH) + "\"]\n" + "[White \"" + this.settings.getPlayerWhite().getName() + "\"]\n[Black \""
+                + this.settings.getPlayerBlack().getName() + "\"]\n\n");
         String str = new String("") + info + this.moveHistoryController.getMovesInString();
         try {
             fileW.write(str);
@@ -180,8 +181,8 @@ public class Game extends JPanel implements Observer, ComponentListener {
         }
         Game newGUI = JChessApp.jcv.addNewTab(whiteName + " vs. " + blackName);
         Settings locSetts = newGUI.settings;
-        locSetts.getPlayerBlack().name = blackName;
-        locSetts.getPlayerWhite().name = whiteName;
+        locSetts.getPlayerBlack().setName(blackName);
+        locSetts.getPlayerWhite().setName(whiteName);
         locSetts.gameMode = Settings.gameModes.loadGame;
 
         newGUI.newGame();
@@ -266,15 +267,30 @@ public class Game extends JPanel implements Observer, ComponentListener {
     /**
      * Method to switch active players after move
      */
-    public void switchActive() {
-        if (activePlayer == settings.getPlayerWhite()) {
-            activePlayer = settings.getPlayerBlack();
-        } else if (activePlayer == settings.getPlayerBlack()) {
-            activePlayer = settings.getPlayerGray();
-        } else if (activePlayer == settings.getPlayerGray()) {
-            activePlayer = settings.getPlayerWhite();
-        }
-        this.gameClock.switchPlayers();
+    public void switchActive(boolean forward) {
+        if (forward) {
+            if (activePlayer == settings.getPlayerWhite())
+                    activePlayer = settings.getPlayerBlack();
+            else if (activePlayer == settings.getPlayerBlack())
+                    activePlayer = settings.getPlayerGray();
+            else if (activePlayer == settings.getPlayerGray())
+                    activePlayer = settings.getPlayerWhite();
+                }
+        else {
+            if (activePlayer == settings.getPlayerWhite())
+                    activePlayer = settings.getPlayerGray();
+            else if (activePlayer == settings.getPlayerBlack())
+                    activePlayer = settings.getPlayerWhite();
+            else if (activePlayer == settings.getPlayerGray())
+                    activePlayer = settings.getPlayerBlack();
+                }
+            this.gameClock.switchPlayers(forward);
+                    if (activePlayer == settings.getPlayerWhite())
+                moveHistoryController.setActivePlayForColumn(MoveHistoryController.PlayerColumn.player1);
+            else if (activePlayer == settings.getPlayerBlack())
+                moveHistoryController.setActivePlayForColumn(MoveHistoryController.PlayerColumn.player2);
+            else if (activePlayer == settings.getPlayerGray())
+                moveHistoryController.setActivePlayForColumn(MoveHistoryController.PlayerColumn.player3);
     }
 
     /**
@@ -290,8 +306,8 @@ public class Game extends JPanel implements Observer, ComponentListener {
      * Method to go to next move
      */
     private void nextMove() {
-        switchActive();
-        this.blockedChessboard = false;
+        switchActive(true);
+            this.blockedChessboard = false;
     }
 
     /**
@@ -317,9 +333,9 @@ public class Game extends JPanel implements Observer, ComponentListener {
     public boolean undo() {
         boolean status;
 
-        status = chessboardController.undo(true);
-        if (status)
-            this.switchActive();
+            status = chessboardController.undo(true);
+            if (status)
+                this.switchActive(false);
         return status;
     }
 
@@ -349,7 +365,6 @@ public class Game extends JPanel implements Observer, ComponentListener {
         while (chessboardController.redo(true)) {
             result = true;
         }
-
         return result;
     }
 
@@ -395,7 +410,7 @@ public class Game extends JPanel implements Observer, ComponentListener {
                 HashSet<Piece> cp = chessboardController.getCrucialPieces(this.activePlayer);
                 for (Piece piece : cp)
                     if (chessboardController.pieceIsUnsavable(piece))
-                        this.endGame("Checkmate! " + piece.getPlayer().color.toString() + " player lose!");
+                        this.endGame("Checkmate! " + piece.getPlayer().getColor().name() + " player lose!");
             }
         } else if (blockedChessboard) {
             Log.log("Chessboard is blocked");

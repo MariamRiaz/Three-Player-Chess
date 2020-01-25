@@ -158,7 +158,7 @@ public class DrawNewGameSettings extends JPanel implements ActionListener, TextL
 			}
 			Log.log(this.time4Game.getActionCommand());
 			// this.time4Game.getComponent(this.time4Game.getSelectedIndex());
-			Log.log("****************\nStarting new game: " + pl1.name + " vs. " + pl2.name + "\ntime 4 game: "
+			Log.log("****************\nStarting new game: " + pl1.getName() + " vs. " + pl2.getName() + "\ntime 4 game: "
 					+ sett.timeForGame + "\ntime limit set: " + sett.timeLimitSet + "\nwhite on top?: "
 					+ "\n****************");// 4test
 			newGUI.newGame();// start new Game
