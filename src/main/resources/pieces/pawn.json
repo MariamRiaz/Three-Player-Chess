@@ -1,0 +1,30 @@
+{
+    "value": 1,
+    "type": "Pawn",
+    "symbol": "",
+    "moves": [ 
+        { 
+            "x": -1,
+            "y": 0,
+            "limit": 1,
+            "conditions": [ "OnlyMove" ]
+        },
+        { 
+            "x": -1,
+            "y": 0,
+            "limit": 2,
+            "conditions": [ "OnlyMove", "OnlyWhenFresh" ]
+        },
+        { 
+            "x": -1,
+            "y": 1,
+            "limit": 1,
+            "conditions": [ "OnlyAttack" ]
+        },
+        { 
+            "x": -1,
+            "y": -1,
+            "limit": 1,
+            "conditions": [ "OnlyAttack" ]
+        } ]
+}

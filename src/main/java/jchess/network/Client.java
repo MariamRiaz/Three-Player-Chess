@@ -161,7 +161,7 @@ public class Client implements Runnable {
 					}
 				} else if (in.equals("#undoAnswerPositive") && (this.wait4undoAnswer || this.isObserver)) {
 					this.wait4undoAnswer = false;
-					String lastMove = game.getMoveHistory().getMoves().get(game.getMoveHistory().getMoves().size() - 1);
+					String lastMove = game.getMoveHistoryController().getMoves().get(game.getMoveHistoryController().getMoves().size() - 1);
 					game.getChat().addMessage("** " + Settings.lang("permision_ok_4_undo_move") + ": " + lastMove + "**");
 					game.getChessboardController().undo(true);
 				} else if (in.equals("#undoAnswerNegative") && this.wait4undoAnswer) {

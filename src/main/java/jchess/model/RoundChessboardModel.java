@@ -2,12 +2,11 @@ package jchess.model;
 
 import jchess.helper.Log;
 import jchess.entities.Player;
-import jchess.Settings;
 import jchess.entities.Square;
 import jchess.pieces.Piece;
-import jchess.pieces.PieceFactory;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -17,36 +16,83 @@ import java.util.logging.Level;
  */
 public class RoundChessboardModel {
     public List<Square> squares;
-    public Piece kingWhite;
-    public Piece kingBlack;
-    public Piece kingGray;
+    private HashSet<Piece> crucialPieces = new HashSet<>();
     private int squaresPerRow;
     private int rows;
-    private boolean hasContinuousRows;
+    private boolean hasContinuousRows, innerRimConnected;
 
     /**
      * Constructor
      * @param rows              int     row count of the chessboard
      * @param squaresPerRow     int     count of squares per row of the chessboard
      * @param continuousRows    boolean
-     * @param settings          Settings    settings of the application
      */
-    public RoundChessboardModel(int rows, int squaresPerRow, boolean continuousRows, Settings settings) {
+    public RoundChessboardModel(int rows, int squaresPerRow, boolean continuousRows, boolean connectedInnerRim) {
+    	this.rows = rows;
+    	this.squaresPerRow = squaresPerRow;
+    	this.hasContinuousRows = continuousRows;
+    	this.innerRimConnected = connectedInnerRim;
+    	
         this.squares = new ArrayList<Square>();
-        this.squaresPerRow = squaresPerRow;
-        this.rows = rows;
-        this.hasContinuousRows = continuousRows;
-        
-        populateSquares(rows, squaresPerRow);
-        initializePieces(settings.getPlayerWhite(), settings.getPlayerBlack(), settings.getPlayerGray());
+        populateSquares();
     }
 
-    private void populateSquares(int rows, int squaresPerRow) {
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < squaresPerRow; j++) {
-                squares.add(new Square(j, i, null));
-            }
-        }
+    private void populateSquares() {
+    	squares.clear();
+    	
+        for (int i = 0; i < rows; i++)
+            for (int j = 0; j < squaresPerRow; j++) 
+            	squares.add(new Square(j, i, null));
+    }
+    
+    /**
+     * Converts the given Square y index to an array index in the list of Squares of this board, taking board linkage and into account.
+     * @param y The index to convert, e.g. -1 or 10.
+     * @return The corresponding array index between 0 and the number of rows in the board minus one.
+     */
+    private int normalizeY(int y) {
+    	return y % rows < 0 ? (y % rows) + rows : y % rows;
+    }
+    
+    /**
+     * @return The number of rows.
+     */
+    public int getRows() {
+    	return rows;
+    }
+    
+    /**
+     * @return The number of Squares per row.
+     */
+    public int getColumns() {
+    	return squaresPerRow;
+    }
+    
+    /**
+     * Adds the given Piece to the list of crucial Pieces, which when taken cause their Player to lose.
+     * @param piece The Piece to add.
+     */
+    public void addCrucialPiece(Piece piece) {
+    	if (piece == null)
+    		return;
+    	
+    	crucialPieces.add(piece);
+    }
+    
+    /**
+     * @param player The Player whose Pieces to return.
+     * @return The Pieces of the given Player, which cause him to lose if they are taken.
+     */
+    public HashSet<Piece> getCrucialPieces(Player player) {
+    	if (player == null)
+    		return new HashSet<>();
+    	
+    	HashSet<Piece> retVal = new HashSet<>();
+    	for (Piece el : crucialPieces)
+    		if (el.getPlayer().color.equals(player.color))
+    			retVal.add(el);
+    	
+    	return retVal;
     }
 
     /**
@@ -56,14 +102,46 @@ public class RoundChessboardModel {
      * @return      Square corresponding to the given x and y index
      */
     public Square getSquare(int x, int y) {
-    	int newY = hasContinuousRows ? (y % rows < 0 ? (y % rows) + rows : y % rows) : y;
+    	if (hasContinuousRows) {
+	    	y = normalizeY(y);
+	    	
+	    	if (innerRimConnected && x < 0) {
+	    		x = -x - 1;
+	    		y = normalizeY(y + rows / 2);
+	    	}
+    	}
     	
-        Optional<Square> optionalSquare = squares.stream().filter(s ->
-        	s.getPozX() == x && s.getPozY() == newY).findFirst();
+    	final int newX = x, newY = y;
+    	Optional<Square> optionalSquare = squares.stream().filter(s ->
+        	s.getPozX() == newX && s.getPozY() == newY).findFirst();
         if(optionalSquare.equals(Optional.empty()))
             return null;
             
-        return optionalSquare.get();//TODO
+        return optionalSquare.get();
+    }
+    
+    /**
+     * Determines whether or not the given Square is in the area where e.g. pawns of the given player are promoted.
+     * @param square The Square to check.
+     * @param color The color of the Player for whom to check.
+     * @return Whether the given Player's Pieces upon reaching the given Square may be promoted.
+     */
+    public boolean isInPromotionArea(Square square, Player.colors color) {
+    	return square != null && square.getPozX() == 5;
+    }
+
+    /**
+     * @return Whether or not the board has continuous rows, i.e. is circular.
+     */
+    public boolean getHasContinuousRows() {
+    	return hasContinuousRows;
+    }
+    
+    /**
+     * @return Whether or not the board inner rim is connected, if circular. I.e. whether jumps across the middle are possible.
+     */
+    public boolean getInnerRimConnected() {
+    	return hasContinuousRows && innerRimConnected;
     }
 
     /**
@@ -72,11 +150,45 @@ public class RoundChessboardModel {
      * @return          Square where the given Piece is located on
      */
     public Square getSquare(Piece piece) {
-        Optional<Square> optionalSquare = squares.stream().filter(s -> s.getPiece() == piece).findFirst();
-        if(optionalSquare.equals(Optional.empty())) {
+    	if (piece == null)
+    		return null;
+    	
+    	return getSquare(piece.getID());
+    }
+    
+    /**
+     * gets the Square where the given Piece is located on
+     * @param id     	id of Piece to get the Square from
+     * @return          Square where the given Piece is located on
+     */
+    public Square getSquare(int id) {
+        Optional<Square> optionalSquare = squares.stream().filter(s -> s.getPiece() != null && s.getPiece().getID() == id).findFirst();
+        if(optionalSquare.equals(Optional.empty()))
             return null;
-        }
+        
         return optionalSquare.get();//TODO
+    }
+    
+    /**
+     * Gets all Squares between the two given Squares, including both of them.
+     * @param one The first Square.
+     * @param two The second Square.
+     * @return The Squares between the two given ones, including them.
+     */
+    public HashSet<Square> getSquaresBetween(Square one, Square two) {
+    	HashSet<Square> retVal = new HashSet<>();
+    	
+    	if (one == null || two == null) 
+    		return retVal;
+    	
+    	final int minX = Math.min(one.getPozX(), two.getPozX()), maxX = Math.max(one.getPozX(), two.getPozX()),
+    			minY = Math.min(one.getPozY(), two.getPozY()), maxY = Math.max(one.getPozY(), two.getPozY());
+    	
+    	for (int i = minX; i <= maxX; i++)
+    		for (int j = minY; j <= maxY; j++)
+    			retVal.add(this.getSquare(i, j));
+    	
+    	return retVal;
     }
 
     /**
@@ -90,51 +202,12 @@ public class RoundChessboardModel {
             Log.log(Level.WARNING, "Piece was not set on square because square is null");
             return null;
         }
+        
+        Square prev = getSquare(piece);
+        if (prev != null)
+        	prev.setPiece(null);
+        
         square.setPiece(piece);
         return piece;
-    }
-
-    private void initializePiecesForPlayer(Player player, int row) {
-        initializePawnsForPlayer(player, row);
-        initializeHeavyPiecesForPlayer(player, row);
-    }
-
-    private void initializeHeavyPiecesForPlayer(Player player, int row) {
-        Piece king = PieceFactory.createKing(player);
-        setPieceOnSquare(PieceFactory.createRook(player), getSquare(0, row + 1));
-        setPieceOnSquare(PieceFactory.createKnight(player), getSquare(1, row + 1));
-        setPieceOnSquare(PieceFactory.createQueen(player), getSquare(2, row + 1));
-        setPieceOnSquare(king, getSquare(3, row + 1));
-        setPieceOnSquare(PieceFactory.createKnight(player), getSquare(4, row + 1));
-        setPieceOnSquare(PieceFactory.createRook(player), getSquare(5, row + 1));
-
-        if (player.color == Player.colors.white)
-            kingWhite = king;
-        else if (player.color == Player.colors.gray)
-        	kingGray = king;
-        else kingBlack = king;
-    }
-
-    private void initializePawnsForPlayer(Player player, int row) {
-        for (int i = 0; i < squaresPerRow; i++) {
-            setPieceOnSquare(PieceFactory.createPawn(player, true), getSquare(i, row));
-            setPieceOnSquare(PieceFactory.createPawn(player, false), getSquare(i, row + 2));
-        }
-    }
-
-    /**
-     * initializes Pieces for given players on startup
-     * @param plWhite   Player white player
-     * @param plBlack   Player black player
-     * @param plGray    Player gray player
-     */
-    public void initializePieces(Player plWhite, Player plBlack, Player plGray) {
-        Player player1 = plBlack;
-        Player player2 = plWhite;
-        Player player3 = plGray;
-
-        initializePiecesForPlayer(player1, 0);
-        initializePiecesForPlayer(player2, 8);
-        initializePiecesForPlayer(player3, 16);
     }
 }
