@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import jchess.JChessApp;
+import jchess.controller.RoundChessboardController;
 import jchess.entities.Player;
 import jchess.entities.Square;
 import jchess.model.RoundChessboardModel;
@@ -80,81 +81,20 @@ public class MoveEffect {
 	public boolean isFromMove() {
 		return fromMove;
 	}
-	
-	/**
-	 * Applies this MoveEffect to the given board model and view: moves Pieces and changes their states.
-	 * @param model The board model.
-	 * @param view The board view.
-	 */
-    public void apply(RoundChessboardModel model, RoundChessboardView view) {
-    	if (model == null)
-    		return;
-    	
-    	for (PositionChange ent : positionChanges) {
-    		if (view != null)
-    			view.removeVisual(model.getSquare(ent.getPiece()));
-    		model.setPieceOnSquare(ent.getPiece(), ent.getSquare());
-    		if (view != null)
-    			view.setVisual(ent.getSquare().getPiece(), ent.getSquare());
-    	}
-    	
-    	for (StateChange ent : stateChanges) {
-    		final Square sq = model.getSquare(ent.getID());
-    		if (sq == null)
-    			continue;
-
-    		if (ent.getState().getDefinition() == PieceDefinition.PLACEHOLDER)
-    			ent.getState().setDefinition(PieceLoader.getPieceDefinition(
-    					JChessApp.jcv.showPawnPromotionBox(ent.getState().getPlayer().getColor().getColor())));
-    		
-    		model.setPieceOnSquare(ent.getState(), sq);
-    		if (view != null)
-    			view.setVisual(ent.getState(), sq.getPozX(), sq.getPozY());
-    	}
-    }
     
-    /**
-     * Reverses this MoveEffect on the given board model and view: moves Pieces back and returns them to their previous states. 
-     * Assumes this MoveEffect is the last one that was applied to the given board. Behavior undefined otherwise.
-     * @param model The board model.
-     * @param view The board view.
-     */
-    public void reverse(RoundChessboardModel model, RoundChessboardView view) {
-    	if (model == null)
-    		return;
-    	
-    	for (StateChange ent : scReverse) {
-    		final Square sq = model.getSquare(ent.getID());
-    		if (sq == null)
-    			continue;
-    		
-    		model.setPieceOnSquare(ent.getState(), sq);
-    		if (view != null)
-    			view.setVisual(ent.getState(), sq.getPozX(), sq.getPozY());
-    	}
-    	
-    	for (PositionChange ent : pcReverse) {
-    		if (view != null)
-    			view.removeVisual(model.getSquare(ent.getPiece()));
-    		model.setPieceOnSquare(ent.getPiece(), ent.getSquare());
-    		if (view != null)
-    			view.setVisual(ent.getSquare().getPiece(), ent.getSquare());
-    	}
-    }
-    
-    protected ArrayList<PositionChange> getPositionChanges() {
+    public ArrayList<PositionChange> getPositionChanges() {
     	return positionChanges;
     }
     
-    protected ArrayList<PositionChange> getPositionChangesReverse() {
+    public ArrayList<PositionChange> getPositionChangesReverse() {
     	return pcReverse;
     }
     
-    protected ArrayList<StateChange> getStateChanges() {
+    public ArrayList<StateChange> getStateChanges() {
     	return stateChanges;
     }
     
-    protected ArrayList<StateChange> getStateChangesReverse() {
+    public ArrayList<StateChange> getStateChangesReverse() {
     	return scReverse;
     }
 }

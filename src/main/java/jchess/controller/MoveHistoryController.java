@@ -148,7 +148,7 @@ public class MoveHistoryController {
         return moveHistoryModel.move;
     }
 
-    synchronized Queue<MoveEffect> undo() {
+    Queue<MoveEffect> undo() {
     	Queue<MoveEffect> retVal = new PriorityQueue<>();
         
     	MoveEffect toAdd = null;
@@ -161,7 +161,7 @@ public class MoveHistoryController {
         return retVal;
     }
     
-    synchronized MoveEffect undoOne() {
+    MoveEffect undoOne() {
     	MoveEffect last = null;
     	
         try {
@@ -196,7 +196,7 @@ public class MoveHistoryController {
         return last;
     }
 
-    synchronized Queue<MoveEffect> redo() {
+    Queue<MoveEffect> redo() {
     	Queue<MoveEffect> retVal = new PriorityQueue<>();
         
     	MoveEffect toAdd = null;
@@ -212,7 +212,7 @@ public class MoveHistoryController {
         return retVal;
     }
     
-    synchronized MoveEffect redoOne() {
+    MoveEffect redoOne() {
         try {
             MoveEffect first = moveHistoryModel.moveForwardStack.pop();
             addMove(first, true, first.isFromMove());

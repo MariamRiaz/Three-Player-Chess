@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Random;
 
 import jchess.controller.MoveHistoryController;
+import jchess.controller.RoundChessboardController;
 import jchess.entities.Square;
 import jchess.helper.MoveEvaluator;
 import jchess.model.RoundChessboardModel;
@@ -12,18 +13,13 @@ import jchess.move.effects.MoveEffectsBuilder;
 import jchess.view.RoundChessboardView;
 
 public class BuffEvaluator {
-	private final RoundChessboardModel model;
-	private final RoundChessboardView view;
+	private final RoundChessboardController chessboard;
 	private final MoveHistoryController history;
 	
-	public BuffEvaluator(RoundChessboardModel model, RoundChessboardView view, MoveHistoryController history) {
-		if (model == null)
+	public BuffEvaluator(RoundChessboardController controller, MoveHistoryController history) {
+		if (controller == null)
 			throw new NullPointerException("'model' of BuffEvaluator cannot be null.");
-		this.model = model;
-		
-		if (view == null)
-			throw new NullPointerException("'view' of BuffEvaluator cannot be null.");
-		this.view = view;
+		this.chessboard = controller;
 		
 		if (history == null)
 			throw new NullPointerException("'model' of BuffEvaluator cannot be null.");
@@ -31,7 +27,7 @@ public class BuffEvaluator {
 	}
 	
 	public void evaluate() {
-		for (Square square : model.getSquares()) {
+		for (Square square : chessboard.getSquares()) {
 			if (square == null || square.getPiece() == null)
 				continue;
 			
@@ -40,8 +36,6 @@ public class BuffEvaluator {
 			
 			square.getPiece().tickBuffs();
 		}
-		
-		view.updateAfterMove();
 	}
 	
 	private void evaluateBuff(Square square, BuffType buff) {
@@ -51,11 +45,11 @@ public class BuffEvaluator {
 	
 	private void evaluateConfusion(Square square) {
 		HashSet<MoveEffect> mes = 
-				new MoveEvaluator(model).getValidTargetSquaresToSavePiece(square.getPiece(), model.getCrucialPieces(square.getPiece().getPlayer()));
+				new MoveEvaluator(chessboard).getValidTargetSquaresToSavePiece(square.getPiece(), chessboard.getCrucialPieces(square.getPiece().getPlayer()));
 		
 		MoveEffect temp = (MoveEffect) mes.toArray()[new Random().nextInt(mes.size())];
 		MoveEffect randomMove = new MoveEffectsBuilder(temp).setFromMove(false).build();
-		randomMove.apply(model, view);
+		chessboard.apply(randomMove);
 		
 		history.addMove(randomMove, true, false);
 	}
