@@ -21,16 +21,20 @@
 package jchess.pieces;
 
 import jchess.entities.Player;
+import jchess.move.Orientation;
 
 /**
  * Class to represent a Piece of any kind. Each Piece is defined by specific values for its member attributes.
  */
 public class Piece {
+	private static int idIncrement = 0;
+	
 	private boolean hasMoved = false;
 	private Orientation orientation;
 	
-	public final Player player;
-	public PieceDefinition definition;
+	private final int id;
+	private final Player player;
+	private PieceDefinition definition;
 	
 	/**
 	 * Creates a new Piece based on the given parameters. Piece attributes cannot be changed after initialization.
@@ -52,6 +56,8 @@ public class Piece {
 		if (orientation == null)
 			throw new NullPointerException("Argument 'orientation' is null.");
 		this.orientation = orientation;
+		
+		id = idIncrement++;
 	}
 	
 	/**
@@ -65,13 +71,29 @@ public class Piece {
 		this.player = other.player;
 		this.definition = other.definition;
 		this.hasMoved = other.hasMoved;
+		this.orientation = other.orientation;
+		this.id = other.id;
 	}
 	
 	/**
-	 * Returns a deep copy of this Piece.
+	 * Returns a deep copy of this Piece. ID of the copy will be the same.
 	 */
 	public Piece clone() {
 		return new Piece(this);
+	}
+	
+	/**
+	 * @return The unique ID of this Piece. Clones of this Piece will share ID.
+	 */
+	public int getID() {
+		return id;
+	}
+	
+	/**
+	 * @return The Player owning this Piece.
+	 */
+	public Player getPlayer() {
+		return player;
 	}
 	
 	/**
@@ -98,7 +120,18 @@ public class Piece {
 	}
 	
 	/**
-	 * @return List of all available Moves for this Piece.
+	 * Changes this Piece's Orientation to the given non-null Orientation.
+	 * @param orientation The new Orientation.
+	 * @return This Piece.
+	 */
+	public Piece reorient(Orientation orientation) {
+		if (orientation != null)
+			this.orientation = orientation;
+		return this;
+	}
+	
+	/**
+	 * @return The PieceDefinition of this Piece.
 	 */
 	public PieceDefinition getDefinition() {
 		return definition;

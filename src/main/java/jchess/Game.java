@@ -27,6 +27,7 @@ import jchess.entities.Player;
 import jchess.entities.Square;
 import jchess.exceptions.ReadGameError;
 import jchess.helper.Log;
+import jchess.helper.RoundChessboardLoader;
 import jchess.model.RoundChessboardModel;
 import jchess.network.Client;
 import jchess.pieces.Piece;
@@ -41,6 +42,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.logging.Level;
@@ -60,8 +62,6 @@ public class Game extends JPanel implements Observer, ComponentListener {
     private Client client;
     private MoveHistory moveHistory;
     private Chat chat;
-    private final int rows = 24;
-    private final int squaresPerRow = 6;
     private final int chessboardSize = 800;
 
 
@@ -70,8 +70,8 @@ public class Game extends JPanel implements Observer, ComponentListener {
         this.moveHistory = new MoveHistory(this);
         settings = new Settings();
 
-        RoundChessboardModel model = new RoundChessboardModel(rows, squaresPerRow, true, settings);
-        RoundChessboardView view = new RoundChessboardView(chessboardSize, "3-player-board.png", rows, squaresPerRow, model.squares);
+        RoundChessboardModel model = new RoundChessboardLoader().loadDefaultFromJSON(settings);
+        RoundChessboardView view = new RoundChessboardView(chessboardSize, "3-player-board.png", model.getRows(), model.getColumns(), model.squares);
         chessboardController = new RoundChessboardController(model, view, this.settings, this.moveHistory);
 
         this.add(chessboardController.getView());
@@ -284,8 +284,7 @@ public class Game extends JPanel implements Observer, ComponentListener {
         } else if (activePlayer == settings.getPlayerGray()) {
             activePlayer = settings.getPlayerWhite();
         }
-
-        this.gameClock.switch_clocks();
+        this.gameClock.switchPlayers();
     }
 
     /**
@@ -336,9 +335,8 @@ public class Game extends JPanel implements Observer, ComponentListener {
 
         if (this.settings.gameType == Settings.gameTypes.local) {
             status = chessboardController.undo(true);
-            if (status) {
+            if (status)
                 this.switchActive();
-            }
         } else if (this.settings.gameType == Settings.gameTypes.network) {
             this.client.sendUndoAsk();
             status = true;
@@ -391,9 +389,8 @@ public class Game extends JPanel implements Observer, ComponentListener {
     public boolean redo() {
         boolean status = chessboardController.redo(true);
         if (this.settings.gameType == Settings.gameTypes.local) {
-            if (status) {
+            if (status)
                 this.nextMove();
-            }
         } else {
             throw new UnsupportedOperationException(Settings.lang("operation_supported_only_in_local_game"));
         }
@@ -410,10 +407,10 @@ public class Game extends JPanel implements Observer, ComponentListener {
         if (!blockedChessboard) {
             if ((square == null && square.getPiece() == null && chessboardController.getActiveSquare() == null)
                     || (this.chessboardController.getActiveSquare() == null && square.getPiece() != null
-                    && square.getPiece().player != this.activePlayer)) {
+                    && square.getPiece().getPlayer() != this.activePlayer)) {
                 return;
             }
-            if (square.getPiece() != null && square.getPiece().player == this.activePlayer && square != chessboardController.getActiveSquare()) {
+            if (square.getPiece() != null && square.getPiece().getPlayer() == this.activePlayer && square != chessboardController.getActiveSquare()) {
                 chessboardController.unselect();
                 chessboardController.select(square);
             } else if (chessboardController.getActiveSquare() == square) // unselect
@@ -432,9 +429,11 @@ public class Game extends JPanel implements Observer, ComponentListener {
                 }
                 chessboardController.unselect();
                 this.nextMove();
-                Piece king = chessboardController.getKing(this.activePlayer);
-                if (chessboardController.pieceIsUnsavable(king))
-                    this.endGame("Checkmate! " + king.player.color.toString() + " player lose!");
+                
+                HashSet<Piece> cp = chessboardController.getCrucialPieces(this.activePlayer);
+                for (Piece piece : cp)
+                	if (chessboardController.pieceIsUnsavable(piece))
+                		this.endGame("Checkmate! " + piece.getPlayer().color.toString() + " player lose!");
             }
         } else if (blockedChessboard) {
             Log.log("Chessboard is blocked");

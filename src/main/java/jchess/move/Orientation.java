@@ -1,4 +1,4 @@
-package jchess.pieces;
+package jchess.move;
 
 public class Orientation {
 	public boolean x, y;
@@ -11,6 +11,10 @@ public class Orientation {
 	public Orientation(boolean x, boolean y) {
 		this.x = x;
 		this.y = y;
+	}
+	
+	public Orientation clone() {
+		return new Orientation(x, y);
 	}
 	
 	public Orientation reverse() {

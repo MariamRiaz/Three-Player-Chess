@@ -2,34 +2,27 @@ package jchess.view;
 
 import jchess.Game;
 import jchess.Settings;
-import jchess.helper.Clock;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /*
-* Class to generate the view of game clock
-* */
+ * Class to generate the view of game clock
+ * */
 
 public class GameClockView extends JPanel {
 
     private Settings settings;
     private BufferedImage background;
-    private String white_clock, black_clock, gray_clock;
-    public Clock clock1;
-    public Clock clock2;
-    public Clock clock3;
+    private String whiteClock, blackClock, grayClock;
 
     public GameClockView(Game game){
         this.settings = game.getSettings();
+        this.updateClocks(new int[]{0, 0, 0});
     }
 
     public void paint(Graphics g) {
         super.paint(g);
-        white_clock = this.clock1.prepareString();
-        black_clock = this.clock2.prepareString();
-        gray_clock = this.clock3.prepareString();
         Graphics2D g2d = (Graphics2D) g;
         g2d.drawImage(this.background, 0, 0, this);
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -58,20 +51,33 @@ public class GameClockView extends JPanel {
 
         g2d.setFont(font);
         g.setColor(Color.BLACK);
-        g.drawString(settings.getPlayerWhite().getName(), 10, 50);
+        g.drawString(settings.getPlayerBlack().getName(), 10, 50);
 
         g.setColor(Color.WHITE);
-        g.drawString(settings.getPlayerBlack().getName(), 90, 50);
+        g.drawString(settings.getPlayerWhite().getName(), 90, 50);
         g.drawString(settings.getPlayerGray().getName(), 170, 50);
         g2d.setFont(font);
         g.setColor(Color.BLACK);
-        g2d.drawString(white_clock, 10, 80);
-        g2d.drawString(black_clock, 90, 80);
-        g2d.drawString(gray_clock, 170, 80);
+        g2d.drawString(whiteClock, 10, 80);
+        g2d.drawString(blackClock, 90, 80);
+        g2d.drawString(grayClock, 170, 80);
     }
 
     public void update(Graphics g) {
         paint(g);
+    }
+
+    public void updateClocks(int[] timeSpentByPlayers){
+        int whiteMinutes = (int) timeSpentByPlayers[0]/60;
+        int whiteSeconds = (int) timeSpentByPlayers[0]%60;
+        whiteClock = String.format("%02d", whiteMinutes) + ":" + String.format("%02d", whiteSeconds);
+        int blackMinutes = (int) timeSpentByPlayers[1]/60;
+        int blackSeconds = (int) timeSpentByPlayers[1]%60;
+        blackClock = String.format("%02d", blackMinutes) + ":" + String.format("%02d", blackSeconds);
+        int grayMinutes = (int) timeSpentByPlayers[2]/60;
+        int graySeconds = (int) timeSpentByPlayers[2]%60;
+        grayClock = String.format("%02d", grayMinutes) + ":" + String.format("%02d", graySeconds);
+        this.repaint();
     }
 
 }
