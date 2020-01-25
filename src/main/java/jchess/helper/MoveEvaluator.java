@@ -54,45 +54,21 @@ public class MoveEvaluator {
      */
     private HashSet<MoveEffect> evaluateMoveToTargetSquares(Move move, Piece piece) {
         HashSet<MoveEffect> ret = new HashSet<>();
-        HashSet<Square> traversed = new HashSet<Square>();
         
         if (move == null || piece == null)
             return ret;//TODO error handling
 
+        HashSet<Square> traversed = new HashSet<Square>();
         int count = 0;
         Orientation otn = piece.getOrientation().clone();
-        Square from = model.getSquare(piece);
+        final Square from = model.getSquare(piece);
         
-        for (Square next = nextSquare(from, move.getX(), move.getY(), otn); next != null
-                && (move.getLimit() == null || count < move.getLimit()) && !traversed.contains(next); 
+        for (Square next = nextSquare(from, move.getX(), move.getY(), otn); 
+        		next != null && (move.getLimit() == null || count < move.getLimit()) && !traversed.contains(next); 
         		next = nextSquare(next, move.getX(), move.getY(), otn)) {
         	
-            boolean add = true;
             MoveEffectsBuilder meb = new MoveEffectsBuilder(piece, next, from, move);
-
-            if (move.getConditions().contains(MoveType.OnlyAttack)) {
-                if (next.getPiece() == null || next.getPiece().getPlayer() == piece.getPlayer())
-                    add = false;
-            } else if (move.getConditions().contains(MoveType.OnlyMove)) {
-                if (next.getPiece() != null)
-                    add = false;
-            } else if (next.getPiece() != null && next.getPiece().getPlayer() == piece.getPlayer())
-                add = false;
-            
-            if (move.getConditions().contains(MoveType.OnlyWhenFresh) && piece.hasMoved())
-            	add = false;
-            
-            if (move.getConditions().contains(MoveType.Castling)) {
-            	if (piece.hasMoved())
-            		add = false;
-            	else {
-            		
-            	}
-            }
-            
-            if (move.getConditions().contains(MoveType.EnPassant)) {
-            	
-            }
+            boolean add = evaluateAndGenEffects(move, next, piece, meb);
             
             if (add) {
                 if (meb.isEmpty())
@@ -113,6 +89,54 @@ public class MoveEvaluator {
         }
 
         return ret;
+    }
+    
+    private boolean evaluateAndGenEffects(Move move, Square next, Piece piece, MoveEffectsBuilder meb) {
+    	if (move.getConditions().contains(MoveType.OnlyAttack)) {
+            if (next.getPiece() == null || next.getPiece().getPlayer() == piece.getPlayer())
+            	return false;
+        } else if (move.getConditions().contains(MoveType.OnlyMove)) {
+            if (next.getPiece() != null)
+            	return false;
+        } else if (next.getPiece() != null && next.getPiece().getPlayer() == piece.getPlayer())
+        	return false;
+        
+        if (move.getConditions().contains(MoveType.OnlyWhenFresh) && piece.hasMoved())
+        	return false;
+        
+        if (move.getConditions().contains(MoveType.Castling)) {
+        	if (piece.hasMoved())
+        		return false;
+        	else {
+        		Square rook = null, nextRook = null;
+        		if (move.getY() > 0) {
+        			rook = model.getSquare(next.getPozX(), next.getPozY() + 1);
+        			nextRook = model.getSquare(next.getPozX(), next.getPozY() - 1);
+        		}
+        		else {
+        			rook = model.getSquare(next.getPozX(), next.getPozY() - 1);
+        			nextRook = model.getSquare(next.getPozX(), next.getPozY() + 1);
+        		}
+        		
+        		if (rook.getPiece() == null || rook.getPiece().hasMoved())
+        			return false;
+        		
+        		for (Square sq : model.getSquaresBetween(model.getSquare(piece), rook))
+        			if (squareIsThreatened(sq, piece.getPlayer())) 
+        				return false;
+        		
+        		meb.addPosChange(model.getSquare(piece), next)
+        			.addStateChange(piece, piece.clone().setHasMoved(true))
+        			.addPosChange(rook, nextRook)
+        			.addStateChange(rook.getPiece(), rook.getPiece().clone().setHasMoved(true));
+        	}
+        }
+        
+        if (move.getConditions().contains(MoveType.EnPassant)) {
+        	
+        }
+        
+        return true;
     }
 
     /**
