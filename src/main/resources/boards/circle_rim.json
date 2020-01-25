@@ -1,5 +1,5 @@
 {
-"columns": 6,
+"columns": ["f", "e", "d", "c", "b", "a"],
 "rows": 24,
 "continuous-rows": true,
 "connected-inner-rim": true,
@@ -86,7 +86,7 @@
         "type": "Pawn",
         "player": "WH"
     },
-    
+
     {
         "square": [5, 7],
         "type": "Rook",
@@ -128,7 +128,7 @@
         "type": "Rook",
         "player": "BL"
     },
-    
+
     {
         "square": [4, 7],
         "type": "Pawn",
@@ -169,7 +169,7 @@
         "type": "Pawn",
         "player": "BL"
     },
-    
+
     {
         "square": [5, 15],
         "type": "Rook",

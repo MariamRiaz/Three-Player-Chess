@@ -29,7 +29,7 @@ public class RoundChessboardController extends MouseAdapter {
     private Square activeSquare;
     private Settings settings;
     private SquareObservable squareObservable;
-    private MoveHistory movesHistory;
+    private MoveHistoryController movesHistory;
     private HashSet<MoveEffect> moveEffects = null;
     
     public static int bottom = 7;
@@ -40,9 +40,9 @@ public class RoundChessboardController extends MouseAdapter {
      * @param model The chessboard model to be used by the controller.
      * @param view The chessboard view to be used by the controller.
      * @param settings The settings of the game.
-     * @param movesHistory The MoveHistory of the game, where the controller will store played moves.
+     * @param movesHistory The MoveHistoryController of the game, where the controller will store played moves.
      */
-    public RoundChessboardController(RoundChessboardModel model, RoundChessboardView view, Settings settings, MoveHistory movesHistory) {
+    public RoundChessboardController(RoundChessboardModel model, RoundChessboardView view, Settings settings, MoveHistoryController movesHistory) {
         this.model = model;
         this.view = view;
         view.addMouseListener(this);
@@ -193,7 +193,7 @@ public class RoundChessboardController extends MouseAdapter {
      * @param begin The origin Square, where the moving Piece is located.
      * @param end The target Square, on which the moving Piece should end.
      * @param refresh Whether or not to refresh the chessboard.
-     * @param clearForwardHistory Whether or not to clear the forward history of the MoveHistory instance for this game.
+     * @param clearForwardHistory Whether or not to clear the forward history of the MoveHistoryController instance for this game.
      */
     public void move(Square begin, Square end, boolean refresh, boolean clearForwardHistory) {
     	MoveEffect move = null;
