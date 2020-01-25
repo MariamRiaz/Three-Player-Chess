@@ -1,6 +1,8 @@
 package jchess.view;
 
-import jchess.helper.GUI;
+import jchess.entities.PlayerColor;
+import jchess.helper.Images;
+import jchess.helper.ResourceLoader;
 import jchess.helper.Log;
 import jchess.entities.Player;
 import jchess.entities.Square;
@@ -40,10 +42,10 @@ public class RoundChessboardView extends JPanel {
      */
     public RoundChessboardView(int chessBoardSize, String chessBoardImagePath, int rows, int cellsPerRow, List<Square> squares) {
         super();
-        this.boardImage = GUI.loadImage(chessBoardImagePath);
+        this.boardImage = ResourceLoader.loadImage(chessBoardImagePath);
         this.boardImage = boardImage.getScaledInstance(chessBoardSize, chessBoardSize, Image.SCALE_DEFAULT);
-        this.selectedSquareImage = GUI.loadImage("sel_square.png");
-        this.ableSquareImage = GUI.loadImage("able_square.png");
+        this.selectedSquareImage = ResourceLoader.loadImage(Images.SQUARE_SELECTION);
+        this.ableSquareImage = ResourceLoader.loadImage(Images.SQUARE);
         this.chessBoardSize = chessBoardSize;
         setSize(chessBoardSize, chessBoardSize);
         circleCenter = new Point(chessBoardSize / 2, chessBoardSize / 2);
@@ -197,12 +199,8 @@ public class RoundChessboardView extends JPanel {
         if (piece == null)//TODO
             return;
         PolarCell cell = getCellByPosition(x, y);
-        String pieceVisualExtension = "";
-        if (piece.getPlayer().color == Player.colors.black) pieceVisualExtension = "-B.png";
-        else if (piece.getPlayer().color == Player.colors.white) pieceVisualExtension = "-W.png";
-        else if (piece.getPlayer().color == Player.colors.gray) pieceVisualExtension = "-G.png";
 
-        PieceVisual visual = new PieceVisual(piece.getDefinition().getType() + pieceVisualExtension);
+        PieceVisual visual = new PieceVisual(piece);
         cell.setPieceVisual(visual);
     }
     

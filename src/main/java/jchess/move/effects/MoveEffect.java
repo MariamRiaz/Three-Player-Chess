@@ -99,7 +99,7 @@ public class MoveEffect {
 
     		if (ent.getState().getDefinition() == PieceDefinition.PLACEHOLDER)
     			ent.getState().setDefinition(PieceLoader.getPieceDefinition(
-    					JChessApp.jcv.showPawnPromotionBox(Player.colorToLetter(ent.getState().getPlayer().color))));
+    					JChessApp.jcv.showPawnPromotionBox(ent.getState().getPlayer().getColor().getColor())));
     		
     		model.setPieceOnSquare(ent.getState(), sq);
     		if (view != null)
