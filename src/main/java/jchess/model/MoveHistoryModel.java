@@ -28,7 +28,6 @@ public class MoveHistoryModel extends DefaultTableModel {
         return false;
     }
 
-
     public MoveEffect undo() {
         MoveEffect last = null;
         try {
