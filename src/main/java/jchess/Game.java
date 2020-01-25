@@ -182,10 +182,7 @@ public class Game extends JPanel implements Observer, ComponentListener {
         Settings locSetts = newGUI.settings;
         locSetts.getPlayerBlack().name = blackName;
         locSetts.getPlayerWhite().name = whiteName;
-        locSetts.getPlayerBlack().setType(Player.playerTypes.localUser);
-        locSetts.getPlayerWhite().setType(Player.playerTypes.localUser);
         locSetts.gameMode = Settings.gameModes.loadGame;
-        locSetts.gameType = Settings.gameTypes.local;
 
         newGUI.newGame();
         newGUI.blockedChessboard = true;
@@ -247,12 +244,9 @@ public class Game extends JPanel implements Observer, ComponentListener {
      */
     public void newGame() {
         activePlayer = settings.getPlayerWhite();
-        if (activePlayer.playerType != Player.playerTypes.localUser) {
-            this.blockedChessboard = true;
-        }
+
         Game activeGame = JChessApp.jcv.getActiveTabGame();
         if (activeGame != null && JChessApp.jcv.getNumberOfOpenedTabs() == 0) {
-            //TODO resizing
             activeGame.repaint();
         }
         this.repaint();
@@ -297,13 +291,7 @@ public class Game extends JPanel implements Observer, ComponentListener {
      */
     private void nextMove() {
         switchActive();
-        Log.log("next move, active player: " + activePlayer.name + ", color: " + activePlayer.color.name() + ", type: "
-                + activePlayer.playerType.name());
-        if (activePlayer.playerType == Player.playerTypes.localUser) {
-            this.blockedChessboard = false;
-        } else if (activePlayer.playerType == Player.playerTypes.networkUser) {
-            this.blockedChessboard = true;
-        }
+        this.blockedChessboard = false;
     }
 
     /**
@@ -343,12 +331,8 @@ public class Game extends JPanel implements Observer, ComponentListener {
     public boolean rewindToBegin() {
         boolean result = false;
 
-        if (this.settings.gameType == Settings.gameTypes.local) {
-            while (chessboardController.undo(true)) {
-                result = true;
-            }
-        } else {
-            throw new UnsupportedOperationException(Settings.lang("operation_supported_only_in_local_game"));
+        while (chessboardController.undo(true)) {
+            result = true;
         }
         return result;
     }
@@ -362,13 +346,10 @@ public class Game extends JPanel implements Observer, ComponentListener {
     public boolean rewindToEnd() throws UnsupportedOperationException {
         boolean result = false;
 
-        if (this.settings.gameType == Settings.gameTypes.local) {
-            while (chessboardController.redo(true)) {
-                result = true;
-            }
-        } else {
-            throw new UnsupportedOperationException(Settings.lang("operation_supported_only_in_local_game"));
+        while (chessboardController.redo(true)) {
+            result = true;
         }
+
         return result;
     }
 
@@ -379,12 +360,9 @@ public class Game extends JPanel implements Observer, ComponentListener {
      */
     public boolean redo() {
         boolean status = chessboardController.redo(true);
-        if (this.settings.gameType == Settings.gameTypes.local) {
-            if (status)
-                this.nextMove();
-        } else {
-            throw new UnsupportedOperationException(Settings.lang("operation_supported_only_in_local_game"));
-        }
+        if (status)
+            this.nextMove();
+
         return status;
     }
 
@@ -410,10 +388,7 @@ public class Game extends JPanel implements Observer, ComponentListener {
             } else if (chessboardController.getActiveSquare() != null && chessboardController.getActiveSquare().getPiece() != null
                     && chessboardController.moveIsPossible(chessboardController.getActiveSquare(), square)) // move
             {
-                if (settings.gameType == Settings.gameTypes.local) {
-                    //TODO: exception is caught here --> method returns without switching player
-                    chessboardController.move(chessboardController.getActiveSquare(), square, true, true);
-                }
+                chessboardController.move(chessboardController.getActiveSquare(), square, true, true);
                 chessboardController.unselect();
                 this.nextMove();
 
