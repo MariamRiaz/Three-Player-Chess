@@ -168,6 +168,28 @@ public class RoundChessboardModel {
         
         return optionalSquare.get();//TODO
     }
+    
+    /**
+     * Gets all Squares between the two given Squares, including both of them.
+     * @param one The first Square.
+     * @param two The second Square.
+     * @return The Squares between the two given ones, including them.
+     */
+    public HashSet<Square> getSquaresBetween(Square one, Square two) {
+    	HashSet<Square> retVal = new HashSet<>();
+    	
+    	if (one == null || two == null) 
+    		return retVal;
+    	
+    	final int minX = Math.min(one.getPozX(), two.getPozX()), maxX = Math.max(one.getPozX(), two.getPozX()),
+    			minY = Math.min(one.getPozY(), two.getPozY()), maxY = Math.max(one.getPozY(), two.getPozY());
+    	
+    	for (int i = minX; i <= maxX; i++)
+    		for (int j = minY; j <= maxY; j++)
+    			retVal.add(this.getSquare(i, j));
+    	
+    	return retVal;
+    }
 
     /**
      * sets the given Piece on the given Square
