@@ -36,8 +36,6 @@ import java.util.logging.Level;
  */
 public class ResourceLoader {
 
-    static final public Properties configFile = ResourceLoader.getConfigFile();
-
     /*
      * Method load image by a given name with extension
      *
@@ -46,13 +44,12 @@ public class ResourceLoader {
      * @returns : image or null if cannot load
      */
     public static Image loadImage(String name) {
-        if (configFile == null) {
-            return null;
-        }
         Image img = null;
         Toolkit tk = Toolkit.getDefaultToolkit();
         try {
-            String imageLink = "theme/" + configFile.getProperty("THEME") + "/images/" + name;
+            Theme currentTheme = getTheme();
+            String imageLink = Images.THEME_FOLDER + File.pathSeparator
+                    + currentTheme.getTheme() + Images.IMAGES_FOLDER;
             URL url = JChessApp.class.getClassLoader().getResource(imageLink);
             img = tk.getImage(url);
 
@@ -61,6 +58,11 @@ public class ResourceLoader {
             e.printStackTrace();
         }
         return img;
+    }
+
+    private static Theme getTheme() {
+        String currentTheme = getConfigFile().getProperty("THEME");
+        return Theme.valueOf(currentTheme);
     }
 
     public static Properties getConfigFile() {
