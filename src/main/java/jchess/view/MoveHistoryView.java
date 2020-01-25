@@ -14,8 +14,8 @@ import java.awt.*;
 
 public class MoveHistoryView {
 
-    public JScrollPane scrollPane;
-    public JTable table;
+    private JScrollPane scrollPane;
+    private JTable table;
     ResourceMap resources = new ResourceMap(Application.getInstance().getContext().getResourceMap(),
             MoveHistoryView.class.getClassLoader(), "MoveHistoryView");
 
@@ -26,5 +26,13 @@ public class MoveHistoryView {
         this.scrollPane.setMaximumSize(new Dimension(dimension, dimension));
         this.table.setMinimumSize(new Dimension(dimension, dimension));
         this.scrollPane.setAutoscrolls(true);
+    }
+
+    public JScrollPane getScrollPane() {
+        return scrollPane;
+    }
+
+    public JTable getTable() {
+        return table;
     }
 }

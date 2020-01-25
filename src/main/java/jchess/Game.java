@@ -67,7 +67,7 @@ public class Game extends JPanel implements Observer, ComponentListener {
 
     public Game() {
         this.setLayout(null);
-        this.moveHistoryController = new MoveHistoryController(this);
+        this.moveHistoryController = new MoveHistoryController();
         settings = new Settings();
 
         RoundChessboardModel model = new RoundChessboardLoader().loadDefaultFromJSON(settings);
@@ -193,7 +193,7 @@ public class Game extends JPanel implements Observer, ComponentListener {
 
         newGUI.newGame();
         newGUI.blockedChessboard = true;
-        newGUI.moveHistoryController.setMoves(tempStr);
+        newGUI.moveHistoryController.setMoves(newGUI, tempStr);
         newGUI.blockedChessboard = false;
     }
 
@@ -279,13 +279,13 @@ public class Game extends JPanel implements Observer, ComponentListener {
     public void switchActive() {
         if (activePlayer == settings.getPlayerWhite()) {
             activePlayer = settings.getPlayerBlack();
-            moveHistoryController.setActivePlayFerColumn(MoveHistoryController.PlayerColumn.player2);
+            moveHistoryController.setActivePlayForColumn(MoveHistoryController.PlayerColumn.player2);
         } else if (activePlayer == settings.getPlayerBlack()) {
             activePlayer = settings.getPlayerGray();
-            moveHistoryController.setActivePlayFerColumn(MoveHistoryController.PlayerColumn.player3);
+            moveHistoryController.setActivePlayForColumn(MoveHistoryController.PlayerColumn.player3);
         } else if (activePlayer == settings.getPlayerGray()) {
             activePlayer = settings.getPlayerWhite();
-            moveHistoryController.setActivePlayFerColumn(MoveHistoryController.PlayerColumn.player1);
+            moveHistoryController.setActivePlayForColumn(MoveHistoryController.PlayerColumn.player1);
         }
         this.gameClock.switchPlayers();
     }
