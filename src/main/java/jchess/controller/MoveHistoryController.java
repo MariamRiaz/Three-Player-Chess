@@ -51,7 +51,7 @@ public class MoveHistoryController {
         player3
     }
 
-    private String[] names = new String[]{Settings.lang("white"), Settings.lang("black"), Settings.lang("gray")};
+    private String[] names = new String[]{Settings.getTexts("white"), Settings.getTexts("black"), Settings.getTexts("gray")};
     private MoveHistoryView moveHistoryView;
     private MoveHistoryModel moveHistoryModel;
     private ArrayList<Character> columnNames;
@@ -346,7 +346,7 @@ public class MoveHistoryController {
         {
             if (!MoveHistoryController.isMoveCorrect(locMove.trim())) // if not
             {
-                JOptionPane.showMessageDialog(game, Settings.lang("invalid_file_to_load") + moveHistoryModel.move);
+                JOptionPane.showMessageDialog(game, Settings.getTexts("invalid_file_to_load") + moveHistoryModel.move);
                 return;// show message and finish reading game
             }
         }
@@ -375,7 +375,7 @@ public class MoveHistoryController {
 
                 if (!canMove) // if move is illegal
                 {
-                    JOptionPane.showMessageDialog(game, Settings.lang("illegal_move_on") + locMove);
+                    JOptionPane.showMessageDialog(game, Settings.getTexts("illegal_move_on") + locMove);
                     return;// finish reading game and show message
                 }
                 continue;
@@ -404,7 +404,7 @@ public class MoveHistoryController {
             canMove = game.simulateMove(xFrom, yFrom, xTo, yTo);
             if (!canMove) // if move is illegal
             {
-                JOptionPane.showMessageDialog(game, Settings.lang("illegal_move_on") + locMove);
+                JOptionPane.showMessageDialog(game, Settings.getTexts("illegal_move_on") + locMove);
                 game.getChessboardController().setActiveSquare(null);
                 return;// finish reading game and show message
             }

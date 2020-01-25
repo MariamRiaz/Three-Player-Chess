@@ -30,10 +30,9 @@ import jchess.helper.Images;
 import jchess.helper.Log;
 import jchess.helper.RoundChessboardLoader;
 import jchess.model.RoundChessboardModel;
-import jchess.network.Client;
 import jchess.pieces.Piece;
-import jchess.view.Chat;
 import jchess.view.RoundChessboardView;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentEvent;
@@ -60,9 +59,7 @@ public class Game extends JPanel implements Observer, ComponentListener {
     private RoundChessboardController chessboardController;
     private Player activePlayer;
     private GameClock gameClock;
-    private Client client;
     private MoveHistoryController moveHistoryController;
-    private Chat chat;
     private final int chessboardSize = 800;
     private RoundChessboardLoader chessboardLoader;
 
@@ -86,6 +83,7 @@ public class Game extends JPanel implements Observer, ComponentListener {
 
         chessboardController = new RoundChessboardController(model, view, this.settings, this.moveHistoryController);
 
+
         this.add(chessboardController.getView());
         chessboardController.addSelectSquareObserver(this);
         gameClock = new GameClock(this);
@@ -97,11 +95,6 @@ public class Game extends JPanel implements Observer, ComponentListener {
         movesHistory.setSize(new Dimension(245, 350));
         movesHistory.setLocation(new Point(500, 121));
         this.add(movesHistory);
-
-        this.chat = new Chat();
-        this.chat.setSize(new Dimension(380, 100));
-        this.chat.setLocation(new Point(0, 500));
-        this.chat.setMinimumSize(new Dimension(400, 100));
 
         this.blockedChessboard = false;
         this.setLayout(null);
@@ -115,14 +108,6 @@ public class Game extends JPanel implements Observer, ComponentListener {
 
     public void setSettings(Settings settings) {
         this.settings = settings;
-    }
-
-    public Chat getChat() {
-        return chat;
-    }
-
-    public void setClient(Client client) {
-        this.client = client;
     }
 
     public RoundChessboardController getChessboardController() {
@@ -148,7 +133,7 @@ public class Game extends JPanel implements Observer, ComponentListener {
             fileW = new FileWriter(path);
         } catch (java.io.IOException exc) {
             System.err.println("error creating fileWriter: " + exc);
-            JOptionPane.showMessageDialog(this, Settings.lang("error_writing_to_file") + ": " + exc);
+            JOptionPane.showMessageDialog(this, Settings.getTexts("error_writing_to_file") + ": " + exc);
             return;
         }
         Calendar cal = Calendar.getInstance();
@@ -162,10 +147,10 @@ public class Game extends JPanel implements Observer, ComponentListener {
             fileW.close();
         } catch (java.io.IOException exc) {
             Log.log(Level.SEVERE, "error writing to file: " + exc);
-            JOptionPane.showMessageDialog(this, Settings.lang("error_writing_to_file") + ": " + exc);
+            JOptionPane.showMessageDialog(this, Settings.getTexts("error_writing_to_file") + ": " + exc);
             return;
         }
-        JOptionPane.showMessageDialog(this, Settings.lang("game_saved_properly"));
+        JOptionPane.showMessageDialog(this, Settings.getTexts("game_saved_properly"));
     }
 
     /**
@@ -198,10 +183,7 @@ public class Game extends JPanel implements Observer, ComponentListener {
         Settings locSetts = newGUI.settings;
         locSetts.getPlayerBlack().setName(blackName);
         locSetts.getPlayerWhite().setName(whiteName);
-        locSetts.getPlayerBlack().setType(Player.playerTypes.localUser);
-        locSetts.getPlayerWhite().setType(Player.playerTypes.localUser);
         locSetts.gameMode = Settings.gameModes.loadGame;
-        locSetts.gameType = Settings.gameTypes.local;
 
         newGUI.newGame();
         newGUI.blockedChessboard = true;
@@ -263,12 +245,9 @@ public class Game extends JPanel implements Observer, ComponentListener {
      */
     public void newGame() {
         activePlayer = settings.getPlayerWhite();
-        if (activePlayer.playerType != Player.playerTypes.localUser) {
-            this.blockedChessboard = true;
-        }
+
         Game activeGame = JChessApp.jcv.getActiveTabGame();
         if (activeGame != null && JChessApp.jcv.getNumberOfOpenedTabs() == 0) {
-            //TODO resizing
             activeGame.repaint();
         }
         this.repaint();
@@ -328,13 +307,7 @@ public class Game extends JPanel implements Observer, ComponentListener {
      */
     private void nextMove() {
         switchActive(true);
-        Log.log("next move, active player: " + activePlayer.getName() + ", color: " + activePlayer.getColor().name() + ", type: "
-                + activePlayer.playerType.name());
-        if (activePlayer.playerType == Player.playerTypes.localUser) {
             this.blockedChessboard = false;
-        } else if (activePlayer.playerType == Player.playerTypes.networkUser) {
-            this.blockedChessboard = true;
-        }
     }
 
     /**
@@ -358,16 +331,11 @@ public class Game extends JPanel implements Observer, ComponentListener {
      * @return True if the current state of the game is undoable
      */
     public boolean undo() {
-        boolean status = false;
+        boolean status;
 
-        if (this.settings.gameType == Settings.gameTypes.local) {
             status = chessboardController.undo(true);
             if (status)
                 this.switchActive(false);
-        } else if (this.settings.gameType == Settings.gameTypes.network) {
-            this.client.sendUndoAsk();
-            status = true;
-        }
         return status;
     }
 
@@ -379,12 +347,8 @@ public class Game extends JPanel implements Observer, ComponentListener {
     public boolean rewindToBegin() {
         boolean result = false;
 
-        if (this.settings.gameType == Settings.gameTypes.local) {
-            while (chessboardController.undo(true)) {
-                result = true;
-            }
-        } else {
-            throw new UnsupportedOperationException(Settings.lang("operation_supported_only_in_local_game"));
+        while (chessboardController.undo(true)) {
+            result = true;
         }
         return result;
     }
@@ -398,12 +362,8 @@ public class Game extends JPanel implements Observer, ComponentListener {
     public boolean rewindToEnd() throws UnsupportedOperationException {
         boolean result = false;
 
-        if (this.settings.gameType == Settings.gameTypes.local) {
-            while (chessboardController.redo(true)) {
-                result = true;
-            }
-        } else {
-            throw new UnsupportedOperationException(Settings.lang("operation_supported_only_in_local_game"));
+        while (chessboardController.redo(true)) {
+            result = true;
         }
         return result;
     }
@@ -415,12 +375,9 @@ public class Game extends JPanel implements Observer, ComponentListener {
      */
     public boolean redo() {
         boolean status = chessboardController.redo(true);
-        if (this.settings.gameType == Settings.gameTypes.local) {
-            if (status)
-                this.nextMove();
-        } else {
-            throw new UnsupportedOperationException(Settings.lang("operation_supported_only_in_local_game"));
-        }
+        if (status)
+            this.nextMove();
+
         return status;
     }
 
@@ -446,20 +403,12 @@ public class Game extends JPanel implements Observer, ComponentListener {
             } else if (chessboardController.getActiveSquare() != null && chessboardController.getActiveSquare().getPiece() != null
                     && chessboardController.moveIsPossible(chessboardController.getActiveSquare(), square)) // move
             {
-                if (settings.gameType == Settings.gameTypes.local) {
-                    //TODO: exception is caught here --> method returns without switching player
-                    chessboardController.move(chessboardController.getActiveSquare(), square, true, true);
-                } else if (settings.gameType == Settings.gameTypes.network) {
-                    client.sendMove(chessboardController.getActiveSquare().getPozX(), chessboardController.getActiveSquare().getPozY(), square.getPozX(),
-                            square.getPozY());
-                    chessboardController.move(chessboardController.getActiveSquare(), square, true, true);
-                }
+                chessboardController.move(chessboardController.getActiveSquare(), square, true, true);
                 chessboardController.unselect();
                 this.nextMove();
 
                 HashSet<Piece> cp = chessboardController.getCrucialPieces(this.activePlayer);
                 for (Piece piece : cp)
-
                     if (chessboardController.pieceIsUnsavable(piece))
                         this.endGame("Checkmate! " + piece.getPlayer().getColor().name() + " player lose!");
             }
@@ -471,16 +420,11 @@ public class Game extends JPanel implements Observer, ComponentListener {
     @Override
     public void componentResized(ComponentEvent e) {
         int height = this.getHeight() >= this.getWidth() ? this.getWidth() : this.getHeight();
-        int chess_height = (int) Math.round((height * 0.8) / 8) * 8;
-        //TODO resize chessview
+        int chess_height;
         chess_height = this.chessboardController.getHeight();
         this.moveHistoryController.getScrollPane().setLocation(new Point(chess_height + 5, 100));
         this.moveHistoryController.getScrollPane().setSize(this.moveHistoryController.getScrollPane().getWidth(), chess_height - 100);
         this.gameClock.gameClockView.setLocation(new Point(chess_height + 5, 0));
-        if (this.chat != null) {
-            this.chat.setLocation(new Point(0, chess_height + 5));
-            this.chat.setSize(new Dimension(chess_height, this.getHeight() - (chess_height + 5)));
-        }
     }
 
     @Override
