@@ -276,34 +276,22 @@ public class Game extends JPanel implements Observer, ComponentListener {
     /**
      * Method to switch active players after move
      */
-//    public void switchActive() {
-//        if (activePlayer == settings.getPlayerWhite()) {
-//            activePlayer = settings.getPlayerBlack();
-//            moveHistory.setActivePlayerColumn(MoveHistory.PlayerColumn.player2);
-//        } else if (activePlayer == settings.getPlayerBlack()) {
-//            activePlayer = settings.getPlayerGray();
-//            moveHistory.setActivePlayerColumn(MoveHistory.PlayerColumn.player3);
-//        } else if (activePlayer == settings.getPlayerGray()) {
-//            activePlayer = settings.getPlayerWhite();
-//            moveHistory.setActivePlayerColumn(MoveHistory.PlayerColumn.player1);
-//        }
-//        this.gameClock.switchPlayers();
-// }
-        public void switchActive(boolean forward) {
-            if (forward) {
-                if (activePlayer == settings.getPlayerWhite())
+
+    public void switchActive(boolean forward) {
+        if (forward) {
+            if (activePlayer == settings.getPlayerWhite())
                     activePlayer = settings.getPlayerBlack();
-                else if (activePlayer == settings.getPlayerBlack())
+            else if (activePlayer == settings.getPlayerBlack())
                     activePlayer = settings.getPlayerGray();
-                else if (activePlayer == settings.getPlayerGray())
+            else if (activePlayer == settings.getPlayerGray())
                     activePlayer = settings.getPlayerWhite();
                 }
-            else {
-                if (activePlayer == settings.getPlayerWhite())
+        else {
+            if (activePlayer == settings.getPlayerWhite())
                     activePlayer = settings.getPlayerGray();
-                else if (activePlayer == settings.getPlayerBlack())
+            else if (activePlayer == settings.getPlayerBlack())
                     activePlayer = settings.getPlayerWhite();
-                else if (activePlayer == settings.getPlayerGray())
+            else if (activePlayer == settings.getPlayerGray())
                     activePlayer = settings.getPlayerBlack();
                 }
             this.gameClock.switchPlayers(forward);
