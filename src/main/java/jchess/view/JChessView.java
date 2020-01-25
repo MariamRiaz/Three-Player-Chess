@@ -12,9 +12,9 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package jchess.view;
 import jchess.*;
-import jchess.helper.GUI;
 import jchess.helper.Log;
 import org.jdesktop.application.ResourceMap;
 import org.jdesktop.application.SingleFrameApplication;
@@ -28,6 +28,10 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.*;
 import java.io.File;
+import jchess.view.PawnPromotionWindow;
+import jchess.view.FileMenuView;
+import jchess.view.OptionsMenuView;
+import jchess.view.HelpMenuView;
 import java.util.logging.Level;
 /**
  * The application's main frame.
@@ -52,7 +56,6 @@ public class JChessView extends FrameView implements ActionListener {
     private int busyIconIndex = 0;
     private PawnPromotionWindow promotionBox;
     public JDialog newGameFrame;
-    static GUI gui = null;
     private FileMenuView fileMenuView;
     private OptionsMenuView optionsMenuView;
     private HelpMenuView helpMenuView;

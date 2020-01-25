@@ -20,53 +20,21 @@
  */
 package jchess.pieces;
 
-import java.security.InvalidParameterException;
-import java.util.Arrays;
-import java.util.HashSet;
-
 import jchess.entities.Player;
+import jchess.move.Orientation;
 
 /**
  * Class to represent a Piece of any kind. Each Piece is defined by specific values for its member attributes.
  */
 public class Piece {
-	/**
-	 * Class representing a potential Move of a Piece. It describes the direction, limit and conditions for this Move.
-	 */
-	public static class Move {
-		/**
-		 * Enum describing constraints, conditions, and move types to be observed when evaluating this Move.
-		 */
-		public enum MoveType {
-			OnlyAttack,
-			OnlyMove,
-			Unblockable,
-			OnlyWhenFresh,
-			Castling, 
-			EnPassant
-		}
-		
-		public final int x, y;
-		public final Integer limit;
-		public final HashSet<MoveType> conditions;
-		
-		protected Move(int x, int y, Integer limit, MoveType... conditions) {
-			this.x = x;
-			this.y = y;
-			this.limit = limit;
-			this.conditions = new HashSet<MoveType>(Arrays.asList(conditions));
-			
-			if (this.conditions.contains(MoveType.OnlyAttack) && this.conditions.contains(MoveType.OnlyMove))
-				throw new InvalidParameterException("Move conditions cannot include 'OnlyAttack' and 'OnlyMove' simultaneously.");
-		}
-	}
+	private static int idIncrement = 0;
 	
 	private boolean hasMoved = false;
+	private Orientation orientation;
 	
-	public final Player player;
-	public final int value;
-	public final String type, symbol;
-	public final HashSet<Move> moves;
+	private final int id;
+	private final Player player;
+	private PieceDefinition definition;
 	
 	/**
 	 * Creates a new Piece based on the given parameters. Piece attributes cannot be changed after initialization.
@@ -76,22 +44,20 @@ public class Piece {
 	 * @param symbol Must be non-null. The shorthand symbol of this Piece, e.g. N, K, Q etc.
 	 * @param moves The Moves for this Piece. Each Move must be non-null.
 	 */
-	public Piece(Player player, String type, int value, String symbol, Move... moves) {
-		this.value = value;
-		
-		this.moves = new HashSet<Move>(Arrays.asList(moves));
+	public Piece(PieceDefinition definition, Player player, Orientation orientation) {
+		if (definition == null)
+			throw new NullPointerException("Argument 'definition' is null.");
+		this.definition = definition;
 		
 		if (player == null)
 			throw new NullPointerException("Argument 'player' is null.");
 		this.player = player;
 		
-		if (type == null)
-			throw new NullPointerException("Argument 'type' is null.");
-		this.symbol = symbol;
+		if (orientation == null)
+			throw new NullPointerException("Argument 'orientation' is null.");
+		this.orientation = orientation;
 		
-		if (symbol == null)
-			throw new NullPointerException("Argument 'symbol' is null.");
-		this.type = type;
+		id = idIncrement++;
 	}
 	
 	/**
@@ -102,19 +68,32 @@ public class Piece {
 		if (other == null)
 			throw new NullPointerException("Argument 'other' is null.");
 		
-		this.value = other.value;
-		
-		this.moves = new HashSet<Move>(other.moves);
 		this.player = other.player;
-		this.symbol = new String(other.symbol);
-		this.type = new String(other.type);
+		this.definition = other.definition;
+		this.hasMoved = other.hasMoved;
+		this.orientation = other.orientation;
+		this.id = other.id;
 	}
 	
 	/**
-	 * Returns a deep copy of this Piece.
+	 * Returns a deep copy of this Piece. ID of the copy will be the same.
 	 */
 	public Piece clone() {
 		return new Piece(this);
+	}
+	
+	/**
+	 * @return The unique ID of this Piece. Clones of this Piece will share ID.
+	 */
+	public int getID() {
+		return id;
+	}
+	
+	/**
+	 * @return The Player owning this Piece.
+	 */
+	public Player getPlayer() {
+		return player;
 	}
 	
 	/**
@@ -134,9 +113,38 @@ public class Piece {
 	}
 	
 	/**
-	 * @return List of all available Moves for this Piece.
+	 * @return This Piece's orientation on the board.
 	 */
-	public HashSet<Move> getMoves() {
-		return moves;
+	public Orientation getOrientation() {
+		return orientation;
+	}
+	
+	/**
+	 * Changes this Piece's Orientation to the given non-null Orientation.
+	 * @param orientation The new Orientation.
+	 * @return This Piece.
+	 */
+	public Piece reorient(Orientation orientation) {
+		if (orientation != null)
+			this.orientation = orientation;
+		return this;
+	}
+	
+	/**
+	 * @return The PieceDefinition of this Piece.
+	 */
+	public PieceDefinition getDefinition() {
+		return definition;
+	}
+	
+	/**
+	 * @param def This Piece's new PieceDefinition. Cannot be null.
+	 * @return This Piece.
+	 */
+	public Piece setDefinition(PieceDefinition def) {
+		if (def == null)
+			throw new NullPointerException("Argument 'definition' is null.");
+		this.definition = def;
+		return this;
 	}
 }

@@ -1,12 +1,14 @@
 package jchessTest;
 
+import jchess.controller.MoveHistoryController;
 import jchess.entities.Player;
 import jchess.Settings;
 import jchess.entities.Square;
 import jchess.controller.RoundChessboardController;
 import jchess.model.RoundChessboardModel;
-import jchess.controller.MoveHistory;
-import jchess.pieces.PieceFactory;
+import jchess.move.Orientation;
+import jchess.pieces.Piece;
+import jchess.pieces.PieceLoader;
 import jchess.view.RoundChessboardView;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,7 +22,7 @@ public class RoundChessboardControllerTest {
 
 
     private Settings settingsMock;
-    private MoveHistory moveHistoryMock;
+    private MoveHistoryController moveHistoryControllerMock;
     private RoundChessboardController controller;
     private RoundChessboardModel modelMock;
     private RoundChessboardView viewMock;
@@ -32,12 +34,12 @@ public class RoundChessboardControllerTest {
         settingsMock = mock(Settings.class);
         when(settingsMock.getPlayerWhite()).thenReturn(testPlayer);
 
-        moveHistoryMock = mock(MoveHistory.class);
+        moveHistoryControllerMock = mock(MoveHistoryController.class);
         modelMock = mock(RoundChessboardModel.class);
         viewMock = mock(RoundChessboardView.class);
-        square = new Square(10, 10, PieceFactory.createKing(settingsMock.getPlayerWhite()));
+        square = new Square(10, 10, new Piece(PieceLoader.getPieceDefinition("King"), settingsMock.getPlayerWhite(), new Orientation()));
 
-        controller = new RoundChessboardController(modelMock, viewMock, settingsMock, moveHistoryMock);
+        controller = new RoundChessboardController(modelMock, viewMock, settingsMock, moveHistoryControllerMock);
     }
 
     @Test

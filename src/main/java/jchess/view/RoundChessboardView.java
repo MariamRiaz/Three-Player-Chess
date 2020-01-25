@@ -1,6 +1,8 @@
 package jchess.view;
 
-import jchess.helper.GUI;
+import jchess.entities.PlayerColor;
+import jchess.helper.Images;
+import jchess.helper.ResourceLoader;
 import jchess.helper.Log;
 import jchess.entities.Player;
 import jchess.entities.Square;
@@ -40,10 +42,10 @@ public class RoundChessboardView extends JPanel {
      */
     public RoundChessboardView(int chessBoardSize, String chessBoardImagePath, int rows, int cellsPerRow, List<Square> squares) {
         super();
-        this.boardImage = GUI.loadImage(chessBoardImagePath);
+        this.boardImage = ResourceLoader.loadImage(chessBoardImagePath);
         this.boardImage = boardImage.getScaledInstance(chessBoardSize, chessBoardSize, Image.SCALE_DEFAULT);
-        this.selectedSquareImage = GUI.loadImage("sel_square.png");
-        this.ableSquareImage = GUI.loadImage("able_square.png");
+        this.selectedSquareImage = ResourceLoader.loadImage(Images.SQUARE_SELECTION);
+        this.ableSquareImage = ResourceLoader.loadImage(Images.SQUARE);
         this.chessBoardSize = chessBoardSize;
         setSize(chessBoardSize, chessBoardSize);
         circleCenter = new Point(chessBoardSize / 2, chessBoardSize / 2);
@@ -168,20 +170,25 @@ public class RoundChessboardView extends JPanel {
 
     /**
      * updates the RoundChessboardView after move was done
-     * @param piece     moved piece
-     * @param oldX      x index before move
-     * @param oldY      y index before move
-     * @param newX      x index after move was done
-     * @param newY      y index after move was done
      */
-    public void updateAfterMove(Piece piece, int oldX, int oldY, int newX, int newY) {
-        removeVisual(piece, oldX, oldY);
-        setVisual(piece, newX, newY);
+    public void updateAfterMove() {
         moves.clear();
         activeCell = null;
         repaint();
     }
-
+    
+    /**
+     * sets visuals for a piece
+     * @param piece     piece to set the visual of
+     * @param square 	Square on which to show Piece
+     */
+    public void setVisual(Piece piece, Square square) {
+        if (piece == null || square == null)//TODO
+            return;
+        
+        setVisual(piece, square.getPozX(), square.getPozY());
+    }
+    
     /**
      * sets visuals for a piece
      * @param piece     piece to set the visual of
@@ -192,22 +199,27 @@ public class RoundChessboardView extends JPanel {
         if (piece == null)//TODO
             return;
         PolarCell cell = getCellByPosition(x, y);
-        String pieceVisualExtension = "";
-        if (piece.player.color == Player.colors.black) pieceVisualExtension = "-B.png";
-        if (piece.player.color == Player.colors.white) pieceVisualExtension = "-W.png";
-        if (piece.player.color == Player.colors.gray) pieceVisualExtension = "-G.png";
 
-        PieceVisual visual = new PieceVisual(piece.type + pieceVisualExtension);
+        PieceVisual visual = new PieceVisual(piece);
         cell.setPieceVisual(visual);
+    }
+    
+    /**
+     * remove  visual for a piece at the given index
+     * @param square Square on which the Piece is shown
+     */
+    public void removeVisual(Square square) {
+    	if (square == null)
+    		return;
+    	removeVisual(square.getPozX(), square.getPozY());
     }
 
     /**
      * remove  visual for a piece at the given index
-     * @param piece Piece to remove the visual from
      * @param x     int x index of the piece
      * @param y     int y index of the piece
      */
-    public void removeVisual(Piece piece, int x, int y) {
+    public void removeVisual(int x, int y) {
         PolarCell cell = getCellByPosition(x, y);
         cell.setPieceVisual(null);
     }

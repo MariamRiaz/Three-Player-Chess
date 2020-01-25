@@ -27,29 +27,15 @@ import java.io.Serializable;
  */
 public class Player implements Serializable {
 
-	public String name;
+	private String name;
 
-	public enum colors {
+	private PlayerColor color;
 
-		white, black, gray
-	}
-
-	public colors color;
-
-	public enum playerTypes {
-
-		localUser, networkUser, computer
-	}
-
-	public playerTypes playerType;
 	public boolean goDown;
-
-	public Player() {
-	}
 
 	public Player(String name, String color) {
 		this.name = name;
-		this.color = colors.valueOf(color);
+		this.color = PlayerColor.getColor(color);
 		this.goDown = false;
 	}
 
@@ -71,12 +57,7 @@ public class Player implements Serializable {
 		return this.name;
 	}
 
-	/**
-	 * Method setting the players type
-	 * 
-	 * @param type type of player - enumerate
-	 */
-	public void setType(playerTypes type) {
-		this.playerType = type;
+	public PlayerColor getColor() {
+		return color;
 	}
 }

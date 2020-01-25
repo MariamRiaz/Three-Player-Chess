@@ -21,6 +21,7 @@
 package jchess;
 
 import jchess.entities.Player;
+import jchess.helper.Images;
 
 import java.io.Serializable;
 import java.util.Locale;
@@ -34,7 +35,6 @@ public class Settings implements Serializable {
 
     private static ResourceBundle loc = null;
     public int timeForGame;
-    public boolean runningChat;
     public boolean runningGameClock;
     public boolean timeLimitSet;// tel us if player choose time 4 game or it's infinity
     public boolean upsideDown;
@@ -53,50 +53,28 @@ public class Settings implements Serializable {
         return playerWhite;
     }
 
-    public void setPlayerWhite(Player playerWhite) {
-        this.playerWhite = playerWhite;
-    }
-
     public Player getPlayerBlack() {
         return playerBlack;
-    }
-
-    public void setPlayerBlack(Player playerBlack) {
-        this.playerBlack = playerBlack;
     }
 
     public Player getPlayerGray() {
         return playerGray;
     }
 
-    public void setPlayerGray(Player playerGray) {
-        this.playerGray = playerGray;
-    }
-
-
-    public enum gameTypes {
-
-        local, network
-    }
-
-    public gameTypes gameType;
-    public boolean renderLabels = true;
-
     public Settings() {
         // temporally
-        this.playerWhite = new Player("", "white");
-        this.playerBlack = new Player("", "black");
-        this.playerGray = new Player("", "gray");
+        this.playerWhite = new Player("", Images.WHITE_COLOR);
+        this.playerBlack = new Player("", Images.BLACK_COLOR);
+        this.playerGray = new Player("", Images.GREY_COLOR);
         this.timeLimitSet = false;
         gameMode = gameModes.newGame;
     }
 
-    public static String lang(String key) {
+    public static String getTexts(String key) {
         if (Settings.loc == null) {
             Settings.loc = PropertyResourceBundle.getBundle("i18n.main");
-            Locale.setDefault(Locale.ENGLISH);
         }
-        String result = "";
+        String result;
         try {
             result = Settings.loc.getString(key);
         } catch (java.util.MissingResourceException exc) {
