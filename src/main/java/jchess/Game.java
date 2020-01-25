@@ -29,10 +29,9 @@ import jchess.exceptions.ReadGameError;
 import jchess.helper.Log;
 import jchess.helper.RoundChessboardLoader;
 import jchess.model.RoundChessboardModel;
-import jchess.network.Client;
 import jchess.pieces.Piece;
-import jchess.view.Chat;
 import jchess.view.RoundChessboardView;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentEvent;
@@ -59,9 +58,7 @@ public class Game extends JPanel implements Observer, ComponentListener {
     private RoundChessboardController chessboardController;
     private Player activePlayer;
     private GameClock gameClock;
-    private Client client;
     private MoveHistory moveHistory;
-    private Chat chat;
     private final int chessboardSize = 800;
 
 
@@ -86,11 +83,6 @@ public class Game extends JPanel implements Observer, ComponentListener {
         movesHistory.setLocation(new Point(500, 121));
         this.add(movesHistory);
 
-        this.chat = new Chat();
-        this.chat.setSize(new Dimension(380, 100));
-        this.chat.setLocation(new Point(0, 500));
-        this.chat.setMinimumSize(new Dimension(400, 100));
-
         this.blockedChessboard = false;
         this.setLayout(null);
         this.addComponentListener(this);
@@ -105,20 +97,8 @@ public class Game extends JPanel implements Observer, ComponentListener {
         this.settings = settings;
     }
 
-    public Chat getChat() {
-        return chat;
-    }
-
-    public void setClient(Client client) {
-        this.client = client;
-    }
-
     public RoundChessboardController getChessboardController() {
         return chessboardController;
-    }
-
-    public MoveHistory getMoveHistory() {
-        return moveHistory;
     }
 
     public GameClock getGameClock() {
@@ -331,16 +311,11 @@ public class Game extends JPanel implements Observer, ComponentListener {
      * @return True if the current state of the game is undoable
      */
     public boolean undo() {
-        boolean status = false;
+        boolean status;
 
-        if (this.settings.gameType == Settings.gameTypes.local) {
-            status = chessboardController.undo(true);
-            if (status)
-                this.switchActive();
-        } else if (this.settings.gameType == Settings.gameTypes.network) {
-            this.client.sendUndoAsk();
-            status = true;
-        }
+        status = chessboardController.undo(true);
+        if (status)
+            this.switchActive();
         return status;
     }
 
@@ -422,18 +397,14 @@ public class Game extends JPanel implements Observer, ComponentListener {
                 if (settings.gameType == Settings.gameTypes.local) {
                     //TODO: exception is caught here --> method returns without switching player
                     chessboardController.move(chessboardController.getActiveSquare(), square, true, true);
-                } else if (settings.gameType == Settings.gameTypes.network) {
-                    client.sendMove(chessboardController.getActiveSquare().getPozX(), chessboardController.getActiveSquare().getPozY(), square.getPozX(),
-                            square.getPozY());
-                    chessboardController.move(chessboardController.getActiveSquare(), square, true, true);
                 }
                 chessboardController.unselect();
                 this.nextMove();
-                
+
                 HashSet<Piece> cp = chessboardController.getCrucialPieces(this.activePlayer);
                 for (Piece piece : cp)
-                	if (chessboardController.pieceIsUnsavable(piece))
-                		this.endGame("Checkmate! " + piece.getPlayer().color.toString() + " player lose!");
+                    if (chessboardController.pieceIsUnsavable(piece))
+                        this.endGame("Checkmate! " + piece.getPlayer().color.toString() + " player lose!");
             }
         } else if (blockedChessboard) {
             Log.log("Chessboard is blocked");
@@ -443,16 +414,11 @@ public class Game extends JPanel implements Observer, ComponentListener {
     @Override
     public void componentResized(ComponentEvent e) {
         int height = this.getHeight() >= this.getWidth() ? this.getWidth() : this.getHeight();
-        int chess_height = (int) Math.round((height * 0.8) / 8) * 8;
-        //TODO resize chessview
+        int chess_height;
         chess_height = this.chessboardController.getHeight();
         this.moveHistory.getScrollPane().setLocation(new Point(chess_height + 5, 100));
         this.moveHistory.getScrollPane().setSize(this.moveHistory.getScrollPane().getWidth(), chess_height - 100);
         this.gameClock.gameClockView.setLocation(new Point(chess_height + 5, 0));
-        if (this.chat != null) {
-            this.chat.setLocation(new Point(0, chess_height + 5));
-            this.chat.setSize(new Dimension(chess_height, this.getHeight() - (chess_height + 5)));
-        }
     }
 
     @Override
@@ -472,7 +438,8 @@ public class Game extends JPanel implements Observer, ComponentListener {
 
     /**
      * Listens for events that come every time a square is selected
-     * @param o The observable square that generates the events
+     *
+     * @param o   The observable square that generates the events
      * @param arg The new generated Square
      */
     @Override
