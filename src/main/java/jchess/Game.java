@@ -21,7 +21,7 @@
 package jchess;
 
 import jchess.controller.GameClock;
-import jchess.controller.MoveHistory;
+import jchess.controller.MoveHistoryController;
 import jchess.controller.RoundChessboardController;
 import jchess.entities.Player;
 import jchess.entities.Square;
@@ -58,18 +58,30 @@ public class Game extends JPanel implements Observer, ComponentListener {
     private RoundChessboardController chessboardController;
     private Player activePlayer;
     private GameClock gameClock;
-    private MoveHistory moveHistory;
+    private MoveHistoryController moveHistoryController;
     private final int chessboardSize = 800;
+    private RoundChessboardLoader chessboardLoader;
 
 
     public Game() {
         this.setLayout(null);
-        this.moveHistory = new MoveHistory(this);
         settings = new Settings();
 
-        RoundChessboardModel model = new RoundChessboardLoader().loadDefaultFromJSON(settings);
-        RoundChessboardView view = new RoundChessboardView(chessboardSize, "3-player-board.png", model.getRows(), model.getColumns(), model.squares);
-        chessboardController = new RoundChessboardController(model, view, this.settings, this.moveHistory);
+        chessboardLoader = new RoundChessboardLoader();
+
+        RoundChessboardModel model = chessboardLoader.loadDefaultFromJSON(settings);
+        RoundChessboardView view =
+                new RoundChessboardView(
+                        chessboardSize,
+                        "3-player-board.png",
+                        model.getRows(),
+                        model.getColumns(),
+                        model.squares);
+
+        this.moveHistoryController = new MoveHistoryController(chessboardLoader.getColumnNames());
+
+        chessboardController = new RoundChessboardController(model, view, this.settings, this.moveHistoryController);
+
 
         this.add(chessboardController.getView());
         chessboardController.addSelectSquareObserver(this);
@@ -78,7 +90,7 @@ public class Game extends JPanel implements Observer, ComponentListener {
         gameClock.gameClockView.setLocation(new Point(500, 0));
         this.add(gameClock.gameClockView);
 
-        JScrollPane movesHistory = this.moveHistory.getScrollPane();
+        JScrollPane movesHistory = this.moveHistoryController.getScrollPane();
         movesHistory.setSize(new Dimension(245, 350));
         movesHistory.setLocation(new Point(500, 121));
         this.add(movesHistory);
@@ -99,6 +111,10 @@ public class Game extends JPanel implements Observer, ComponentListener {
 
     public RoundChessboardController getChessboardController() {
         return chessboardController;
+    }
+
+    public MoveHistoryController getMoveHistoryController() {
+        return moveHistoryController;
     }
 
     public GameClock getGameClock() {
@@ -123,7 +139,7 @@ public class Game extends JPanel implements Observer, ComponentListener {
         String info = new String("[Event \"Game\"]\n[Date \"" + cal.get(Calendar.YEAR) + "." + (cal.get(Calendar.MONTH) + 1) + "."
                 + cal.get(Calendar.DAY_OF_MONTH) + "\"]\n" + "[White \"" + this.settings.getPlayerWhite().name + "\"]\n[Black \""
                 + this.settings.getPlayerBlack().name + "\"]\n\n");
-        String str = new String("") + info + this.moveHistory.getMovesInString();
+        String str = new String("") + info + this.moveHistoryController.getMovesInString();
         try {
             fileW.write(str);
             fileW.flush();
@@ -173,7 +189,7 @@ public class Game extends JPanel implements Observer, ComponentListener {
 
         newGUI.newGame();
         newGUI.blockedChessboard = true;
-        newGUI.moveHistory.setMoves(tempStr);
+        newGUI.moveHistoryController.setMoves(newGUI, tempStr);
         newGUI.blockedChessboard = false;
     }
 
@@ -416,8 +432,8 @@ public class Game extends JPanel implements Observer, ComponentListener {
         int height = this.getHeight() >= this.getWidth() ? this.getWidth() : this.getHeight();
         int chess_height;
         chess_height = this.chessboardController.getHeight();
-        this.moveHistory.getScrollPane().setLocation(new Point(chess_height + 5, 100));
-        this.moveHistory.getScrollPane().setSize(this.moveHistory.getScrollPane().getWidth(), chess_height - 100);
+        this.moveHistoryController.getScrollPane().setLocation(new Point(chess_height + 5, 100));
+        this.moveHistoryController.getScrollPane().setSize(this.moveHistoryController.getScrollPane().getWidth(), chess_height - 100);
         this.gameClock.gameClockView.setLocation(new Point(chess_height + 5, 0));
     }
 

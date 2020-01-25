@@ -54,47 +54,23 @@ public class MoveEvaluator {
      */
     private HashSet<MoveEffect> evaluateMoveToTargetSquares(Move move, Piece piece) {
         HashSet<MoveEffect> ret = new HashSet<>();
-        HashSet<Square> traversed = new HashSet<Square>();
         
         if (move == null || piece == null)
             return ret;//TODO error handling
 
         int count = 0;
+        HashSet<Square> traversed = new HashSet<Square>();
         Orientation otn = piece.getOrientation().clone();
-        Square from = model.getSquare(piece);
+        final Square from = model.getSquare(piece);
         
-        for (Square next = nextSquare(from, move.getX(), move.getY(), otn); next != null
-                && (move.getLimit() == null || count < move.getLimit()) && !traversed.contains(next); 
+        for (Square next = nextSquare(from, move.getX(), move.getY(), otn); 
+        		next != null && (move.getLimit() == null || count < move.getLimit()) && !traversed.contains(next); 
         		next = nextSquare(next, move.getX(), move.getY(), otn)) {
         	
-            boolean add = true;
             MoveEffectsBuilder meb = new MoveEffectsBuilder(piece, next, from, move);
-
-            if (move.getConditions().contains(MoveType.OnlyAttack)) {
-                if (next.getPiece() == null || next.getPiece().getPlayer() == piece.getPlayer())
-                    add = false;
-            } else if (move.getConditions().contains(MoveType.OnlyMove)) {
-                if (next.getPiece() != null)
-                    add = false;
-            } else if (next.getPiece() != null && next.getPiece().getPlayer() == piece.getPlayer())
-                add = false;
+            meb = evaluateAndGenEffects(move, next, piece, meb);
             
-            if (move.getConditions().contains(MoveType.OnlyWhenFresh) && piece.hasMoved())
-            	add = false;
-            
-            if (move.getConditions().contains(MoveType.Castling)) {
-            	if (piece.hasMoved())
-            		add = false;
-            	else {
-            		
-            	}
-            }
-            
-            if (move.getConditions().contains(MoveType.EnPassant)) {
-            	
-            }
-            
-            if (add) {
+            if (meb != null) {
                 if (meb.isEmpty())
                 	meb.addPosChange(model.getSquare(piece), next)
                 		.addStateChange(piece, piece.clone().setHasMoved(true).reorient(otn.clone()));
@@ -105,7 +81,7 @@ public class MoveEvaluator {
                 ret.add(meb.build());
             	traversed.add(next);
             }
-                
+            
             if (!move.getConditions().contains(MoveType.Unblockable) && next.getPiece() != null)
                 break;
 
@@ -113,6 +89,57 @@ public class MoveEvaluator {
         }
 
         return ret;
+    }
+    
+    private MoveEffectsBuilder evaluateCastling(Move move, Square next, Piece piece, MoveEffectsBuilder meb) {
+    	if (piece.hasMoved())
+    		return null;
+    	else {
+    		Square rook = null, nextRook = null;
+    		if (move.getY() > 0) {
+    			rook = model.getSquare(next.getPozX(), next.getPozY() + 1);
+    			nextRook = model.getSquare(next.getPozX(), next.getPozY() - 1);
+    		}
+    		else {
+    			rook = model.getSquare(next.getPozX(), next.getPozY() - 1);
+    			nextRook = model.getSquare(next.getPozX(), next.getPozY() + 1);
+    		}
+    		
+    		if (rook.getPiece() == null || rook.getPiece().hasMoved())
+    			return null;
+    		
+    		for (Square sq : model.getSquaresBetween(model.getSquare(piece), rook))
+    			if (squareIsThreatened(sq, piece.getPlayer())) 
+    				return null;
+    		
+    		return meb.addPosChange(model.getSquare(piece), next)
+    			.addStateChange(piece, piece.clone().setHasMoved(true))
+    			.addPosChange(rook, nextRook)
+    			.addStateChange(rook.getPiece(), rook.getPiece().clone().setHasMoved(true));
+    	}
+    }
+    
+    private MoveEffectsBuilder evaluateAndGenEffects(Move move, Square next, Piece piece, MoveEffectsBuilder meb) {
+    	if (move.getConditions().contains(MoveType.OnlyAttack)) {
+            if (next.getPiece() == null || next.getPiece().getPlayer() == piece.getPlayer())
+            	return null;
+        } else if (move.getConditions().contains(MoveType.OnlyMove)) {
+            if (next.getPiece() != null)
+            	return null;
+        } else if (next.getPiece() != null && next.getPiece().getPlayer() == piece.getPlayer())
+        	return null;
+        
+        if (move.getConditions().contains(MoveType.OnlyWhenFresh) && piece.hasMoved())
+        	return null;
+        
+        if (move.getConditions().contains(MoveType.Castling))
+        	return evaluateCastling(move, next, piece, meb);
+        
+        if (move.getConditions().contains(MoveType.EnPassant)) {
+        	
+        }
+        
+        return meb;
     }
 
     /**
