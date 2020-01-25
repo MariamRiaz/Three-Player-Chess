@@ -57,16 +57,6 @@ public class Player implements Serializable {
 		return this.name;
 	}
 
-	/**
-	 * Method setting the players type
-	 * 
-	 * @param type type of player - enumerate
-	 */
-	public void setType(playerTypes type) {
-		this.playerType = type;
-	}
-
-
 	public PlayerColor getColor() {
 		return color;
 	}
