@@ -32,6 +32,7 @@ import jchess.helper.RoundChessboardLoader;
 import jchess.model.RoundChessboardModel;
 import jchess.move.buff.BuffEvaluator;
 import jchess.pieces.Piece;
+import jchess.view.GameView;
 import jchess.view.RoundChessboardView;
 
 import javax.swing.*;
@@ -53,20 +54,23 @@ import java.util.logging.Level;
  * and for storing the currently active player.
  * It also provides functionality for saving and loading games.
  */
-public class Game extends JPanel implements Observer, ComponentListener {
+public class Game implements Observer, ComponentListener {
+
+    private GameView gameView;
 
     public Settings settings;
     private boolean blockedChessboard;
     private RoundChessboardController chessboardController;
+    private MoveHistoryController moveHistoryController;
     private Player activePlayer;
     private GameClock gameClock;
-    private MoveHistoryController moveHistoryController;
     private final int chessboardSize = 800;
     private RoundChessboardLoader chessboardLoader;
 
 
     public Game() {
-        this.setLayout(null);
+//        this.setLayout(null);
+
         settings = new Settings();
 
         chessboardLoader = new RoundChessboardLoader();
@@ -84,23 +88,36 @@ public class Game extends JPanel implements Observer, ComponentListener {
 
         chessboardController = new RoundChessboardController(model, view, this.settings, this.moveHistoryController);
 
+        gameView = new GameView();
 
-        this.add(chessboardController.getView());
+        // TODO: put all of the following in a Method
+
+        gameView.add(chessboardController.getView());
+//        this.add(chessboardController.getView());
+
         chessboardController.addSelectSquareObserver(this);
         gameClock = new GameClock(this);
         gameClock.gameClockView.setSize(new Dimension(400, 100));
         gameClock.gameClockView.setLocation(new Point(500, 0));
-        this.add(gameClock.gameClockView);
+        gameView.add(gameClock.gameClockView);
+//        this.add(gameClock.gameClockView);
 
-        JScrollPane movesHistory = this.moveHistoryController.getScrollPane();
-        movesHistory.setSize(new Dimension(245, 350));
-        movesHistory.setLocation(new Point(500, 121));
-        this.add(movesHistory);
+        JScrollPane movesHistoryScrollPane = this.moveHistoryController.getScrollPane();
+        movesHistoryScrollPane.setSize(new Dimension(245, 350));
+        movesHistoryScrollPane.setLocation(new Point(500, 121));
+        gameView.add(movesHistoryScrollPane);
+//        this.add(movesHistoryScrollPane);
 
         this.blockedChessboard = false;
-        this.setLayout(null);
-        this.addComponentListener(this);
-        this.setDoubleBuffered(true);
+
+        // TODO: test if this is needed
+        gameView.setLayout(null);
+//        this.setLayout(null);
+
+
+
+        gameView.addComponentListener(this);
+        gameView.setDoubleBuffered(true);
     }
 
     public Settings getSettings() {
