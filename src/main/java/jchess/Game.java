@@ -33,7 +33,6 @@ import jchess.network.Client;
 import jchess.pieces.Piece;
 import jchess.view.Chat;
 import jchess.view.RoundChessboardView;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentEvent;
@@ -289,18 +288,30 @@ public class Game extends JPanel implements Observer, ComponentListener {
     /**
      * Method to switch active players after move
      */
-    public void switchActive() {
-        if (activePlayer == settings.getPlayerWhite()) {
-            activePlayer = settings.getPlayerBlack();
-            moveHistoryController.setActivePlayForColumn(MoveHistoryController.PlayerColumn.player2);
-        } else if (activePlayer == settings.getPlayerBlack()) {
-            activePlayer = settings.getPlayerGray();
-            moveHistoryController.setActivePlayForColumn(MoveHistoryController.PlayerColumn.player3);
-        } else if (activePlayer == settings.getPlayerGray()) {
-            activePlayer = settings.getPlayerWhite();
-            moveHistoryController.setActivePlayForColumn(MoveHistoryController.PlayerColumn.player1);
-        }
-        this.gameClock.switchPlayers();
+    public void switchActive(boolean forward) {
+        if (forward) {
+            if (activePlayer == settings.getPlayerWhite())
+                    activePlayer = settings.getPlayerBlack();
+            else if (activePlayer == settings.getPlayerBlack())
+                    activePlayer = settings.getPlayerGray();
+            else if (activePlayer == settings.getPlayerGray())
+                    activePlayer = settings.getPlayerWhite();
+                }
+        else {
+            if (activePlayer == settings.getPlayerWhite())
+                    activePlayer = settings.getPlayerGray();
+            else if (activePlayer == settings.getPlayerBlack())
+                    activePlayer = settings.getPlayerWhite();
+            else if (activePlayer == settings.getPlayerGray())
+                    activePlayer = settings.getPlayerBlack();
+                }
+            this.gameClock.switchPlayers(forward);
+                    if (activePlayer == settings.getPlayerWhite())
+                moveHistoryController.setActivePlayForColumn(MoveHistoryController.PlayerColumn.player1);
+            else if (activePlayer == settings.getPlayerBlack())
+                moveHistoryController.setActivePlayForColumn(MoveHistoryController.PlayerColumn.player2);
+            else if (activePlayer == settings.getPlayerGray())
+                moveHistoryController.setActivePlayForColumn(MoveHistoryController.PlayerColumn.player3);
     }
 
     /**
@@ -316,7 +327,7 @@ public class Game extends JPanel implements Observer, ComponentListener {
      * Method to go to next move
      */
     private void nextMove() {
-        switchActive();
+        switchActive(true);
         Log.log("next move, active player: " + activePlayer.name + ", color: " + activePlayer.color.name() + ", type: "
                 + activePlayer.playerType.name());
         if (activePlayer.playerType == Player.playerTypes.localUser) {
@@ -352,7 +363,7 @@ public class Game extends JPanel implements Observer, ComponentListener {
         if (this.settings.gameType == Settings.gameTypes.local) {
             status = chessboardController.undo(true);
             if (status)
-                this.switchActive();
+                this.switchActive(false);
         } else if (this.settings.gameType == Settings.gameTypes.network) {
             this.client.sendUndoAsk();
             status = true;
