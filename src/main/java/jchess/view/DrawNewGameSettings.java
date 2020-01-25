@@ -37,7 +37,7 @@ import jchess.Settings;
 /**
  * Class responsible for drawing the fold with local game settings
  */
-public class DrawLocalSettings extends JPanel implements ActionListener, TextListener {
+public class DrawNewGameSettings extends JPanel implements ActionListener, TextListener {
 
 	JDialog parent;// needet to close newGame window
 	JComboBox color;// to choose color of player
@@ -167,7 +167,7 @@ public class DrawLocalSettings extends JPanel implements ActionListener, TextLis
 
 	}
 
-	public DrawLocalSettings(JDialog parent) {
+	public DrawNewGameSettings(JDialog parent) {
 		super();
 		// this.setA//choose oponent
 		this.parent = parent;
