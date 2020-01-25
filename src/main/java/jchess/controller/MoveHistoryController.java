@@ -147,10 +147,8 @@ public class MoveHistoryController {
     synchronized MoveEffect undo() {
 
         MoveEffect last = null;
-        try {
+        if (!moveHistoryModel.moveBackStack.isEmpty()) {
             last = moveHistoryModel.moveBackStack.pop();
-        } catch (EmptyStackException | ArrayIndexOutOfBoundsException exc) {
-            exc.printStackTrace();
         }
 
         if (last != null) {
