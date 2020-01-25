@@ -20,7 +20,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Observer;
 import java.util.Queue;
-import java.util.Stack;
 
 /**
  * Class that represents the interaction interface for the RoundChessboard component
