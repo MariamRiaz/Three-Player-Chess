@@ -23,7 +23,7 @@ package jchess.view;
 import java.awt.*;
 import javax.swing.*;
 
-import jchess.helper.GUI;
+import jchess.helper.ResourceLoader;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -56,10 +56,10 @@ public class PawnPromotionWindow extends JDialog implements ActionListener {
 
 		this.gbl = new GridBagLayout();
 		this.gbc = new GridBagConstraints();
-		this.knightButton = new JButton(new ImageIcon(GUI.loadImage("Knight-" + color + ".png")));
-		this.bishopButton = new JButton(new ImageIcon(GUI.loadImage("Bishop-" + color + ".png")));
-		this.rookButton = new JButton(new ImageIcon(GUI.loadImage("Rook-" + color + ".png")));
-		this.queenButton = new JButton(new ImageIcon(GUI.loadImage("Queen-" + color + ".png")));
+		this.knightButton = new JButton(new ImageIcon(ResourceLoader.loadImage("Knight-" + color + ".png")));
+		this.bishopButton = new JButton(new ImageIcon(ResourceLoader.loadImage("Bishop-" + color + ".png")));
+		this.rookButton = new JButton(new ImageIcon(ResourceLoader.loadImage("Rook-" + color + ".png")));
+		this.queenButton = new JButton(new ImageIcon(ResourceLoader.loadImage("Queen-" + color + ".png")));
 		this.result = "";
 
 		this.knightButton.addActionListener(this);
@@ -79,10 +79,10 @@ public class PawnPromotionWindow extends JDialog implements ActionListener {
 	 * @param color The players color
 	 */
 	public void setColor(String color) {
-		this.knightButton.setIcon(new ImageIcon(GUI.loadImage("Knight-" + color + ".png")));
-		this.bishopButton.setIcon(new ImageIcon(GUI.loadImage("Bishop-" + color + ".png")));
-		this.rookButton.setIcon(new ImageIcon(GUI.loadImage("Rook-" + color + ".png")));
-		this.queenButton.setIcon(new ImageIcon(GUI.loadImage("Queen-" + color + ".png")));
+		this.knightButton.setIcon(new ImageIcon(ResourceLoader.loadImage("Knight-" + color + ".png")));
+		this.bishopButton.setIcon(new ImageIcon(ResourceLoader.loadImage("Bishop-" + color + ".png")));
+		this.rookButton.setIcon(new ImageIcon(ResourceLoader.loadImage("Rook-" + color + ".png")));
+		this.queenButton.setIcon(new ImageIcon(ResourceLoader.loadImage("Queen-" + color + ".png")));
 	}
 
 	/**

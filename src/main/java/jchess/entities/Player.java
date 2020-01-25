@@ -26,27 +26,10 @@ import java.io.Serializable;
  * Class representing the player in the game
  */
 public class Player implements Serializable {
-    public static String colorToLetter(Player.colors color) {
-    	switch (color) {
-    	case black:
-    		return "B";
-    	case white:
-    		return "W";
-    	case gray:
-    		return "G";
-    	}
-    	
-		return "";
-    }
 
-	public String name;
+	private String name;
 
-	public enum colors {
-
-		white, black, gray
-	}
-
-	public colors color;
+	private PlayerColor color;
 
 	public enum playerTypes {
 
@@ -56,12 +39,9 @@ public class Player implements Serializable {
 	public playerTypes playerType;
 	public boolean goDown;
 
-	public Player() {
-	}
-
 	public Player(String name, String color) {
 		this.name = name;
-		this.color = colors.valueOf(color);
+		this.color = PlayerColor.getColor(color);
 		this.goDown = false;
 	}
 
@@ -90,5 +70,10 @@ public class Player implements Serializable {
 	 */
 	public void setType(playerTypes type) {
 		this.playerType = type;
+	}
+
+
+	public PlayerColor getColor() {
+		return color;
 	}
 }
