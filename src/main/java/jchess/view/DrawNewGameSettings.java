@@ -60,7 +60,7 @@ public class DrawNewGameSettings extends JPanel implements ActionListener, TextL
 	JButton okButton;
 	JCheckBox timeGame;
 	JComboBox time4Game;
-	String colors[] = { Settings.lang("white"), Settings.lang("black"), Settings.lang("gray") };
+	String colors[] = { Settings.getTexts("white"), Settings.getTexts("black"), Settings.getTexts("gray") };
 	String times[] = { "1", "3", "5", "8", "10", "15", "20", "25", "30", "60", "120" };
 
 	;
@@ -119,11 +119,11 @@ public class DrawNewGameSettings extends JPanel implements ActionListener, TextL
 				this.thirdName.setText(this.trimString(thirdName, 9));
 			}
 			if (this.firstName.getText().length() == 0 || this.secondName.getText().length() == 0 || this.thirdName.getText().length() == 0) {
-				JOptionPane.showMessageDialog(this, Settings.lang("fill_names"));
+				JOptionPane.showMessageDialog(this, Settings.getTexts("fill_names"));
 				return;
 			}
 			if (this.firstName.getText().length() == 0) {
-				JOptionPane.showMessageDialog(this, Settings.lang("fill_name"));
+				JOptionPane.showMessageDialog(this, Settings.getTexts("fill_name"));
 				return;
 			}
 			Game newGUI = JChessApp.jcv.addNewTab(this.firstName.getText() + " vs " + this.secondName.getText() + " vs " + this.thirdName.getText());
@@ -175,7 +175,7 @@ public class DrawNewGameSettings extends JPanel implements ActionListener, TextL
 		this.gbl = new GridBagLayout();
 		this.gbc = new GridBagConstraints();
 		this.sep = new JSeparator();
-		this.okButton = new JButton(Settings.lang("ok"));
+		this.okButton = new JButton(Settings.getTexts("ok"));
 
 		this.firstName = new JTextField("", 10);
 		this.firstName.setSize(new Dimension(200, 50));
@@ -183,15 +183,15 @@ public class DrawNewGameSettings extends JPanel implements ActionListener, TextL
 		this.secondName.setSize(new Dimension(200, 50));
 		this.thirdName = new JTextField("", 10);
 		this.thirdName.setSize(new Dimension(200, 50));
-		this.firstNameLab = new JLabel(Settings.lang("first_player_name") + ": ");
-		this.secondNameLab = new JLabel(Settings.lang("second_player_name") + ": ");
-		this.thirdNameLab = new JLabel(Settings.lang("third_player_name") + ": ");
+		this.firstNameLab = new JLabel(Settings.getTexts("first_player_name") + ": ");
+		this.secondNameLab = new JLabel(Settings.getTexts("second_player_name") + ": ");
+		this.thirdNameLab = new JLabel(Settings.getTexts("third_player_name") + ": ");
 		this.oponentChoos = new ButtonGroup();
 		this.computerLevel = new JSlider();
-		this.timeGame = new JCheckBox(Settings.lang("time_game_min"));
+		this.timeGame = new JCheckBox(Settings.getTexts("time_game_min"));
 		this.time4Game = new JComboBox(times);
 
-		this.oponentHuman = new JRadioButton(Settings.lang("against_other_human"), true);
+		this.oponentHuman = new JRadioButton(Settings.getTexts("against_other_human"), true);
 
 		this.setLayout(gbl);
 		this.oponentHuman.addActionListener(this);
@@ -199,7 +199,6 @@ public class DrawNewGameSettings extends JPanel implements ActionListener, TextL
 
 		this.secondName.addActionListener(this);
 
-		this.oponentChoos.add(oponentHuman);
 		this.computerLevel.setEnabled(false);
 		this.computerLevel.setMaximum(3);
 		this.computerLevel.setMinimum(1);
@@ -207,8 +206,6 @@ public class DrawNewGameSettings extends JPanel implements ActionListener, TextL
 		this.gbc.gridx = 0;
 		this.gbc.gridy = 0;
 		this.gbc.insets = new Insets(3, 3, 3, 3);
-		this.gbl.setConstraints(oponentHuman, gbc);
-		this.add(oponentHuman);
 		this.gbc.gridx = 0;
 		this.gbc.gridy = 1;
 		this.gbl.setConstraints(firstNameLab, gbc);

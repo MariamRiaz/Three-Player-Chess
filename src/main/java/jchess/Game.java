@@ -133,7 +133,7 @@ public class Game extends JPanel implements Observer, ComponentListener {
             fileW = new FileWriter(path);
         } catch (java.io.IOException exc) {
             System.err.println("error creating fileWriter: " + exc);
-            JOptionPane.showMessageDialog(this, Settings.lang("error_writing_to_file") + ": " + exc);
+            JOptionPane.showMessageDialog(this, Settings.getTexts("error_writing_to_file") + ": " + exc);
             return;
         }
         Calendar cal = Calendar.getInstance();
@@ -147,10 +147,10 @@ public class Game extends JPanel implements Observer, ComponentListener {
             fileW.close();
         } catch (java.io.IOException exc) {
             Log.log(Level.SEVERE, "error writing to file: " + exc);
-            JOptionPane.showMessageDialog(this, Settings.lang("error_writing_to_file") + ": " + exc);
+            JOptionPane.showMessageDialog(this, Settings.getTexts("error_writing_to_file") + ": " + exc);
             return;
         }
-        JOptionPane.showMessageDialog(this, Settings.lang("game_saved_properly"));
+        JOptionPane.showMessageDialog(this, Settings.getTexts("game_saved_properly"));
     }
 
     /**

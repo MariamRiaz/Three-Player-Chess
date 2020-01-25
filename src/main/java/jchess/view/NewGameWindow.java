@@ -36,7 +36,7 @@ public class NewGameWindow extends JDialog {
 
 		this.setSize(400, 700);
 		this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		this.jTabbedPane1.addTab(Settings.lang("new_game"), new DrawNewGameSettings(this));
+		this.jTabbedPane1.addTab(Settings.getTexts("new_game"), new DrawNewGameSettings(this));
 	}
 
 	/**

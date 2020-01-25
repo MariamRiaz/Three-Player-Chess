@@ -53,27 +53,13 @@ public class Settings implements Serializable {
         return playerWhite;
     }
 
-    public void setPlayerWhite(Player playerWhite) {
-        this.playerWhite = playerWhite;
-    }
-
     public Player getPlayerBlack() {
         return playerBlack;
-    }
-
-    public void setPlayerBlack(Player playerBlack) {
-        this.playerBlack = playerBlack;
     }
 
     public Player getPlayerGray() {
         return playerGray;
     }
-
-    public void setPlayerGray(Player playerGray) {
-        this.playerGray = playerGray;
-    }
-
-    public boolean renderLabels = true;
 
     public Settings() {
         // temporally
@@ -84,12 +70,11 @@ public class Settings implements Serializable {
         gameMode = gameModes.newGame;
     }
 
-    public static String lang(String key) {
+    public static String getTexts(String key) {
         if (Settings.loc == null) {
             Settings.loc = PropertyResourceBundle.getBundle("i18n.main");
-            Locale.setDefault(Locale.ENGLISH);
         }
-        String result = "";
+        String result;
         try {
             result = Settings.loc.getString(key);
         } catch (java.util.MissingResourceException exc) {
