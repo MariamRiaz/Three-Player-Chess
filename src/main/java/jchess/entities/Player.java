@@ -31,12 +31,6 @@ public class Player implements Serializable {
 
 	private PlayerColor color;
 
-	public enum playerTypes {
-
-		localUser, networkUser, computer
-	}
-
-	public playerTypes playerType;
 	public boolean goDown;
 
 	public Player(String name, String color) {
@@ -62,16 +56,6 @@ public class Player implements Serializable {
 	public String getName() {
 		return this.name;
 	}
-
-	/**
-	 * Method setting the players type
-	 * 
-	 * @param type type of player - enumerate
-	 */
-	public void setType(playerTypes type) {
-		this.playerType = type;
-	}
-
 
 	public PlayerColor getColor() {
 		return color;
