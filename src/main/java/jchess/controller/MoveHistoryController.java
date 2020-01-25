@@ -33,10 +33,7 @@ import jchess.view.MoveHistoryView;
 import org.apache.commons.text.StringSubstitutor;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.EmptyStackException;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 
 /**
@@ -52,25 +49,21 @@ public class MoveHistoryController {
     private String[] names = new String[]{Settings.lang("white"), Settings.lang("black"), Settings.lang("gray")};
     private MoveHistoryView moveHistoryView;
     private MoveHistoryModel moveHistoryModel;
-    private HashMap<Integer, Character> positionCharacterMap;
+    private ArrayList<Character> columnNames;
 
 
     public enum castling {
         none, shortCastling, longCastling
     }
 
-    public MoveHistoryController() {
+    public MoveHistoryController(ArrayList<Character> columns) {
         super();
         this.moveHistoryModel = new MoveHistoryModel();
         this.moveHistoryView = new MoveHistoryView(moveHistoryModel);
         this.moveHistoryModel.addColumn(this.names[0]);
         this.moveHistoryModel.addColumn(this.names[1]);
         this.moveHistoryModel.addColumn(this.names[2]);
-        initializePositionCharacterMap();
-    }
-
-    private void initializePositionCharacterMap() {
-
+        this.columnNames = columns;
     }
 
     /**
@@ -132,7 +125,7 @@ public class MoveHistoryController {
     }
 
     private String getPosition(Square square) {
-        return positionCharacterMap.get(square.getPozX()) // add letter of Square from which move was made
+        return columnNames.get(square.getPozX()) // add letter of Square from which move was made
                 + Integer.toString(square.getPozY() + 1);// add number of Square from which move was made
     }
 

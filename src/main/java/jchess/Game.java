@@ -33,6 +33,7 @@ import jchess.network.Client;
 import jchess.pieces.Piece;
 import jchess.view.Chat;
 import jchess.view.RoundChessboardView;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentEvent;
@@ -63,16 +64,28 @@ public class Game extends JPanel implements Observer, ComponentListener {
     private MoveHistoryController moveHistoryController;
     private Chat chat;
     private final int chessboardSize = 800;
+    private RoundChessboardLoader chessboardLoader;
 
 
     public Game() {
         this.setLayout(null);
-        this.moveHistoryController = new MoveHistoryController();
         settings = new Settings();
 
-        RoundChessboardModel model = new RoundChessboardLoader().loadDefaultFromJSON(settings);
-        RoundChessboardView view = new RoundChessboardView(chessboardSize, "3-player-board.png", model.getRows(), model.getColumns(), model.squares);
+        chessboardLoader = new RoundChessboardLoader();
+
+        RoundChessboardModel model = chessboardLoader.loadDefaultFromJSON(settings);
+        RoundChessboardView view =
+                new RoundChessboardView(
+                        chessboardSize,
+                        "3-player-board.png",
+                        model.getRows(),
+                        model.getColumns(),
+                        model.squares);
+
+        this.moveHistoryController = new MoveHistoryController(chessboardLoader.getColumnNames());
+
         chessboardController = new RoundChessboardController(model, view, this.settings, this.moveHistoryController);
+
 
         this.add(chessboardController.getView());
         chessboardController.addSelectSquareObserver(this);
@@ -432,11 +445,11 @@ public class Game extends JPanel implements Observer, ComponentListener {
                 }
                 chessboardController.unselect();
                 this.nextMove();
-                
+
                 HashSet<Piece> cp = chessboardController.getCrucialPieces(this.activePlayer);
                 for (Piece piece : cp)
-                	if (chessboardController.pieceIsUnsavable(piece))
-                		this.endGame("Checkmate! " + piece.getPlayer().color.toString() + " player lose!");
+                    if (chessboardController.pieceIsUnsavable(piece))
+                        this.endGame("Checkmate! " + piece.getPlayer().color.toString() + " player lose!");
             }
         } else if (blockedChessboard) {
             Log.log("Chessboard is blocked");
@@ -475,7 +488,8 @@ public class Game extends JPanel implements Observer, ComponentListener {
 
     /**
      * Listens for events that come every time a square is selected
-     * @param o The observable square that generates the events
+     *
+     * @param o   The observable square that generates the events
      * @param arg The new generated Square
      */
     @Override
