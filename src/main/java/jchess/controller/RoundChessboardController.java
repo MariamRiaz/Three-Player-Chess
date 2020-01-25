@@ -19,6 +19,8 @@ import java.awt.event.MouseEvent;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Observer;
+import java.util.Queue;
+import java.util.Stack;
 
 /**
  * Class that represents the interaction interface for the RoundChessboard component
@@ -185,7 +187,7 @@ public class RoundChessboardController extends MouseAdapter {
      * @return The List of Squares.
      */
     public List<Square> getSquares() {
-        return this.model.squares;
+        return this.model.getSquares();
     }
 
     /**
@@ -211,8 +213,8 @@ public class RoundChessboardController extends MouseAdapter {
 
         if (clearForwardHistory) {
             this.movesHistory.clearMoveForwardStack();
-            this.movesHistory.addMove(move, true);
-        } else this.movesHistory.addMove(move, false);
+            this.movesHistory.addMove(move, true, true);
+        } else this.movesHistory.addMove(move, false, true);
         
     	view.updateAfterMove();
     	
@@ -234,11 +236,12 @@ public class RoundChessboardController extends MouseAdapter {
      */
     public synchronized boolean undo(boolean refresh)
     {
-        MoveEffect last = this.movesHistory.undo();
+        Queue<MoveEffect> last = this.movesHistory.undo();
         
         if (last != null) {
-        	last.reverse(model, view);
-
+        	for (MoveEffect me : last)
+        		me.reverse(model, view);
+        	
             if (refresh) {
             	this.unselect();
                 view.repaint();
@@ -255,10 +258,11 @@ public class RoundChessboardController extends MouseAdapter {
      */
     public boolean redo(boolean refresh) {
         if (this.settings.gameType == Settings.gameTypes.local) {
-        	MoveEffect first = this.movesHistory.redo();
+        	Queue<MoveEffect> first = this.movesHistory.redo();
         	
             if (first != null) {
-            	first.apply(model, view);
+            	for (MoveEffect me : first)
+            		me.apply(model, view);
                 
                 if (refresh) {
                     this.unselect();

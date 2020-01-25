@@ -19,17 +19,19 @@ public class MoveEffect {
 	private final Square trigger, from;
 	private final Move move;
 	private final MoveType flag;
+	private final boolean fromMove;
 	
 	private final ArrayList<PositionChange> positionChanges, pcReverse;
 	private final ArrayList<StateChange> stateChanges, scReverse;
 	
-	protected MoveEffect(Piece moving, Square trigger, Square from, Move move, MoveType flag, ArrayList<PositionChange> positionChanges, ArrayList<StateChange> stateChanges,
+	protected MoveEffect(Piece moving, Square trigger, Square from, Move move, MoveType flag, boolean fromMove, ArrayList<PositionChange> positionChanges, ArrayList<StateChange> stateChanges,
 			ArrayList<PositionChange> pcReverse, ArrayList<StateChange> scReverse) {
 		this.moving = moving;
 		this.trigger = trigger;
 		this.from = from;
 		this.move = move;
 		this.flag = flag;
+		this.fromMove = fromMove;
 		this.positionChanges = positionChanges;
 		this.stateChanges = stateChanges;
 		
@@ -73,6 +75,10 @@ public class MoveEffect {
 	 */
 	public MoveType getFlag() {
 		return flag;
+	}
+	
+	public boolean isFromMove() {
+		return fromMove;
 	}
 	
 	/**
@@ -134,5 +140,21 @@ public class MoveEffect {
     		if (view != null)
     			view.setVisual(ent.getSquare().getPiece(), ent.getSquare());
     	}
+    }
+    
+    protected ArrayList<PositionChange> getPositionChanges() {
+    	return positionChanges;
+    }
+    
+    protected ArrayList<PositionChange> getPositionChangesReverse() {
+    	return pcReverse;
+    }
+    
+    protected ArrayList<StateChange> getStateChanges() {
+    	return stateChanges;
+    }
+    
+    protected ArrayList<StateChange> getStateChangesReverse() {
+    	return scReverse;
     }
 }

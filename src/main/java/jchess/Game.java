@@ -80,7 +80,7 @@ public class Game extends JPanel implements Observer, ComponentListener {
                         "3-player-board.png",
                         model.getRows(),
                         model.getColumns(),
-                        model.squares);
+                        model.getSquares());
 
         this.moveHistoryController = new MoveHistoryController(chessboardLoader.getColumnNames());
 

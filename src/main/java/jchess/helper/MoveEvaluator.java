@@ -67,7 +67,7 @@ public class MoveEvaluator {
         		next != null && (move.getLimit() == null || count < move.getLimit()) && !traversed.contains(next); 
         		next = nextSquare(next, move.getX(), move.getY(), otn)) {
         	
-            MoveEffectsBuilder meb = new MoveEffectsBuilder(piece, next, from, move);
+            MoveEffectsBuilder meb = new MoveEffectsBuilder(piece, next, from, move, true);
             meb = evaluateAndGenEffects(move, next, piece, meb);
             
             if (meb != null) {
@@ -177,7 +177,7 @@ public class MoveEvaluator {
     public boolean pieceIsUnsavable(Piece piece) {
         if (piece == null)
             return false;
-        for (Square sq : model.squares) {
+        for (Square sq : model.getSquares()) {
             if (sq.getPiece() == null || sq.getPiece().getPlayer() != piece.getPlayer())
                 continue;
 			
@@ -240,7 +240,7 @@ public class MoveEvaluator {
             return false;
         
         Piece piece = square.getPiece();
-        for (Square sq : model.squares) {
+        for (Square sq : model.getSquares()) {
             if (sq.getPiece() == null || sq.getPiece().getPlayer() == player)
                 continue;
 			
