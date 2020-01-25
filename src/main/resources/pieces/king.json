@@ -3,6 +3,18 @@
     "type": "King",
     "symbol": "K",
     "moves": [ 
+        {
+            "x": 0,
+            "y": 2,
+            "limit": 1,
+            "conditions": [ "Castling" ]
+        },
+        {
+            "x": 0,
+            "y": -3,
+            "limit": 1,
+            "conditions": [ "Castling" ]
+        },
         { 
             "x": 1,
             "y": 1,
