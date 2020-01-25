@@ -16,7 +16,7 @@
 package jchess.view;
 
 import jchess.*;
-import jchess.helper.GUI;
+import jchess.helper.ResourceLoader;
 import jchess.helper.Log;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.ResourceMap;
@@ -39,8 +39,7 @@ import java.util.logging.Level;
  * The application's main frame.
  */
 public class JChessView extends FrameView implements ActionListener, ComponentListener {
-    static GUI gui = null;
-    GUI activeGUI;//in future it will be reference to active tab
+    static ResourceLoader resourceLoader = null;
 
     public Game addNewTab(String title) {
         Game newGUI = new Game();
@@ -116,7 +115,7 @@ public class JChessView extends FrameView implements ActionListener, ComponentLi
 
     public JChessView(SingleFrameApplication app) {
         super(app);
-
+        getFrame().setTitle("3 Player Chess");
         initComponents();
         // status bar initialization - message timeout, idle icon and busy animation, etc
         ResourceMap resourceMap = new ResourceMap(getResourceMap(), JChessView.class.getClassLoader(), "JChessApp", "JChessView");
@@ -198,11 +197,6 @@ public class JChessView extends FrameView implements ActionListener, ComponentLi
         JChessApp.getApplication().show(promotionBox);
 
         return promotionBox.result;
-    }
-
-    public String showSaveWindow() {
-
-        return "";
     }
 
 
@@ -414,20 +408,18 @@ public class JChessView extends FrameView implements ActionListener, ComponentLi
 
     private void moveBackItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_moveBackItemActionPerformed
     {//GEN-HEADEREND:event_moveBackItemActionPerformed
-        if (gui != null && gui.game != null) {
-            gui.game.undo();
-        } else {
-            try {
-                Game activeGame = this.getActiveTabGame();
-                if (!activeGame.undo()) {
-                    JOptionPane.showMessageDialog(null, "Nie da sie cofnac!");
-                }
-            } catch (java.lang.ArrayIndexOutOfBoundsException exc) {
-                JOptionPane.showMessageDialog(null, "Brak aktywnej karty!");
-            } catch (UnsupportedOperationException exc) {
-                JOptionPane.showMessageDialog(null, exc.getMessage());
+
+        try {
+            Game activeGame = this.getActiveTabGame();
+            if (!activeGame.undo()) {
+                JOptionPane.showMessageDialog(null, "Nie da sie cofnac!");
             }
+        } catch (java.lang.ArrayIndexOutOfBoundsException exc) {
+            JOptionPane.showMessageDialog(null, "Brak aktywnej karty!");
+        } catch (UnsupportedOperationException exc) {
+            JOptionPane.showMessageDialog(null, exc.getMessage());
         }
+
 
     }//GEN-LAST:event_moveBackItemActionPerformed
 
@@ -446,20 +438,18 @@ public class JChessView extends FrameView implements ActionListener, ComponentLi
     private void moveForwardItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_moveForwardItemActionPerformed
     {//GEN-HEADEREND:event_moveForwardItemActionPerformed
         // TODO add your handling code here:
-        if (gui != null && gui.game != null) {
-            gui.game.redo();
-        } else {
-            try {
-                Game activeGame = this.getActiveTabGame();
-                if (!activeGame.redo()) {
-                    JOptionPane.showMessageDialog(null, "W pamieci brak ruchow do przodu!");
-                }
-            } catch (java.lang.ArrayIndexOutOfBoundsException exc) {
-                JOptionPane.showMessageDialog(null, "Brak aktywnej karty!");
-            } catch (UnsupportedOperationException exc) {
-                JOptionPane.showMessageDialog(null, exc.getMessage());
+
+        try {
+            Game activeGame = this.getActiveTabGame();
+            if (!activeGame.redo()) {
+                JOptionPane.showMessageDialog(null, "W pamieci brak ruchow do przodu!");
             }
+        } catch (java.lang.ArrayIndexOutOfBoundsException exc) {
+            JOptionPane.showMessageDialog(null, "Brak aktywnej karty!");
+        } catch (UnsupportedOperationException exc) {
+            JOptionPane.showMessageDialog(null, exc.getMessage());
         }
+
     }//GEN-LAST:event_moveForwardItemActionPerformed
 
     private void rewindToBeginActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_rewindToBeginActionPerformed
