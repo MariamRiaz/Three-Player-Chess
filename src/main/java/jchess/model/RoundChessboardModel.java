@@ -90,7 +90,7 @@ public class RoundChessboardModel {
     	
     	HashSet<Piece> retVal = new HashSet<>();
     	for (Piece el : crucialPieces)
-    		if (el.getPlayer().color.equals(player.color))
+    		if (el.getPlayer().getColor().equals(player.getColor()))
     			retVal.add(el);
     	
     	return retVal;
@@ -127,7 +127,7 @@ public class RoundChessboardModel {
      * @param color The color of the Player for whom to check.
      * @return Whether the given Player's Pieces upon reaching the given Square may be promoted.
      */
-    public boolean isInPromotionArea(Square square, Player.colors color) {
+    public boolean isInPromotionArea(Square square) {
     	return square != null && square.getPozX() == 5;
     }
 

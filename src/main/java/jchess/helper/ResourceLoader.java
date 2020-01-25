@@ -21,6 +21,7 @@
 package jchess.helper;
 
 import jchess.JChessApp;
+import jchess.pieces.Piece;
 
 import java.awt.*;
 import java.net.*;
@@ -36,6 +37,8 @@ import java.util.logging.Level;
  */
 public class ResourceLoader {
 
+    public static final String THEME_PROPERTY = "THEME";
+
     /*
      * Method load image by a given name with extension
      *
@@ -48,8 +51,9 @@ public class ResourceLoader {
         Toolkit tk = Toolkit.getDefaultToolkit();
         try {
             Theme currentTheme = getTheme();
-            String imageLink = Images.THEME_FOLDER + File.pathSeparator
-                    + currentTheme.getTheme() + Images.IMAGES_FOLDER;
+            String imageLink = Images.THEME_FOLDER + "/"
+                    + currentTheme.getThemeString() + "/" +
+                    Images.IMAGES_FOLDER + "/" + name;
             URL url = JChessApp.class.getClassLoader().getResource(imageLink);
             img = tk.getImage(url);
 
@@ -60,9 +64,39 @@ public class ResourceLoader {
         return img;
     }
 
+    public static File getResource(String resourcePath) {
+        URL url = JChessApp.class.getClassLoader().getResource(resourcePath);
+        try {
+            return new File(url.toURI());
+        } catch (URISyntaxException e) {
+            Log.log(Level.WARNING, "Cannot get resource for " + url.toString());
+            return new File("");
+        }
+    }
+
+    public static Image loadPieceImage(Piece piece) {
+        Image img = null;
+        Toolkit tk = Toolkit.getDefaultToolkit();
+        try {
+            Theme currentTheme = getTheme();
+            String imageLink = Images.THEME_FOLDER + "/"
+                    + currentTheme.getThemeString()  + "/" + Images.IMAGES_FOLDER +
+                    "/" + piece.getDefinition().getType()
+                    + piece.getPlayer().getColor().getColor() + Images.PNG_EXTENSION;
+            URL url = JChessApp.class.getClassLoader().getResource(imageLink);
+            img = tk.getImage(url);
+
+        } catch (Exception e) {
+            Log.log(Level.SEVERE, "some error loading image!");
+            e.printStackTrace();
+        }
+        return img;
+    }
+
+
     private static Theme getTheme() {
-        String currentTheme = getConfigFile().getProperty("THEME");
-        return Theme.valueOf(currentTheme);
+        String currentTheme = getConfigFile().getProperty(ResourceLoader.THEME_PROPERTY);
+        return Theme.getTheme(currentTheme);
     }
 
     public static Properties getConfigFile() {
@@ -70,9 +104,9 @@ public class ResourceLoader {
         String configFilePath = "JChessApp.properties";
         try {
             confFile.load(ResourceLoader.class.getClassLoader().getResourceAsStream(configFilePath));
-        } catch(IOException e) {
+        } catch (IOException e) {
             Log.log(Level.WARNING, "Config file " + configFilePath + " could not be found");
-            confFile.setProperty("THEME", "default");
+            confFile.setProperty(ResourceLoader.THEME_PROPERTY, Images.DEFAULT_THEME);
         }
         return confFile;
     }

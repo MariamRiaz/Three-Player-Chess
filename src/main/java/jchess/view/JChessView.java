@@ -199,11 +199,6 @@ public class JChessView extends FrameView implements ActionListener, ComponentLi
         return promotionBox.result;
     }
 
-    public String showSaveWindow() {
-
-        return "";
-    }
-
 
     /**
      * This method is called from within the constructor to

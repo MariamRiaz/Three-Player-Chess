@@ -26,6 +26,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import jchess.helper.Images;
 import jchess.helper.ResourceLoader;
 import jchess.JChessApp;
 import jchess.helper.Log;
@@ -52,7 +53,7 @@ public class ThemeChooseWindow extends JDialog implements ActionListener, ListSe
     public ThemeChooseWindow(Frame parent) throws Exception {
         super(parent);
 
-        File dir = new File(ThemeChooseWindow.class.getClassLoader().getResource("theme/").toURI());
+        File dir = ResourceLoader.getResource(Images.THEME_FOLDER);
 
         Log.log("Theme path: " + dir.getPath());
 
@@ -81,7 +82,7 @@ public class ThemeChooseWindow extends JDialog implements ActionListener, ListSe
             this.gbl = new GridBagLayout();
             this.gbc = new GridBagConstraints();
             try {
-                this.themePreview = new ImageIcon(ResourceLoader.loadImage("Preview.png"));// JChessApp.class.getResource("theme/"+GUI.configFile.getProperty("THEME")+"/images/Preview.png"));
+                this.themePreview = new ImageIcon(ResourceLoader.loadImage(Images.PREVIEW));// JChessApp.class.getResource("theme/"+GUI.configFile.getProperty("THEME")+"/images/Preview.png"));
             } catch (java.lang.NullPointerException exc) {
                 Log.log(Level.SEVERE, "Cannot find preview image: " + exc);
                 this.themePreview = new ImageIcon(JChessApp.class.getResource("theme/noPreview.png"));
@@ -106,10 +107,10 @@ public class ThemeChooseWindow extends JDialog implements ActionListener, ListSe
 
     @Override
     public void valueChanged(ListSelectionEvent event) {
-        String element = this.themesList.getModel().getElementAt(this.themesList.getSelectedIndex()).toString();
-        String path = ThemeChooseWindow.class.getClassLoader().getResource("theme/").toString();
-        Log.log(path + element + "/images/Preview.png");
-        this.themePreview = new ImageIcon(path + element + "/images/Preview.png");
+        String themeString = this.themesList.getModel().getElementAt(this.themesList.getSelectedIndex()).toString();
+        String path = ThemeChooseWindow.class.getClassLoader().getResource(Images.THEME_FOLDER).toString();
+        this.themePreview = new ImageIcon(path + File.pathSeparator +
+                themeString + File.separator + Images.IMAGES_FOLDER + File.separator + Images.PREVIEW);
         this.themePreviewButton.setIcon(this.themePreview);
         repaint();
     }
@@ -124,7 +125,7 @@ public class ThemeChooseWindow extends JDialog implements ActionListener, ListSe
             Properties prp = ResourceLoader.getConfigFile();
             int element = this.themesList.getSelectedIndex();
             String name = this.themesList.getModel().getElementAt(element).toString();
-            prp.setProperty("THEME", name);
+            prp.setProperty(ResourceLoader.THEME_PROPERTY, name);
             try {
             	File properties = new File(ThemeChooseWindow.class.getClassLoader().getResource("JChessApp.properties").toURI());
                 FileOutputStream outStream = new FileOutputStream(properties);
@@ -135,7 +136,7 @@ public class ThemeChooseWindow extends JDialog implements ActionListener, ListSe
             }
             JOptionPane.showMessageDialog(this, Settings.lang("changes_visible_after_restart"));
             this.setVisible(false);
-			Log.log(prp.getProperty("THEME"));
+			Log.log(prp.getProperty(ResourceLoader.THEME_PROPERTY));
         }
     }
 }

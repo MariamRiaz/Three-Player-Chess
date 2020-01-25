@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Stack;
 import javax.swing.JScrollPane;
 
+import jchess.entities.PlayerColor;
 import org.apache.commons.text.StringSubstitutor;
 
 import jchess.Game;
@@ -357,7 +358,7 @@ public class MoveHistory {
             {
                 int[] values = new int[4];
                 if (locMove.equals("O-O-O")) {
-                    if (this.game.getActivePlayer().color == Player.colors.black) // if black turn
+                    if (this.game.getActivePlayer().getColor() == PlayerColor.BLACK) // if black turn
                     {
                         values = new int[]{4, 0, 2, 0};// move value for castling (King move)
                     } else {
@@ -365,7 +366,7 @@ public class MoveHistory {
                     }
                 } else if (locMove.equals("O-O")) // if short castling
                 {
-                    if (this.game.getActivePlayer().color == Player.colors.black) // if black turn
+                    if (this.game.getActivePlayer().getColor() == PlayerColor.BLACK) // if black turn
                     {
                         values = new int[]{4, 0, 6, 0};// move value for castling (King move)
                     } else {
@@ -398,7 +399,7 @@ public class MoveHistory {
                 yTo = RoundChessboardController.bottom - (locMove.charAt(from + 1) - 49);// from ASCII
                 for (Square square : squares) {
                     if (square.getPiece() == null
-                            || this.game.getActivePlayer().color != square.getPiece().getPlayer().color) {
+                            || this.game.getActivePlayer().getColor() != square.getPiece().getPlayer().getColor()) {
                         continue;
                     }
                     /*HashSet<Square> pieceMoves = this.game.chessboardController.getValidTargetSquares(square);

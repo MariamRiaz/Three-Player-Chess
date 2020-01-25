@@ -16,12 +16,12 @@ public class PieceVisual {
 	
 	/**
 	 * Creates a new PieceVisual instance.
-	 * @param imageID The String ID of the image to use when drawing this PieceVisual. Must be non-null and containted in GUI.loadImage().
+	 * @param piece The String ID of the image to use when drawing this PieceVisual. Must be non-null and containted in GUI.loadImage().
 	 */
-	public PieceVisual(String imageID) {
-		this.image = ResourceLoader.loadImage(imageID);
+	public PieceVisual(Piece piece) {
+		this.image = ResourceLoader.loadPieceImage(piece);
 		if (this.image == null)
-			throw new NullPointerException("PieceVisual image is null. Argument 'imageID' was " + new String(imageID));
+			throw new NullPointerException("PieceVisual image is null");
 	}
 	
 	/**

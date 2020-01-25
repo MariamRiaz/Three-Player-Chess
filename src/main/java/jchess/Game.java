@@ -26,6 +26,7 @@ import jchess.controller.RoundChessboardController;
 import jchess.entities.Player;
 import jchess.entities.Square;
 import jchess.exceptions.ReadGameError;
+import jchess.helper.Images;
 import jchess.helper.Log;
 import jchess.helper.RoundChessboardLoader;
 import jchess.model.RoundChessboardModel;
@@ -71,7 +72,7 @@ public class Game extends JPanel implements Observer, ComponentListener {
         settings = new Settings();
 
         RoundChessboardModel model = new RoundChessboardLoader().loadDefaultFromJSON(settings);
-        RoundChessboardView view = new RoundChessboardView(chessboardSize, "3-player-board.png", model.getRows(), model.getColumns(), model.squares);
+        RoundChessboardView view = new RoundChessboardView(chessboardSize, Images.BOARD, model.getRows(), model.getColumns(), model.squares);
         chessboardController = new RoundChessboardController(model, view, this.settings, this.moveHistory);
 
         this.add(chessboardController.getView());
@@ -141,8 +142,8 @@ public class Game extends JPanel implements Observer, ComponentListener {
         }
         Calendar cal = Calendar.getInstance();
         String info = new String("[Event \"Game\"]\n[Date \"" + cal.get(Calendar.YEAR) + "." + (cal.get(Calendar.MONTH) + 1) + "."
-                + cal.get(Calendar.DAY_OF_MONTH) + "\"]\n" + "[White \"" + this.settings.getPlayerWhite().name + "\"]\n[Black \""
-                + this.settings.getPlayerBlack().name + "\"]\n\n");
+                + cal.get(Calendar.DAY_OF_MONTH) + "\"]\n" + "[White \"" + this.settings.getPlayerWhite().getName() + "\"]\n[Black \""
+                + this.settings.getPlayerBlack().getName() + "\"]\n\n");
         String str = new String("") + info + this.moveHistory.getMovesInString();
         try {
             fileW.write(str);
@@ -184,8 +185,8 @@ public class Game extends JPanel implements Observer, ComponentListener {
         }
         Game newGUI = JChessApp.jcv.addNewTab(whiteName + " vs. " + blackName);
         Settings locSetts = newGUI.settings;
-        locSetts.getPlayerBlack().name = blackName;
-        locSetts.getPlayerWhite().name = whiteName;
+        locSetts.getPlayerBlack().setName(blackName);
+        locSetts.getPlayerWhite().setName(whiteName);
         locSetts.getPlayerBlack().setType(Player.playerTypes.localUser);
         locSetts.getPlayerWhite().setType(Player.playerTypes.localUser);
         locSetts.gameMode = Settings.gameModes.loadGame;
@@ -301,7 +302,8 @@ public class Game extends JPanel implements Observer, ComponentListener {
      */
     private void nextMove() {
         switchActive();
-        Log.log("next move, active player: " + activePlayer.name + ", color: " + activePlayer.color.name() + ", type: "
+        Log.log("next move, active player: " + activePlayer.getName()
+                + ", color: " + activePlayer.getColor().name() + ", type: "
                 + activePlayer.playerType.name());
         if (activePlayer.playerType == Player.playerTypes.localUser) {
             this.blockedChessboard = false;
@@ -433,7 +435,7 @@ public class Game extends JPanel implements Observer, ComponentListener {
                 HashSet<Piece> cp = chessboardController.getCrucialPieces(this.activePlayer);
                 for (Piece piece : cp)
                 	if (chessboardController.pieceIsUnsavable(piece))
-                		this.endGame("Checkmate! " + piece.getPlayer().color.toString() + " player lose!");
+                		this.endGame("Checkmate! " + piece.getPlayer().getColor().name() + " player lose!");
             }
         } else if (blockedChessboard) {
             Log.log("Chessboard is blocked");
