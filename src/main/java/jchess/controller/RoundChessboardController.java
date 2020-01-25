@@ -237,7 +237,7 @@ public class RoundChessboardController extends MouseAdapter {
     {
         Queue<MoveEffect> last = this.movesHistory.undo();
         
-        if (last != null) {
+        if (last != null && last.size() != 0) {
         	for (MoveEffect me : last)
         		me.reverse(model, view);
         	
@@ -259,7 +259,7 @@ public class RoundChessboardController extends MouseAdapter {
         if (this.settings.gameType == Settings.gameTypes.local) {
         	Queue<MoveEffect> first = this.movesHistory.redo();
         	
-            if (first != null) {
+            if (first != null && first.size() != 0) {
             	for (MoveEffect me : first)
             		me.apply(model, view);
                 
