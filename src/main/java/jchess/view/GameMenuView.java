@@ -1,7 +1,6 @@
 package jchess.view;
 
 import jchess.Game;
-import jchess.helper.GUI;
 import org.jdesktop.application.ResourceMap;
 
 import javax.swing.*;
@@ -12,11 +11,9 @@ public class GameMenuView {
     private javax.swing.JMenuItem moveForwardItem;
     private javax.swing.JMenuItem rewindToBegin;
     private javax.swing.JMenuItem rewindToEnd;
-    private GUI gui = null;
     private javax.swing.JTabbedPane gamesPane;
-    public GameMenuView(ResourceMap resourceMap, GUI gui, JTabbedPane gamesPane) {
+    public GameMenuView(ResourceMap resourceMap, JTabbedPane gamesPane) {
         this.gameMenu = new javax.swing.JMenu();
-        this.gui = gui;
         this.gamesPane = gamesPane;
         moveBackItem = new javax.swing.JMenuItem();
         moveForwardItem = new javax.swing.JMenuItem();
@@ -83,9 +80,6 @@ public class GameMenuView {
 
     private void moveBackItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_moveBackItemActionPerformed
     {//GEN-HEADEREND:event_moveBackItemActionPerformed
-        if (gui != null && gui.game != null) {
-            gui.game.undo();
-        } else {
             try {
                 Game activeGame = this.getActiveTabGame();
                 if (!activeGame.undo()) {
@@ -96,7 +90,6 @@ public class GameMenuView {
             } catch (UnsupportedOperationException exc) {
                 JOptionPane.showMessageDialog(null, exc.getMessage());
             }
-        }
 
     }//GEN-LAST:event_moveBackItemActionPerformed
 
@@ -108,9 +101,6 @@ public class GameMenuView {
     private void moveForwardItemMouseClicked(java.awt.event.MouseEvent evt){ }
     private void moveForwardItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_moveForwardItemActionPerformed
     {
-        if (gui != null && gui.game != null) {
-            gui.game.redo();
-        } else {
             try {
                 Game activeGame = this.getActiveTabGame();
                 if (!activeGame.redo()) {
@@ -121,7 +111,6 @@ public class GameMenuView {
             } catch (UnsupportedOperationException exc) {
                 JOptionPane.showMessageDialog(null, exc.getMessage());
             }
-        }
     }//GEN-LAST:event_moveForwardItemActionPerformed
     private void rewindToBeginActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_rewindToBeginActionPerformed
     {//GEN-HEADEREND:event_rewindToBeginActionPerformed

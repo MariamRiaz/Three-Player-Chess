@@ -191,7 +191,7 @@ public class JChessView extends FrameView implements ActionListener {
         fileMenuView = new FileMenuView(resourceMap);
         menuBar.add(fileMenuView.fileMenu);
 
-        GameMenuView gameMenuView = new GameMenuView(resourceMap, gui, gamesPane);
+        GameMenuView gameMenuView = new GameMenuView(resourceMap, gamesPane);
         menuBar.add(gameMenuView.gameMenu);
 
         optionsMenuView = new OptionsMenuView(resourceMap);
@@ -257,7 +257,7 @@ public class JChessView extends FrameView implements ActionListener {
             JChessApp.getApplication().show(this.newGameFrame);
         } else if (target == fileMenuView.saveGameItem) { //saveGame
             if (this.gamesPane.getTabCount() == 0) {
-                JOptionPane.showMessageDialog(null, Settings.lang("save_not_called_for_tab"));
+                JOptionPane.showMessageDialog(null, Settings.getTexts("save_not_called_for_tab"));
                 return;
             }
             while (true) {//until
@@ -273,7 +273,7 @@ public class JChessView extends FrameView implements ActionListener {
                             Log.log(Level.SEVERE, "error creating file: " + exc);
                         }
                     } else if (selFile.exists()) {
-                        int opt = JOptionPane.showConfirmDialog(tempGUI, Settings.lang("file_exists"), Settings.lang("file_exists"), JOptionPane.YES_NO_OPTION);
+                        int opt = JOptionPane.showConfirmDialog(tempGUI, Settings.getTexts("file_exists"), Settings.getTexts("file_exists"), JOptionPane.YES_NO_OPTION);
                         if (opt == JOptionPane.NO_OPTION)//if user choose to now overwrite
                         {
                             continue; // go back to file choose
