@@ -118,12 +118,11 @@ public class DrawLocalSettings extends JPanel implements ActionListener, TextLis
 			if (this.thirdName.getText().length() > 9) {// make names short to 10 digits
 				this.thirdName.setText(this.trimString(thirdName, 9));
 			}
-			if (!this.oponentComp.isSelected()
-					&& (this.firstName.getText().length() == 0 || this.secondName.getText().length() == 0 || this.thirdName.getText().length() == 0)) {
+			if (this.firstName.getText().length() == 0 || this.secondName.getText().length() == 0 || this.thirdName.getText().length() == 0) {
 				JOptionPane.showMessageDialog(this, Settings.lang("fill_names"));
 				return;
 			}
-			if ((this.oponentComp.isSelected() && this.firstName.getText().length() == 0)) {
+			if (this.firstName.getText().length() == 0) {
 				JOptionPane.showMessageDialog(this, Settings.lang("fill_name"));
 				return;
 			}
@@ -177,7 +176,6 @@ public class DrawLocalSettings extends JPanel implements ActionListener, TextLis
 		this.gbc = new GridBagConstraints();
 		this.sep = new JSeparator();
 		this.okButton = new JButton(Settings.lang("ok"));
-		this.compLevLab = new JLabel(Settings.lang("computer_level"));
 
 		this.firstName = new JTextField("", 10);
 		this.firstName.setSize(new Dimension(200, 50));
@@ -193,17 +191,14 @@ public class DrawLocalSettings extends JPanel implements ActionListener, TextLis
 		this.timeGame = new JCheckBox(Settings.lang("time_game_min"));
 		this.time4Game = new JComboBox(times);
 
-		this.oponentComp = new JRadioButton(Settings.lang("against_computer"), false);
 		this.oponentHuman = new JRadioButton(Settings.lang("against_other_human"), true);
 
 		this.setLayout(gbl);
-		this.oponentComp.addActionListener(this);
 		this.oponentHuman.addActionListener(this);
 		this.okButton.addActionListener(this);
 
 		this.secondName.addActionListener(this);
 
-		this.oponentChoos.add(oponentComp);
 		this.oponentChoos.add(oponentHuman);
 		this.computerLevel.setEnabled(false);
 		this.computerLevel.setMaximum(3);
@@ -212,9 +207,6 @@ public class DrawLocalSettings extends JPanel implements ActionListener, TextLis
 		this.gbc.gridx = 0;
 		this.gbc.gridy = 0;
 		this.gbc.insets = new Insets(3, 3, 3, 3);
-		this.gbl.setConstraints(oponentComp, gbc);
-		this.add(oponentComp);
-		this.gbc.gridx = 1;
 		this.gbl.setConstraints(oponentHuman, gbc);
 		this.add(oponentHuman);
 		this.gbc.gridx = 0;
@@ -246,11 +238,9 @@ public class DrawLocalSettings extends JPanel implements ActionListener, TextLis
 		this.gbc.gridy = 7;
 
 		this.gbc.insets = new Insets(0, 0, 0, 0);
-		this.gbl.setConstraints(compLevLab, gbc);
-		this.add(compLevLab);
+
 		this.gbc.gridy = 8;
-		this.gbl.setConstraints(computerLevel, gbc);
-		this.add(computerLevel);
+
 		this.gbc.gridy = 9;
 		this.gbc.gridwidth = 1;
 		this.gbl.setConstraints(timeGame, gbc);
@@ -265,7 +255,6 @@ public class DrawLocalSettings extends JPanel implements ActionListener, TextLis
 		this.gbc.gridwidth = 0;
 		this.gbl.setConstraints(okButton, gbc);
 		this.add(okButton);
-		this.oponentComp.setEnabled(false);// for now, becouse not implemented!
 
 	}
 
