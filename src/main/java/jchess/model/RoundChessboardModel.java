@@ -26,7 +26,6 @@ public class RoundChessboardModel {
      * @param rows              int     row count of the chessboard
      * @param squaresPerRow     int     count of squares per row of the chessboard
      * @param continuousRows    boolean
-     * @param settings          Settings    settings of the application
      */
     public RoundChessboardModel(int rows, int squaresPerRow, boolean continuousRows, boolean connectedInnerRim) {
     	this.rows = rows;
