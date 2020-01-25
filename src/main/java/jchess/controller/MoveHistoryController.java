@@ -22,7 +22,7 @@ package jchess.controller;
 
 import jchess.Game;
 import jchess.Settings;
-import jchess.entities.Player;
+import jchess.entities.PlayerColor;
 import jchess.entities.Square;
 import jchess.helper.Log;
 import jchess.model.MoveHistoryModel;
@@ -33,7 +33,10 @@ import jchess.view.MoveHistoryView;
 import org.apache.commons.text.StringSubstitutor;
 
 import javax.swing.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EmptyStackException;
+import java.util.HashMap;
+import java.util.List;
 
 
 /**
@@ -351,7 +354,7 @@ public class MoveHistoryController {
             {
                 int[] values = new int[4];
                 if (locMove.equals("O-O-O")) {
-                    if (game.getActivePlayer().color == Player.colors.black) // if black turn
+                    if (game.getActivePlayer().getColor() == PlayerColor.BLACK) // if black turn
                     {
                         values = new int[]{4, 0, 2, 0};// move value for castling (King move)
                     } else {
@@ -359,7 +362,7 @@ public class MoveHistoryController {
                     }
                 } else if (locMove.equals("O-O")) // if short castling
                 {
-                    if (game.getActivePlayer().color == Player.colors.black) // if black turn
+                    if (game.getActivePlayer().getColor() == PlayerColor.BLACK) // if black turn
                     {
                         values = new int[]{4, 0, 6, 0};// move value for castling (King move)
                     } else {

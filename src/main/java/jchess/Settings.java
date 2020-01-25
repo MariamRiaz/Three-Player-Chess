@@ -21,6 +21,7 @@
 package jchess;
 
 import jchess.entities.Player;
+import jchess.helper.Images;
 
 import java.io.Serializable;
 import java.util.Locale;
@@ -84,9 +85,9 @@ public class Settings implements Serializable {
 
     public Settings() {
         // temporally
-        this.playerWhite = new Player("", "white");
-        this.playerBlack = new Player("", "black");
-        this.playerGray = new Player("", "gray");
+        this.playerWhite = new Player("", Images.WHITE_COLOR);
+        this.playerBlack = new Player("", Images.BLACK_COLOR);
+        this.playerGray = new Player("", Images.GREY_COLOR);
         this.timeLimitSet = false;
         gameMode = gameModes.newGame;
     }

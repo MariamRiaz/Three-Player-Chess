@@ -75,7 +75,7 @@ public class MoveEvaluator {
                 	meb.addPosChange(model.getSquare(piece), next)
                 		.addStateChange(piece, piece.clone().setHasMoved(true).reorient(otn.clone()));
             	
-                if (piece.getDefinition().getType().equals("Pawn") && model.isInPromotionArea(next, piece.getPlayer().color))
+                if (piece.getDefinition().getType().equals("Pawn") && model.isInPromotionArea(next))
                 	meb.addStateChange(piece, piece.clone().setDefinition(PieceDefinition.PLACEHOLDER));
                 
                 ret.add(meb.build());

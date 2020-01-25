@@ -26,7 +26,7 @@ public class GameClockView extends JPanel {
         Graphics2D g2d = (Graphics2D) g;
         g2d.drawImage(this.background, 0, 0, this);
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        Font font = new Font("Serif", Font.ITALIC, 20);
+        Font font = new Font(Font.SERIF, Font.ITALIC, 20);
         g2d.drawImage(this.background, 0, 0, this);
 
         g2d.setColor(Color.WHITE);
@@ -45,7 +45,7 @@ public class GameClockView extends JPanel {
         g2d.drawLine(85, 30, 85, 90);
         g2d.drawLine(165, 30, 165, 90);
 
-        font = new Font("Serif", Font.ITALIC, 14);
+        font = new Font(Font.SERIF, Font.ITALIC, 14);
 
         g2d.drawImage(this.background, 0, 0, this);
 
