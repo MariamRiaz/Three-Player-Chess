@@ -1,6 +1,5 @@
 package jchess.view;
 
-import jchess.controller.ChessboardView;
 import jchess.helper.Images;
 import jchess.helper.ResourceLoader;
 import jchess.helper.Log;

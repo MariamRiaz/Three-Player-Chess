@@ -1,27 +1,27 @@
 package jchess.controller;
 
-import jchess.model.GameModel;
-import jchess.entities.Player;
 import jchess.JChessApp;
+import jchess.entities.Player;
+import jchess.entities.PolarPoint;
 import jchess.entities.Square;
 import jchess.entities.SquareObservable;
 import jchess.helper.CartesianPolarConverter;
 import jchess.helper.Images;
 import jchess.helper.MoveEvaluator;
-import jchess.entities.PolarPoint;
 import jchess.helper.RoundChessboardLoader;
-import jchess.model.RoundChessboardModel;
+import jchess.model.GameModel;
+import jchess.model.IChessboardModel;
 import jchess.move.effects.MoveEffect;
 import jchess.move.effects.PositionChange;
 import jchess.move.effects.StateChange;
 import jchess.pieces.Piece;
 import jchess.pieces.PieceDefinition;
 import jchess.pieces.PieceLoader;
+import jchess.view.ChessboardView;
 import jchess.view.RoundChessboardView;
 import jchess.view.SquareView;
 
 import java.awt.*;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashSet;
 import java.util.List;
@@ -32,8 +32,8 @@ import java.util.Queue;
  * Class that represents the interaction interface for the RoundChessboard component
  */
 public class RoundChessboardController implements IChessboardController {
-    private RoundChessboardModel model;
-    private RoundChessboardView view;
+    private IChessboardModel model;
+    private ChessboardView view;
     private Square activeSquare;
     private SquareObservable squareObservable;
     private MoveHistoryController movesHistory;
@@ -67,6 +67,11 @@ public class RoundChessboardController implements IChessboardController {
         this.squareObservable.addObserver(observer);
     }
 
+    @Override
+    public void mouseClicked(MouseEvent e) {
+
+    }
+
     /**
      * Processes MoueseEvent on mouse press.
      */
@@ -75,6 +80,21 @@ public class RoundChessboardController implements IChessboardController {
         Square square = getSquareFromClick(mouseEvent.getX(), mouseEvent.getY());
         if (square != null)
             squareObservable.setSquare(square);
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
     }
 
     /**
@@ -278,27 +298,24 @@ public class RoundChessboardController implements IChessboardController {
     /**
      * Unselects the currently selected Square.
      */
-    void unselect() {
+    public void unselect() {
         setActiveSquare(null);
     }
 
     /**
      * Undoes the last-played move.
      *
-     * @param refresh Whether or not to refresh the board.
      * @return Whether or not the undo operation was successful.
      */
-    synchronized boolean undo(boolean refresh) {
+    public boolean undo() {
         Queue<MoveEffect> last = this.movesHistory.undo();
 
         if (last != null && last.size() != 0) {
             for (MoveEffect me : last)
                 reverse(me);
 
-            if (refresh) {
-                this.unselect();
-                view.repaint();
-            }
+            this.unselect();
+            view.repaint();
 
             return true;
         } else return false;
@@ -307,20 +324,17 @@ public class RoundChessboardController implements IChessboardController {
     /**
      * Redoes the move that was undone last.
      *
-     * @param refresh Whether or not to refresh the board.
      * @return Whether or not the redo operation was successful.
      */
-    boolean redo(boolean refresh) {
+    public boolean redo() {
         Queue<MoveEffect> first = this.movesHistory.redo();
 
         if (first != null && first.size() != 0) {
             for (MoveEffect me : first)
                 apply(me);
 
-            if (refresh) {
-                this.unselect();
-                view.repaint();
-            }
+            this.unselect();
+            view.repaint();
 
             return true;
         }
@@ -360,7 +374,7 @@ public class RoundChessboardController implements IChessboardController {
         return model.getSquare(x, y);
     }
 
-    public RoundChessboardModel getModel() {
+    public IChessboardModel getModel() {
         return model;
     }
 }

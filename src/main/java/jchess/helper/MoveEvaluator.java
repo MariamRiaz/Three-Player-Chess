@@ -1,12 +1,8 @@
 package jchess.helper;
 
-import java.util.HashSet;
-import java.util.Iterator;
-
-import jchess.controller.RoundChessboardController;
+import jchess.controller.IChessboardController;
 import jchess.entities.Player;
 import jchess.entities.Square;
-import jchess.model.RoundChessboardModel;
 import jchess.move.Move;
 import jchess.move.MoveType;
 import jchess.move.Orientation;
@@ -15,17 +11,20 @@ import jchess.move.effects.MoveEffectsBuilder;
 import jchess.pieces.Piece;
 import jchess.pieces.PieceDefinition;
 
+import java.util.HashSet;
+import java.util.Iterator;
+
 /**
  * Class that contains method to evaluate if a move is valid and gets possible target Squares
  */
 public class MoveEvaluator {
-	private RoundChessboardController chessboard;
+	private IChessboardController chessboard;
 
     /**
      * Constructor
      * @param model     RoundChessboardModel    the model of the chessboard
      */
-	public MoveEvaluator (RoundChessboardController chessboard) {
+	public MoveEvaluator (IChessboardController chessboard) {
 		this.chessboard = chessboard;
 	}
 	

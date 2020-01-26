@@ -1,11 +1,10 @@
-package jchess.controller;
+package jchess.view;
 
 import jchess.entities.Square;
 import jchess.pieces.Piece;
-import jchess.view.SquareView;
 
 import javax.swing.*;
-import java.util.HashSet;
+import java.awt.*;
 import java.util.List;
 import java.util.Set;
 
@@ -25,7 +24,8 @@ public abstract class ChessboardView extends JPanel {
 
         public abstract void setVisual(Piece piece, int x, int y);
 
-        public abstract List<SquareView> getCells();
+        public abstract List<PolarSquareView> getCells();
 
+        public abstract Point getCircleCenter();
 
 }

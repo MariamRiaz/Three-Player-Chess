@@ -43,7 +43,7 @@ public class GameController implements Observer {
     private GameView gameView;
 
     private GameModel gameModel;
-    private RoundChessboardController chessboardController;
+    private IChessboardController chessboardController;
     private MoveHistoryController moveHistoryController;
     private GameClock gameClock;
     private final int chessboardSize = 800;
@@ -147,7 +147,7 @@ public class GameController implements Observer {
     public boolean undo() {
         boolean status;
 
-        status = chessboardController.undo(true);
+        status = chessboardController.undo();
         if (status)
             this.switchActive(false);
         return status;
@@ -161,7 +161,7 @@ public class GameController implements Observer {
     public boolean rewindToBegin() {
         boolean result = false;
 
-        while (chessboardController.undo(true)) {
+        while (chessboardController.undo()) {
             result = true;
         }
         return result;
@@ -176,7 +176,7 @@ public class GameController implements Observer {
     public boolean rewindToEnd() throws UnsupportedOperationException {
         boolean result = false;
 
-        while (chessboardController.redo(true)) {
+        while (chessboardController.redo()) {
             result = true;
         }
         return result;
@@ -188,7 +188,7 @@ public class GameController implements Observer {
      * @return True if the most recent undone move can be redone
      */
     public boolean redo() {
-        boolean status = chessboardController.redo(true);
+        boolean status = chessboardController.redo();
         if (status)
             this.nextMove();
 
