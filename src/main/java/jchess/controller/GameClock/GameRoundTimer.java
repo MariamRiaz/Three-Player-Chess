@@ -1,4 +1,4 @@
-package jchess.helper;
+package jchess.controller.GameClock;
 
 public class GameRoundTimer {
     private int timeSpentInRound;

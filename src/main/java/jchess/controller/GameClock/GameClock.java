@@ -18,13 +18,13 @@
  * Mateusz Sławomir Lach ( matlak, msl )
  * Damian Marciniak
  */
-package jchess.controller;
+package jchess.controller.GameClock;
 
 import java.util.logging.Level;
 
+import jchess.controller.GameController;
 import jchess.helper.Log;
 import jchess.model.GameModel;
-import jchess.helper.GameRoundTimer;
 import jchess.view.GameClockView;
 
 /**
@@ -86,7 +86,7 @@ public class GameClock implements Runnable {
 		}
 	}
 
-	void switchPlayers(boolean forward) {
+	public void switchPlayers(boolean forward) {
 		if (forward) {
 			if (this.activePlayer == PlayerColors.WHITE) {
 				this.activePlayer = PlayerColors.BLACK;

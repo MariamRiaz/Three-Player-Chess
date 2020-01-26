@@ -20,7 +20,7 @@
  */
 package jchess.controller;
 
-import jchess.JChessApp;
+import jchess.controller.GameClock.GameClock;
 import jchess.entities.Square;
 import jchess.helper.Log;
 import jchess.helper.RoundChessboardLoader;
@@ -30,9 +30,6 @@ import jchess.pieces.Piece;
 import jchess.view.GameView;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.util.HashSet;
 import java.util.Observable;
 import java.util.Observer;
@@ -84,7 +81,7 @@ public class GameController implements Observer {
      *
      * @param message The message that is shown at the end of the game to each player
      */
-    void endGame(String message) {
+    public void endGame(String message) {
         gameModel.setBlockedChessboard(true);
         Log.log(message);
         JOptionPane.showMessageDialog(null, message);
