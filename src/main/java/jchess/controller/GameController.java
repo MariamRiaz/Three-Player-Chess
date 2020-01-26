@@ -107,7 +107,7 @@ public class GameController implements Observer {
                 gameModel.setActivePlayer(gameModel.getPlayerBlack());
         }
         this.gameClock.switchPlayers(forward);
-        this.moveHistoryController.switchColumns();
+        this.moveHistoryController.switchColumns(forward);
     }
 
     /**

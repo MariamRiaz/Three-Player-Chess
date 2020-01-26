@@ -222,12 +222,12 @@ public class MoveHistoryController implements IMoveHistoryController {
     }
 
     @Override
-    public void switchColumns() {
+    public void switchColumns(boolean forward) {
         if (moveHistoryModel.getActivePlayerColumn().equals(PlayerColumn.player1))
-            moveHistoryModel.setActivePlayerColumn(PlayerColumn.player2);
+            moveHistoryModel.setActivePlayerColumn(forward ? PlayerColumn.player2 : PlayerColumn.player3);
         else if (moveHistoryModel.getActivePlayerColumn().equals(PlayerColumn.player2))
-            moveHistoryModel.setActivePlayerColumn(PlayerColumn.player3);
+            moveHistoryModel.setActivePlayerColumn(forward ? PlayerColumn.player3 : PlayerColumn.player1);
         else if (moveHistoryModel.getActivePlayerColumn().equals(PlayerColumn.player3))
-            moveHistoryModel.setActivePlayerColumn(PlayerColumn.player1);
+            moveHistoryModel.setActivePlayerColumn(forward ? PlayerColumn.player1 : PlayerColumn.player2);
     }
 }

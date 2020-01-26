@@ -24,5 +24,5 @@ public interface IMoveHistoryController {
 
     MoveEffect redoOne();
 
-    void switchColumns();
+    void switchColumns(boolean forward);
 }
