@@ -24,14 +24,15 @@ import jchess.entities.Square;
 import jchess.helper.Log;
 import jchess.helper.RoundChessboardLoader;
 import jchess.model.GameModel;
+import jchess.model.IGameModel;
 import jchess.move.buff.BuffEvaluator;
 import jchess.pieces.Piece;
+import jchess.view.AbstractGameView;
 import jchess.view.GameView;
 
 import javax.swing.*;
 import java.util.HashSet;
 import java.util.Observable;
-import java.util.Observer;
 
 /**
  * Class that represents a chess game. It is responsible for starting and ending games
@@ -40,9 +41,9 @@ import java.util.Observer;
  */
 public class GameController implements IGameController {
 
-    private GameView gameView;
+    private AbstractGameView gameView;
 
-    private GameModel gameModel;
+    private IGameModel gameModel;
     private IChessboardController chessboardController;
     private IMoveHistoryController moveHistoryController;
     private GameClock gameClock;
@@ -67,7 +68,7 @@ public class GameController implements IGameController {
         chessboardController.addSelectSquareObserver(this);
     }
 
-    public GameModel getGameModel() {
+    public IGameModel getGameModel() {
         return gameModel;
     }
 
@@ -224,7 +225,7 @@ public class GameController implements IGameController {
         selectedSquare(square);
     }
 
-    public GameView getView() {
+    public AbstractGameView getView() {
         return this.gameView;
     }
 }

@@ -1,7 +1,7 @@
 package jchess.view;
 
 import jchess.controller.IGameController;
-import jchess.model.GameModel;
+import jchess.model.IGameModel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,7 +13,7 @@ import java.awt.image.BufferedImage;
 
 public class GameClockView extends JPanel {
 
-    private GameModel settings;
+    private IGameModel settings;
     private BufferedImage background;
     private String whiteClock, blackClock, grayClock;
 

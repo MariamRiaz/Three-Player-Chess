@@ -4,8 +4,8 @@ import com.google.gson.*;
 import jchess.JChessApp;
 import jchess.entities.Player;
 import jchess.entities.Square;
-import jchess.model.GameModel;
 import jchess.model.IChessboardModel;
+import jchess.model.IGameModel;
 import jchess.model.RoundChessboardModel;
 import jchess.move.Orientation;
 import jchess.pieces.Piece;
@@ -32,7 +32,7 @@ public class RoundChessboardLoader {
      * @param gameModel The GameModel with the Players to use.
      * @return The loaded model or null if loading failed.
      */
-    public IChessboardModel loadDefaultFromJSON(GameModel gameModel) {
+    public IChessboardModel loadDefaultFromJSON(IGameModel gameModel) {
         return loadFromJSON(defaultBoardPath, gameModel);
     }
 
@@ -42,7 +42,7 @@ public class RoundChessboardLoader {
      * @param gameModel The GameModel with the Players to use.
      * @return The loaded model or null if loading failed.
      */
-    private IChessboardModel loadFromJSON(URL boardPath, GameModel gameModel) {
+    private IChessboardModel loadFromJSON(URL boardPath, IGameModel gameModel) {
         model = null;
 
         try {
@@ -54,7 +54,7 @@ public class RoundChessboardLoader {
         return model;
     }
 
-    private Player parsePlayerCode(String code, GameModel gameModel) {
+    private Player parsePlayerCode(String code, IGameModel gameModel) {
         switch (code) {
             case "WH":
                 return gameModel.getPlayerWhite();
@@ -66,7 +66,7 @@ public class RoundChessboardLoader {
         return null;
     }
 
-    private void initializeFromJSON(JsonElement jsonBody, GameModel gameModel) {
+    private void initializeFromJSON(JsonElement jsonBody, IGameModel gameModel) {
         if (jsonBody == null || !jsonBody.isJsonObject())
             return;
 

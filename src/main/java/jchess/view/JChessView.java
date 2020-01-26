@@ -447,7 +447,7 @@ public class JChessView extends FrameView implements ActionListener, ComponentLi
     }
 
     public IGameController getActiveTabGame() throws ArrayIndexOutOfBoundsException {
-        GameView activeGameView = (GameView) this.gamesPane.getComponentAt(this.gamesPane.getSelectedIndex());
+        AbstractGameView activeGameView = (GameView) this.gamesPane.getComponentAt(this.gamesPane.getSelectedIndex());
         return activeGameView.getGameController();
     }
 

@@ -6,6 +6,7 @@ import jchess.entities.Player;
 import jchess.entities.Square;
 import jchess.helper.RoundChessboardLoader;
 import jchess.model.GameModel;
+import jchess.model.IGameModel;
 import jchess.model.RoundChessboardModel;
 import jchess.move.Orientation;
 import jchess.pieces.Piece;
@@ -21,7 +22,7 @@ import static org.mockito.Mockito.when;
 public class RoundChessboardControllerTest {
 
 
-    private GameModel gameModel;
+    private IGameModel gameModel;
     private MoveHistoryController moveHistoryControllerMock;
     private RoundChessboardController controller;
     private RoundChessboardModel modelMock;

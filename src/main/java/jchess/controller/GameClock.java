@@ -20,19 +20,19 @@
  */
 package jchess.controller;
 
-import java.util.logging.Level;
-
-import jchess.helper.Log;
-import jchess.model.GameModel;
 import jchess.helper.GameRoundTimer;
+import jchess.helper.Log;
+import jchess.model.IGameModel;
 import jchess.view.GameClockView;
+
+import java.util.logging.Level;
 
 /**
  * Class to represent the full game clock logic interacts with game clock view to generate the clocks on the game window
  */
 public class GameClock implements Runnable {
 
-    private GameModel gameModel;
+    private IGameModel gameModel;
     private Thread thread;
     private IGameController gameController;
     private GameClockView gameClockView;
@@ -55,7 +55,7 @@ public class GameClock implements Runnable {
         activePlayer = PlayerColors.WHITE;
         this.setTimes(time);
 		this.thread = new Thread(this);
-		if (this.gameModel.timeLimitSet) {
+		if (this.gameModel.getTimeLimitSet()) {
 			thread.start();
 		}
 	}

@@ -1,17 +1,17 @@
 package jchess.controller;
 
-import jchess.model.GameModel;
-import jchess.view.GameView;
+import jchess.model.IGameModel;
+import jchess.view.AbstractGameView;
 
 import java.util.Observer;
 
 public interface IGameController extends Observer {
 
-    GameModel getGameModel();
+    IGameModel getGameModel();
 
     GameClock getGameClock();
 
-    GameView getView();
+    AbstractGameView getView();
 
     void endGame(String message);
 

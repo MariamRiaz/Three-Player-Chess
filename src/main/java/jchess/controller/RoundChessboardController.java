@@ -9,8 +9,8 @@ import jchess.helper.CartesianPolarConverter;
 import jchess.helper.Images;
 import jchess.helper.MoveEvaluator;
 import jchess.helper.RoundChessboardLoader;
-import jchess.model.GameModel;
 import jchess.model.IChessboardModel;
+import jchess.model.IGameModel;
 import jchess.move.effects.MoveEffect;
 import jchess.move.effects.PositionChange;
 import jchess.move.effects.StateChange;
@@ -45,7 +45,7 @@ public class RoundChessboardController implements IChessboardController {
      * @param settings     The gameModel of the game.
      * @param movesHistory The MoveHistoryController of the game, where the controller will store played moves.
      */
-    public RoundChessboardController(RoundChessboardLoader chessboardLoader, int chessboardSize, GameModel settings, IMoveHistoryController movesHistory) {
+    public RoundChessboardController(RoundChessboardLoader chessboardLoader, int chessboardSize, IGameModel settings, IMoveHistoryController movesHistory) {
         this.model = chessboardLoader.loadDefaultFromJSON(settings);
         this.view = new RoundChessboardView(chessboardSize, Images.BOARD, model.getRows(), model.getColumns(), model.getSquares());
         view.addMouseListener(this);

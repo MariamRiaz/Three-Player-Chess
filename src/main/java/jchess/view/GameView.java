@@ -2,12 +2,11 @@ package jchess.view;
 
 import jchess.controller.IGameController;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 
-public class GameView extends JPanel implements ComponentListener {
+public class GameView extends AbstractGameView implements ComponentListener{
 
     private IGameController gameController;
     private Component chessboardView;
@@ -36,7 +35,7 @@ public class GameView extends JPanel implements ComponentListener {
         addComponentListener(this);
     }
 
-    IGameController getGameController() {
+    public IGameController getGameController() {
         return gameController;
     }
 
