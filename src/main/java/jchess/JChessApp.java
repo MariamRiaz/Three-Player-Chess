@@ -37,7 +37,6 @@ public class JChessApp extends SingleFrameApplication {
     protected void startup() {
         Log.init();
         jcv = new JChessView(this);
-        //show(jcv);
         jcv.newGameFrame = new NewGameWindow();
         JChessApp.getApplication().show(jcv.newGameFrame);
     }
