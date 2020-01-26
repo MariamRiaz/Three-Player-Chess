@@ -33,7 +33,7 @@ public class RoundChessboardModel {
     	this.hasContinuousRows = continuousRows;
     	this.innerRimConnected = connectedInnerRim;
     	
-        this.squares = new ArrayList<Square>();
+        this.squares = new ArrayList<>();
         populateSquares();
     }
 

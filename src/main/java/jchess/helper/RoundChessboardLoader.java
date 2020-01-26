@@ -34,25 +34,25 @@ public class RoundChessboardLoader {
     /**
      * Loads the default RoundChessboardModel. See loadFromJSON()
      *
-     * @param settings The GameModel with the Players to use.
+     * @param gameModel The GameModel with the Players to use.
      * @return The loaded model or null if loading failed.
      */
-    public RoundChessboardModel loadDefaultFromJSON(GameModel settings) {
-        return loadFromJSON(defaultBoardPath, settings);
+    public RoundChessboardModel loadDefaultFromJSON(GameModel gameModel) {
+        return loadFromJSON(defaultBoardPath, gameModel);
     }
 
     /**
      * Loads the RoundChessboardModel from the given JSON file with the given GameModel to reference Players.
      *
-     * @param settings The GameModel with the Players to use.
+     * @param gameModel The GameModel with the Players to use.
      * @return The loaded model or null if loading failed.
      */
-    private RoundChessboardModel loadFromJSON(URL boardPath, GameModel settings) {
+    private RoundChessboardModel loadFromJSON(URL boardPath, GameModel gameModel) {
         model = null;
 
         try {
             if (boardPath != null)
-                initializeFromJSON(new JsonParser().parse(new BufferedReader(new InputStreamReader(boardPath.openStream()))), settings);
+                initializeFromJSON(new JsonParser().parse(new BufferedReader(new InputStreamReader(boardPath.openStream()))), gameModel);
         } catch (JsonIOException | JsonSyntaxException | IOException e) {
             e.printStackTrace();
         }
@@ -60,19 +60,19 @@ public class RoundChessboardLoader {
         return model;
     }
 
-    private Player parsePlayerCode(String code, GameModel settings) {
+    private Player parsePlayerCode(String code, GameModel gameModel) {
         switch (code) {
             case "WH":
-                return settings.getPlayerWhite();
+                return gameModel.getPlayerWhite();
             case "BL":
-                return settings.getPlayerBlack();
+                return gameModel.getPlayerBlack();
             case "GR":
-                return settings.getPlayerGray();
+                return gameModel.getPlayerGray();
         }
         return null;
     }
 
-    private void initializeFromJSON(JsonElement jsonBody, GameModel settings) {
+    private void initializeFromJSON(JsonElement jsonBody, GameModel gameModel) {
         if (jsonBody == null || !jsonBody.isJsonObject())
             return;
 
@@ -99,7 +99,7 @@ public class RoundChessboardLoader {
         if (json.get("players") != null && json.get("players").isJsonArray())
             for (JsonElement element : json.get("players").getAsJsonArray())
                 if (element.isJsonPrimitive())
-                    players.put(element.getAsString(), parsePlayerCode(element.getAsString(), settings));
+                    players.put(element.getAsString(), parsePlayerCode(element.getAsString(), gameModel));
 
         if (json.get("pieces") != null && json.get("pieces").isJsonArray())
             loadPieces(json.get("pieces").getAsJsonArray(), players);
