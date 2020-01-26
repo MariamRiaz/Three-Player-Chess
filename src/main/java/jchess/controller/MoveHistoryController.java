@@ -33,12 +33,7 @@ import jchess.view.MoveHistoryView;
 import org.apache.commons.text.StringSubstitutor;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.EmptyStackException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.PriorityQueue;
-import java.util.Queue;
+import java.util.*;
 
 
 /**
@@ -115,7 +110,7 @@ public class MoveHistoryController {
 	            put(Move.formatStringFrom, getPosition(moveEffects.getFrom()));
 	            put(Move.formatStringTo, getPosition(moveEffects.getTrigger()));
 	        }};
-	
+
 	        String formatString = moveEffects.getMove().getFormatString(moveEffects.getFlag());
 	        if (formatString == null)
 	            formatString = moveEffects.getMove().getFormatString(MoveType.OnlyMove);
@@ -123,10 +118,10 @@ public class MoveHistoryController {
 	            formatString = moveEffects.getMove().getDefaultFormatString();
 	        if (formatString == null)
 	            formatString = "-";
-	
+
 	        addMove(new StringSubstitutor(values).replace(formatString));
     	}
-        
+
         if (registerInHistory)
             moveHistoryModel.moveBackStack.add(moveEffects);
     }
@@ -150,24 +145,22 @@ public class MoveHistoryController {
 
     Queue<MoveEffect> undo() {
     	Queue<MoveEffect> retVal = new PriorityQueue<>();
-        
+
     	MoveEffect toAdd = null;
     	while ((toAdd = undoOne()) != null) {
     		retVal.add(toAdd);
     		if (toAdd.isFromMove())
     			break;
     	}
-    	
+
         return retVal;
     }
-    
+
     MoveEffect undoOne() {
     	MoveEffect last = null;
-    	
-        try {
+
+        if (!moveHistoryModel.moveBackStack.isEmpty()) {
             last = moveHistoryModel.moveBackStack.pop();
-        } catch (EmptyStackException | ArrayIndexOutOfBoundsException exc) {
-            exc.printStackTrace();
         }
 
         if (last != null) {
@@ -177,41 +170,41 @@ public class MoveHistoryController {
 	            if (moveHistoryModel.activePlayerColumn.equals(MoveHistoryController.PlayerColumn.player1)) {
 	                if (moveHistoryModel.getRowCount() > 0)
 	                    moveHistoryModel.setValueAt("", moveHistoryModel.getRowCount() - 1, 2);
-	
+
 	            } else if (moveHistoryModel.activePlayerColumn.equals(MoveHistoryController.PlayerColumn.player2)) {
 	                moveHistoryModel.setValueAt("", moveHistoryModel.getRowCount() - 1, 0);
 	                moveHistoryModel.removeRow(moveHistoryModel.getRowCount() - 1);
 	                if (moveHistoryModel.rowsNum > 0)
 	                    moveHistoryModel.rowsNum--;
-	
+
 	            } else {
 	                if (moveHistoryModel.getRowCount() > 0)
 	                    moveHistoryModel.setValueAt("", moveHistoryModel.getRowCount() - 1, 1);
-	
+
 	            }
 	            moveHistoryModel.move.remove(moveHistoryModel.move.size() - 1);
             }
         }
-        
+
         return last;
     }
 
     Queue<MoveEffect> redo() {
     	Queue<MoveEffect> retVal = new PriorityQueue<>();
-        
+
     	MoveEffect toAdd = null;
     	while ((toAdd = redoOne()) != null) {
     		if (toAdd.isFromMove() && retVal.size() != 0) {
     			undoOne();
     			break;
     		}
-    		
+
     		retVal.add(toAdd);
     	}
-    	
+
         return retVal;
     }
-    
+
     MoveEffect redoOne() {
         try {
             MoveEffect first = moveHistoryModel.moveForwardStack.pop();
