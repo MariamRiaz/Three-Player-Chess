@@ -17,14 +17,18 @@ package jchess;
 
 import jchess.helper.Log;
 import jchess.view.JChessView;
+import jchess.view.NewGameWindow;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
+
+import javax.swing.*;
 
 /**
  * The main class of the application.
  */
 public class JChessApp extends SingleFrameApplication {
     public static JChessView jcv;
+    public JDialog newGameFrame;
 
     /**
      * At startup create and show the main frame of the application.
@@ -33,7 +37,9 @@ public class JChessApp extends SingleFrameApplication {
     protected void startup() {
         Log.init();
         jcv = new JChessView(this);
-        show(jcv);
+        //show(jcv);
+        jcv.newGameFrame = new NewGameWindow();
+        JChessApp.getApplication().show(jcv.newGameFrame);
     }
 
     /**

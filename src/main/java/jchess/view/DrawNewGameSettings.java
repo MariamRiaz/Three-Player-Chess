@@ -126,6 +126,7 @@ public class DrawNewGameSettings extends JPanel implements ActionListener, TextL
 				JOptionPane.showMessageDialog(this, GameModel.getTexts("fill_name"));
 				return;
 			}
+			JChessApp.getApplication().show(JChessApp.jcv);
 			GameController newGUI = JChessApp.jcv.addNewTab(this.firstName.getText() + " vs " + this.secondName.getText() + " vs " + this.thirdName.getText());
 			GameModel gameModel = newGUI.getGameModel();// sett local gameModel variable
 			Player pl1 = gameModel.getPlayerWhite();// set local player variable
