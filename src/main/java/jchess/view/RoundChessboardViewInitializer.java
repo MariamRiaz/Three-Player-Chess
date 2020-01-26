@@ -21,8 +21,8 @@ public class RoundChessboardViewInitializer {
         this.rows = rows;
     }
 
-    public List<PolarCell> createCells() {
-        List<PolarCell> cells = new ArrayList<>();
+    public List<PolarSquareView> createCells() {
+        List<PolarSquareView> cells = new ArrayList<>();
 
         double degreesIncrement = 360.0/rows;
         double degreesCenter = degreesIncrement/2;
@@ -32,7 +32,7 @@ public class RoundChessboardViewInitializer {
             double radiusCenter = imageSize/16.0 + radiusIncrement * 1.5;
             for(int j=0; j<cellsPerRow; j++) {
                 PolarPoint cellCenter = new PolarPoint(radiusCenter, degreesCenter);
-                cells.add(new PolarCell(cellCenter, degreesIncrement, radiusIncrement, j, i));
+                cells.add(new PolarSquareView(cellCenter, degreesIncrement, radiusIncrement, j, i));
                 radiusCenter += radiusIncrement;
             }
             degreesCenter += degreesIncrement;

@@ -17,8 +17,9 @@ import jchess.move.effects.StateChange;
 import jchess.pieces.Piece;
 import jchess.pieces.PieceDefinition;
 import jchess.pieces.PieceLoader;
-import jchess.view.PolarCell;
+import jchess.view.PolarSquareView;
 import jchess.view.RoundChessboardView;
+import jchess.view.SquareView;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -31,7 +32,7 @@ import java.util.Queue;
 /**
  * Class that represents the interaction interface for the RoundChessboard component
  */
-public class RoundChessboardController extends MouseAdapter {
+public class RoundChessboardController extends MouseAdapter implements ChessboardController {
     private RoundChessboardModel model;
     private RoundChessboardView view;
     private Square activeSquare;
@@ -56,7 +57,7 @@ public class RoundChessboardController extends MouseAdapter {
     /**
      * @return The view of the chessboard.
      */
-    public RoundChessboardView getView() {
+    public ChessboardView getView() {
         return view;
     }
 
@@ -222,11 +223,15 @@ public class RoundChessboardController extends MouseAdapter {
 
     public void apply(MoveEffect me) {
     	for (PositionChange ent : me.getPositionChanges()) {
-    		if (view != null)
-    			view.removeVisual(model.getSquare(ent.getPiece()));
+    		if (view != null) {
+    		    Square sq = model.getSquare(ent.getPiece());
+                view.removeVisual(sq.getPozX(), sq.getPozY());
+            }
     		model.setPieceOnSquare(ent.getPiece(), ent.getSquare());
-    		if (view != null)
-    			view.setVisual(ent.getSquare().getPiece(), ent.getSquare());
+    		if (view != null) {
+    		    Square square = ent.getSquare();
+                view.setVisual(square.getPiece(), square.getPozX(), square.getPozY());
+            }
     	}
     	
     	for (StateChange ent : me.getStateChanges()) {
@@ -259,11 +264,15 @@ public class RoundChessboardController extends MouseAdapter {
     	}
     	
     	for (PositionChange ent : me.getPositionChangesReverse()) {
-    		if (view != null)
-    			view.removeVisual(model.getSquare(ent.getPiece()));
+    		if (view != null) {
+                Square square = model.getSquare(ent.getPiece());
+                view.removeVisual(square.getPozX(), square.getPozY());
+            }
     		model.setPieceOnSquare(ent.getPiece(), ent.getSquare());
-    		if (view != null)
-    			view.setVisual(ent.getSquare().getPiece(), ent.getSquare());
+    		if (view != null) {
+    		    Square square = ent.getSquare();
+    		    view.setVisual(square.getPiece(), square.getPozX(), square.getPozY());
+            }
     	}
     }
 
@@ -333,7 +342,7 @@ public class RoundChessboardController extends MouseAdapter {
         CartesianPolarConverter converter = new CartesianPolarConverter();
         PolarPoint polarPoint = converter.getPolarFromCartesian(clickedPoint, view.getCircleCenter());
 
-        for (PolarCell cell : view.getCells()) {
+        for (SquareView cell : view.getCells()) {
             double top = cell.getTopBound(), bottom = cell.getBottomBound(), left = cell.getLeftBound(), right = cell.getRightBound();
 
             if (polarPoint.getRadius() <= top && polarPoint.getRadius() > bottom && polarPoint.getDegrees() >= left && polarPoint.getDegrees() < right)
