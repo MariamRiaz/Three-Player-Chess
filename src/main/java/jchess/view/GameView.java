@@ -3,18 +3,53 @@ package jchess.view;
 import jchess.controller.GameController;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 
-public class GameView extends JPanel {
+public class GameView extends JPanel implements ComponentListener {
 
     private GameController gameController;
+    private Component chessboardView;
+    private Component moveHistoryView;
+    private Component gameClockView;
 
-    public GameView(GameController gameController) {
+
+    public GameView(GameController gameController, Component chessboardView, Component moveHistoryView, Component gameClockView) {
         this.setLayout(null);
         this.gameController = gameController;
+        this.chessboardView = chessboardView;
+        this.moveHistoryView = moveHistoryView;
+        this.gameClockView = gameClockView;
+        addComponentListener(this);
+
     }
 
-
-    public GameController getGameController() {
+    GameController getGameController() {
         return gameController;
+    }
+
+    @Override
+    public void componentResized(ComponentEvent e) {
+        int chess_height;
+        chess_height = this.chessboardView.getHeight();
+        this.moveHistoryView.setLocation(new Point(chess_height + 5, 100));
+        this.moveHistoryView.setSize(moveHistoryView.getWidth(), chess_height - 100);
+        this.gameClockView.setLocation(new Point(chess_height + 5, 0));
+    }
+
+    @Override
+    public void componentMoved(ComponentEvent e) {
+
+    }
+
+    @Override
+    public void componentShown(ComponentEvent e) {
+
+    }
+
+    @Override
+    public void componentHidden(ComponentEvent e) {
+
     }
 }

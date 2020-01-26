@@ -42,7 +42,7 @@ import java.util.Observer;
  * and for storing the currently active player.
  * It also provides functionality for saving and loading games.
  */
-public class GameController implements Observer, ComponentListener {
+public class GameController implements Observer {
 
     private GameView gameView;
 
@@ -72,19 +72,18 @@ public class GameController implements Observer, ComponentListener {
     }
 
     private void initializeView() {
-        gameView = new GameView(this);
+        gameView = new GameView(this, chessboardController.getView(), moveHistoryController.getScrollPane(), gameClock.getGameClockView());
         gameView.add(chessboardController.getView());
 
-        gameClock.gameClockView.setSize(new Dimension(400, 100));
-        gameClock.gameClockView.setLocation(new Point(500, 0));
-        gameView.add(gameClock.gameClockView);
+        gameClock.getGameClockView().setSize(new Dimension(400, 100));
+        gameClock.getGameClockView().setLocation(new Point(500, 0));
+        gameView.add(gameClock.getGameClockView());
 
         JScrollPane movesHistoryScrollPane = this.moveHistoryController.getScrollPane();
         movesHistoryScrollPane.setSize(new Dimension(245, 350));
         movesHistoryScrollPane.setLocation(new Point(500, 121));
         gameView.add(movesHistoryScrollPane);
 
-        gameView.addComponentListener(this);
         gameView.setDoubleBuffered(true);
     }
 
@@ -252,30 +251,6 @@ public class GameController implements Observer, ComponentListener {
         } else {
             Log.log("Chessboard is blocked");
         }
-    }
-
-    @Override
-    public void componentResized(ComponentEvent e) {
-        int chess_height;
-        chess_height = this.chessboardController.getHeight();
-        this.moveHistoryController.getScrollPane().setLocation(new Point(chess_height + 5, 100));
-        this.moveHistoryController.getScrollPane().setSize(this.moveHistoryController.getScrollPane().getWidth(), chess_height - 100);
-        this.gameClock.gameClockView.setLocation(new Point(chess_height + 5, 0));
-    }
-
-    @Override
-    public void componentMoved(ComponentEvent e) {
-
-    }
-
-    @Override
-    public void componentShown(ComponentEvent e) {
-
-    }
-
-    @Override
-    public void componentHidden(ComponentEvent e) {
-
     }
 
     /**

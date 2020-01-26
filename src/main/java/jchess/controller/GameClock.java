@@ -35,7 +35,7 @@ public class GameClock implements Runnable {
     private GameModel gameModel;
     private Thread thread;
     private GameController gameController;
-    public GameClockView gameClockView;
+    private GameClockView gameClockView;
     private GameRoundTimer runningClock;
     private int totalPlayerTimeLimit;
     private int timeSpentByPlayers[];
@@ -60,6 +60,10 @@ public class GameClock implements Runnable {
 		}
 	}
 
+	public GameClockView getGameClockView() {
+		return gameClockView;
+	}
+
 	/**
 	 * Method to init game clock
 	 */
@@ -69,7 +73,7 @@ public class GameClock implements Runnable {
 	/**
 	 * Method to stop game clock
 	 */
-	public void stop() {
+	private void stop() {
 		this.runningClock = null;
 
 		try {// block this thread
@@ -82,7 +86,7 @@ public class GameClock implements Runnable {
 		}
 	}
 
-	public void switchPlayers(boolean forward) {
+	void switchPlayers(boolean forward) {
 		if (forward) {
 			if (this.activePlayer == PlayerColors.WHITE) {
 				this.activePlayer = PlayerColors.BLACK;
