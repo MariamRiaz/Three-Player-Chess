@@ -33,10 +33,7 @@ import jchess.view.MoveHistoryView;
 import org.apache.commons.text.StringSubstitutor;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.EmptyStackException;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 
 /**
