@@ -9,5 +9,6 @@ public enum MoveType {
 	Unblockable,
 	OnlyWhenFresh,
 	Castling, 
-	EnPassant
+	EnPassant,
+	Shoot
 }
