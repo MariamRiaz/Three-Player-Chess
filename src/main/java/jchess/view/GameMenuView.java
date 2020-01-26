@@ -80,16 +80,16 @@ public class GameMenuView {
 
     private void moveBackItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_moveBackItemActionPerformed
     {//GEN-HEADEREND:event_moveBackItemActionPerformed
-            try {
-                Game activeGame = this.getActiveTabGame();
-                if (!activeGame.undo()) {
-                    JOptionPane.showMessageDialog(null, "Nie da sie cofnac!");
-                }
-            } catch (java.lang.ArrayIndexOutOfBoundsException exc) {
-                JOptionPane.showMessageDialog(null, "Brak aktywnej karty!");
-            } catch (UnsupportedOperationException exc) {
-                JOptionPane.showMessageDialog(null, exc.getMessage());
+        try {
+            Game activeGame = this.getActiveTabGame();
+            if (!activeGame.undo()) {
+                JOptionPane.showMessageDialog(null, "Nie da sie cofnac!");
             }
+        } catch (java.lang.ArrayIndexOutOfBoundsException exc) {
+            JOptionPane.showMessageDialog(null, "Brak aktywnej karty!");
+        } catch (UnsupportedOperationException exc) {
+            JOptionPane.showMessageDialog(null, exc.getMessage());
+        }
 
     }//GEN-LAST:event_moveBackItemActionPerformed
 
@@ -101,16 +101,16 @@ public class GameMenuView {
     private void moveForwardItemMouseClicked(java.awt.event.MouseEvent evt){ }
     private void moveForwardItemActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_moveForwardItemActionPerformed
     {
-            try {
-                Game activeGame = this.getActiveTabGame();
-                if (!activeGame.redo()) {
-                    JOptionPane.showMessageDialog(null, "W pamieci brak ruchow do przodu!");
-                }
-            } catch (java.lang.ArrayIndexOutOfBoundsException exc) {
-                JOptionPane.showMessageDialog(null, "Brak aktywnej karty!");
-            } catch (UnsupportedOperationException exc) {
-                JOptionPane.showMessageDialog(null, exc.getMessage());
+        try {
+            Game activeGame = this.getActiveTabGame();
+            if (!activeGame.redo()) {
+                JOptionPane.showMessageDialog(null, "W pamieci brak ruchow do przodu!");
             }
+        } catch (java.lang.ArrayIndexOutOfBoundsException exc) {
+            JOptionPane.showMessageDialog(null, "Brak aktywnej karty!");
+        } catch (UnsupportedOperationException exc) {
+            JOptionPane.showMessageDialog(null, exc.getMessage());
+        }
     }//GEN-LAST:event_moveForwardItemActionPerformed
     private void rewindToBeginActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_rewindToBeginActionPerformed
     {//GEN-HEADEREND:event_rewindToBeginActionPerformed
