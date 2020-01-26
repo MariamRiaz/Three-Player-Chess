@@ -21,8 +21,19 @@ public class GameView extends JPanel implements ComponentListener {
         this.chessboardView = chessboardView;
         this.moveHistoryView = moveHistoryView;
         this.gameClockView = gameClockView;
-        addComponentListener(this);
 
+        this.add(chessboardView);
+
+        gameClockView.setSize(new Dimension(400, 100));
+        gameClockView.setLocation(new Point(500, 0));
+        this.add(gameClockView);
+
+        moveHistoryView.setSize(new Dimension(245, 350));
+        moveHistoryView.setLocation(new Point(500, 121));
+        this.add(moveHistoryView);
+
+        this.setDoubleBuffered(true);
+        addComponentListener(this);
     }
 
     GameController getGameController() {

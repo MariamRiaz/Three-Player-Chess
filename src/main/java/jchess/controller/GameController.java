@@ -59,7 +59,7 @@ public class GameController implements Observer {
         gameModel = new GameModel();
         chessboardLoader = new RoundChessboardLoader();
         initializeControllers();
-        initializeView();
+        gameView = new GameView(this, chessboardController.getView(), moveHistoryController.getScrollPane(), gameClock.getGameClockView());
         gameModel.setBlockedChessboard(false);
         gameModel.setActivePlayer(gameModel.getPlayerWhite());
     }
@@ -69,22 +69,6 @@ public class GameController implements Observer {
         chessboardController = new RoundChessboardController(chessboardLoader, chessboardSize, this.gameModel, this.moveHistoryController);
         gameClock = new GameClock(this);
         chessboardController.addSelectSquareObserver(this);
-    }
-
-    private void initializeView() {
-        gameView = new GameView(this, chessboardController.getView(), moveHistoryController.getScrollPane(), gameClock.getGameClockView());
-        gameView.add(chessboardController.getView());
-
-        gameClock.getGameClockView().setSize(new Dimension(400, 100));
-        gameClock.getGameClockView().setLocation(new Point(500, 0));
-        gameView.add(gameClock.getGameClockView());
-
-        JScrollPane movesHistoryScrollPane = this.moveHistoryController.getScrollPane();
-        movesHistoryScrollPane.setSize(new Dimension(245, 350));
-        movesHistoryScrollPane.setLocation(new Point(500, 121));
-        gameView.add(movesHistoryScrollPane);
-
-        gameView.setDoubleBuffered(true);
     }
 
     public GameModel getGameModel() {
