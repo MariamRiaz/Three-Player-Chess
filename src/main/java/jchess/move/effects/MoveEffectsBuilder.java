@@ -12,15 +12,33 @@ public class MoveEffectsBuilder {
 	private final Square trigger, from;
 	private final Move move;
 	private MoveType flag = null;
+	private boolean fromMove;
 	
 	private ArrayList<PositionChange> positionChanges = new ArrayList<>(), pcReverse = new ArrayList<>();
 	private ArrayList<StateChange> stateChanges = new ArrayList<>(), scReverse = new ArrayList<>();
 	
-	public MoveEffectsBuilder(Piece moving, Square trigger, Square from, Move move) {
+	public MoveEffectsBuilder(Piece moving, Square trigger, Square from, Move move, boolean fromMove) {
 		this.moving = moving;
 		this.trigger = trigger;
 		this.from = from;
 		this.move = move;
+		this.fromMove = fromMove;
+	}
+	
+	public MoveEffectsBuilder(MoveEffect base) {
+		if (base == null)
+			throw new NullPointerException("'base' of MoveEffectsBuilder cannot be null.");
+		
+		this.moving = base.getMoving();
+		this.trigger = base.getTrigger();
+		this.from = base.getFrom();
+		this.move = base.getMove();
+		this.flag = base.getFlag();
+		
+		this.positionChanges = base.getPositionChanges();
+		this.pcReverse = base.getPositionChangesReverse();
+		this.stateChanges = base.getStateChanges();
+		this.scReverse = base.getStateChangesReverse();
 	}
 
 	public MoveEffectsBuilder addPosChange(Square one, Square two) {
@@ -51,6 +69,11 @@ public class MoveEffectsBuilder {
 		return this;
 	}
 	
+	public MoveEffectsBuilder setFromMove(boolean flag) {
+		this.fromMove = flag;
+		return this;
+	}
+	
 	public MoveEffectsBuilder clear() {
 		positionChanges.clear();
 		pcReverse.clear();
@@ -66,6 +89,6 @@ public class MoveEffectsBuilder {
 	}
 	
 	public MoveEffect build() {
-		return new MoveEffect(moving, trigger, from, move, flag, positionChanges, stateChanges, pcReverse, scReverse);
+		return new MoveEffect(moving, trigger, from, move, flag, fromMove, positionChanges, stateChanges, pcReverse, scReverse);
 	}
 }

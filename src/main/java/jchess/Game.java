@@ -30,6 +30,7 @@ import jchess.helper.Images;
 import jchess.helper.Log;
 import jchess.helper.RoundChessboardLoader;
 import jchess.model.RoundChessboardModel;
+import jchess.move.buff.BuffEvaluator;
 import jchess.pieces.Piece;
 import jchess.view.RoundChessboardView;
 
@@ -77,7 +78,7 @@ public class Game extends JPanel implements Observer, ComponentListener {
                         Images.BOARD,
                         model.getRows(),
                         model.getColumns(),
-                        model.squares);
+                        model.getSquares());
 
         this.moveHistoryController = new MoveHistoryController(chessboardLoader.getColumnNames());
 
@@ -306,8 +307,9 @@ public class Game extends JPanel implements Observer, ComponentListener {
      * Method to go to next move
      */
     private void nextMove() {
-        switchActive(true);
-            this.blockedChessboard = false;
+        
+    	switchActive(true);
+        this.blockedChessboard = false;
     }
 
     /**
@@ -405,6 +407,8 @@ public class Game extends JPanel implements Observer, ComponentListener {
             {
                 chessboardController.move(chessboardController.getActiveSquare(), square, true, true);
                 chessboardController.unselect();
+                new BuffEvaluator(chessboardController, moveHistoryController).evaluate();
+                
                 this.nextMove();
 
                 HashSet<Piece> cp = chessboardController.getCrucialPieces(this.activePlayer);

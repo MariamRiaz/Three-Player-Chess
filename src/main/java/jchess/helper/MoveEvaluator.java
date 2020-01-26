@@ -3,6 +3,7 @@ package jchess.helper;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import jchess.controller.RoundChessboardController;
 import jchess.entities.Player;
 import jchess.entities.Square;
 import jchess.model.RoundChessboardModel;
@@ -18,14 +19,14 @@ import jchess.pieces.PieceDefinition;
  * Class that contains method to evaluate if a move is valid and gets possible target Squares
  */
 public class MoveEvaluator {
-	private RoundChessboardModel model;
+	private RoundChessboardController chessboard;
 
     /**
      * Constructor
      * @param model     RoundChessboardModel    the model of the chessboard
      */
-	public MoveEvaluator (RoundChessboardModel model) {
-		this.model = model;
+	public MoveEvaluator (RoundChessboardController chessboard) {
+		this.chessboard = chessboard;
 	}
 	
 	/**
@@ -61,21 +62,21 @@ public class MoveEvaluator {
         int count = 0;
         HashSet<Square> traversed = new HashSet<Square>();
         Orientation otn = piece.getOrientation().clone();
-        final Square from = model.getSquare(piece);
+        final Square from = chessboard.getSquare(piece);
         
         for (Square next = nextSquare(from, move.getX(), move.getY(), otn); 
         		next != null && (move.getLimit() == null || count < move.getLimit()) && !traversed.contains(next); 
         		next = nextSquare(next, move.getX(), move.getY(), otn)) {
         	
-            MoveEffectsBuilder meb = new MoveEffectsBuilder(piece, next, from, move);
+            MoveEffectsBuilder meb = new MoveEffectsBuilder(piece, next, from, move, true);
             meb = evaluateAndGenEffects(move, next, piece, meb);
             
             if (meb != null) {
                 if (meb.isEmpty())
-                	meb.addPosChange(model.getSquare(piece), next)
+                	meb.addPosChange(chessboard.getSquare(piece), next)
                 		.addStateChange(piece, piece.clone().setHasMoved(true).reorient(otn.clone()));
             	
-                if (piece.getDefinition().getType().equals("Pawn") && model.isInPromotionArea(next))
+                if (piece.getDefinition().getType().equals("Pawn") && chessboard.getModel().isInPromotionArea(next))
                 	meb.addStateChange(piece, piece.clone().setDefinition(PieceDefinition.PLACEHOLDER));
                 
                 ret.add(meb.build());
@@ -97,22 +98,22 @@ public class MoveEvaluator {
     	else {
     		Square rook = null, nextRook = null;
     		if (move.getY() > 0) {
-    			rook = model.getSquare(next.getPozX(), next.getPozY() + 1);
-    			nextRook = model.getSquare(next.getPozX(), next.getPozY() - 1);
+    			rook = chessboard.getSquare(next.getPozX(), next.getPozY() + 1);
+    			nextRook = chessboard.getSquare(next.getPozX(), next.getPozY() - 1);
     		}
     		else {
-    			rook = model.getSquare(next.getPozX(), next.getPozY() - 1);
-    			nextRook = model.getSquare(next.getPozX(), next.getPozY() + 1);
+    			rook = chessboard.getSquare(next.getPozX(), next.getPozY() - 1);
+    			nextRook = chessboard.getSquare(next.getPozX(), next.getPozY() + 1);
     		}
     		
     		if (rook.getPiece() == null || rook.getPiece().hasMoved())
     			return null;
     		
-    		for (Square sq : model.getSquaresBetween(model.getSquare(piece), rook))
+    		for (Square sq : chessboard.getModel().getSquaresBetween(chessboard.getSquare(piece), rook))
     			if (squareIsThreatened(sq, piece.getPlayer())) 
     				return null;
     		
-    		return meb.addPosChange(model.getSquare(piece), next)
+    		return meb.addPosChange(chessboard.getSquare(piece), next)
     			.addStateChange(piece, piece.clone().setHasMoved(true))
     			.addPosChange(rook, nextRook)
     			.addStateChange(rook.getPiece(), rook.getPiece().clone().setHasMoved(true));
@@ -160,11 +161,11 @@ public class MoveEvaluator {
 	    	if (orientation.y)
 	    		y = -y;
 	    	
-            if (model.getInnerRimConnected() && current.getPozX() + x < 0)
+            if (chessboard.getModel().getInnerRimConnected() && current.getPozX() + x < 0)
             	orientation.reverseX();
 	    }
     	
-        Square retVal = model.getSquare(current.getPozX() + x, current.getPozY() + y);
+        Square retVal = chessboard.getSquare(current.getPozX() + x, current.getPozY() + y);
         
         return retVal;
     }
@@ -177,7 +178,7 @@ public class MoveEvaluator {
     public boolean pieceIsUnsavable(Piece piece) {
         if (piece == null)
             return false;
-        for (Square sq : model.squares) {
+        for (Square sq : chessboard.getSquares()) {
             if (sq.getPiece() == null || sq.getPiece().getPlayer() != piece.getPlayer())
                 continue;
 			
@@ -201,14 +202,14 @@ public class MoveEvaluator {
         for (Iterator<MoveEffect> it = ret.iterator(); it.hasNext(); ) {
             final MoveEffect me = it.next();
         	
-            me.apply(model, null);
+            chessboard.apply(me);
             boolean rm = false;
             for (Piece piece : toSave) 
-            	if (squareIsThreatened(model.getSquare(piece))) {
+            	if (squareIsThreatened(chessboard.getSquare(piece))) {
             		rm = true;
             		break;
             	}
-            me.reverse(model, null);
+            chessboard.reverse(me);
             
             if (rm)
             	it.remove();
@@ -240,18 +241,18 @@ public class MoveEvaluator {
             return false;
         
         Piece piece = square.getPiece();
-        for (Square sq : model.squares) {
+        for (Square sq : chessboard.getSquares()) {
             if (sq.getPiece() == null || sq.getPiece().getPlayer() == player)
                 continue;
 			
             HashSet<MoveEffect> validMoveSquares = getValidTargetSquares(sq.getPiece());
             for (MoveEffect it2 : validMoveSquares) {
-            	it2.apply(model, null);
-            	if ((piece == null && square.getPiece() != null) || (piece != null && model.getSquare(piece) == null)) {
-            		it2.reverse(model, null);
+            	chessboard.apply(it2);
+            	if ((piece == null && square.getPiece() != null) || (piece != null && chessboard.getSquare(piece) == null)) {
+            		chessboard.reverse(it2);
             		return true;
             	}
-            	it2.reverse(model, null);
+            	chessboard.reverse(it2);
             }
         }
         return false;
