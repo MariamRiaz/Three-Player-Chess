@@ -1,9 +1,9 @@
 package jchessTest;
 
-import jchess.Game;
+import jchess.controller.GameController;
+import jchess.model.GameModel;
 import jchess.controller.MoveHistoryController;
 import jchess.entities.Player;
-import jchess.Settings;
 import jchess.entities.Square;
 import jchess.pieces.Piece;
 
@@ -16,9 +16,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class MoveHistoryControllerTest {
-    Game game;
+    GameController gameController;
     MoveHistoryController moveHistoryController;
-    private Settings settingsMock;
+    private GameModel settingsMock;
     Square square1;
     Square square2;
     private Piece pieceMock;
@@ -26,8 +26,8 @@ public class MoveHistoryControllerTest {
 
     @Before
     public void setup() {
-        game = mock (Game.class);
-        settingsMock = mock(Settings.class);
+        gameController = mock (GameController.class);
+        settingsMock = mock(GameModel.class);
         pieceMock = mock(Piece.class);
         Player testPlayer = new Player("test", "white");
         columnNames.add('a');

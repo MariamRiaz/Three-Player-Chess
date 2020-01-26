@@ -1,13 +1,15 @@
 package jchess.controller;
 
+import jchess.model.GameModel;
 import jchess.entities.Player;
 import jchess.JChessApp;
-import jchess.Settings;
 import jchess.entities.Square;
 import jchess.entities.SquareObservable;
 import jchess.helper.CartesianPolarConverter;
+import jchess.helper.Images;
 import jchess.helper.MoveEvaluator;
 import jchess.entities.PolarPoint;
+import jchess.helper.RoundChessboardLoader;
 import jchess.model.RoundChessboardModel;
 import jchess.move.effects.MoveEffect;
 import jchess.move.effects.PositionChange;
@@ -33,28 +35,21 @@ public class RoundChessboardController extends MouseAdapter {
     private RoundChessboardModel model;
     private RoundChessboardView view;
     private Square activeSquare;
-    private Settings settings;
     private SquareObservable squareObservable;
     private MoveHistoryController movesHistory;
     private HashSet<MoveEffect> moveEffects = null;
 
-    public static int bottom = 7;
-    public static int top = 0;
-
     /**
      * Instantiates the RoundChessboardController with the given arguments.
      *
-     * @param model        The chessboard model to be used by the controller.
-     * @param view         The chessboard view to be used by the controller.
-     * @param settings     The settings of the game.
+     * @param settings     The gameModel of the game.
      * @param movesHistory The MoveHistoryController of the game, where the controller will store played moves.
      */
-    public RoundChessboardController(RoundChessboardModel model, RoundChessboardView view, Settings settings, MoveHistoryController movesHistory) {
-        this.model = model;
-        this.view = view;
+    public RoundChessboardController(RoundChessboardLoader chessboardLoader, int chessboardSize, GameModel settings, MoveHistoryController movesHistory) {
+        this.model = chessboardLoader.loadDefaultFromJSON(settings);
+        this.view = new RoundChessboardView(chessboardSize, Images.BOARD, model.getRows(), model.getColumns(), model.getSquares());
         view.addMouseListener(this);
         this.movesHistory = movesHistory;
-        this.settings = settings;
         this.squareObservable = new SquareObservable();
     }
 
@@ -68,7 +63,7 @@ public class RoundChessboardController extends MouseAdapter {
     /**
      * @param observer Adds an Observer to the currently selected Square.
      */
-    public void addSelectSquareObserver(Observer observer) {
+    void addSelectSquareObserver(Observer observer) {
         this.squareObservable.addObserver(observer);
     }
 
@@ -127,16 +122,6 @@ public class RoundChessboardController extends MouseAdapter {
     public void select(Square sq) {
         setActiveSquare(sq);
         view.repaint();
-    }
-
-    /**
-     * Checks whether the given Piece is threatened by Pieces of other Players.
-     *
-     * @param piece The Piece to check.
-     * @return Whether the Piece is threatened.
-     */
-    public boolean pieceIsThreatened(Piece piece) {
-    	return new MoveEvaluator(this).squareIsThreatened(model.getSquare(piece));
     }
 
     /**
@@ -285,7 +270,7 @@ public class RoundChessboardController extends MouseAdapter {
     /**
      * Unselects the currently selected Square.
      */
-    public void unselect() {
+    void unselect() {
         setActiveSquare(null);
     }
 
@@ -295,7 +280,7 @@ public class RoundChessboardController extends MouseAdapter {
      * @param refresh Whether or not to refresh the board.
      * @return Whether or not the undo operation was successful.
      */
-    public synchronized boolean undo(boolean refresh)
+    synchronized boolean undo(boolean refresh)
     {
         Queue<MoveEffect> last = this.movesHistory.undo();
         
@@ -318,7 +303,7 @@ public class RoundChessboardController extends MouseAdapter {
      * @param refresh Whether or not to refresh the board.
      * @return Whether or not the redo operation was successful.
      */
-    public boolean redo(boolean refresh) {
+    boolean redo(boolean refresh) {
         Queue<MoveEffect> first = this.movesHistory.redo();
         	
         if (first != null && first.size() != 0) {
@@ -366,15 +351,6 @@ public class RoundChessboardController extends MouseAdapter {
      */
     public Square getSquare(int x, int y) {
         return model.getSquare(x, y);
-    }
-
-    /**
-     * Gets the height of the board view.
-     *
-     * @return The view height.
-     */
-    public int getHeight() {
-        return view.getHeight();
     }
     
     public RoundChessboardModel getModel() {

@@ -16,6 +16,7 @@
 package jchess.view;
 
 import jchess.*;
+import jchess.controller.GameController;
 import jchess.helper.ResourceLoader;
 import jchess.helper.Log;
 import org.jdesktop.application.Action;
@@ -32,7 +33,6 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.*;
 import java.awt.event.*;
-import java.io.File;
 import java.util.logging.Level;
 
 /**
@@ -41,9 +41,9 @@ import java.util.logging.Level;
 public class JChessView extends FrameView implements ActionListener, ComponentListener {
     static ResourceLoader resourceLoader = null;
 
-    public Game addNewTab(String title) {
-        Game newGUI = new Game();
-        this.gamesPane.addTab(title, newGUI);
+    public GameController addNewTab(String title) {
+        GameController newGUI = new GameController();
+        this.gamesPane.addTab(title, newGUI.getView());
         return newGUI;
     }
 
@@ -52,49 +52,7 @@ public class JChessView extends FrameView implements ActionListener, ComponentLi
         if (target == newGameItem) {
             this.newGameFrame = new NewGameWindow();
             JChessApp.getApplication().show(this.newGameFrame);
-        } else if (target == saveGameItem) { //saveGame
-            if (this.gamesPane.getTabCount() == 0) {
-                JOptionPane.showMessageDialog(null, Settings.getTexts("save_not_called_for_tab"));
-                return;
-            }
-            while (true) {//until
-                JFileChooser fc = new JFileChooser();
-                int retVal = fc.showSaveDialog(this.gamesPane);
-                if (retVal == JFileChooser.APPROVE_OPTION) {
-                    File selFile = fc.getSelectedFile();
-                    Game tempGUI = (Game) this.gamesPane.getComponentAt(this.gamesPane.getSelectedIndex());
-                    if (!selFile.exists()) {
-                        try {
-                            selFile.createNewFile();
-                        } catch (java.io.IOException exc) {
-                            Log.log(Level.SEVERE, "error creating file: " + exc);
-                        }
-                    } else if (selFile.exists()) {
-                        int opt = JOptionPane.showConfirmDialog(tempGUI, Settings.getTexts("file_exists"), Settings.getTexts("file_exists"), JOptionPane.YES_NO_OPTION);
-                        if (opt == JOptionPane.NO_OPTION)//if user choose to now overwrite
-                        {
-                            continue; // go back to file choose
-                        }
-                    }
-                    if (selFile.canWrite()) {
-                        tempGUI.saveGame(selFile);
-                    }
-                    Log.log(fc.getSelectedFile().isFile());
-                    break;
-                } else if (retVal == JFileChooser.CANCEL_OPTION) {
-                    break;
-                }
-                ///JChessView.gui.game.saveGame(fc.);
-            }
-        } else if (target == loadGameItem) { //loadGame
-            JFileChooser fc = new JFileChooser();
-            int retVal = fc.showOpenDialog(this.gamesPane);
-            if (retVal == JFileChooser.APPROVE_OPTION) {
-                File file = fc.getSelectedFile();
-                if (file.exists() && file.canRead()) {
-                    Game.loadGame(file);
-                }
-            }
+
         } else if (target == this.themeSettingsMenu) {
             try {
                 ThemeChooseWindow choose = new ThemeChooseWindow(this.getFrame());
@@ -410,7 +368,7 @@ public class JChessView extends FrameView implements ActionListener, ComponentLi
     {//GEN-HEADEREND:event_moveBackItemActionPerformed
 
         try {
-            Game activeGame = this.getActiveTabGame();
+            GameController activeGame = this.getActiveTabGame();
             if (!activeGame.undo()) {
                 JOptionPane.showMessageDialog(null, "Nie da sie cofnac!");
             }
@@ -440,7 +398,7 @@ public class JChessView extends FrameView implements ActionListener, ComponentLi
         // TODO add your handling code here:
 
         try {
-            Game activeGame = this.getActiveTabGame();
+            GameController activeGame = this.getActiveTabGame();
             if (!activeGame.redo()) {
                 JOptionPane.showMessageDialog(null, "W pamieci brak ruchow do przodu!");
             }
@@ -455,7 +413,7 @@ public class JChessView extends FrameView implements ActionListener, ComponentLi
     private void rewindToBeginActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_rewindToBeginActionPerformed
     {//GEN-HEADEREND:event_rewindToBeginActionPerformed
         try {
-            Game activeGame = this.getActiveTabGame();
+            GameController activeGame = this.getActiveTabGame();
             if (!activeGame.rewindToBegin()) {
                 JOptionPane.showMessageDialog(null, "W pamieci brak ruchow do przodu!");
             }
@@ -469,7 +427,7 @@ public class JChessView extends FrameView implements ActionListener, ComponentLi
     private void rewindToEndActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_rewindToEndActionPerformed
     {//GEN-HEADEREND:event_rewindToEndActionPerformed
         try {
-            Game activeGame = this.getActiveTabGame();
+            GameController activeGame = this.getActiveTabGame();
             if (!activeGame.rewindToEnd()) {
                 JOptionPane.showMessageDialog(null, "W pamieci brak ruchow wstecz!");
             }
@@ -515,9 +473,9 @@ public class JChessView extends FrameView implements ActionListener, ComponentLi
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Game getActiveTabGame() throws ArrayIndexOutOfBoundsException {
-        Game activeGame = (Game) this.gamesPane.getComponentAt(this.gamesPane.getSelectedIndex());
-        return activeGame;
+    public GameController getActiveTabGame() throws ArrayIndexOutOfBoundsException {
+        GameView activeGameView = (GameView) this.gamesPane.getComponentAt(this.gamesPane.getSelectedIndex());
+        return activeGameView.getGameController();
     }
 
     public int getNumberOfOpenedTabs() {

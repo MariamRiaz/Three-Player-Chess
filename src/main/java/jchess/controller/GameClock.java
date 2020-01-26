@@ -22,9 +22,8 @@ package jchess.controller;
 
 import java.util.logging.Level;
 
-import jchess.Game;
 import jchess.helper.Log;
-import jchess.Settings;
+import jchess.model.GameModel;
 import jchess.helper.GameRoundTimer;
 import jchess.view.GameClockView;
 
@@ -33,10 +32,10 @@ import jchess.view.GameClockView;
  */
 public class GameClock implements Runnable {
 
-    private Settings settings;
+    private GameModel gameModel;
     private Thread thread;
-    private Game game;
-    public GameClockView gameClockView;
+    private GameController gameController;
+    private GameClockView gameClockView;
     private GameRoundTimer runningClock;
     private int totalPlayerTimeLimit;
     private int timeSpentByPlayers[];
@@ -44,21 +43,25 @@ public class GameClock implements Runnable {
     private PlayerColors activePlayer;
 
     /**
-     * @param game The current game
+     * @param gameController The current gameController
      */
-    public GameClock(Game game) {
+    public GameClock(GameController gameController) {
         super();
-        gameClockView = new GameClockView(game);
+        gameClockView = new GameClockView(gameController);
         this.runningClock = new GameRoundTimer();
-        this.game = game;
-        this.settings = game.getSettings();
-        int time = this.settings.getTimeForGame();
+        this.gameController = gameController;
+        this.gameModel = gameController.getGameModel();
+        int time = this.gameModel.getTimeForGame();
         activePlayer = PlayerColors.WHITE;
         this.setTimes(time);
 		this.thread = new Thread(this);
-		if (this.settings.timeLimitSet) {
+		if (this.gameModel.timeLimitSet) {
 			thread.start();
 		}
+	}
+
+	public GameClockView getGameClockView() {
+		return gameClockView;
 	}
 
 	/**
@@ -70,7 +73,7 @@ public class GameClock implements Runnable {
 	/**
 	 * Method to stop game clock
 	 */
-	public void stop() {
+	private void stop() {
 		this.runningClock = null;
 
 		try {// block this thread
@@ -83,7 +86,7 @@ public class GameClock implements Runnable {
 		}
 	}
 
-	public void switchPlayers(boolean forward) {
+	void switchPlayers(boolean forward) {
 		if (forward) {
 			if (this.activePlayer == PlayerColors.WHITE) {
 				this.activePlayer = PlayerColors.BLACK;
@@ -160,7 +163,7 @@ public class GameClock implements Runnable {
 		} else {// if called in wrong moment
 			Log.log("Time over called when player got time 2 play");
 		}
-		this.game.endGame("Time is over! " + color + " player wins the game.");
+		this.gameController.endGame("Time is over! " + color + " player wins the gameController.");
 		this.stop();
 		// JOptionPane.showMessageDialog(this, "koniec czasu");
 	}

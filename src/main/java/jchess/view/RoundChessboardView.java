@@ -99,7 +99,7 @@ public class RoundChessboardView extends JPanel {
     }
 
     /**
-     * Annotations to superclass Game updating and painting the chessboard
+     * Annotations to superclass GameController updating and painting the chessboard
      */
     @Override
     public void update(Graphics g) {
