@@ -1,13 +1,15 @@
 package jchess.controller;
 
+import jchess.model.GameModel;
 import jchess.entities.Player;
 import jchess.JChessApp;
-import jchess.Settings;
 import jchess.entities.Square;
 import jchess.entities.SquareObservable;
 import jchess.helper.CartesianPolarConverter;
+import jchess.helper.Images;
 import jchess.helper.MoveEvaluator;
 import jchess.entities.PolarPoint;
+import jchess.helper.RoundChessboardLoader;
 import jchess.model.RoundChessboardModel;
 import jchess.move.effects.MoveEffect;
 import jchess.move.effects.PositionChange;
@@ -33,7 +35,7 @@ public class RoundChessboardController extends MouseAdapter {
     private RoundChessboardModel model;
     private RoundChessboardView view;
     private Square activeSquare;
-    private Settings settings;
+    private GameModel settings;
     private SquareObservable squareObservable;
     private MoveHistoryController movesHistory;
     private HashSet<MoveEffect> moveEffects = null;
@@ -44,14 +46,12 @@ public class RoundChessboardController extends MouseAdapter {
     /**
      * Instantiates the RoundChessboardController with the given arguments.
      *
-     * @param model        The chessboard model to be used by the controller.
-     * @param view         The chessboard view to be used by the controller.
-     * @param settings     The settings of the game.
+     * @param settings     The gameModel of the game.
      * @param movesHistory The MoveHistoryController of the game, where the controller will store played moves.
      */
-    public RoundChessboardController(RoundChessboardModel model, RoundChessboardView view, Settings settings, MoveHistoryController movesHistory) {
-        this.model = model;
-        this.view = view;
+    public RoundChessboardController(RoundChessboardLoader chessboardLoader, int chessboardSize, GameModel settings, MoveHistoryController movesHistory) {
+        this.model = chessboardLoader.loadDefaultFromJSON(settings);
+        this.view = new RoundChessboardView(chessboardSize, Images.BOARD, model.getRows(), model.getColumns(), model.getSquares());
         view.addMouseListener(this);
         this.movesHistory = movesHistory;
         this.settings = settings;

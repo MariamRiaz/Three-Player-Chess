@@ -28,14 +28,14 @@ import java.awt.event.TextEvent;
 import java.awt.*;
 import javax.swing.text.BadLocationException;
 
-import jchess.Game;
+import jchess.controller.GameController;
+import jchess.model.GameModel;
 import jchess.JChessApp;
 import jchess.helper.Log;
 import jchess.entities.Player;
-import jchess.Settings;
 
 /**
- * Class responsible for drawing the fold with local game settings
+ * Class responsible for drawing the fold with local game gameModel
  */
 public class DrawNewGameSettings extends JPanel implements ActionListener, TextListener {
 
@@ -60,7 +60,7 @@ public class DrawNewGameSettings extends JPanel implements ActionListener, TextL
 	JButton okButton;
 	JCheckBox timeGame;
 	JComboBox time4Game;
-	String colors[] = { Settings.getTexts("white"), Settings.getTexts("black"), Settings.getTexts("gray") };
+	String colors[] = { GameModel.getTexts("white"), GameModel.getTexts("black"), GameModel.getTexts("gray") };
 	String times[] = { "1", "3", "5", "8", "10", "15", "20", "25", "30", "60", "120" };
 
 	;
@@ -119,19 +119,19 @@ public class DrawNewGameSettings extends JPanel implements ActionListener, TextL
 				this.thirdName.setText(this.trimString(thirdName, 9));
 			}
 			if (this.firstName.getText().length() == 0 || this.secondName.getText().length() == 0 || this.thirdName.getText().length() == 0) {
-				JOptionPane.showMessageDialog(this, Settings.getTexts("fill_names"));
+				JOptionPane.showMessageDialog(this, GameModel.getTexts("fill_names"));
 				return;
 			}
 			if (this.firstName.getText().length() == 0) {
-				JOptionPane.showMessageDialog(this, Settings.getTexts("fill_name"));
+				JOptionPane.showMessageDialog(this, GameModel.getTexts("fill_name"));
 				return;
 			}
-			Game newGUI = JChessApp.jcv.addNewTab(this.firstName.getText() + " vs " + this.secondName.getText() + " vs " + this.thirdName.getText());
-			Settings sett = newGUI.getSettings();// sett local settings variable
+			GameController newGUI = JChessApp.jcv.addNewTab(this.firstName.getText() + " vs " + this.secondName.getText() + " vs " + this.thirdName.getText());
+			GameModel sett = newGUI.getGameModel();// sett local gameModel variable
 			Player pl1 = sett.getPlayerWhite();// set local player variable
 			Player pl2 = sett.getPlayerBlack();// set local player variable
 			Player pl3 = sett.getPlayerGray();// set local player variable
-			sett.gameMode = Settings.gameModes.newGame;
+			sett.gameMode = GameModel.gameModes.newGame;
 			// if(this.firstName.getText().length() >9 )
 			// this.firstName.setText(this.firstName.getText(0,8));
 			if (this.color.getActionCommand().equals("biały")) // if first player is white
@@ -161,7 +161,7 @@ public class DrawNewGameSettings extends JPanel implements ActionListener, TextL
 			Log.log("****************\nStarting new game: " + pl1.getName() + " vs. " + pl2.getName() + "\ntime 4 game: "
 					+ sett.timeForGame + "\ntime limit set: " + sett.timeLimitSet + "\nwhite on top?: "
 					+ "\n****************");// 4test
-			newGUI.newGame();// start new Game
+			newGUI.newGame();// start new GameController
 			this.parent.setVisible(false);// hide parent
 		}
 
@@ -175,7 +175,7 @@ public class DrawNewGameSettings extends JPanel implements ActionListener, TextL
 		this.gbl = new GridBagLayout();
 		this.gbc = new GridBagConstraints();
 		this.sep = new JSeparator();
-		this.okButton = new JButton(Settings.getTexts("ok"));
+		this.okButton = new JButton(GameModel.getTexts("ok"));
 
 		this.firstName = new JTextField("", 10);
 		this.firstName.setSize(new Dimension(200, 50));
@@ -183,15 +183,15 @@ public class DrawNewGameSettings extends JPanel implements ActionListener, TextL
 		this.secondName.setSize(new Dimension(200, 50));
 		this.thirdName = new JTextField("", 10);
 		this.thirdName.setSize(new Dimension(200, 50));
-		this.firstNameLab = new JLabel(Settings.getTexts("first_player_name") + ": ");
-		this.secondNameLab = new JLabel(Settings.getTexts("second_player_name") + ": ");
-		this.thirdNameLab = new JLabel(Settings.getTexts("third_player_name") + ": ");
+		this.firstNameLab = new JLabel(GameModel.getTexts("first_player_name") + ": ");
+		this.secondNameLab = new JLabel(GameModel.getTexts("second_player_name") + ": ");
+		this.thirdNameLab = new JLabel(GameModel.getTexts("third_player_name") + ": ");
 		this.oponentChoos = new ButtonGroup();
 		this.computerLevel = new JSlider();
-		this.timeGame = new JCheckBox(Settings.getTexts("time_game_min"));
+		this.timeGame = new JCheckBox(GameModel.getTexts("time_game_min"));
 		this.time4Game = new JComboBox(times);
 
-		this.oponentHuman = new JRadioButton(Settings.getTexts("against_other_human"), true);
+		this.oponentHuman = new JRadioButton(GameModel.getTexts("against_other_human"), true);
 
 		this.setLayout(gbl);
 		this.oponentHuman.addActionListener(this);

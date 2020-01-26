@@ -18,30 +18,30 @@
  * Mateusz Sławomir Lach ( matlak, msl )
  * Damian Marciniak
  */
-package jchess;
+package jchess.model;
 
 import jchess.entities.Player;
 import jchess.helper.Images;
 
 import java.io.Serializable;
-import java.util.Locale;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
 /**
- * Class representings game settings available for the current player
+ * Class representings game gameModel available for the current player
  */
-public class Settings implements Serializable {
+public class GameModel implements Serializable {
 
     private static ResourceBundle loc = null;
     public int timeForGame;
     public boolean runningGameClock;
-    public boolean timeLimitSet;// tel us if player choose time 4 game or it's infinity
-    public boolean upsideDown;
+    public boolean timeLimitSet;
+    private Player activePlayer;
+    private boolean blockedChessboard;
 
     public enum gameModes {
 
-        newGame, loadGame
+        newGame
     }
 
     public gameModes gameMode;
@@ -61,7 +61,23 @@ public class Settings implements Serializable {
         return playerGray;
     }
 
-    public Settings() {
+    public void setBlockedChessboard(boolean blockedChessboard) {
+        this.blockedChessboard = blockedChessboard;
+    }
+
+    public boolean isBlockedChessboard() {
+        return blockedChessboard;
+    }
+
+    public void setActivePlayer(Player activePlayer) {
+        this.activePlayer = activePlayer;
+    }
+
+    public Player getActivePlayer() {
+        return activePlayer;
+    }
+
+    public GameModel() {
         // temporally
         this.playerWhite = new Player("", Images.WHITE_COLOR);
         this.playerBlack = new Player("", Images.BLACK_COLOR);
@@ -71,12 +87,12 @@ public class Settings implements Serializable {
     }
 
     public static String getTexts(String key) {
-        if (Settings.loc == null) {
-            Settings.loc = PropertyResourceBundle.getBundle("i18n.main");
+        if (GameModel.loc == null) {
+            GameModel.loc = PropertyResourceBundle.getBundle("i18n.main");
         }
         String result;
         try {
-            result = Settings.loc.getString(key);
+            result = GameModel.loc.getString(key);
         } catch (java.util.MissingResourceException exc) {
             result = key;
         }

@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -16,7 +15,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 
 import jchess.JChessApp;
-import jchess.Settings;
+import jchess.model.GameModel;
 import jchess.entities.Player;
 import jchess.entities.Square;
 import jchess.model.RoundChessboardModel;
@@ -35,20 +34,20 @@ public class RoundChessboardLoader {
     /**
      * Loads the default RoundChessboardModel. See loadFromJSON()
      *
-     * @param settings The Settings with the Players to use.
+     * @param settings The GameModel with the Players to use.
      * @return The loaded model or null if loading failed.
      */
-    public RoundChessboardModel loadDefaultFromJSON(Settings settings) {
+    public RoundChessboardModel loadDefaultFromJSON(GameModel settings) {
         return loadFromJSON(defaultBoardPath, settings);
     }
 
     /**
-     * Loads the RoundChessboardModel from the given JSON file with the given Settings to reference Players.
+     * Loads the RoundChessboardModel from the given JSON file with the given GameModel to reference Players.
      *
-     * @param settings The Settings with the Players to use.
+     * @param settings The GameModel with the Players to use.
      * @return The loaded model or null if loading failed.
      */
-    private RoundChessboardModel loadFromJSON(URL boardPath, Settings settings) {
+    private RoundChessboardModel loadFromJSON(URL boardPath, GameModel settings) {
         model = null;
 
         try {
@@ -61,7 +60,7 @@ public class RoundChessboardLoader {
         return model;
     }
 
-    private Player parsePlayerCode(String code, Settings settings) {
+    private Player parsePlayerCode(String code, GameModel settings) {
         switch (code) {
             case "WH":
                 return settings.getPlayerWhite();
@@ -73,7 +72,7 @@ public class RoundChessboardLoader {
         return null;
     }
 
-    private void initializeFromJSON(JsonElement jsonBody, Settings settings) {
+    private void initializeFromJSON(JsonElement jsonBody, GameModel settings) {
         if (jsonBody == null || !jsonBody.isJsonObject())
             return;
 

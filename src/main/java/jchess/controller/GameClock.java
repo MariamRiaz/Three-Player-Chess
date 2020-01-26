@@ -22,20 +22,19 @@ package jchess.controller;
 
 import java.util.logging.Level;
 
-import jchess.Game;
 import jchess.helper.Log;
-import jchess.Settings;
+import jchess.model.GameModel;
 import jchess.helper.GameRoundTimer;
 import jchess.view.GameClockView;
 
 /**
- * Class to represent the full game clock logic interacts with game clock view to generate the clocks on the game window
+ * Class to represent the full gameController clock logic interacts with gameController clock view to generate the clocks on the gameController window
  */
 public class GameClock implements Runnable {
 
-    private Settings settings;
+    private GameModel settings;
     private Thread thread;
-    private Game game;
+    private GameController gameController;
     public GameClockView gameClockView;
     private GameRoundTimer runningClock;
     private int totalPlayerTimeLimit;
@@ -44,14 +43,14 @@ public class GameClock implements Runnable {
     private PlayerColors activePlayer;
 
     /**
-     * @param game The current game
+     * @param gameController The current gameController
      */
-    public GameClock(Game game) {
+    public GameClock(GameController gameController) {
         super();
-        gameClockView = new GameClockView(game);
+        gameClockView = new GameClockView(gameController);
         this.runningClock = new GameRoundTimer();
-        this.game = game;
-        this.settings = game.getSettings();
+        this.gameController = gameController;
+        this.settings = gameController.getGameModel();
         int time = this.settings.getTimeForGame();
         activePlayer = PlayerColors.WHITE;
         this.setTimes(time);
@@ -62,13 +61,13 @@ public class GameClock implements Runnable {
 	}
 
 	/**
-	 * Method to init game clock
+	 * Method to init gameController clock
 	 */
 	public void start() {
 		this.thread.start();
 	}
 	/**
-	 * Method to stop game clock
+	 * Method to stop gameController clock
 	 */
 	public void stop() {
 		this.runningClock = null;
@@ -149,7 +148,7 @@ public class GameClock implements Runnable {
 	}
 
 	/**
-	 * Method of checking is the time of the game is not over
+	 * Method of checking is the time of the gameController is not over
 	 */
 	private void  timeOver() {
 		String color = new String();
@@ -160,7 +159,7 @@ public class GameClock implements Runnable {
 		} else {// if called in wrong moment
 			Log.log("Time over called when player got time 2 play");
 		}
-		this.game.endGame("Time is over! " + color + " player wins the game.");
+		this.gameController.endGame("Time is over! " + color + " player wins the gameController.");
 		this.stop();
 		// JOptionPane.showMessageDialog(this, "koniec czasu");
 	}

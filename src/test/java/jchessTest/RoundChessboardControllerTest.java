@@ -1,8 +1,8 @@
 package jchessTest;
 
+import jchess.model.GameModel;
 import jchess.controller.MoveHistoryController;
 import jchess.entities.Player;
-import jchess.Settings;
 import jchess.entities.Square;
 import jchess.controller.RoundChessboardController;
 import jchess.model.RoundChessboardModel;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.when;
 public class RoundChessboardControllerTest {
 
 
-    private Settings settingsMock;
+    private GameModel settingsMock;
     private MoveHistoryController moveHistoryControllerMock;
     private RoundChessboardController controller;
     private RoundChessboardModel modelMock;
@@ -31,7 +31,7 @@ public class RoundChessboardControllerTest {
     @Before
     public void beforeEachTest() {
         Player testPlayer = new Player("test", "white");
-        settingsMock = mock(Settings.class);
+        settingsMock = mock(GameModel.class);
         when(settingsMock.getPlayerWhite()).thenReturn(testPlayer);
 
         moveHistoryControllerMock = mock(MoveHistoryController.class);
