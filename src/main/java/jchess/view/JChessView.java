@@ -173,8 +173,6 @@ public class JChessView extends FrameView implements ActionListener, ComponentLi
         menuBar = new javax.swing.JMenuBar();
         javax.swing.JMenu fileMenu = new javax.swing.JMenu();
         newGameItem = new javax.swing.JMenuItem();
-        loadGameItem = new javax.swing.JMenuItem();
-        saveGameItem = new javax.swing.JMenuItem();
         javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
         gameMenu = new javax.swing.JMenu();
         moveBackItem = new javax.swing.JMenuItem();
@@ -215,11 +213,7 @@ public class JChessView extends FrameView implements ActionListener, ComponentLi
         );
 
         menuBar.setName("menuBar"); // NOI18N
-
-        //org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(jchess.JChessApp.class).getContext().getResourceMap(JChessView.class);
-//        ResourceMap parentMap = new ResourceMap(null, JChessView.class.getClassLoader(), "JChessApp");
         ResourceMap resourceMap = new ResourceMap(getResourceMap(), JChessView.class.getClassLoader(), "JChessView", "JChessApp");
-        //new ResourceMap(getResourceMap(), JChessView.class.getClassLoader(), "JChessView");
         fileMenu.setText(resourceMap.getString("fileMenu.text")); // NOI18N
         fileMenu.setName("fileMenu"); // NOI18N
 
@@ -228,18 +222,6 @@ public class JChessView extends FrameView implements ActionListener, ComponentLi
         newGameItem.setName("newGameItem"); // NOI18N
         fileMenu.add(newGameItem);
         newGameItem.addActionListener(this);
-
-        loadGameItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, java.awt.event.InputEvent.CTRL_MASK));
-        loadGameItem.setText(resourceMap.getString("loadGameItem.text")); // NOI18N
-        loadGameItem.setName("loadGameItem"); // NOI18N
-        fileMenu.add(loadGameItem);
-        loadGameItem.addActionListener(this);
-
-        saveGameItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
-        saveGameItem.setText(resourceMap.getString("saveGameItem.text")); // NOI18N
-        saveGameItem.setName("saveGameItem"); // NOI18N
-        fileMenu.add(saveGameItem);
-        saveGameItem.addActionListener(this);
 
         javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(jchess.JChessApp.class).getContext().getActionMap(JChessView.class, this);
         exitMenuItem.setAction(actionMap.get("quit")); // NOI18N
@@ -441,7 +423,6 @@ public class JChessView extends FrameView implements ActionListener, ComponentLi
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu gameMenu;
     private javax.swing.JTabbedPane gamesPane;
-    private javax.swing.JMenuItem loadGameItem;
     public javax.swing.JPanel mainPanel;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenuItem moveBackItem;
@@ -451,7 +432,6 @@ public class JChessView extends FrameView implements ActionListener, ComponentLi
     private javax.swing.JProgressBar progressBar;
     private javax.swing.JMenuItem rewindToBegin;
     private javax.swing.JMenuItem rewindToEnd;
-    private javax.swing.JMenuItem saveGameItem;
     private javax.swing.JLabel statusAnimationLabel;
     private javax.swing.JLabel statusMessageLabel;
     private javax.swing.JPanel statusPanel;
@@ -476,10 +456,6 @@ public class JChessView extends FrameView implements ActionListener, ComponentLi
     public GameController getActiveTabGame() throws ArrayIndexOutOfBoundsException {
         GameView activeGameView = (GameView) this.gamesPane.getComponentAt(this.gamesPane.getSelectedIndex());
         return activeGameView.getGameController();
-    }
-
-    public int getNumberOfOpenedTabs() {
-        return this.gamesPane.getTabCount();
     }
 
     public void componentMoved(ComponentEvent e) {
