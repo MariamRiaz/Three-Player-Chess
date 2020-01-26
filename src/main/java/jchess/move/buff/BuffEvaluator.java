@@ -7,10 +7,8 @@ import jchess.controller.MoveHistoryController;
 import jchess.controller.RoundChessboardController;
 import jchess.entities.Square;
 import jchess.helper.MoveEvaluator;
-import jchess.model.RoundChessboardModel;
 import jchess.move.effects.MoveEffect;
 import jchess.move.effects.MoveEffectsBuilder;
-import jchess.view.RoundChessboardView;
 
 public class BuffEvaluator {
 	private final RoundChessboardController chessboard;

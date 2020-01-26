@@ -1,4 +1,4 @@
-package jchess.view;
+package jchess.view.GameView.ChessBoardView;
 
 import jchess.entities.PolarPoint;
 

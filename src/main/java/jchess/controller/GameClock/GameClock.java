@@ -25,7 +25,7 @@ import java.util.logging.Level;
 import jchess.controller.GameController;
 import jchess.helper.Log;
 import jchess.model.GameModel;
-import jchess.view.GameClockView;
+import jchess.view.GameView.GameClockView.GameClockView;
 
 /**
  * Class to represent the full game clock logic interacts with game clock view to generate the clocks on the game window

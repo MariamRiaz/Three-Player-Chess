@@ -18,11 +18,12 @@
  *
  * Created on 2009-10-20, 15:11:49
  */
-package jchess.view;
+package jchess.view.InitialWindowView.JchessView.NewGame;
 
 import javax.swing.*;
 
 import jchess.model.GameModel;
+import jchess.view.DrawNewGameSettings;
 
 /**
  *

@@ -10,12 +10,10 @@ import jchess.model.RoundChessboardModel;
 import jchess.move.Orientation;
 import jchess.pieces.Piece;
 import jchess.pieces.PieceLoader;
-import jchess.view.RoundChessboardView;
+import jchess.view.GameView.ChessBoardView.RoundChessboardView;
 import org.junit.Before;
-import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;

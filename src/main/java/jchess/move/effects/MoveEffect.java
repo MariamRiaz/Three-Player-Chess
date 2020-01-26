@@ -3,17 +3,10 @@ package jchess.move.effects;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import jchess.JChessApp;
-import jchess.controller.RoundChessboardController;
-import jchess.entities.Player;
 import jchess.entities.Square;
-import jchess.model.RoundChessboardModel;
 import jchess.move.Move;
 import jchess.move.MoveType;
 import jchess.pieces.Piece;
-import jchess.pieces.PieceDefinition;
-import jchess.pieces.PieceLoader;
-import jchess.view.RoundChessboardView;
 
 public class MoveEffect {
 	private final Piece moving;

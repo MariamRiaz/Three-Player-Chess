@@ -1,4 +1,4 @@
-package jchess.view;
+package jchess.view.GameView;
 
 import jchess.controller.GameController;
 
@@ -36,7 +36,7 @@ public class GameView extends JPanel implements ComponentListener {
         addComponentListener(this);
     }
 
-    GameController getGameController() {
+    public GameController getGameController() {
         return gameController;
     }
 

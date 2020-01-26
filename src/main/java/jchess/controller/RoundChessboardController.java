@@ -17,8 +17,8 @@ import jchess.move.effects.StateChange;
 import jchess.pieces.Piece;
 import jchess.pieces.PieceDefinition;
 import jchess.pieces.PieceLoader;
-import jchess.view.PolarCell;
-import jchess.view.RoundChessboardView;
+import jchess.view.GameView.ChessBoardView.PolarCell;
+import jchess.view.GameView.ChessBoardView.RoundChessboardView;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;

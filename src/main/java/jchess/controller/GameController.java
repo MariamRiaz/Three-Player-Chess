@@ -27,7 +27,7 @@ import jchess.helper.RoundChessboardLoader;
 import jchess.model.GameModel;
 import jchess.move.buff.BuffEvaluator;
 import jchess.pieces.Piece;
-import jchess.view.GameView;
+import jchess.view.GameView.GameView;
 
 import javax.swing.*;
 import java.util.HashSet;
