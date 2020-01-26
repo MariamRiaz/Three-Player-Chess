@@ -1,8 +1,20 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.bmuschko:gradle-clover-plugin:2.2.3'
+    }
+}
 
 plugins {
     id 'java'
     id 'checkstyle'
+    id 'findbugs'
 }
+
+apply plugin: 'com.bmuschko.clover'
 
 repositories {
     mavenCentral()
@@ -42,6 +54,7 @@ if (hasProperty('buildScan')) {
 
 dependencies {
     compile group: 'org.jdesktop', name: 'appframework', version: '1.0.3'
+    clover 'org.openclover:clover:4.3.1'
     compile group: 'com.google.code.gson', name: 'gson', version:'2.7'
     compile group: 'org.apache.commons', name:'commons-text', version:'1.8'
     testCompile 'junit:junit:4.12'
@@ -53,9 +66,81 @@ checkstyle {
     toolVersion = '7.8.1'
     configFile file("config/checkstyle/checkstyle.xml")
 }
-//checkstyleMain {
-//    source ='src/main/java'
-//}
-//checkstyleTest {
-//    source ='src/test/java'
-//}
+checkstyleMain {
+    source ='src/main/java'
+}
+checkstyleTest {
+    source ='src/test/java'
+}
+
+tasks.withType(Checkstyle) {
+    reports {
+        xml.enabled false
+        html.enabled true
+    }
+}
+
+findbugs {
+    ignoreFailures = true
+    toolVersion = "3.0.1"
+    sourceSets=[sourceSets.main]
+    excludeFilter = file("config/findbugs/excludeFilter.xml")
+    effort = "max"
+}
+
+tasks.withType(FindBugs) {
+    reports {
+        xml.enabled false
+        html.enabled true
+    }
+}
+
+clover {
+    report {
+        // This is the default testIncludes configuration
+        testIncludes = ['**/*Test.java', '**/*Spec.groovy']
+        testExcludes = ['**/Mock*.java']
+        html = true
+        xml = true
+        testResultsDir = project.tasks.getByName('test').reports.junitXml.destination
+        testResultsInclude = 'TEST-*.xml'
+
+        // Clover report nested columns support
+        columns {
+            coveredMethods format: 'longbar', min: '75'
+            coveredStatements format: '%'
+            coveredBranches format: 'raw'
+            totalPercentageCovered format: '%', scope: 'package'
+        }
+
+        // Clover history generation support
+        // See Clover documentation for details of the values supported
+        historical {
+            enabled = true
+            historyIncludes = 'clover-*.xml.gz'
+            packageFilter = null
+            from = null
+            to = null
+
+            added {
+                range = 10
+                interval = '3 weeks'
+            }
+            mover {
+                threshold = 1
+                range = 10
+                interval = '3 weeks'
+            }
+            mover {
+                threshold = 1
+                range = 10
+                interval = '3 months'
+            }
+            mover {
+                threshold = 1
+                range = 10
+                interval = '1 year'
+            }
+        }
+    }
+}
