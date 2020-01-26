@@ -15,14 +15,14 @@ public class PositionChange {
 	/**
 	 * @return The moving Piece.
 	 */
-	protected Piece getPiece() {
+	public Piece getPiece() {
 		return piece;
 	}
 	
 	/**
 	 * @return The target Square.
 	 */
-	protected Square getSquare() {
+	public Square getSquare() {
 		return square;
 	}
 }

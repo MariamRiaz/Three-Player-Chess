@@ -33,10 +33,7 @@ import jchess.view.MoveHistoryView;
 import org.apache.commons.text.StringSubstitutor;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.EmptyStackException;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 
 /**
@@ -106,22 +103,24 @@ public class MoveHistoryController {
     /**
      * Method of adding new move
      */
-    void addMove(MoveEffect moveEffects, boolean registerInHistory) {
-        HashMap<String, String> values = new HashMap<String, String>() {{
-            put(Move.formatStringPiece, moveEffects.getMoving().getDefinition().getSymbol());
-            put(Move.formatStringFrom, getPosition(moveEffects.getFrom()));
-            put(Move.formatStringTo, getPosition(moveEffects.getTrigger()));
-        }};
+    public void addMove(MoveEffect moveEffects, boolean registerInHistory, boolean registerInTable) {
+    	if (registerInTable) {
+	        HashMap<String, String> values = new HashMap<String, String>() {{
+	            put(Move.formatStringPiece, moveEffects.getMoving().getDefinition().getSymbol());
+	            put(Move.formatStringFrom, getPosition(moveEffects.getFrom()));
+	            put(Move.formatStringTo, getPosition(moveEffects.getTrigger()));
+	        }};
 
-        String formatString = moveEffects.getMove().getFormatString(moveEffects.getFlag());
-        if (formatString == null)
-            formatString = moveEffects.getMove().getFormatString(MoveType.OnlyMove);
-        if (formatString == null)
-            formatString = moveEffects.getMove().getDefaultFormatString();
-        if (formatString == null)
-            formatString = "-";
+	        String formatString = moveEffects.getMove().getFormatString(moveEffects.getFlag());
+	        if (formatString == null)
+	            formatString = moveEffects.getMove().getFormatString(MoveType.OnlyMove);
+	        if (formatString == null)
+	            formatString = moveEffects.getMove().getDefaultFormatString();
+	        if (formatString == null)
+	            formatString = "-";
 
-        addMove(new StringSubstitutor(values).replace(formatString));
+	        addMove(new StringSubstitutor(values).replace(formatString));
+    	}
 
         if (registerInHistory)
             moveHistoryModel.moveBackStack.add(moveEffects);
@@ -144,43 +143,72 @@ public class MoveHistoryController {
         return moveHistoryModel.move;
     }
 
-    synchronized MoveEffect undo() {
+    Queue<MoveEffect> undo() {
+    	Queue<MoveEffect> retVal = new PriorityQueue<>();
 
-        MoveEffect last = null;
-        try {
+    	MoveEffect toAdd = null;
+    	while ((toAdd = undoOne()) != null) {
+    		retVal.add(toAdd);
+    		if (toAdd.isFromMove())
+    			break;
+    	}
+
+        return retVal;
+    }
+
+    MoveEffect undoOne() {
+    	MoveEffect last = null;
+
+        if (!moveHistoryModel.moveBackStack.isEmpty()) {
             last = moveHistoryModel.moveBackStack.pop();
-        } catch (EmptyStackException | ArrayIndexOutOfBoundsException exc) {
-            exc.printStackTrace();
         }
 
         if (last != null) {
             moveHistoryModel.moveForwardStack.push(last);
 
-            if (moveHistoryModel.activePlayerColumn.equals(MoveHistoryController.PlayerColumn.player1)) {
-                if (moveHistoryModel.getRowCount() > 0)
-                    moveHistoryModel.setValueAt("", moveHistoryModel.getRowCount() - 1, 2);
+            if (last.isFromMove()) {
+	            if (moveHistoryModel.activePlayerColumn.equals(MoveHistoryController.PlayerColumn.player1)) {
+	                if (moveHistoryModel.getRowCount() > 0)
+	                    moveHistoryModel.setValueAt("", moveHistoryModel.getRowCount() - 1, 2);
 
-            } else if (moveHistoryModel.activePlayerColumn.equals(MoveHistoryController.PlayerColumn.player2)) {
-                moveHistoryModel.setValueAt("", moveHistoryModel.getRowCount() - 1, 0);
-                moveHistoryModel.removeRow(moveHistoryModel.getRowCount() - 1);
-                if (moveHistoryModel.rowsNum > 0)
-                    moveHistoryModel.rowsNum--;
+	            } else if (moveHistoryModel.activePlayerColumn.equals(MoveHistoryController.PlayerColumn.player2)) {
+	                moveHistoryModel.setValueAt("", moveHistoryModel.getRowCount() - 1, 0);
+	                moveHistoryModel.removeRow(moveHistoryModel.getRowCount() - 1);
+	                if (moveHistoryModel.rowsNum > 0)
+	                    moveHistoryModel.rowsNum--;
 
-            } else {
-                if (moveHistoryModel.getRowCount() > 0)
-                    moveHistoryModel.setValueAt("", moveHistoryModel.getRowCount() - 1, 1);
+	            } else {
+	                if (moveHistoryModel.getRowCount() > 0)
+	                    moveHistoryModel.setValueAt("", moveHistoryModel.getRowCount() - 1, 1);
 
+	            }
+	            moveHistoryModel.move.remove(moveHistoryModel.move.size() - 1);
             }
-            moveHistoryModel.move.remove(moveHistoryModel.move.size() - 1);
         }
+
         return last;
     }
 
-    synchronized MoveEffect redo() {
+    Queue<MoveEffect> redo() {
+    	Queue<MoveEffect> retVal = new PriorityQueue<>();
+
+    	MoveEffect toAdd = null;
+    	while ((toAdd = redoOne()) != null) {
+    		if (toAdd.isFromMove() && retVal.size() != 0) {
+    			undoOne();
+    			break;
+    		}
+
+    		retVal.add(toAdd);
+    	}
+
+        return retVal;
+    }
+
+    MoveEffect redoOne() {
         try {
             MoveEffect first = moveHistoryModel.moveForwardStack.pop();
-            moveHistoryModel.moveBackStack.push(first);
-            addMove(first, false);
+            addMove(first, true, first.isFromMove());
             return first;
         } catch (java.util.EmptyStackException exc) {
             return null;
