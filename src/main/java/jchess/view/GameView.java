@@ -1,6 +1,6 @@
 package jchess.view;
 
-import jchess.controller.GameController;
+import jchess.controller.IGameController;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,13 +9,13 @@ import java.awt.event.ComponentListener;
 
 public class GameView extends JPanel implements ComponentListener {
 
-    private GameController gameController;
+    private IGameController gameController;
     private Component chessboardView;
     private Component moveHistoryView;
     private Component gameClockView;
 
 
-    public GameView(GameController gameController, Component chessboardView, Component moveHistoryView, Component gameClockView) {
+    public GameView(IGameController gameController, Component chessboardView, Component moveHistoryView, Component gameClockView) {
         this.setLayout(null);
         this.gameController = gameController;
         this.chessboardView = chessboardView;
@@ -36,7 +36,7 @@ public class GameView extends JPanel implements ComponentListener {
         addComponentListener(this);
     }
 
-    GameController getGameController() {
+    IGameController getGameController() {
         return gameController;
     }
 

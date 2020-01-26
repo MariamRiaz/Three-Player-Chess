@@ -1,6 +1,6 @@
 package jchess.view;
 
-import jchess.controller.GameController;
+import jchess.controller.IGameController;
 import jchess.model.GameModel;
 
 import javax.swing.*;
@@ -17,7 +17,7 @@ public class GameClockView extends JPanel {
     private BufferedImage background;
     private String whiteClock, blackClock, grayClock;
 
-    public GameClockView(GameController gameController){
+    public GameClockView(IGameController gameController){
         this.settings = gameController.getGameModel();
         this.updateClocks(new int[]{0, 0, 0});
     }

@@ -38,7 +38,7 @@ import java.util.Observer;
  * and for storing the currently active player.
  * It also provides functionality for saving and loading games.
  */
-public class GameController implements Observer {
+public class GameController implements IGameController {
 
     private GameView gameView;
 
@@ -80,7 +80,7 @@ public class GameController implements Observer {
      *
      * @param message The message that is shown at the end of the game to each player
      */
-    void endGame(String message) {
+    public void endGame(String message) {
         gameModel.setBlockedChessboard(true);
         Log.log(message);
         JOptionPane.showMessageDialog(null, message);
@@ -117,21 +117,6 @@ public class GameController implements Observer {
 
         switchActive(true);
         gameModel.setBlockedChessboard(false);
-    }
-
-    /**
-     * Method to simulate Move to check if it's correct etc.
-     *
-     * @param beginX the initial x coordinate of the square where the move starts
-     * @param beginY the initial y coordinate of the square where the move starts
-     * @param endX   the final x coordinate of the square where the move ends
-     * @param endY   the final y coordinate of the square where the move ends
-     * @return Returns true if the move is valid
-     */
-    public boolean simulateMove(int beginX, int beginY, int endX, int endY) {
-        boolean moveCorrect = chessboardController.moveIsPossible(beginX, beginY, endX, endY);
-        nextMove();
-        return moveCorrect;
     }
 
     /**
@@ -234,7 +219,6 @@ public class GameController implements Observer {
      * @param o   The observable square that generates the events
      * @param arg The new generated Square
      */
-    @Override
     public void update(Observable o, Object arg) {
         Square square = (Square) arg;
         selectedSquare(square);

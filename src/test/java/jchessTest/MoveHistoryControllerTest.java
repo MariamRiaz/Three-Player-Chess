@@ -1,12 +1,12 @@
 package jchessTest;
 
 import jchess.controller.GameController;
-import jchess.model.GameModel;
+import jchess.controller.IGameController;
 import jchess.controller.MoveHistoryController;
 import jchess.entities.Player;
 import jchess.entities.Square;
+import jchess.model.GameModel;
 import jchess.pieces.Piece;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,7 +16,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class MoveHistoryControllerTest {
-    GameController gameController;
+    IGameController gameController;
     MoveHistoryController moveHistoryController;
     private GameModel settingsMock;
     Square square1;
@@ -26,7 +26,7 @@ public class MoveHistoryControllerTest {
 
     @Before
     public void setup() {
-        gameController = mock (GameController.class);
+        gameController = mock(GameController.class);
         settingsMock = mock(GameModel.class);
         pieceMock = mock(Piece.class);
         Player testPlayer = new Player("test", "white");
@@ -34,6 +34,7 @@ public class MoveHistoryControllerTest {
         when(settingsMock.getPlayerWhite()).thenReturn(testPlayer);
         moveHistoryController = new MoveHistoryController(columnNames);
     }
+
     @Test
     public void getMoves() {
         assert moveHistoryController.getMoves().isEmpty();

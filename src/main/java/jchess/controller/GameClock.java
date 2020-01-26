@@ -34,7 +34,7 @@ public class GameClock implements Runnable {
 
     private GameModel gameModel;
     private Thread thread;
-    private GameController gameController;
+    private IGameController gameController;
     private GameClockView gameClockView;
     private GameRoundTimer runningClock;
     private int totalPlayerTimeLimit;
@@ -45,7 +45,7 @@ public class GameClock implements Runnable {
     /**
      * @param gameController The current gameController
      */
-    public GameClock(GameController gameController) {
+    public GameClock(IGameController gameController) {
         super();
         gameClockView = new GameClockView(gameController);
         this.runningClock = new GameRoundTimer();

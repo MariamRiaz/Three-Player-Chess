@@ -1,7 +1,5 @@
 package jchess.entities;
 
-import jchess.entities.Square;
-
 import java.util.Observable;
 
 public class SquareObservable extends Observable {

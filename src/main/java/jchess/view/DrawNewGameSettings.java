@@ -19,20 +19,20 @@
  */
 package jchess.view;
 
+import jchess.JChessApp;
+import jchess.controller.IGameController;
+import jchess.entities.Player;
+import jchess.helper.Log;
+import jchess.model.GameModel;
+
 import javax.swing.*;
-import java.awt.event.ActionListener;
+import javax.swing.text.BadLocationException;
+import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.TextEvent;
 import java.awt.event.TextListener;
 import java.util.logging.Level;
-import java.awt.event.TextEvent;
-import java.awt.*;
-import javax.swing.text.BadLocationException;
-
-import jchess.controller.GameController;
-import jchess.model.GameModel;
-import jchess.JChessApp;
-import jchess.helper.Log;
-import jchess.entities.Player;
 
 /**
  * Class responsible for drawing the fold with local game gameModel
@@ -126,7 +126,7 @@ public class DrawNewGameSettings extends JPanel implements ActionListener, TextL
 				JOptionPane.showMessageDialog(this, GameModel.getTexts("fill_name"));
 				return;
 			}
-			GameController newGUI = JChessApp.jcv.addNewTab(this.firstName.getText() + " vs " + this.secondName.getText() + " vs " + this.thirdName.getText());
+			IGameController newGUI = JChessApp.jcv.addNewTab(this.firstName.getText() + " vs " + this.secondName.getText() + " vs " + this.thirdName.getText());
 			GameModel gameModel = newGUI.getGameModel();// sett local gameModel variable
 			Player pl1 = gameModel.getPlayerWhite();// set local player variable
 			Player pl2 = gameModel.getPlayerBlack();// set local player variable
