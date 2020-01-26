@@ -28,11 +28,11 @@ import jchess.helper.GameRoundTimer;
 import jchess.view.GameClockView;
 
 /**
- * Class to represent the full gameController clock logic interacts with gameController clock view to generate the clocks on the gameController window
+ * Class to represent the full game clock logic interacts with game clock view to generate the clocks on the game window
  */
 public class GameClock implements Runnable {
 
-    private GameModel settings;
+    private GameModel gameModel;
     private Thread thread;
     private GameController gameController;
     public GameClockView gameClockView;
@@ -50,24 +50,24 @@ public class GameClock implements Runnable {
         gameClockView = new GameClockView(gameController);
         this.runningClock = new GameRoundTimer();
         this.gameController = gameController;
-        this.settings = gameController.getGameModel();
-        int time = this.settings.getTimeForGame();
+        this.gameModel = gameController.getGameModel();
+        int time = this.gameModel.getTimeForGame();
         activePlayer = PlayerColors.WHITE;
         this.setTimes(time);
 		this.thread = new Thread(this);
-		if (this.settings.timeLimitSet) {
+		if (this.gameModel.timeLimitSet) {
 			thread.start();
 		}
 	}
 
 	/**
-	 * Method to init gameController clock
+	 * Method to init game clock
 	 */
 	public void start() {
 		this.thread.start();
 	}
 	/**
-	 * Method to stop gameController clock
+	 * Method to stop game clock
 	 */
 	public void stop() {
 		this.runningClock = null;
@@ -148,7 +148,7 @@ public class GameClock implements Runnable {
 	}
 
 	/**
-	 * Method of checking is the time of the gameController is not over
+	 * Method of checking is the time of the game is not over
 	 */
 	private void  timeOver() {
 		String color = new String();

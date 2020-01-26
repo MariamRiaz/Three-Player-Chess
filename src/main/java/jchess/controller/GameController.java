@@ -61,6 +61,7 @@ public class GameController implements Observer, ComponentListener {
         initializeControllers();
         initializeView();
         gameModel.setBlockedChessboard(false);
+        gameModel.setActivePlayer(gameModel.getPlayerWhite());
     }
 
     private void initializeControllers() {
@@ -93,19 +94,6 @@ public class GameController implements Observer, ComponentListener {
 
     public GameClock getGameClock() {
         return gameClock;
-    }
-
-    /**
-     * Method to Start new game
-     */
-    public void newGame() {
-        gameModel.setActivePlayer(gameModel.getPlayerWhite());
-
-        GameController activeGame = JChessApp.jcv.getActiveTabGame();
-        if (activeGame != null && JChessApp.jcv.getNumberOfOpenedTabs() == 0) {
-            gameView.repaint();
-        }
-        gameView.repaint();
     }
 
     /**

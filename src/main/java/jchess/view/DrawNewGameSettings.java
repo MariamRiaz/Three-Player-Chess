@@ -127,11 +127,11 @@ public class DrawNewGameSettings extends JPanel implements ActionListener, TextL
 				return;
 			}
 			GameController newGUI = JChessApp.jcv.addNewTab(this.firstName.getText() + " vs " + this.secondName.getText() + " vs " + this.thirdName.getText());
-			GameModel sett = newGUI.getGameModel();// sett local gameModel variable
-			Player pl1 = sett.getPlayerWhite();// set local player variable
-			Player pl2 = sett.getPlayerBlack();// set local player variable
-			Player pl3 = sett.getPlayerGray();// set local player variable
-			sett.gameMode = GameModel.gameModes.newGame;
+			GameModel gameModel = newGUI.getGameModel();// sett local gameModel variable
+			Player pl1 = gameModel.getPlayerWhite();// set local player variable
+			Player pl2 = gameModel.getPlayerBlack();// set local player variable
+			Player pl3 = gameModel.getPlayerGray();// set local player variable
+			gameModel.gameMode = GameModel.gameModes.newGame;
 			// if(this.firstName.getText().length() >9 )
 			// this.firstName.setText(this.firstName.getText(0,8));
 			if (this.color.getActionCommand().equals("biały")) // if first player is white
@@ -151,17 +151,16 @@ public class DrawNewGameSettings extends JPanel implements ActionListener, TextL
 			{
 				String value = this.times[this.time4Game.getSelectedIndex()];// set time for game
 				Integer val = new Integer(value);
-				sett.timeLimitSet = true;
-				sett.timeForGame = (int) val * 60;// set time for game and mult it to seconds
-				newGUI.getGameClock().setTimes(sett.timeForGame);
+				gameModel.timeLimitSet = true;
+				gameModel.timeForGame = (int) val * 60;// set time for game and mult it to seconds
+				newGUI.getGameClock().setTimes(gameModel.timeForGame);
 				newGUI.getGameClock().start();
 			}
 			Log.log(this.time4Game.getActionCommand());
 			// this.time4Game.getComponent(this.time4Game.getSelectedIndex());
 			Log.log("****************\nStarting new game: " + pl1.getName() + " vs. " + pl2.getName() + "\ntime 4 game: "
-					+ sett.timeForGame + "\ntime limit set: " + sett.timeLimitSet + "\nwhite on top?: "
+					+ gameModel.timeForGame + "\ntime limit set: " + gameModel.timeLimitSet + "\nwhite on top?: "
 					+ "\n****************");// 4test
-			newGUI.newGame();// start new GameController
 			this.parent.setVisible(false);// hide parent
 		}
 
