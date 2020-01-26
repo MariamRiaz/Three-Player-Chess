@@ -19,7 +19,7 @@ import jchess.*;
 import jchess.controller.GameController;
 import jchess.helper.ResourceLoader;
 import jchess.helper.Log;
-import jchess.view.GameStateViews.PawnPromotionWindow;
+import jchess.view.GameView.PawnPromotionWindow;
 import jchess.view.GameView.GameView;
 import jchess.view.InitialWindowView.JchessView.AboutBox.JChessAboutBox;
 import jchess.view.InitialWindowView.JchessView.NewGame.NewGameWindow;
