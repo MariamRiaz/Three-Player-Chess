@@ -17,8 +17,8 @@ import jchess.move.effects.StateChange;
 import jchess.pieces.Piece;
 import jchess.pieces.PieceDefinition;
 import jchess.pieces.PieceLoader;
-import jchess.view.ChessboardView;
-import jchess.view.RoundChessboardView;
+import jchess.view.AbstractChessboardView;
+import jchess.view.RoundAbstractChessboardView;
 import jchess.view.SquareView;
 
 import java.awt.*;
@@ -33,10 +33,10 @@ import java.util.Queue;
  */
 public class RoundChessboardController implements IChessboardController {
     private IChessboardModel model;
-    private ChessboardView view;
+    private AbstractChessboardView view;
     private Square activeSquare;
     private SquareObservable squareObservable;
-    private MoveHistoryController movesHistory;
+    private IMoveHistoryController movesHistory;
     private HashSet<MoveEffect> moveEffects = null;
 
     /**
@@ -45,9 +45,9 @@ public class RoundChessboardController implements IChessboardController {
      * @param settings     The gameModel of the game.
      * @param movesHistory The MoveHistoryController of the game, where the controller will store played moves.
      */
-    public RoundChessboardController(RoundChessboardLoader chessboardLoader, int chessboardSize, GameModel settings, MoveHistoryController movesHistory) {
+    public RoundChessboardController(RoundChessboardLoader chessboardLoader, int chessboardSize, GameModel settings, IMoveHistoryController movesHistory) {
         this.model = chessboardLoader.loadDefaultFromJSON(settings);
-        this.view = new RoundChessboardView(chessboardSize, Images.BOARD, model.getRows(), model.getColumns(), model.getSquares());
+        this.view = new RoundAbstractChessboardView(chessboardSize, Images.BOARD, model.getRows(), model.getColumns(), model.getSquares());
         view.addMouseListener(this);
         this.movesHistory = movesHistory;
         this.squareObservable = new SquareObservable();
@@ -56,7 +56,7 @@ public class RoundChessboardController implements IChessboardController {
     /**
      * @return The view of the chessboard.
      */
-    public ChessboardView getView() {
+    public AbstractChessboardView getView() {
         return view;
     }
 

@@ -10,7 +10,7 @@ import jchess.model.RoundChessboardModel;
 import jchess.move.Orientation;
 import jchess.pieces.Piece;
 import jchess.pieces.PieceLoader;
-import jchess.view.RoundChessboardView;
+import jchess.view.RoundAbstractChessboardView;
 import org.junit.Before;
 
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ public class RoundChessboardControllerTest {
     private MoveHistoryController moveHistoryControllerMock;
     private RoundChessboardController controller;
     private RoundChessboardModel modelMock;
-    private RoundChessboardView viewMock;
+    private RoundAbstractChessboardView viewMock;
     private Square square;
     private RoundChessboardLoader chessboardLoaderMock;
 
@@ -44,7 +44,7 @@ public class RoundChessboardControllerTest {
         when(modelMock.getRows()).thenReturn(2);
         when(modelMock.getSquares()).thenReturn(squareList);
 
-        viewMock = mock(RoundChessboardView.class);
+        viewMock = mock(RoundAbstractChessboardView.class);
         moveHistoryControllerMock = mock(MoveHistoryController.class);
 
         chessboardLoaderMock = mock(RoundChessboardLoader.class);

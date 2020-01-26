@@ -18,7 +18,7 @@ import java.util.logging.Level;
 /**
  * Class to generate the view of a circular board
  */
-public class RoundChessboardView extends ChessboardView {
+public class RoundAbstractChessboardView extends AbstractChessboardView {
 
     private Image boardImage;
     private Image selectedSquareImage;// image of highlighted square
@@ -39,7 +39,7 @@ public class RoundChessboardView extends ChessboardView {
      * @param cellsPerRow         int     count of cells per row
      * @param squares             List<Square>    List of square objects from the corresponding model
      */
-    public RoundChessboardView(int chessBoardSize, String chessBoardImagePath, int rows, int cellsPerRow, List<Square> squares) {
+    public RoundAbstractChessboardView(int chessBoardSize, String chessBoardImagePath, int rows, int cellsPerRow, List<Square> squares) {
         super();
         this.boardImage = ResourceLoader.loadImage(chessBoardImagePath);
         this.boardImage = boardImage.getScaledInstance(chessBoardSize, chessBoardSize, Image.SCALE_DEFAULT);
@@ -172,7 +172,7 @@ public class RoundChessboardView extends ChessboardView {
     }
 
     /**
-     * updates the RoundChessboardView after move was done
+     * updates the RoundAbstractChessboardView after move was done
      */
     public void updateAfterMove() {
         moves.clear();

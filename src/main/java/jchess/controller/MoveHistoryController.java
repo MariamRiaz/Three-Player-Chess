@@ -20,13 +20,14 @@
  */
 package jchess.controller;
 
-import jchess.model.GameModel;
 import jchess.entities.Square;
-import jchess.helper.Log;
+import jchess.model.AbstractMoveHistoryModel;
+import jchess.model.GameModel;
 import jchess.model.MoveHistoryModel;
 import jchess.move.Move;
 import jchess.move.MoveType;
 import jchess.move.effects.MoveEffect;
+import jchess.view.IMoveHistoryView;
 import jchess.view.MoveHistoryView;
 import org.apache.commons.text.StringSubstitutor;
 
@@ -37,16 +38,18 @@ import java.util.*;
 /**
  * Class that holds all the move history of the game, and all the necessary methods to undo and redo a move
  */
-public class MoveHistoryController {
+public class MoveHistoryController implements IMoveHistoryController {
     public enum PlayerColumn {
         player1,
         player2,
         player3
     }
 
+    public List<Integer> column = new ArrayList<>();
+
     private String[] names = new String[]{GameModel.getTexts("white"), GameModel.getTexts("black"), GameModel.getTexts("gray")};
-    private MoveHistoryView moveHistoryView;
-    private MoveHistoryModel moveHistoryModel;
+    private IMoveHistoryView moveHistoryView;
+    private AbstractMoveHistoryModel moveHistoryModel;
     private ArrayList<Character> columnNames;
 
 
@@ -71,16 +74,16 @@ public class MoveHistoryController {
      */
     private void addMoveToTable(String str) {
         try {
-            if (moveHistoryModel.activePlayerColumn.equals(PlayerColumn.player1)) {
+            if (moveHistoryModel.getActivePlayerColumn().equals(PlayerColumn.player1)) {
                 moveHistoryModel.addRow(new String[2]);
                 moveHistoryModel.rowsNum = this.moveHistoryModel.getRowCount() - 1;
                 this.moveHistoryModel.setValueAt(str, moveHistoryModel.rowsNum, 0);
 
-            } else if (moveHistoryModel.activePlayerColumn.equals(PlayerColumn.player2)) {
+            } else if (moveHistoryModel.getActivePlayerColumn().equals(PlayerColumn.player2)) {
                 this.moveHistoryModel.setValueAt(str, moveHistoryModel.rowsNum, 1);
                 moveHistoryModel.rowsNum = this.moveHistoryModel.getRowCount() - 1;
 
-            } else if (moveHistoryModel.activePlayerColumn.equals(PlayerColumn.player3)) {
+            } else if (moveHistoryModel.getActivePlayerColumn().equals(PlayerColumn.player3)) {
                 this.moveHistoryModel.setValueAt(str, moveHistoryModel.rowsNum, 2);
                 moveHistoryModel.rowsNum = this.moveHistoryModel.getRowCount() - 1;
             }
@@ -129,7 +132,7 @@ public class MoveHistoryController {
                 + Integer.toString(square.getPozY() + 1);// add number of Square from which move was made
     }
 
-    void clearMoveForwardStack() {
+    public void clearMoveForwardStack() {
         moveHistoryModel.moveForwardStack.clear();
     }
 
@@ -141,7 +144,7 @@ public class MoveHistoryController {
         return moveHistoryModel.move;
     }
 
-    Queue<MoveEffect> undo() {
+    public Queue<MoveEffect> undo() {
         Queue<MoveEffect> retVal = new PriorityQueue<>();
 
         MoveEffect toAdd = null;
@@ -154,7 +157,7 @@ public class MoveHistoryController {
         return retVal;
     }
 
-    MoveEffect undoOne() {
+    public MoveEffect undoOne() {
         MoveEffect last = null;
 
         if (!moveHistoryModel.moveBackStack.isEmpty()) {
@@ -165,11 +168,11 @@ public class MoveHistoryController {
             moveHistoryModel.moveForwardStack.push(last);
 
             if (last.isFromMove()) {
-                if (moveHistoryModel.activePlayerColumn.equals(MoveHistoryController.PlayerColumn.player1)) {
+                if (moveHistoryModel.getActivePlayerColumn().equals(MoveHistoryController.PlayerColumn.player1)) {
                     if (moveHistoryModel.getRowCount() > 0)
                         moveHistoryModel.setValueAt("", moveHistoryModel.getRowCount() - 1, 2);
 
-                } else if (moveHistoryModel.activePlayerColumn.equals(MoveHistoryController.PlayerColumn.player2)) {
+                } else if (moveHistoryModel.getActivePlayerColumn().equals(MoveHistoryController.PlayerColumn.player2)) {
                     moveHistoryModel.setValueAt("", moveHistoryModel.getRowCount() - 1, 0);
                     moveHistoryModel.removeRow(moveHistoryModel.getRowCount() - 1);
                     if (moveHistoryModel.rowsNum > 0)
@@ -187,7 +190,7 @@ public class MoveHistoryController {
         return last;
     }
 
-    Queue<MoveEffect> redo() {
+    public Queue<MoveEffect> redo() {
         Queue<MoveEffect> retVal = new PriorityQueue<>();
 
         MoveEffect toAdd = null;
@@ -203,7 +206,7 @@ public class MoveHistoryController {
         return retVal;
     }
 
-    MoveEffect redoOne() {
+    public MoveEffect redoOne() {
         try {
             MoveEffect first = moveHistoryModel.moveForwardStack.pop();
             addMove(first, true, first.isFromMove());
@@ -213,72 +216,18 @@ public class MoveHistoryController {
         }
     }
 
-    /**
-     * Method with is checking is the move is correct
-     *
-     * @param move String which in is capt player move
-     * @return boolean 1 if the move is correct, else 0
-     */
-    private static boolean isMoveCorrect(String move) {
-        if (move.equals("O-O") || move.equals("O-O-O")) {
-            return true;
-        }
-        try {
-            int from = 0;
-            int sign = move.charAt(from);// get First
-            switch (sign) // if sign of piece, get next
-            {
-                case 66: // B like Bishop
-                case 75: // K like King
-                case 78: // N like Knight
-                case 81: // Q like Queen
-                case 82:
-                    from = 1;
-                    break; // R like Rook
-            }
-            sign = move.charAt(from);
-            Log.log(sign);
-            if (sign < 97 || sign > 104) // if lower than 'a' or higher than 'h'
-            {
-                return false;
-            }
-            sign = move.charAt(from + 1);
-            if (sign < 49 || sign > 56) // if lower than '1' or higher than '8'
-            {
-                return false;
-            }
-            if (move.length() > 3) // if is equal to 3 or lower, than it's in short notation, no more checking
-            // needed
-            {
-                sign = move.charAt(from + 2);
-                if (sign != 45 && sign != 120) // if isn't '-' and 'x'
-                {
-                    return false;
-                }
-                sign = move.charAt(from + 3);
-                if (sign < 97 || sign > 104) // if lower than 'a' or higher than 'h'
-                {
-                    return false;
-                }
-                sign = move.charAt(from + 4);
-                if (sign < 49 || sign > 56) // if lower than '1' or higher than '8'
-                {
-                    return false;
-                }
-            }
-        } catch (java.lang.StringIndexOutOfBoundsException exc) {
-            return false;
-        }
-
-        return true;
-    }
-
     private void addMove(String move) {
         moveHistoryModel.move.add(move);
         this.addMoveToTable(move);
     }
 
-    public void setActivePlayForColumn(PlayerColumn column) {
-        moveHistoryModel.activePlayerColumn = column;
+    @Override
+    public void switchColumns() {
+        if (moveHistoryModel.getActivePlayerColumn().equals(PlayerColumn.player1))
+            moveHistoryModel.setActivePlayerColumn(PlayerColumn.player2);
+        else if (moveHistoryModel.getActivePlayerColumn().equals(PlayerColumn.player2))
+            moveHistoryModel.setActivePlayerColumn(PlayerColumn.player3);
+        else if (moveHistoryModel.getActivePlayerColumn().equals(PlayerColumn.player3))
+            moveHistoryModel.setActivePlayerColumn(PlayerColumn.player1);
     }
 }

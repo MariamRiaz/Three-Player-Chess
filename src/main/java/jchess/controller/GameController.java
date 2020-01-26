@@ -44,7 +44,7 @@ public class GameController implements Observer {
 
     private GameModel gameModel;
     private IChessboardController chessboardController;
-    private MoveHistoryController moveHistoryController;
+    private IMoveHistoryController moveHistoryController;
     private GameClock gameClock;
     private final int chessboardSize = 800;
     private RoundChessboardLoader chessboardLoader;
@@ -107,12 +107,7 @@ public class GameController implements Observer {
                 gameModel.setActivePlayer(gameModel.getPlayerBlack());
         }
         this.gameClock.switchPlayers(forward);
-        if (gameModel.getActivePlayer() == gameModel.getPlayerWhite())
-            moveHistoryController.setActivePlayForColumn(MoveHistoryController.PlayerColumn.player1);
-        else if (gameModel.getActivePlayer() == gameModel.getPlayerBlack())
-            moveHistoryController.setActivePlayForColumn(MoveHistoryController.PlayerColumn.player2);
-        else if (gameModel.getActivePlayer() == gameModel.getPlayerGray())
-            moveHistoryController.setActivePlayForColumn(MoveHistoryController.PlayerColumn.player3);
+        this.moveHistoryController.switchColumns();
     }
 
     /**

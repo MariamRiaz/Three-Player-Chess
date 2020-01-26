@@ -5,7 +5,7 @@ import jchess.entities.Square;
 import jchess.model.IChessboardModel;
 import jchess.move.effects.MoveEffect;
 import jchess.pieces.Piece;
-import jchess.view.ChessboardView;
+import jchess.view.AbstractChessboardView;
 
 import java.awt.event.MouseListener;
 import java.util.HashSet;
@@ -14,7 +14,7 @@ import java.util.Observer;
 
 public interface IChessboardController extends MouseListener {
 
-    ChessboardView getView();
+    AbstractChessboardView getView();
 
     void addSelectSquareObserver(Observer observer);
 

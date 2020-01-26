@@ -8,7 +8,7 @@ import java.awt.*;
 import java.util.List;
 import java.util.Set;
 
-public abstract class ChessboardView extends JPanel {
+public abstract class AbstractChessboardView extends JPanel {
 
         public abstract void resetActiveCell();
 

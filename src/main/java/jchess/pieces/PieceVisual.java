@@ -2,7 +2,7 @@ package jchess.pieces;
 
 import jchess.helper.Log;
 import jchess.helper.ResourceLoader;
-import jchess.view.ChessboardView;
+import jchess.view.AbstractChessboardView;
 
 import java.awt.*;
 import java.util.logging.Level;
@@ -32,7 +32,7 @@ public class PieceVisual {
 	 * @param height The height for the PieceVisual image.
 	 * @param view The view where the image will be drawn
 	 */
-	public final void draw(Graphics g, int x, int y, int width, int height, ChessboardView view) {
+	public final void draw(Graphics g, int x, int y, int width, int height, AbstractChessboardView view) {
 		try {
 			if (image != null && g != null) {
 				g.drawImage(image, x, y, width, height, view);
