@@ -9,16 +9,31 @@ import java.util.Stack;
 public class MoveHistoryModel extends AbstractMoveHistoryModel{
 
 
-    public Stack<MoveEffect> moveBackStack = new Stack<>();
-    public Stack<MoveEffect> moveForwardStack = new Stack<>();
+    private Stack<MoveEffect> moveBackStack;
+    private Stack<MoveEffect> moveForwardStack;
     private MoveHistoryController.PlayerColumn activePlayerColumn = MoveHistoryController.PlayerColumn.player1;
     public int rowsNum = 0;
-    public ArrayList<String> move = new ArrayList<>();
+    private ArrayList<String> move;
 
 
     public MoveHistoryModel() {
         super();
+        this.moveBackStack = new Stack<>();
+        this.moveForwardStack = new Stack<>();
+        this.move = new ArrayList<>();
         this.addTableModelListener(null);
+    }
+
+    public Stack<MoveEffect> getMoveBackStack() {
+        return moveBackStack;
+    }
+
+    public Stack<MoveEffect> getMoveForwardStack() {
+        return moveForwardStack;
+    }
+
+    public ArrayList<String> getMove() {
+        return move;
     }
 
     public MoveHistoryController.PlayerColumn getActivePlayerColumn() {

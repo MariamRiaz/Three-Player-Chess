@@ -18,7 +18,7 @@ import java.util.logging.Level;
 /**
  * Class to generate the view of a circular board
  */
-public class RoundAbstractChessboardView extends AbstractChessboardView {
+public class RoundChessboardView extends AbstractChessboardView {
 
     private Image boardImage;
     private Image selectedSquareImage;// image of highlighted square
@@ -39,7 +39,7 @@ public class RoundAbstractChessboardView extends AbstractChessboardView {
      * @param cellsPerRow         int     count of cells per row
      * @param squares             List<Square>    List of square objects from the corresponding model
      */
-    public RoundAbstractChessboardView(int chessBoardSize, String chessBoardImagePath, int rows, int cellsPerRow, List<Square> squares) {
+    public RoundChessboardView(int chessBoardSize, String chessBoardImagePath, int rows, int cellsPerRow, List<Square> squares) {
         super();
         this.boardImage = ResourceLoader.loadImage(chessBoardImagePath);
         this.boardImage = boardImage.getScaledInstance(chessBoardSize, chessBoardSize, Image.SCALE_DEFAULT);
@@ -172,7 +172,7 @@ public class RoundAbstractChessboardView extends AbstractChessboardView {
     }
 
     /**
-     * updates the RoundAbstractChessboardView after move was done
+     * updates the RoundChessboardView after move was done
      */
     public void updateAfterMove() {
         moves.clear();
@@ -205,6 +205,13 @@ public class RoundAbstractChessboardView extends AbstractChessboardView {
     public void removeVisual(int x, int y) {
         PolarSquareView cell = getCellByPosition(x, y);
         cell.setPieceVisual(null);
+    }
+
+    public void removeVisual(Square square){
+        if (square == null){
+            return;
+        }
+        removeVisual(square.getPozX(), square.getPozY());
     }
 
     private PolarSquareView getCellByPosition(int x, int y) {

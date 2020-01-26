@@ -18,7 +18,7 @@ import jchess.pieces.Piece;
 import jchess.pieces.PieceDefinition;
 import jchess.pieces.PieceLoader;
 import jchess.view.AbstractChessboardView;
-import jchess.view.RoundAbstractChessboardView;
+import jchess.view.RoundChessboardView;
 import jchess.view.SquareView;
 
 import java.awt.*;
@@ -47,7 +47,7 @@ public class RoundChessboardController implements IChessboardController {
      */
     public RoundChessboardController(RoundChessboardLoader chessboardLoader, int chessboardSize, GameModel settings, IMoveHistoryController movesHistory) {
         this.model = chessboardLoader.loadDefaultFromJSON(settings);
-        this.view = new RoundAbstractChessboardView(chessboardSize, Images.BOARD, model.getRows(), model.getColumns(), model.getSquares());
+        this.view = new RoundChessboardView(chessboardSize, Images.BOARD, model.getRows(), model.getColumns(), model.getSquares());
         view.addMouseListener(this);
         this.movesHistory = movesHistory;
         this.squareObservable = new SquareObservable();
@@ -243,8 +243,7 @@ public class RoundChessboardController implements IChessboardController {
     public void apply(MoveEffect me) {
         for (PositionChange ent : me.getPositionChanges()) {
             if (view != null) {
-                Square sq = model.getSquare(ent.getPiece());
-                view.removeVisual(sq.getPozX(), sq.getPozY());
+                view.removeVisual(model.getSquare(ent.getPiece()));
             }
             model.setPieceOnSquare(ent.getPiece(), ent.getSquare());
             if (view != null) {
@@ -284,8 +283,7 @@ public class RoundChessboardController implements IChessboardController {
 
         for (PositionChange ent : me.getPositionChangesReverse()) {
             if (view != null) {
-                Square square = model.getSquare(ent.getPiece());
-                view.removeVisual(square.getPozX(), square.getPozY());
+                view.removeVisual(model.getSquare(ent.getPiece()));
             }
             model.setPieceOnSquare(ent.getPiece(), ent.getSquare());
             if (view != null) {

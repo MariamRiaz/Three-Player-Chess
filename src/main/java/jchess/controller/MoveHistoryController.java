@@ -124,7 +124,7 @@ public class MoveHistoryController implements IMoveHistoryController {
         }
 
         if (registerInHistory)
-            moveHistoryModel.moveBackStack.add(moveEffects);
+            moveHistoryModel.getMoveBackStack().add(moveEffects);
     }
 
     private String getPosition(Square square) {
@@ -133,7 +133,7 @@ public class MoveHistoryController implements IMoveHistoryController {
     }
 
     public void clearMoveForwardStack() {
-        moveHistoryModel.moveForwardStack.clear();
+        moveHistoryModel.getMoveForwardStack().clear();
     }
 
     public JScrollPane getScrollPane() {
@@ -141,7 +141,7 @@ public class MoveHistoryController implements IMoveHistoryController {
     }
 
     public ArrayList<String> getMoves() {
-        return moveHistoryModel.move;
+        return moveHistoryModel.getMove();
     }
 
     public Queue<MoveEffect> undo() {
@@ -160,12 +160,12 @@ public class MoveHistoryController implements IMoveHistoryController {
     public MoveEffect undoOne() {
         MoveEffect last = null;
 
-        if (!moveHistoryModel.moveBackStack.isEmpty()) {
-            last = moveHistoryModel.moveBackStack.pop();
+        if (!moveHistoryModel.getMoveBackStack().isEmpty()) {
+            last = moveHistoryModel.getMoveBackStack().pop();
         }
 
         if (last != null) {
-            moveHistoryModel.moveForwardStack.push(last);
+            moveHistoryModel.getMoveForwardStack().push(last);
 
             if (last.isFromMove()) {
                 if (moveHistoryModel.getActivePlayerColumn().equals(MoveHistoryController.PlayerColumn.player1)) {
@@ -183,7 +183,7 @@ public class MoveHistoryController implements IMoveHistoryController {
                         moveHistoryModel.setValueAt("", moveHistoryModel.getRowCount() - 1, 1);
 
                 }
-                moveHistoryModel.move.remove(moveHistoryModel.move.size() - 1);
+                moveHistoryModel.getMove().remove(moveHistoryModel.getMove().size() - 1);
             }
         }
 
@@ -208,7 +208,7 @@ public class MoveHistoryController implements IMoveHistoryController {
 
     public MoveEffect redoOne() {
         try {
-            MoveEffect first = moveHistoryModel.moveForwardStack.pop();
+            MoveEffect first = moveHistoryModel.getMoveForwardStack().pop();
             addMove(first, true, first.isFromMove());
             return first;
         } catch (java.util.EmptyStackException exc) {
@@ -217,7 +217,7 @@ public class MoveHistoryController implements IMoveHistoryController {
     }
 
     private void addMove(String move) {
-        moveHistoryModel.move.add(move);
+        moveHistoryModel.getMove().add(move);
         this.addMoveToTable(move);
     }
 

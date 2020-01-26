@@ -10,11 +10,14 @@ import java.util.Stack;
 public abstract class AbstractMoveHistoryModel extends DefaultTableModel {
 
     public int rowsNum;
-    public Stack<MoveEffect> moveBackStack;
-    public Stack<MoveEffect> moveForwardStack;
-    public ArrayList<String> move;
 
     public abstract MoveHistoryController.PlayerColumn getActivePlayerColumn();
+
+    public abstract Stack<MoveEffect> getMoveBackStack();
+
+    public abstract Stack<MoveEffect> getMoveForwardStack();
+
+    public abstract ArrayList<String> getMove();
 
     public abstract void setActivePlayerColumn(MoveHistoryController.PlayerColumn activePlayerColumn);
 }
