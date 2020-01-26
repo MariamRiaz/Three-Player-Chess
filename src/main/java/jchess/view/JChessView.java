@@ -62,6 +62,7 @@ public class JChessView extends FrameView implements ActionListener {
 
     public JChessView(SingleFrameApplication app) {
         super(app);
+        getFrame().setTitle("3 Player Chess");
         initComponents();
         // status bar initialization - message timeout, idle icon and busy animation, etc
         ResourceMap resourceMap = new ResourceMap(getResourceMap(), JChessView.class.getClassLoader(), "JChessApp", "JChessView");
