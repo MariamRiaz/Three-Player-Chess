@@ -14,14 +14,14 @@ public class StateChange {
 	/**
 	 * @return The ID of the Piece, whose state is to be swapped with the state stored in this StateChange.
 	 */
-	protected int getID() {
+	public int getID() {
 		return id;
 	}
 	
 	/**
 	 * @return The new state of the Piece with the ID stored in this StateChage.
 	 */
-	protected Piece getState() {
+	public Piece getState() {
 		return state;
 	}
 }

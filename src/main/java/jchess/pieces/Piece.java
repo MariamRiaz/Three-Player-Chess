@@ -20,21 +20,27 @@
  */
 package jchess.pieces;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import jchess.entities.Player;
 import jchess.move.Orientation;
+import jchess.move.buff.Buff;
+import jchess.move.buff.BuffType;
 
 /**
  * Class to represent a Piece of any kind. Each Piece is defined by specific values for its member attributes.
  */
 public class Piece {
 	private static int idIncrement = 0;
-	
+
+	private PieceDefinition definition;
 	private boolean hasMoved = false;
 	private Orientation orientation;
+	private ArrayList<Buff> buffs = new ArrayList<>();
 	
 	private final int id;
 	private final Player player;
-	private PieceDefinition definition;
 	
 	/**
 	 * Creates a new Piece based on the given parameters. Piece attributes cannot be changed after initialization.
@@ -73,6 +79,9 @@ public class Piece {
 		this.hasMoved = other.hasMoved;
 		this.orientation = other.orientation;
 		this.id = other.id;
+		
+		for (Buff buff : other.buffs)
+			this.addBuff(buff);
 	}
 	
 	/**
@@ -146,5 +155,26 @@ public class Piece {
 			throw new NullPointerException("Argument 'definition' is null.");
 		this.definition = def;
 		return this;
+	}
+	
+	public Piece addBuff(Buff buff) {
+		if (buff != null)
+			buffs.add(buff.clone());
+		return this;
+	}
+	
+	public Piece tickBuffs() {
+		for (Iterator<Buff> buff = this.buffs.iterator(); buff.hasNext(); )
+			if (buff.next().tick())
+				buff.remove();
+		return this;
+	}
+	
+	public ArrayList<BuffType> getActiveBuffs() {
+		ArrayList<BuffType> retVal = new ArrayList<>();
+		for (Buff buff : this.buffs)
+			retVal.add(buff.getType());
+		
+		return retVal;
 	}
 }

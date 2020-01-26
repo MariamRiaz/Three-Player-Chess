@@ -32,27 +32,26 @@ import java.awt.event.ActionEvent;
  * Class responsible for promotion of a pawn. When pawn reach the end of the
  * chessboard it can be change to rook, bishop, queen or knight. For what pawn
  * is promoted decideds player.
- *
  */
 public class PawnPromotionWindow extends JDialog implements ActionListener {
 
-	JButton knightButton;
-	JButton bishopButton;
-	JButton rookButton;
-	JButton queenButton;
-	GridBagLayout gbl;
-	public String result;
-	GridBagConstraints gbc;
+    JButton knightButton;
+    JButton bishopButton;
+    JButton rookButton;
+    JButton queenButton;
+    GridBagLayout gbl;
+    public String result;
+    GridBagConstraints gbc;
 
-	public PawnPromotionWindow(Frame parent, String color) {
-		super(parent);
-		this.setTitle("Choose piece");
-		this.setMinimumSize(new Dimension(520, 130));
-		this.setSize(new Dimension(520, 130));
-		this.setMaximumSize(new Dimension(520, 130));
-		this.setResizable(false);
-		this.setLayout(new GridLayout(1, 4));
-		// this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+    public PawnPromotionWindow(Frame parent, String color) {
+        super(parent);
+        this.setTitle("Choose piece");
+        this.setMinimumSize(new Dimension(520, 130));
+        this.setSize(new Dimension(520, 130));
+        this.setMaximumSize(new Dimension(520, 130));
+        this.setResizable(false);
+        this.setLayout(new GridLayout(1, 4));
+        // this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 
 		this.gbl = new GridBagLayout();
 		this.gbc = new GridBagConstraints();
@@ -62,16 +61,16 @@ public class PawnPromotionWindow extends JDialog implements ActionListener {
 		this.queenButton = new JButton(new ImageIcon(ResourceLoader.loadImage("Queen-" + color + ".png")));
 		this.result = "";
 
-		this.knightButton.addActionListener(this);
-		this.bishopButton.addActionListener(this);
-		this.rookButton.addActionListener(this);
-		this.queenButton.addActionListener(this);
+        this.knightButton.addActionListener(this);
+        this.bishopButton.addActionListener(this);
+        this.rookButton.addActionListener(this);
+        this.queenButton.addActionListener(this);
 
-		this.add(queenButton);
-		this.add(rookButton);
-		this.add(bishopButton);
-		this.add(knightButton);
-	}
+        this.add(queenButton);
+        this.add(rookButton);
+        this.add(bishopButton);
+        this.add(knightButton);
+    }
 
 	/**
 	 * Method setting the color fo promoted pawn
@@ -85,22 +84,21 @@ public class PawnPromotionWindow extends JDialog implements ActionListener {
 		this.queenButton.setIcon(new ImageIcon(ResourceLoader.loadImage("Queen-" + color + ".png")));
 	}
 
-	/**
-	 * Method wich is changing a pawn into queen, rook, bishop or knight
-	 * 
-	 * @param arg0 Capt information about performed action
-	 */
-	public void actionPerformed(ActionEvent arg0) {
-		if (arg0.getSource() == queenButton) {
-			result = "Queen";
-		} else if (arg0.getSource() == rookButton) {
-			result = "Rook";
-		} else if (arg0.getSource() == bishopButton) {
-			result = "Bishop";
-		} else // knight
-		{
-			result = "Knight";
-		}
-		this.setVisible(false);
-	}
+    /**
+     * Method wich is changing a pawn into queen, rook, bishop or knight
+     *
+     * @param arg0 Capt information about performed action
+     */
+    public void actionPerformed(ActionEvent arg0) {
+        if (arg0.getSource() == queenButton) {
+            result = "Queen";
+        } else if (arg0.getSource() == rookButton) {
+            result = "Rook";
+        } else if (arg0.getSource() == bishopButton) {
+            result = "Bishop";
+        } else {
+            result = "Knight";
+        }
+        this.setVisible(false);
+    }
 }

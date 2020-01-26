@@ -15,7 +15,7 @@ import java.util.logging.Level;
  * Class that holds the state of the RoundChessboard component
  */
 public class RoundChessboardModel {
-    public List<Square> squares;
+    private List<Square> squares;
     private HashSet<Piece> crucialPieces = new HashSet<>();
     private int squaresPerRow;
     private int rows;
@@ -209,5 +209,9 @@ public class RoundChessboardModel {
         
         square.setPiece(piece);
         return piece;
+    }
+    
+    public List<Square> getSquares() {
+    	return squares;
     }
 }
