@@ -174,7 +174,7 @@ public class JChessView extends FrameView implements ActionListener, ComponentLi
         javax.swing.JMenu fileMenu = new javax.swing.JMenu();
         newGameItem = new javax.swing.JMenuItem();
 /*        loadGameItem = new javax.swing.JMenuItem();*/
-        saveGameItem = new javax.swing.JMenuItem();
+/*        saveGameItem = new javax.swing.JMenuItem();*/
         javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
         gameMenu = new javax.swing.JMenu();
         moveBackItem = new javax.swing.JMenuItem();
@@ -235,11 +235,11 @@ public class JChessView extends FrameView implements ActionListener, ComponentLi
         fileMenu.add(loadGameItem);
         loadGameItem.addActionListener(this);*/
 
-        saveGameItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+/*        saveGameItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         saveGameItem.setText(resourceMap.getString("saveGameItem.text")); // NOI18N
         saveGameItem.setName("saveGameItem"); // NOI18N
         fileMenu.add(saveGameItem);
-        saveGameItem.addActionListener(this);
+        saveGameItem.addActionListener(this);*/
 
         javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(jchess.JChessApp.class).getContext().getActionMap(JChessView.class, this);
         exitMenuItem.setAction(actionMap.get("quit")); // NOI18N
@@ -451,7 +451,7 @@ public class JChessView extends FrameView implements ActionListener, ComponentLi
     private javax.swing.JProgressBar progressBar;
     private javax.swing.JMenuItem rewindToBegin;
     private javax.swing.JMenuItem rewindToEnd;
-    private javax.swing.JMenuItem saveGameItem;
+    //private javax.swing.JMenuItem saveGameItem;
     private javax.swing.JLabel statusAnimationLabel;
     private javax.swing.JLabel statusMessageLabel;
     private javax.swing.JPanel statusPanel;
