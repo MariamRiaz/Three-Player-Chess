@@ -46,7 +46,7 @@ public class GameController implements IGameController {
     private IGameModel gameModel;
     private IChessboardController chessboardController;
     private IMoveHistoryController moveHistoryController;
-    private GameClock gameClock;
+    private IGameClock gameClock;
     private final int chessboardSize = 800;
     private RoundChessboardLoader chessboardLoader;
 
@@ -72,7 +72,7 @@ public class GameController implements IGameController {
         return gameModel;
     }
 
-    public GameClock getGameClock() {
+    public IGameClock getGameClock() {
         return gameClock;
     }
 

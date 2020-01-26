@@ -3,7 +3,6 @@ package jchess.view;
 import jchess.controller.IGameController;
 import jchess.model.IGameModel;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
@@ -11,19 +10,18 @@ import java.awt.image.BufferedImage;
  * Class to generate the view of game clock
  * */
 
-public class GameClockView extends JPanel {
+public class GameClockView extends AbstractGameClockView {
 
-    private IGameModel settings;
+    private IGameModel gameModel;
     private BufferedImage background;
     private String whiteClock, blackClock, grayClock;
 
     public GameClockView(IGameController gameController){
-        this.settings = gameController.getGameModel();
+        this.gameModel = gameController.getGameModel();
         this.updateClocks(new int[]{0, 0, 0});
     }
 
     public void paint(Graphics g) {
-        super.paint(g);
         Graphics2D g2d = (Graphics2D) g;
         g2d.drawImage(this.background, 0, 0, this);
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -52,11 +50,11 @@ public class GameClockView extends JPanel {
 
         g2d.setFont(font);
         g.setColor(Color.BLACK);
-        g.drawString(settings.getPlayerBlack().getName(), 10, 50);
+        g.drawString(gameModel.getPlayerBlack().getName(), 10, 50);
 
         g.setColor(Color.WHITE);
-        g.drawString(settings.getPlayerWhite().getName(), 90, 50);
-        g.drawString(settings.getPlayerGray().getName(), 170, 50);
+        g.drawString(gameModel.getPlayerWhite().getName(), 90, 50);
+        g.drawString(gameModel.getPlayerGray().getName(), 170, 50);
         g2d.setFont(font);
         g.setColor(Color.BLACK);
         g2d.drawString(whiteClock, 10, 80);

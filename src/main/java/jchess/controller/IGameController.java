@@ -9,7 +9,7 @@ public interface IGameController extends Observer {
 
     IGameModel getGameModel();
 
-    GameClock getGameClock();
+    IGameClock getGameClock();
 
     AbstractGameView getView();
 
