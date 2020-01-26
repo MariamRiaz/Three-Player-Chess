@@ -87,16 +87,18 @@ public class RoundChessboardController extends MouseAdapter {
      * @return Whether the move is possible.
      */
     public boolean moveIsPossible(int fromX, int fromY, int toX, int toY) {
-        Square square = model.getSquare(fromX, fromY), to = model.getSquare(toX, toY);
+        Square square = model.getSquare(fromX, fromY);
+        Square to = model.getSquare(toX, toY);
 
         if (square == null || to == null || square.getPiece() == null)
             return false;
 
+        MoveEvaluator evaluator = new MoveEvaluator(this);
+        HashSet<Piece> crucialPieces = getCrucialPieces(square.getPiece().getPlayer());
+        HashSet<MoveEffect> moveEffects = evaluator
+                .getValidTargetSquaresToSavePiece(square.getPiece(), crucialPieces);
         HashSet<Square> squares = new HashSet<>();
-        for (MoveEffect me : new MoveEvaluator(this)
-    			.getValidTargetSquaresToSavePiece(square.getPiece(), getCrucialPieces(square.getPiece().getPlayer()))) 
-        	squares.add(me.getTrigger());
-        
+        moveEffects.forEach(m -> squares.add(m.getToSquare()));
     	return squares.contains(model.getSquare(to.getPozX(), to.getPozY()));
     }
 
@@ -163,7 +165,7 @@ public class RoundChessboardController extends MouseAdapter {
 
             HashSet<Square> squares = new HashSet<>();
             for (MoveEffect me : moveEffects)
-                squares.add(me.getTrigger());
+                squares.add(me.getToSquare());
             view.setMoves(squares);
         }
     }
@@ -199,7 +201,7 @@ public class RoundChessboardController extends MouseAdapter {
     	MoveEffect move = null;
     	
     	for (MoveEffect me : moveEffects)
-    		if (model.getSquare(me.getMoving()) == begin && me.getTrigger() == end) {
+    		if (model.getSquare(me.getPiece()) == begin && me.getToSquare() == end) {
     			move = me;
     			break;
     		}

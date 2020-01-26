@@ -4,7 +4,25 @@
     "symbol": "M",
     "moves": [
         {
-            "x": 3,
+            "x": -3,
+            "y": 0,
+            "limit": 1,
+            "conditions": [ "ApplyConfusion" ]
+        },
+        {
+            "x": -3,
+            "y": 1,
+            "limit": 1,
+            "conditions": [ "ApplyConfusion" ]
+        },
+        {
+            "x": -3,
+            "y": -1,
+            "limit": 1,
+            "conditions": [ "ApplyConfusion" ]
+        },
+        {
+            "x": -3,
             "y": 0,
             "limit": 1,
             "conditions": [ "ApplyConfusion" ]
@@ -35,5 +53,21 @@
             "x": -1,
             "y": 1,
             "limit": 1
-        } ]
+        },
+        {
+            "x": 1,
+            "y": 0,
+            "limit": 1
+        },
+        {
+            "x": 1,
+            "y": -1,
+            "limit": 1
+        },
+        {
+            "x": 1,
+            "y": 1,
+            "limit": 1
+        }
+    ]
 }

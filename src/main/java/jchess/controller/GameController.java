@@ -224,7 +224,6 @@ public class GameController implements Observer {
                 chessboardController.move(chessboardController.getActiveSquare(), square, true, true);
                 chessboardController.unselect();
                 new BuffEvaluator(chessboardController, moveHistoryController, gameModel.getActivePlayer()).evaluate();
-
                 this.nextMove();
 
                 HashSet<Piece> cp = chessboardController.getCrucialPieces(gameModel.getActivePlayer());
@@ -235,6 +234,7 @@ public class GameController implements Observer {
         } else {
             Log.log("Chessboard is blocked");
         }
+        chessboardController.getView().repaint();
     }
 
     /**

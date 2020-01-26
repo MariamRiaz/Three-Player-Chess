@@ -39,7 +39,7 @@ public class Buff {
     }
 
     public boolean isWornOff() {
-		return remainingTicks < 0;
+		return remainingTicks < 1;
 	}
 
     public void tick() {

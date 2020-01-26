@@ -1,6 +1,7 @@
 package jchess.move.effects;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import jchess.entities.Square;
 import jchess.move.Move;
@@ -9,18 +10,18 @@ import jchess.pieces.Piece;
 
 public class MoveEffectsBuilder {
 	private final Piece moving;
-	private final Square trigger, from;
+	private final Square squareTo, squareFrom;
 	private final Move move;
 	private MoveType flag = null;
 	private boolean fromMove;
 	
-	private ArrayList<PositionChange> positionChanges = new ArrayList<>(), pcReverse = new ArrayList<>();
-	private ArrayList<StateChange> stateChanges = new ArrayList<>(), scReverse = new ArrayList<>();
+	private ArrayList<PositionChange> positionChanges = new ArrayList<>(), positionChangesReversed = new ArrayList<>();
+	private ArrayList<StateChange> stateChanges = new ArrayList<>(), stateChangesReversed = new ArrayList<>();
 	
-	public MoveEffectsBuilder(Piece moving, Square trigger, Square from, Move move, boolean fromMove) {
+	public MoveEffectsBuilder(Piece moving, Square squareTo, Square squareFrom, Move move, boolean fromMove) {
 		this.moving = moving;
-		this.trigger = trigger;
-		this.from = from;
+		this.squareTo = squareTo;
+		this.squareFrom = squareFrom;
 		this.move = move;
 		this.fromMove = fromMove;
 	}
@@ -29,27 +30,27 @@ public class MoveEffectsBuilder {
 		if (base == null)
 			throw new NullPointerException("'base' of MoveEffectsBuilder cannot be null.");
 		
-		this.moving = base.getMoving();
-		this.trigger = base.getTrigger();
-		this.from = base.getFrom();
+		this.moving = base.getPiece();
+		this.squareTo = base.getToSquare();
+		this.squareFrom = base.getFromSquare();
 		this.move = base.getMove();
-		this.flag = base.getFlag();
+		this.flag = base.getMoveType();
 		
 		this.positionChanges = base.getPositionChanges();
-		this.pcReverse = base.getPositionChangesReverse();
+		this.positionChangesReversed = base.getPositionChangesReverse();
 		this.stateChanges = base.getStateChanges();
-		this.scReverse = base.getStateChangesReverse();
+		this.stateChangesReversed = base.getStateChangesReverse();
 	}
 
-	public MoveEffectsBuilder addPosChange(Square one, Square two) {
-		if (one == null || two == null || one.getPiece() == null)
+	public MoveEffectsBuilder addPosChange(Square firstSquare, Square secondSquare) {
+		if (firstSquare == null || secondSquare == null || firstSquare.getPiece() == null)
 			return this;
 			
-		positionChanges.add(new PositionChange(one.getPiece(), two));
-		pcReverse.add(new PositionChange(one.getPiece(), one));
+		positionChanges.add(new PositionChange(firstSquare.getPiece(), secondSquare));
+		positionChangesReversed.add(new PositionChange(firstSquare.getPiece(), firstSquare));
 		
-		if (two.getPiece() != null)
-			pcReverse.add(new PositionChange(two.getPiece(), two));
+		if (secondSquare.getPiece() != null)
+			positionChangesReversed.add(new PositionChange(secondSquare.getPiece(), secondSquare));
 		
 		return this;
 	}
@@ -59,7 +60,7 @@ public class MoveEffectsBuilder {
 			return this;
 		
 		stateChanges.add(new StateChange(one.getID(), two));
-		scReverse.add(new StateChange(two.getID(), one));
+		stateChangesReversed.add(new StateChange(two.getID(), one));
 		
 		return this;
 	}
@@ -76,9 +77,9 @@ public class MoveEffectsBuilder {
 	
 	public MoveEffectsBuilder clear() {
 		positionChanges.clear();
-		pcReverse.clear();
+		positionChangesReversed.clear();
 		stateChanges.clear();
-		scReverse.clear();
+		stateChangesReversed.clear();
 		flag = null;
 		
 		return this;
@@ -89,6 +90,6 @@ public class MoveEffectsBuilder {
 	}
 	
 	public MoveEffect build() {
-		return new MoveEffect(moving, trigger, from, move, flag, fromMove, positionChanges, stateChanges, pcReverse, scReverse);
+		return new MoveEffect(moving, squareTo, squareFrom, move, flag, fromMove, positionChanges, stateChanges, positionChangesReversed, stateChangesReversed);
 	}
 }

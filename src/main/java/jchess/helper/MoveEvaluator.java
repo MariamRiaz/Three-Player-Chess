@@ -84,7 +84,7 @@ public class MoveEvaluator {
                 moveEffects.add(moveEffectsBuilder.build());
             	traversed.add(next);
             }
-            
+
             if (!move.getConditions().contains(MoveType.Unblockable) && next.getPiece() != null)
                 break;
 
@@ -99,7 +99,7 @@ public class MoveEvaluator {
         Piece attackedPiece = next.getPiece();
         if (attackedPiece != null) {
             return moveEffectsBuilder
-                    .addStateChange(attackedPiece, attackedPiece.clone().addBuff(new Buff(BuffType.Confusion, 3)));
+                    .addStateChange(attackedPiece, attackedPiece.clone().addBuff(new Buff(BuffType.Confusion, 1)));
         }
         return null;
     }
@@ -213,7 +213,7 @@ public class MoveEvaluator {
         HashSet<MoveEffect> ret = getValidTargetSquares(moving);
         if (ret.size() == 0 || toSave == null)
             return ret;
-		
+
         for (Iterator<MoveEffect> it = ret.iterator(); it.hasNext(); ) {
             final MoveEffect me = it.next();
         	

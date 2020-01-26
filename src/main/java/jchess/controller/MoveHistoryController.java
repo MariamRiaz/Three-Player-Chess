@@ -104,12 +104,12 @@ public class MoveHistoryController {
     public void addMove(MoveEffect moveEffects, boolean registerInHistory, boolean registerInTable) {
         if (registerInTable) {
             HashMap<String, String> values = new HashMap<String, String>() {{
-                put(Move.formatStringPiece, moveEffects.getMoving().getDefinition().getSymbol());
-                put(Move.formatStringFrom, getPosition(moveEffects.getFrom()));
-                put(Move.formatStringTo, getPosition(moveEffects.getTrigger()));
+                put(Move.formatStringPiece, moveEffects.getPiece().getDefinition().getSymbol());
+                put(Move.formatStringFrom, getPosition(moveEffects.getFromSquare()));
+                put(Move.formatStringTo, getPosition(moveEffects.getToSquare()));
             }};
 
-            String formatString = moveEffects.getMove().getFormatString(moveEffects.getFlag());
+            String formatString = moveEffects.getMove().getFormatString(moveEffects.getMoveType());
             if (formatString == null)
                 formatString = moveEffects.getMove().getFormatString(MoveType.OnlyMove);
             if (formatString == null)
