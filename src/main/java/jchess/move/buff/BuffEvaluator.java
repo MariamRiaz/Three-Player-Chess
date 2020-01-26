@@ -1,7 +1,7 @@
 package jchess.move.buff;
 
-import jchess.controller.MoveHistoryController;
-import jchess.controller.RoundChessboardController;
+import jchess.controller.IChessboardController;
+import jchess.controller.IMoveHistoryController;
 import jchess.entities.Player;
 import jchess.entities.Square;
 import jchess.helper.MoveEvaluator;
@@ -13,25 +13,24 @@ import java.util.HashSet;
 import java.util.Random;
 
 public class BuffEvaluator {
-    private final RoundChessboardController chessboard;
-    private final MoveHistoryController history;
-    private Player activePlayer;
 
-    public BuffEvaluator(RoundChessboardController controller, MoveHistoryController history, Player activePlayer) {
-        if (controller == null) {
+    private final IChessboardController chessboard;
+    private final IMoveHistoryController history;
+    private final Player activePlayer;
+
+    public BuffEvaluator(IChessboardController controller, IMoveHistoryController history, Player activePlayer) {
+        if (controller == null)
             throw new NullPointerException("'model' of BuffEvaluator cannot be null.");
-        }
         this.chessboard = controller;
 
-        if (history == null) {
+        if (history == null)
             throw new NullPointerException("'model' of BuffEvaluator cannot be null.");
-        }
         this.history = history;
 
-        if (activePlayer == null) {
-            throw new NullPointerException("Active player of cannot be null");
-        }
+        if (activePlayer == null)
+            throw new NullPointerException("Active player cannot be null");
         this.activePlayer = activePlayer;
+
     }
 
     public void evaluate() {

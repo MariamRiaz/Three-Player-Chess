@@ -1,27 +1,27 @@
 package jchess.controller;
 
-import jchess.model.GameModel;
-import jchess.entities.Player;
 import jchess.JChessApp;
+import jchess.entities.Player;
+import jchess.entities.PolarPoint;
 import jchess.entities.Square;
 import jchess.entities.SquareObservable;
 import jchess.helper.CartesianPolarConverter;
 import jchess.helper.Images;
 import jchess.helper.MoveEvaluator;
-import jchess.entities.PolarPoint;
 import jchess.helper.RoundChessboardLoader;
-import jchess.model.RoundChessboardModel;
+import jchess.model.IChessboardModel;
+import jchess.model.IGameModel;
 import jchess.move.effects.MoveEffect;
 import jchess.move.effects.PositionChange;
 import jchess.move.effects.StateChange;
 import jchess.pieces.Piece;
 import jchess.pieces.PieceDefinition;
 import jchess.pieces.PieceLoader;
-import jchess.view.PolarCell;
+import jchess.view.AbstractChessboardView;
 import jchess.view.RoundChessboardView;
+import jchess.view.SquareView;
 
 import java.awt.*;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashSet;
 import java.util.List;
@@ -31,12 +31,12 @@ import java.util.Queue;
 /**
  * Class that represents the interaction interface for the RoundChessboard component
  */
-public class RoundChessboardController extends MouseAdapter {
-    private RoundChessboardModel model;
-    private RoundChessboardView view;
+public class RoundChessboardController implements IChessboardController {
+    private IChessboardModel model;
+    private AbstractChessboardView view;
     private Square activeSquare;
     private SquareObservable squareObservable;
-    private MoveHistoryController movesHistory;
+    private IMoveHistoryController movesHistory;
     private HashSet<MoveEffect> moveEffects = null;
 
     /**
@@ -45,7 +45,7 @@ public class RoundChessboardController extends MouseAdapter {
      * @param settings     The gameModel of the game.
      * @param movesHistory The MoveHistoryController of the game, where the controller will store played moves.
      */
-    public RoundChessboardController(RoundChessboardLoader chessboardLoader, int chessboardSize, GameModel settings, MoveHistoryController movesHistory) {
+    public RoundChessboardController(RoundChessboardLoader chessboardLoader, int chessboardSize, IGameModel settings, IMoveHistoryController movesHistory) {
         this.model = chessboardLoader.loadDefaultFromJSON(settings);
         this.view = new RoundChessboardView(chessboardSize, Images.BOARD, model.getRows(), model.getColumns(), model.getSquares());
         view.addMouseListener(this);
@@ -56,15 +56,20 @@ public class RoundChessboardController extends MouseAdapter {
     /**
      * @return The view of the chessboard.
      */
-    public RoundChessboardView getView() {
+    public AbstractChessboardView getView() {
         return view;
     }
 
     /**
      * @param observer Adds an Observer to the currently selected Square.
      */
-    void addSelectSquareObserver(Observer observer) {
+    public void addSelectSquareObserver(Observer observer) {
         this.squareObservable.addObserver(observer);
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+
     }
 
     /**
@@ -75,6 +80,21 @@ public class RoundChessboardController extends MouseAdapter {
         Square square = getSquareFromClick(mouseEvent.getX(), mouseEvent.getY());
         if (square != null)
             squareObservable.setSquare(square);
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
     }
 
     /**
@@ -133,7 +153,7 @@ public class RoundChessboardController extends MouseAdapter {
      * @return Whether the Piece can be saved.
      */
     public boolean pieceIsUnsavable(Piece piece) {
-    	return new MoveEvaluator(this).pieceIsUnsavable(piece);
+        return new MoveEvaluator(this).pieceIsUnsavable(piece);
     }
 
     public HashSet<Piece> getCrucialPieces(Player player) {
@@ -207,7 +227,6 @@ public class RoundChessboardController extends MouseAdapter {
     		}
     	
     	apply(move);
-    	
         if (refresh)
             this.unselect();
 
@@ -215,85 +234,87 @@ public class RoundChessboardController extends MouseAdapter {
             this.movesHistory.clearMoveForwardStack();
             this.movesHistory.addMove(move, true, true);
         } else this.movesHistory.addMove(move, false, true);
-        
-    	view.updateAfterMove();
-    	
+
+        view.updateAfterMove();
+
         //end.getPiece().setHasMoved(true);
         // TODO: Reverse orientation on jump across board center.
     }
 
     public void apply(MoveEffect me) {
-    	for (PositionChange ent : me.getPositionChanges()) {
-    		if (view != null)
-    			view.removeVisual(model.getSquare(ent.getPiece()));
-    		model.setPieceOnSquare(ent.getPiece(), ent.getSquare());
-    		if (view != null)
-    			view.setVisual(ent.getSquare().getPiece(), ent.getSquare());
-    	}
-    	
-    	for (StateChange ent : me.getStateChanges()) {
-    		final Square sq = model.getSquare(ent.getID());
-    		if (sq == null)
-    			continue;
+        for (PositionChange ent : me.getPositionChanges()) {
+            if (view != null) {
+                view.removeVisual(model.getSquare(ent.getPiece()));
+            }
+            model.setPieceOnSquare(ent.getPiece(), ent.getSquare());
+            if (view != null) {
+                Square square = ent.getSquare();
+                view.setVisual(square.getPiece(), square.getPozX(), square.getPozY());
+            }
+        }
 
-    		if (ent.getState().getDefinition() == PieceDefinition.PLACEHOLDER)
-    			ent.getState().setDefinition(PieceLoader.getPieceDefinition(
-    					JChessApp.jcv.showPawnPromotionBox(ent.getState().getPlayer().getColor().getColor())));
-    		
-    		model.setPieceOnSquare(ent.getState(), sq);
-    		if (view != null)
-    			view.setVisual(ent.getState(), sq.getPozX(), sq.getPozY());
-    	}
+        for (StateChange ent : me.getStateChanges()) {
+            final Square sq = model.getSquare(ent.getID());
+            if (sq == null)
+                continue;
+
+            if (ent.getState().getDefinition() == PieceDefinition.PLACEHOLDER)
+                ent.getState().setDefinition(PieceLoader.getPieceDefinition(
+                        JChessApp.jcv.showPawnPromotionBox(ent.getState().getPlayer().getColor().getColor())));
+
+            model.setPieceOnSquare(ent.getState(), sq);
+            if (view != null)
+                view.setVisual(ent.getState(), sq.getPozX(), sq.getPozY());
+        }
     }
-    
+
     public void reverse(MoveEffect me) {
-    	if (model == null)
-    		return;
-    	
-    	for (StateChange ent : me.getStateChangesReverse()) {
-    		final Square sq = model.getSquare(ent.getID());
-    		if (sq == null)
-    			continue;
-    		
-    		model.setPieceOnSquare(ent.getState(), sq);
-    		if (view != null)
-    			view.setVisual(ent.getState(), sq.getPozX(), sq.getPozY());
-    	}
-    	
-    	for (PositionChange ent : me.getPositionChangesReverse()) {
-    		if (view != null)
-    			view.removeVisual(model.getSquare(ent.getPiece()));
-    		model.setPieceOnSquare(ent.getPiece(), ent.getSquare());
-    		if (view != null)
-    			view.setVisual(ent.getSquare().getPiece(), ent.getSquare());
-    	}
+        if (model == null)
+            return;
+
+        for (StateChange ent : me.getStateChangesReverse()) {
+            final Square sq = model.getSquare(ent.getID());
+            if (sq == null)
+                continue;
+
+            model.setPieceOnSquare(ent.getState(), sq);
+            if (view != null)
+                view.setVisual(ent.getState(), sq.getPozX(), sq.getPozY());
+        }
+
+        for (PositionChange ent : me.getPositionChangesReverse()) {
+            if (view != null) {
+                view.removeVisual(model.getSquare(ent.getPiece()));
+            }
+            model.setPieceOnSquare(ent.getPiece(), ent.getSquare());
+            if (view != null) {
+                Square square = ent.getSquare();
+                view.setVisual(square.getPiece(), square.getPozX(), square.getPozY());
+            }
+        }
     }
 
     /**
      * Unselects the currently selected Square.
      */
-    void unselect() {
+    public void unselect() {
         setActiveSquare(null);
     }
 
     /**
      * Undoes the last-played move.
      *
-     * @param refresh Whether or not to refresh the board.
      * @return Whether or not the undo operation was successful.
      */
-    synchronized boolean undo(boolean refresh)
-    {
+    public boolean undo() {
         Queue<MoveEffect> last = this.movesHistory.undo();
-        
+
         if (last != null && last.size() != 0) {
-        	for (MoveEffect me : last)
-        		reverse(me);
-        	
-            if (refresh) {
-                this.unselect();
-                view.repaint();
-            }
+            for (MoveEffect me : last)
+                reverse(me);
+
+            this.unselect();
+            view.repaint();
 
             return true;
         } else return false;
@@ -302,24 +323,21 @@ public class RoundChessboardController extends MouseAdapter {
     /**
      * Redoes the move that was undone last.
      *
-     * @param refresh Whether or not to refresh the board.
      * @return Whether or not the redo operation was successful.
      */
-    boolean redo(boolean refresh) {
+    public boolean redo() {
         Queue<MoveEffect> first = this.movesHistory.redo();
-        	
+
         if (first != null && first.size() != 0) {
-         	for (MoveEffect me : first)
-          		apply(me);
-                
-            if (refresh) {
-                this.unselect();
-                view.repaint();
-            }
-                
+            for (MoveEffect me : first)
+                apply(me);
+
+            this.unselect();
+            view.repaint();
+
             return true;
         }
-        
+
         return false;
     }
 
@@ -335,7 +353,7 @@ public class RoundChessboardController extends MouseAdapter {
         CartesianPolarConverter converter = new CartesianPolarConverter();
         PolarPoint polarPoint = converter.getPolarFromCartesian(clickedPoint, view.getCircleCenter());
 
-        for (PolarCell cell : view.getCells()) {
+        for (SquareView cell : view.getCells()) {
             double top = cell.getTopBound(), bottom = cell.getBottomBound(), left = cell.getLeftBound(), right = cell.getRightBound();
 
             if (polarPoint.getRadius() <= top && polarPoint.getRadius() > bottom && polarPoint.getDegrees() >= left && polarPoint.getDegrees() < right)
@@ -354,8 +372,8 @@ public class RoundChessboardController extends MouseAdapter {
     public Square getSquare(int x, int y) {
         return model.getSquare(x, y);
     }
-    
-    public RoundChessboardModel getModel() {
-    	return model;
+
+    public IChessboardModel getModel() {
+        return model;
     }
 }

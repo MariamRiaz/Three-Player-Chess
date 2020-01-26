@@ -1,19 +1,18 @@
 package jchess.pieces;
+
+import jchess.helper.Log;
+import jchess.helper.ResourceLoader;
+import jchess.move.buff.BuffType;
+import jchess.view.RoundChessboardView;
+
 import java.awt.*;
 import java.util.List;
 import java.util.logging.Level;
-
-import jchess.helper.ResourceLoader;
-import jchess.helper.Log;
-import jchess.move.buff.Buff;
-import jchess.move.buff.BuffType;
-import jchess.view.RoundChessboardView;
 
 /**
  * Class to represent the visual of a Piece.
  */
 public class PieceVisual {
-
     private final Image image;
 
     private List<BuffType> buffList;
@@ -44,7 +43,7 @@ public class PieceVisual {
         try {
             if (image != null && g != null) {
                 g.drawImage(image, x, y, width, height, view);
-            	drawBuffs(g, x, y, width, height);
+                drawBuffs(g, x, y, width, height);
             } else {
                 Log.log(Level.SEVERE, "image is null!");
             }
@@ -62,5 +61,4 @@ public class PieceVisual {
             }
         });
     }
-
 }

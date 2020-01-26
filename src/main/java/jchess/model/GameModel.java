@@ -30,12 +30,11 @@ import java.util.ResourceBundle;
 /**
  * Class representings game gameModel available for the current player
  */
-public class GameModel implements Serializable {
+public class GameModel implements IGameModel {
 
     private static ResourceBundle loc = null;
-    public int timeForGame;
-    public boolean runningGameClock;
-    public boolean timeLimitSet;
+    private int timeForGame;
+    private boolean timeLimitSet;
     private Player activePlayer;
     private boolean blockedChessboard;
 
@@ -44,10 +43,26 @@ public class GameModel implements Serializable {
         newGame
     }
 
-    public gameModes gameMode;
+    private gameModes gameMode;
     private Player playerWhite;
     private Player playerBlack;
     private Player playerGray;
+
+    public void setTimeForGame(int timeForGame) {
+        this.timeForGame = timeForGame;
+    }
+
+    public boolean getTimeLimitSet(){
+        return timeLimitSet;
+    }
+
+    public void setTimeLimitSet(boolean limitSet){
+        this.timeLimitSet = limitSet;
+    }
+
+    public void setGameMode(gameModes gameMode) {
+        this.gameMode = gameMode;
+    }
 
     public Player getPlayerWhite() {
         return playerWhite;
@@ -86,6 +101,7 @@ public class GameModel implements Serializable {
         gameMode = gameModes.newGame;
     }
 
+    // TODO : put somewhere else
     public static String getTexts(String key) {
         if (GameModel.loc == null) {
             GameModel.loc = PropertyResourceBundle.getBundle("i18n.main");

@@ -19,77 +19,78 @@
  */
 package jchess.view;
 
+import jchess.JChessApp;
+import jchess.controller.IGameController;
+import jchess.entities.Player;
+import jchess.helper.Log;
+import jchess.model.GameModel;
+import jchess.model.IGameModel;
+
 import javax.swing.*;
-import java.awt.event.ActionListener;
+import javax.swing.text.BadLocationException;
+import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.TextEvent;
 import java.awt.event.TextListener;
 import java.util.logging.Level;
-import java.awt.event.TextEvent;
-import java.awt.*;
-import javax.swing.text.BadLocationException;
-
-import jchess.controller.GameController;
-import jchess.model.GameModel;
-import jchess.JChessApp;
-import jchess.helper.Log;
-import jchess.entities.Player;
 
 /**
  * Class responsible for drawing the fold with local game gameModel
  */
 public class DrawNewGameSettings extends JPanel implements ActionListener, TextListener {
 
-	JDialog parent;// needet to close newGame window
-	JComboBox color;// to choose color of player
-	JRadioButton oponentComp;// choose oponent
-	JRadioButton oponentHuman;// choose oponent (human)
-	ButtonGroup oponentChoos;// group 4 radio buttons
-	JFrame localPanel;
-	JLabel compLevLab;
-	JSlider computerLevel;// slider to choose jChess Engine level
-	JTextField firstName;// editable field 4 nickname
-	JTextField secondName;// editable field 4 nickname
-	JTextField thirdName;// editable field 4 nickname
-	JLabel firstNameLab;
-	JLabel secondNameLab;
-	JLabel thirdNameLab;
-	GridBagLayout gbl;
-	GridBagConstraints gbc;
-	Container cont;
-	JSeparator sep;
-	JButton okButton;
-	JCheckBox timeGame;
-	JComboBox time4Game;
-	String colors[] = { GameModel.getTexts("white"), GameModel.getTexts("black"), GameModel.getTexts("gray") };
-	String times[] = { "1", "3", "5", "8", "10", "15", "20", "25", "30", "60", "120" };
+    JDialog parent;// needet to close newGame window
+    JComboBox color;// to choose color of player
+    JRadioButton oponentComp;// choose oponent
+    JRadioButton oponentHuman;// choose oponent (human)
+    ButtonGroup oponentChoos;// group 4 radio buttons
+    JFrame localPanel;
+    JLabel compLevLab;
+    JSlider computerLevel;// slider to choose jChess Engine level
+    JTextField firstName;// editable field 4 nickname
+    JTextField secondName;// editable field 4 nickname
+    JTextField thirdName;// editable field 4 nickname
+    JLabel firstNameLab;
+    JLabel secondNameLab;
+    JLabel thirdNameLab;
+    GridBagLayout gbl;
+    GridBagConstraints gbc;
+    Container cont;
+    JSeparator sep;
+    JButton okButton;
+    JCheckBox timeGame;
+    JComboBox time4Game;
+    String colors[] = {GameModel.getTexts("white"), GameModel.getTexts("black"), GameModel.getTexts("gray")};
+    String times[] = {"1", "3", "5", "8", "10", "15", "20", "25", "30", "60", "120"};
 
-	;
+    ;
 
-	/**
-	 * Method witch is checking correction of edit tables
-	 *
-	 * @param e Object where is saving this what contents edit tables
-	 */
-	public void textValueChanged(TextEvent e) {
-		Object target = e.getSource();
-		if (target == this.firstName || target == this.secondName) {
-			JTextField temp = new JTextField();
-			if (target == this.firstName) {
-				temp = this.firstName;
-			} else if (target == this.secondName) {
-				temp = this.secondName;
-			}
+    /**
+     * Method witch is checking correction of edit tables
+     *
+     * @param e Object where is saving this what contents edit tables
+     */
+    public void textValueChanged(TextEvent e) {
+        Object target = e.getSource();
+        if (target == this.firstName || target == this.secondName) {
+            JTextField temp = new JTextField();
+            if (target == this.firstName) {
+                temp = this.firstName;
+            } else if (target == this.secondName) {
+                temp = this.secondName;
+            }
 
-			int len = temp.getText().length();
-			if (len > 8) {
-				try {
-					temp.setText(temp.getText(0, 7));
-				} catch (BadLocationException exc) {
-					Log.log(Level.SEVERE, "Something wrong in editables: \n" + exc);
-				}
-			}
-		}
-	}
+            int len = temp.getText().length();
+            if (len > 8) {
+                try {
+                    temp.setText(temp.getText(0, 7));
+                } catch (BadLocationException exc) {
+                    Log.log(Level.SEVERE, "Something wrong in editables: \n" + exc);
+                }
+            }
+        }
+    }
 
 	/**
 	 * Method responsible for changing the options which can make a player when he
@@ -126,12 +127,13 @@ public class DrawNewGameSettings extends JPanel implements ActionListener, TextL
 				JOptionPane.showMessageDialog(this, GameModel.getTexts("fill_name"));
 				return;
 			}
-			GameController newGUI = JChessApp.jcv.addNewTab(this.firstName.getText() + " vs " + this.secondName.getText() + " vs " + this.thirdName.getText());
-			GameModel gameModel = newGUI.getGameModel();// sett local gameModel variable
+			JChessApp.getApplication().show(JChessApp.jcv);
+			IGameController newGUI = JChessApp.jcv.addNewTab(this.firstName.getText() + " vs " + this.secondName.getText() + " vs " + this.thirdName.getText());
+			IGameModel gameModel = newGUI.getGameModel();// sett local gameModel variable
 			Player pl1 = gameModel.getPlayerWhite();// set local player variable
 			Player pl2 = gameModel.getPlayerBlack();// set local player variable
 			Player pl3 = gameModel.getPlayerGray();// set local player variable
-			gameModel.gameMode = GameModel.gameModes.newGame;
+			gameModel.setGameMode(GameModel.gameModes.newGame);
 			// if(this.firstName.getText().length() >9 )
 			// this.firstName.setText(this.firstName.getText(0,8));
 			if (this.color.getActionCommand().equals("biały")) // if first player is white
@@ -147,127 +149,127 @@ public class DrawNewGameSettings extends JPanel implements ActionListener, TextL
 			}
 
 
-			if (this.timeGame.isSelected()) // if timeGame is checked
-			{
-				String value = this.times[this.time4Game.getSelectedIndex()];// set time for game
-				Integer val = new Integer(value);
-				gameModel.timeLimitSet = true;
-				gameModel.timeForGame = (int) val * 60;// set time for game and mult it to seconds
-				newGUI.getGameClock().setTimes(gameModel.timeForGame);
-				newGUI.getGameClock().start();
-			}
-			Log.log(this.time4Game.getActionCommand());
-			// this.time4Game.getComponent(this.time4Game.getSelectedIndex());
-			Log.log("****************\nStarting new game: " + pl1.getName() + " vs. " + pl2.getName() + "\ntime 4 game: "
-					+ gameModel.timeForGame + "\ntime limit set: " + gameModel.timeLimitSet + "\nwhite on top?: "
-					+ "\n****************");// 4test
-			this.parent.setVisible(false);// hide parent
-		}
+            if (this.timeGame.isSelected()) // if timeGame is checked
+            {
+                String value = this.times[this.time4Game.getSelectedIndex()];// set time for game
+                Integer val = new Integer(value);
+                gameModel.setTimeLimitSet(true);
+                gameModel.setTimeForGame(val * 60);// set time for game and mult it to seconds
+                newGUI.getGameClock().setTimes(gameModel.getTimeForGame());
+                newGUI.getGameClock().start();
+            }
+            Log.log(this.time4Game.getActionCommand());
+            // this.time4Game.getComponent(this.time4Game.getSelectedIndex());
+            Log.log("****************\nStarting new game: " + pl1.getName() + " vs. " + pl2.getName() + "\ntime 4 game: "
+                    + gameModel.getTimeForGame() + "\ntime limit set: " + gameModel.getTimeLimitSet() + "\nwhite on top?: "
+                    + "\n****************");// 4test
+            this.parent.setVisible(false);// hide parent
+        }
 
-	}
+    }
 
-	public DrawNewGameSettings(JDialog parent) {
-		super();
-		// this.setA//choose oponent
-		this.parent = parent;
-		this.color = new JComboBox(colors);
-		this.gbl = new GridBagLayout();
-		this.gbc = new GridBagConstraints();
-		this.sep = new JSeparator();
-		this.okButton = new JButton(GameModel.getTexts("ok"));
+    public DrawNewGameSettings(JDialog parent) {
+        super();
+        // this.setA//choose oponent
+        this.parent = parent;
+        this.color = new JComboBox(colors);
+        this.gbl = new GridBagLayout();
+        this.gbc = new GridBagConstraints();
+        this.sep = new JSeparator();
+        this.okButton = new JButton(GameModel.getTexts("ok"));
 
-		this.firstName = new JTextField("", 10);
-		this.firstName.setSize(new Dimension(200, 50));
-		this.secondName = new JTextField("", 10);
-		this.secondName.setSize(new Dimension(200, 50));
-		this.thirdName = new JTextField("", 10);
-		this.thirdName.setSize(new Dimension(200, 50));
-		this.firstNameLab = new JLabel(GameModel.getTexts("first_player_name") + ": ");
-		this.secondNameLab = new JLabel(GameModel.getTexts("second_player_name") + ": ");
-		this.thirdNameLab = new JLabel(GameModel.getTexts("third_player_name") + ": ");
-		this.oponentChoos = new ButtonGroup();
-		this.computerLevel = new JSlider();
-		this.timeGame = new JCheckBox(GameModel.getTexts("time_game_min"));
-		this.time4Game = new JComboBox(times);
+        this.firstName = new JTextField("", 10);
+        this.firstName.setSize(new Dimension(200, 50));
+        this.secondName = new JTextField("", 10);
+        this.secondName.setSize(new Dimension(200, 50));
+        this.thirdName = new JTextField("", 10);
+        this.thirdName.setSize(new Dimension(200, 50));
+        this.firstNameLab = new JLabel(GameModel.getTexts("first_player_name") + ": ");
+        this.secondNameLab = new JLabel(GameModel.getTexts("second_player_name") + ": ");
+        this.thirdNameLab = new JLabel(GameModel.getTexts("third_player_name") + ": ");
+        this.oponentChoos = new ButtonGroup();
+        this.computerLevel = new JSlider();
+        this.timeGame = new JCheckBox(GameModel.getTexts("time_game_min"));
+        this.time4Game = new JComboBox(times);
 
-		this.oponentHuman = new JRadioButton(GameModel.getTexts("against_other_human"), true);
+        this.oponentHuman = new JRadioButton(GameModel.getTexts("against_other_human"), true);
 
-		this.setLayout(gbl);
-		this.oponentHuman.addActionListener(this);
-		this.okButton.addActionListener(this);
+        this.setLayout(gbl);
+        this.oponentHuman.addActionListener(this);
+        this.okButton.addActionListener(this);
 
-		this.secondName.addActionListener(this);
+        this.secondName.addActionListener(this);
 
-		this.computerLevel.setEnabled(false);
-		this.computerLevel.setMaximum(3);
-		this.computerLevel.setMinimum(1);
+        this.computerLevel.setEnabled(false);
+        this.computerLevel.setMaximum(3);
+        this.computerLevel.setMinimum(1);
 
-		this.gbc.gridx = 0;
-		this.gbc.gridy = 0;
-		this.gbc.insets = new Insets(3, 3, 3, 3);
-		this.gbc.gridx = 0;
-		this.gbc.gridy = 1;
-		this.gbl.setConstraints(firstNameLab, gbc);
-		this.add(firstNameLab);
-		this.gbc.gridx = 0;
-		this.gbc.gridy = 2;
-		this.gbl.setConstraints(firstName, gbc);
-		this.add(firstName);
-		this.gbc.gridx = 1;
-		this.gbc.gridy = 2;
-		this.gbl.setConstraints(color, gbc);
-		this.add(color);
-		this.gbc.gridx = 0;
-		this.gbc.gridy = 3;
-		this.gbl.setConstraints(secondNameLab, gbc);
-		this.add(secondNameLab);
-		this.gbc.gridy = 4;
-		this.gbl.setConstraints(secondName, gbc);
-		this.add(secondName);
-		this.gbc.gridy = 5;
+        this.gbc.gridx = 0;
+        this.gbc.gridy = 0;
+        this.gbc.insets = new Insets(3, 3, 3, 3);
+        this.gbc.gridx = 0;
+        this.gbc.gridy = 1;
+        this.gbl.setConstraints(firstNameLab, gbc);
+        this.add(firstNameLab);
+        this.gbc.gridx = 0;
+        this.gbc.gridy = 2;
+        this.gbl.setConstraints(firstName, gbc);
+        this.add(firstName);
+        this.gbc.gridx = 1;
+        this.gbc.gridy = 2;
+        this.gbl.setConstraints(color, gbc);
+        this.add(color);
+        this.gbc.gridx = 0;
+        this.gbc.gridy = 3;
+        this.gbl.setConstraints(secondNameLab, gbc);
+        this.add(secondNameLab);
+        this.gbc.gridy = 4;
+        this.gbl.setConstraints(secondName, gbc);
+        this.add(secondName);
+        this.gbc.gridy = 5;
 
-		this.gbl.setConstraints(thirdNameLab, gbc);
-		this.add(thirdNameLab);
-		this.gbc.gridy = 6;
-		this.gbl.setConstraints(thirdName, gbc);
-		this.add(thirdName);
-		this.gbc.gridy = 7;
+        this.gbl.setConstraints(thirdNameLab, gbc);
+        this.add(thirdNameLab);
+        this.gbc.gridy = 6;
+        this.gbl.setConstraints(thirdName, gbc);
+        this.add(thirdName);
+        this.gbc.gridy = 7;
 
-		this.gbc.insets = new Insets(0, 0, 0, 0);
+        this.gbc.insets = new Insets(0, 0, 0, 0);
 
-		this.gbc.gridy = 8;
+        this.gbc.gridy = 8;
 
-		this.gbc.gridy = 9;
-		this.gbc.gridwidth = 1;
-		this.gbl.setConstraints(timeGame, gbc);
-		this.add(timeGame);
-		this.gbc.gridx = 1;
-		this.gbc.gridy = 8;
-		this.gbc.gridwidth = 1;
-		this.gbl.setConstraints(time4Game, gbc);
-		this.add(time4Game);
-		this.gbc.gridx = 1;
-		this.gbc.gridy = 9;
-		this.gbc.gridwidth = 0;
-		this.gbl.setConstraints(okButton, gbc);
-		this.add(okButton);
+        this.gbc.gridy = 9;
+        this.gbc.gridwidth = 1;
+        this.gbl.setConstraints(timeGame, gbc);
+        this.add(timeGame);
+        this.gbc.gridx = 1;
+        this.gbc.gridy = 8;
+        this.gbc.gridwidth = 1;
+        this.gbl.setConstraints(time4Game, gbc);
+        this.add(time4Game);
+        this.gbc.gridx = 1;
+        this.gbc.gridy = 9;
+        this.gbc.gridwidth = 0;
+        this.gbl.setConstraints(okButton, gbc);
+        this.add(okButton);
 
-	}
+    }
 
-	/**
-	 * Method responsible for triming white symbols from strings
-	 *
-	 * @param txt    Where is capt value to equal
-	 * @param length How long is the string
-	 * @return result trimmed String
-	 */
-	public String trimString(JTextField txt, int length) {
-		String result = new String();
-		try {
-			result = txt.getText(0, length);
-		} catch (BadLocationException exc) {
-			Log.log(Level.SEVERE, "Something wrong in editables: \n" + exc);
-		}
-		return result;
-	}
+    /**
+     * Method responsible for triming white symbols from strings
+     *
+     * @param txt    Where is capt value to equal
+     * @param length How long is the string
+     * @return result trimmed String
+     */
+    public String trimString(JTextField txt, int length) {
+        String result = new String();
+        try {
+            result = txt.getText(0, length);
+        } catch (BadLocationException exc) {
+            Log.log(Level.SEVERE, "Something wrong in editables: \n" + exc);
+        }
+        return result;
+    }
 }
