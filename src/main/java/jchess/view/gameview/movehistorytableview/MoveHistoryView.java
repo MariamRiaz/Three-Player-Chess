@@ -1,4 +1,4 @@
-package jchess.view.GameView.MoveHistoryTableView;
+package jchess.view.gameview.movehistorytableview;
 
 import jchess.model.MoveHistoryModel;
 import org.jdesktop.application.Application;

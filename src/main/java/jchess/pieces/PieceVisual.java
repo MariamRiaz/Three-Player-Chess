@@ -6,7 +6,7 @@ import java.util.logging.Level;
 
 import jchess.helper.ResourceLoader;
 import jchess.helper.Log;
-import jchess.view.GameView.ChessBoardView.RoundChessboardView;
+import jchess.view.gameview.chessboardview.RoundChessboardView;
 
 /**
  * Class to represent the visual of a Piece.

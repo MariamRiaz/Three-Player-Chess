@@ -1,4 +1,4 @@
-package jchess.view.GameView;
+package jchess.view.gameview;
 
 import jchess.controller.GameController;
 

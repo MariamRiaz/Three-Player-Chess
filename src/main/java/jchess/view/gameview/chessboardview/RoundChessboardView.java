@@ -1,4 +1,4 @@
-package jchess.view.GameView.ChessBoardView;
+package jchess.view.gameview.chessboardview;
 
 import jchess.helper.Images;
 import jchess.helper.ResourceLoader;

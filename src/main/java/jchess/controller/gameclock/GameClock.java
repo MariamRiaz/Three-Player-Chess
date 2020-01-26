@@ -18,14 +18,14 @@
  * Mateusz Sławomir Lach ( matlak, msl )
  * Damian Marciniak
  */
-package jchess.controller.GameClock;
+package jchess.controller.gameclock;
 
 import java.util.logging.Level;
 
 import jchess.controller.GameController;
 import jchess.helper.Log;
 import jchess.model.GameModel;
-import jchess.view.GameView.GameClockView.GameClockView;
+import jchess.view.gameview.gameclockview.GameClockView;
 
 /**
  * Class to represent the full game clock logic interacts with game clock view to generate the clocks on the game window

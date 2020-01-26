@@ -27,7 +27,7 @@ import jchess.model.MoveHistoryModel;
 import jchess.move.Move;
 import jchess.move.MoveType;
 import jchess.move.effects.MoveEffect;
-import jchess.view.GameView.MoveHistoryTableView.MoveHistoryView;
+import jchess.view.gameview.movehistorytableview.MoveHistoryView;
 import org.apache.commons.text.StringSubstitutor;
 
 import javax.swing.*;

@@ -18,7 +18,7 @@
  * Mateusz Sławomir Lach ( matlak, msl )
  * Damian Marciniak
  */
-package jchess.view.GameView;
+package jchess.view.gameview;
 
 import java.awt.*;
 import javax.swing.*;

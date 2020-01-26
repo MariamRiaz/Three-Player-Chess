@@ -10,7 +10,7 @@ import jchess.model.RoundChessboardModel;
 import jchess.move.Orientation;
 import jchess.pieces.Piece;
 import jchess.pieces.PieceLoader;
-import jchess.view.GameView.ChessBoardView.RoundChessboardView;
+import jchess.view.gameview.chessboardview.RoundChessboardView;
 import org.junit.Before;
 
 import java.util.ArrayList;

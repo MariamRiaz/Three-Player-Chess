@@ -20,14 +20,14 @@
  */
 package jchess.controller;
 
-import jchess.controller.GameClock.GameClock;
+import jchess.controller.gameclock.GameClock;
 import jchess.entities.Square;
 import jchess.helper.Log;
 import jchess.helper.RoundChessboardLoader;
 import jchess.model.GameModel;
 import jchess.move.buff.BuffEvaluator;
 import jchess.pieces.Piece;
-import jchess.view.GameView.GameView;
+import jchess.view.gameview.GameView;
 
 import javax.swing.*;
 import java.util.HashSet;

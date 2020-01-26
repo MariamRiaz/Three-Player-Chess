@@ -1,4 +1,4 @@
-package jchess.view.GameView.GameClockView;
+package jchess.view.gameview.gameclockview;
 
 import jchess.controller.GameController;
 import jchess.model.GameModel;

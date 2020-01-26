@@ -1,4 +1,4 @@
-package jchess.view.GameView.ChessBoardView;
+package jchess.view.gameview.chessboardview;
 /*
 * Class that is used to set the visuals of the pieces on the circular board
 *  */
