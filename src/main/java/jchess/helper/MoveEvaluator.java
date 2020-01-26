@@ -1,32 +1,34 @@
 package jchess.helper;
 
-import java.util.HashSet;
-import java.util.Iterator;
-
 import jchess.controller.RoundChessboardController;
 import jchess.entities.Player;
 import jchess.entities.Square;
-import jchess.model.RoundChessboardModel;
 import jchess.move.Move;
 import jchess.move.MoveType;
 import jchess.move.Orientation;
+import jchess.move.buff.Buff;
+import jchess.move.buff.BuffType;
 import jchess.move.effects.MoveEffect;
 import jchess.move.effects.MoveEffectsBuilder;
 import jchess.pieces.Piece;
 import jchess.pieces.PieceDefinition;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 /**
  * Class that contains method to evaluate if a move is valid and gets possible target Squares
  */
 public class MoveEvaluator {
-	private RoundChessboardController chessboard;
+	private RoundChessboardController roundChessboardController;
 
     /**
      * Constructor
-     * @param model     RoundChessboardModel    the model of the chessboard
+     * @param roundChessboardController
      */
-	public MoveEvaluator (RoundChessboardController chessboard) {
-		this.chessboard = chessboard;
+	public MoveEvaluator (RoundChessboardController roundChessboardController) {
+		this.roundChessboardController = roundChessboardController;
 	}
 	
 	/**
@@ -35,16 +37,16 @@ public class MoveEvaluator {
 	 * @return The valid target Squares for the Piece on the given Square.
 	 */
     private HashSet<MoveEffect> getValidTargetSquares(Piece piece) {
-        HashSet<MoveEffect> ret = new HashSet<>();
+        HashSet<MoveEffect> moveEffects = new HashSet<>();
         
         if (piece == null)
-            return ret;//TODO error handling
+            return moveEffects;//TODO error handling
 
         HashSet<Move> moves = piece.getDefinition().getMoves();
         for (Move it : moves)
-            ret.addAll(evaluateMoveToTargetSquares(it, piece));
+            moveEffects.addAll(evaluateMoveToTargetSquares(it, piece));
 
-        return ret;
+        return moveEffects;
     }
 
     /**
@@ -54,32 +56,32 @@ public class MoveEvaluator {
      * @return A HashSet of the concrete Squares to which the Piece can move with the given Move definition.
      */
     private HashSet<MoveEffect> evaluateMoveToTargetSquares(Move move, Piece piece) {
-        HashSet<MoveEffect> ret = new HashSet<>();
+        HashSet<MoveEffect> moveEffects = new HashSet<>();
         
         if (move == null || piece == null)
-            return ret;//TODO error handling
+            return moveEffects;//TODO error handling
 
         int count = 0;
-        HashSet<Square> traversed = new HashSet<Square>();
-        Orientation otn = piece.getOrientation().clone();
-        final Square from = chessboard.getSquare(piece);
+        Set<Square> traversed = new HashSet<>();
+        Orientation orientation = piece.getOrientation().clone();
+        final Square from = roundChessboardController.getSquare(piece);
         
-        for (Square next = nextSquare(from, move.getX(), move.getY(), otn); 
+        for (Square next = nextSquare(from, move.getX(), move.getY(), orientation);
         		next != null && (move.getLimit() == null || count < move.getLimit()) && !traversed.contains(next); 
-        		next = nextSquare(next, move.getX(), move.getY(), otn)) {
+        		next = nextSquare(next, move.getX(), move.getY(), orientation)) {
         	
-            MoveEffectsBuilder meb = new MoveEffectsBuilder(piece, next, from, move, true);
-            meb = evaluateAndGenEffects(move, next, piece, meb);
+            MoveEffectsBuilder moveEffectsBuilder = new MoveEffectsBuilder(piece, next, from, move, true);
+            moveEffectsBuilder = evaluateAndGenEffects(move, next, piece, moveEffectsBuilder);
             
-            if (meb != null) {
-                if (meb.isEmpty())
-                	meb.addPosChange(chessboard.getSquare(piece), next)
-                		.addStateChange(piece, piece.clone().setHasMoved(true).reorient(otn.clone()));
+            if (moveEffectsBuilder != null) {
+                if (moveEffectsBuilder.isEmpty())
+                	moveEffectsBuilder.addPosChange(roundChessboardController.getSquare(piece), next)
+                		.addStateChange(piece, piece.clone().setHasMoved(true).reorient(orientation.clone()));
             	
-                if (piece.getDefinition().getType().equals("Pawn") && chessboard.getModel().isInPromotionArea(next))
-                	meb.addStateChange(piece, piece.clone().setDefinition(PieceDefinition.PLACEHOLDER));
+                if (piece.getDefinition().getType().equals("Pawn") && roundChessboardController.getModel().isInPromotionArea(next))
+                	moveEffectsBuilder.addStateChange(piece, piece.clone().setDefinition(PieceDefinition.PLACEHOLDER));
                 
-                ret.add(meb.build());
+                moveEffects.add(moveEffectsBuilder.build());
             	traversed.add(next);
             }
             
@@ -89,7 +91,17 @@ public class MoveEvaluator {
             count++;
         }
 
-        return ret;
+        return moveEffects;
+    }
+
+    private MoveEffectsBuilder evaluateApplyConfusion(Square next,
+                                                      MoveEffectsBuilder moveEffectsBuilder) {
+        Piece attackedPiece = next.getPiece();
+        if (attackedPiece != null) {
+            return moveEffectsBuilder
+                    .addStateChange(attackedPiece, attackedPiece.clone().addBuff(new Buff(BuffType.Confusion, 3)));
+        }
+        return null;
     }
     
     private MoveEffectsBuilder evaluateCastling(Move move, Square next, Piece piece, MoveEffectsBuilder meb) {
@@ -98,22 +110,22 @@ public class MoveEvaluator {
     	else {
     		Square rook = null, nextRook = null;
     		if (move.getY() > 0) {
-    			rook = chessboard.getSquare(next.getPozX(), next.getPozY() + 1);
-    			nextRook = chessboard.getSquare(next.getPozX(), next.getPozY() - 1);
+    			rook = roundChessboardController.getSquare(next.getPozX(), next.getPozY() + 1);
+    			nextRook = roundChessboardController.getSquare(next.getPozX(), next.getPozY() - 1);
     		}
     		else {
-    			rook = chessboard.getSquare(next.getPozX(), next.getPozY() - 1);
-    			nextRook = chessboard.getSquare(next.getPozX(), next.getPozY() + 1);
+    			rook = roundChessboardController.getSquare(next.getPozX(), next.getPozY() - 1);
+    			nextRook = roundChessboardController.getSquare(next.getPozX(), next.getPozY() + 1);
     		}
     		
     		if (rook.getPiece() == null || rook.getPiece().hasMoved())
     			return null;
     		
-    		for (Square sq : chessboard.getModel().getSquaresBetween(chessboard.getSquare(piece), rook))
+    		for (Square sq : roundChessboardController.getModel().getSquaresBetween(roundChessboardController.getSquare(piece), rook))
     			if (squareIsThreatened(sq, piece.getPlayer())) 
     				return null;
     		
-    		return meb.addPosChange(chessboard.getSquare(piece), next)
+    		return meb.addPosChange(roundChessboardController.getSquare(piece), next)
     			.addStateChange(piece, piece.clone().setHasMoved(true))
     			.addPosChange(rook, nextRook)
     			.addStateChange(rook.getPiece(), rook.getPiece().clone().setHasMoved(true));
@@ -135,7 +147,10 @@ public class MoveEvaluator {
         
         if (move.getConditions().contains(MoveType.Castling))
         	return evaluateCastling(move, next, piece, meb);
-        
+        if (move.getConditions().contains(MoveType.ApplyConfusion)) {
+            return evaluateApplyConfusion(next, meb);
+        }
+
         if (move.getConditions().contains(MoveType.EnPassant)) {
         	
         }
@@ -161,11 +176,11 @@ public class MoveEvaluator {
 	    	if (orientation.y)
 	    		y = -y;
 	    	
-            if (chessboard.getModel().getInnerRimConnected() && current.getPozX() + x < 0)
+            if (roundChessboardController.getModel().getInnerRimConnected() && current.getPozX() + x < 0)
             	orientation.reverseX();
 	    }
     	
-        Square retVal = chessboard.getSquare(current.getPozX() + x, current.getPozY() + y);
+        Square retVal = roundChessboardController.getSquare(current.getPozX() + x, current.getPozY() + y);
         
         return retVal;
     }
@@ -178,7 +193,7 @@ public class MoveEvaluator {
     public boolean pieceIsUnsavable(Piece piece) {
         if (piece == null)
             return false;
-        for (Square sq : chessboard.getSquares()) {
+        for (Square sq : roundChessboardController.getSquares()) {
             if (sq.getPiece() == null || sq.getPiece().getPlayer() != piece.getPlayer())
                 continue;
 			
@@ -202,14 +217,14 @@ public class MoveEvaluator {
         for (Iterator<MoveEffect> it = ret.iterator(); it.hasNext(); ) {
             final MoveEffect me = it.next();
         	
-            chessboard.apply(me);
+            roundChessboardController.apply(me);
             boolean rm = false;
             for (Piece piece : toSave) 
-            	if (squareIsThreatened(chessboard.getSquare(piece))) {
+            	if (squareIsThreatened(roundChessboardController.getSquare(piece))) {
             		rm = true;
             		break;
             	}
-            chessboard.reverse(me);
+            roundChessboardController.reverse(me);
             
             if (rm)
             	it.remove();
@@ -241,18 +256,18 @@ public class MoveEvaluator {
             return false;
         
         Piece piece = square.getPiece();
-        for (Square sq : chessboard.getSquares()) {
+        for (Square sq : roundChessboardController.getSquares()) {
             if (sq.getPiece() == null || sq.getPiece().getPlayer() == player)
                 continue;
 			
             HashSet<MoveEffect> validMoveSquares = getValidTargetSquares(sq.getPiece());
             for (MoveEffect it2 : validMoveSquares) {
-            	chessboard.apply(it2);
-            	if ((piece == null && square.getPiece() != null) || (piece != null && chessboard.getSquare(piece) == null)) {
-            		chessboard.reverse(it2);
+            	roundChessboardController.apply(it2);
+            	if ((piece == null && square.getPiece() != null) || (piece != null && roundChessboardController.getSquare(piece) == null)) {
+            		roundChessboardController.reverse(it2);
             		return true;
             	}
-            	chessboard.reverse(it2);
+            	roundChessboardController.reverse(it2);
             }
         }
         return false;

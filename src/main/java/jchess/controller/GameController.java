@@ -223,7 +223,7 @@ public class GameController implements Observer {
             {
                 chessboardController.move(chessboardController.getActiveSquare(), square, true, true);
                 chessboardController.unselect();
-                new BuffEvaluator(chessboardController, moveHistoryController).evaluate();
+                new BuffEvaluator(chessboardController, moveHistoryController, gameModel.getActivePlayer()).evaluate();
 
                 this.nextMove();
 

@@ -22,6 +22,7 @@ package jchess.pieces;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import jchess.entities.Player;
 import jchess.move.Orientation;
@@ -37,7 +38,7 @@ public class Piece {
 	private PieceDefinition definition;
 	private boolean hasMoved = false;
 	private Orientation orientation;
-	private ArrayList<Buff> buffs = new ArrayList<>();
+	private List<Buff> buffs = new ArrayList<>();
 	
 	private final int id;
 	private final Player player;
@@ -163,14 +164,12 @@ public class Piece {
 		return this;
 	}
 	
-	public Piece tickBuffs() {
-		for (Iterator<Buff> buff = this.buffs.iterator(); buff.hasNext(); )
-			if (buff.next().tick())
-				buff.remove();
-		return this;
+	public void tickBuffs() {
+		buffs.forEach(Buff::tick);
+		buffs.removeIf(Buff::isWornOff);
 	}
 	
-	public ArrayList<BuffType> getActiveBuffs() {
+	public List<BuffType> getActiveBuffs() {
 		ArrayList<BuffType> retVal = new ArrayList<>();
 		for (Buff buff : this.buffs)
 			retVal.add(buff.getType());
