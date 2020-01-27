@@ -27,37 +27,37 @@ import java.io.Serializable;
  */
 public class Player implements Serializable {
 
-	private String name;
+    private String name;
 
-	private PlayerColor color;
+    private PlayerColor color;
 
-	public boolean goDown;
+    public boolean goDown;
 
-	public Player(String name, String color) {
-		this.name = name;
-		this.color = PlayerColor.getColor(color);
-		this.goDown = false;
-	}
+    public Player(String name, String color) {
+        this.name = name;
+        this.color = PlayerColor.getColor(color);
+        this.goDown = false;
+    }
 
-	/**
-	 * Method setting the players name
-	 * 
-	 * @param name name of player
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
+    /**
+     * Method setting the players name
+     *
+     * @param name name of player
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	/**
-	 * Method getting the players name
-	 * 
-	 * @return name of player
-	 */
-	public String getName() {
-		return this.name;
-	}
+    /**
+     * Method getting the players name
+     *
+     * @return name of player
+     */
+    public String getName() {
+        return this.name;
+    }
 
-	public PlayerColor getColor() {
-		return color;
-	}
+    public PlayerColor getColor() {
+        return color;
+    }
 }

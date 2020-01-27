@@ -92,61 +92,61 @@ public class DrawNewGameSettings extends JPanel implements ActionListener, TextL
         }
     }
 
-	/**
-	 * Method responsible for changing the options which can make a player when he
-	 * want to start new local game
-	 *
-	 * @param e where is saving data of performed action
-	 */
-	public void actionPerformed(ActionEvent e) {
-		Object target = e.getSource();
-		if (target == this.oponentComp) // toggle enabled of controls depends of oponent (if computer)
-		{
-			this.computerLevel.setEnabled(true);// enable level of computer abilities
-			this.secondName.setEnabled(false);// disable field with name of player2
-		} else if (target == this.oponentHuman) // else if oponent will be HUMAN
-		{
-			this.computerLevel.setEnabled(false);// disable level of computer abilities
-			this.secondName.setEnabled(true);// enable field with name of player2
-		} else if (target == this.okButton) // if clicked OK button (on finish)
-		{
-			if (this.firstName.getText().length() > 9) {// make names short to 10 digits
-				this.firstName.setText(this.trimString(firstName, 9));
-			}
-			if (this.secondName.getText().length() > 9) {// make names short to 10 digits
-				this.secondName.setText(this.trimString(secondName, 9));
-			}
-			if (this.thirdName.getText().length() > 9) {// make names short to 10 digits
-				this.thirdName.setText(this.trimString(thirdName, 9));
-			}
-			if (this.firstName.getText().length() == 0 || this.secondName.getText().length() == 0 || this.thirdName.getText().length() == 0) {
-				JOptionPane.showMessageDialog(this, GameModel.getTexts("fill_names"));
-				return;
-			}
-			if (this.firstName.getText().length() == 0) {
-				JOptionPane.showMessageDialog(this, GameModel.getTexts("fill_name"));
-				return;
-			}
-			JChessApp.getApplication().show(JChessApp.jcv);
-			IGameController newGUI = JChessApp.jcv.addNewTab(this.firstName.getText() + " vs " + this.secondName.getText() + " vs " + this.thirdName.getText());
-			IGameModel gameModel = newGUI.getGameModel();// sett local gameModel variable
-			Player pl1 = gameModel.getPlayerWhite();// set local player variable
-			Player pl2 = gameModel.getPlayerBlack();// set local player variable
-			Player pl3 = gameModel.getPlayerGray();// set local player variable
-			gameModel.setGameMode(GameModel.gameModes.newGame);
-			// if(this.firstName.getText().length() >9 )
-			// this.firstName.setText(this.firstName.getText(0,8));
-			if (this.color.getActionCommand().equals("biały")) // if first player is white
-			{
-				pl1.setName(this.firstName.getText());// set name of player
-				pl2.setName(this.secondName.getText());// set name of player
-				pl3.setName(this.thirdName.getText());// set name of player
-			} else // else change names
-			{
-				pl2.setName(this.firstName.getText());// set name of player
-				pl1.setName(this.secondName.getText());// set name of player
-				pl3.setName(this.thirdName.getText());// set name of player
-			}
+    /**
+     * Method responsible for changing the options which can make a player when he
+     * want to start new local game
+     *
+     * @param e where is saving data of performed action
+     */
+    public void actionPerformed(ActionEvent e) {
+        Object target = e.getSource();
+        if (target == this.oponentComp) // toggle enabled of controls depends of oponent (if computer)
+        {
+            this.computerLevel.setEnabled(true);// enable level of computer abilities
+            this.secondName.setEnabled(false);// disable field with name of player2
+        } else if (target == this.oponentHuman) // else if oponent will be HUMAN
+        {
+            this.computerLevel.setEnabled(false);// disable level of computer abilities
+            this.secondName.setEnabled(true);// enable field with name of player2
+        } else if (target == this.okButton) // if clicked OK button (on finish)
+        {
+            if (this.firstName.getText().length() > 9) {// make names short to 10 digits
+                this.firstName.setText(this.trimString(firstName, 9));
+            }
+            if (this.secondName.getText().length() > 9) {// make names short to 10 digits
+                this.secondName.setText(this.trimString(secondName, 9));
+            }
+            if (this.thirdName.getText().length() > 9) {// make names short to 10 digits
+                this.thirdName.setText(this.trimString(thirdName, 9));
+            }
+            if (this.firstName.getText().length() == 0 || this.secondName.getText().length() == 0 || this.thirdName.getText().length() == 0) {
+                JOptionPane.showMessageDialog(this, GameModel.getTexts("fill_names"));
+                return;
+            }
+            if (this.firstName.getText().length() == 0) {
+                JOptionPane.showMessageDialog(this, GameModel.getTexts("fill_name"));
+                return;
+            }
+            JChessApp.getApplication().show(JChessApp.jcv);
+            IGameController newGUI = JChessApp.jcv.addNewTab(this.firstName.getText() + " vs " + this.secondName.getText() + " vs " + this.thirdName.getText());
+            IGameModel gameModel = newGUI.getGameModel();// sett local gameModel variable
+            Player pl1 = gameModel.getPlayerWhite();// set local player variable
+            Player pl2 = gameModel.getPlayerBlack();// set local player variable
+            Player pl3 = gameModel.getPlayerGray();// set local player variable
+            gameModel.setGameMode(GameModel.gameModes.newGame);
+            // if(this.firstName.getText().length() >9 )
+            // this.firstName.setText(this.firstName.getText(0,8));
+            if (this.color.getActionCommand().equals("biały")) // if first player is white
+            {
+                pl1.setName(this.firstName.getText());// set name of player
+                pl2.setName(this.secondName.getText());// set name of player
+                pl3.setName(this.thirdName.getText());// set name of player
+            } else // else change names
+            {
+                pl2.setName(this.firstName.getText());// set name of player
+                pl1.setName(this.secondName.getText());// set name of player
+                pl3.setName(this.thirdName.getText());// set name of player
+            }
 
 
             if (this.timeGame.isSelected()) // if timeGame is checked
