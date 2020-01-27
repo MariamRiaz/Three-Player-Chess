@@ -99,7 +99,7 @@ public class MoveEvaluator {
         Piece attackedPiece = next.getPiece();
         if (attackedPiece != null) {
             return moveEffectsBuilder
-                    .addStateChange(attackedPiece, attackedPiece.clone().addBuff(new Buff(BuffType.Confusion, 1)));
+                    .addStateChange(attackedPiece, attackedPiece.clone().addBuff(new Buff(BuffType.Confusion, 2)));
         }
         return null;
     }
