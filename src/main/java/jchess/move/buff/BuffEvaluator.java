@@ -2,6 +2,7 @@ package jchess.move.buff;
 
 import jchess.controller.IChessboardController;
 import jchess.controller.IMoveHistoryController;
+import jchess.controller.RoundChessboardController;
 import jchess.entities.Square;
 import jchess.helper.MoveEvaluator;
 import jchess.move.effects.MoveEffect;
@@ -43,7 +44,7 @@ public class BuffEvaluator {
 
     private void evaluateConfusion(Square square) {
         HashSet<MoveEffect> mes =
-                new MoveEvaluator(chessboard).getValidTargetSquaresToSavePiece(square.getPiece(), chessboard.getCrucialPieces(square.getPiece().getPlayer()));
+                new MoveEvaluator((RoundChessboardController) chessboard).getValidTargetSquaresToSavePiece(square.getPiece(), chessboard.getCrucialPieces(square.getPiece().getPlayer()));
 
         MoveEffect temp = (MoveEffect) mes.toArray()[new Random().nextInt(mes.size())];
         MoveEffect randomMove = new MoveEffectsBuilder(temp).setFromMove(false).build();

@@ -23,6 +23,4 @@ public interface SquareView {
 
     double getRightBound();
 
-    double getCenterPoint();
-
 }

@@ -140,7 +140,7 @@ public class MoveHistoryController implements IMoveHistoryController {
         return this.moveHistoryView.getScrollPane();
     }
 
-    public ArrayList<String> getMoves() {
+    public List<String> getMoves() {
         return moveHistoryModel.getMove();
     }
 
