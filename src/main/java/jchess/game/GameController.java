@@ -184,12 +184,9 @@ public class GameController implements IGameController {
         if (gameModel.isBlockedChessboard()) return;
         if (square == null) return;
         if (chessboardController.getActiveSquare() != null) {
-            if (didSelectSameSquare(square)) {
+            /*if (didSelectSameSquare(square)) {
                 chessboardController.unselect();
-            } else if (didSelectOwnPiece(square)) {
-                chessboardController.unselect();
-                chessboardController.select(square);
-            } else if (didSelectPossibleMove(square)) {
+            } else */if (didSelectPossibleMove(square)) {
                 chessboardController.move(chessboardController.getActiveSquare(), square, true, true);
                 chessboardController.unselect();
                 applyBuffs();
@@ -197,6 +194,9 @@ public class GameController implements IGameController {
                 if (isCheckMate()) {
                     this.endGame("Checkmate! " + gameModel.getActivePlayer().getName() + " player won!");
                 }
+            } else if (didSelectOwnPiece(square)) {
+                chessboardController.unselect();
+                chessboardController.select(square);
             }
         } else if (didSelectOwnPiece(square)) {
             chessboardController.select(square);

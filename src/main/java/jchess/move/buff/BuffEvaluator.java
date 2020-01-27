@@ -32,7 +32,7 @@ public class BuffEvaluator implements IBuffEvaluator {
                 if (piece != null)
                     if (piece.getPlayer().equals(activePlayer))
                         for (Buff buff : square.getPiece().getActiveBuffs())
-                            evaluateBuff(square, buff);
+                            applyBuffEffect(evaluateBuff(square, buff));
             }
             
         for (Square square : chessboard.getSquares())
@@ -44,25 +44,42 @@ public class BuffEvaluator implements IBuffEvaluator {
             }
     }
 
-    private void evaluateBuff(Square square, Buff buff) {
+    private MoveEffect evaluateBuff(Square square, Buff buff) {
         if (buff.getType().equals(BuffType.Confusion))
-            evaluateConfusion(square);
+            return evaluateConfusion(square);
         else if (buff.getType().equals(BuffType.ImminentExplosion))
-        	evaluateImminentExplosion(square, buff);
+        	return evaluateImminentExplosion(square, buff);
+        
+        return null;
+    }
+    
+    private void applyBuffEffect(MoveEffect buffEffect) {
+    	if (buffEffect == null)
+    		return;
+    	
+        chessboard.apply(buffEffect);
+        history.addMove(buffEffect, true, false);
     }
 
-    private void evaluateConfusion(Square square) {
+    private MoveEffect evaluateConfusion(Square square) {
         HashSet<MoveEffect> mes = moveEvaluator.getValidTargetSquaresToSavePiece(square.getPiece(), chessboard.getCrucialPieces(square.getPiece().getPlayer()));
         MoveEffect temp = (MoveEffect) mes.toArray()[new Random().nextInt(mes.size())];
         MoveEffect randomMove = new MoveEffectsBuilder(temp).setFromMove(false).build();
-        chessboard.apply(randomMove);
-
-        history.addMove(randomMove, true, false);
+        
+        return randomMove;
     }
     
-    private void evaluateImminentExplosion(Square square, Buff buff) {
+    private MoveEffect evaluateImminentExplosion(Square square, Buff buff) {
     	if (buff.getRemainingTicks() > 1)
-    		return;
+    		return null;
     	
+    	MoveEffectsBuilder meb = new MoveEffectsBuilder(square.getPiece(), square, square, null, false);
+
+    	final HashSet<Square> squares = chessboard.getModel().getSquaresBetween(chessboard.getSquare(square.getPozX() + 1,  square.getPozY() + 1),
+    			chessboard.getSquare(square.getPozX() - 1, square.getPozY() - 1));
+    	for (Square sq : squares) 
+    		meb.addPosChange(sq, null);
+    	
+    	return meb.build();
     }
 }
