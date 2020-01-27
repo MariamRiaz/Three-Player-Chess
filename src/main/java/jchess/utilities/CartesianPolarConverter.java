@@ -1,4 +1,4 @@
-package jchess.helper;
+package jchess.utilities;
 
 import jchess.entities.PolarPoint;
 

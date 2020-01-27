@@ -15,7 +15,7 @@ import java.util.logging.Level;
 import com.google.gson.JsonParser;
 
 import jchess.JChessApp;
-import jchess.helper.Log;
+import jchess.utilities.Log;
 
 /*
 * A factory class to generate specific pre-defined Pieces.

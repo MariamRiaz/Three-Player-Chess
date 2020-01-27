@@ -1,6 +1,6 @@
 package jchessTest;
 
-import jchess.helper.RoundChessboardLoader;
+import jchess.controller.loaders.RoundChessboardLoader;
 import jchess.model.GameModel;
 import jchess.controller.MoveHistoryController;
 import jchess.entities.Player;

@@ -6,7 +6,7 @@ import java.util.Random;
 import jchess.controller.MoveHistoryController;
 import jchess.controller.RoundChessboardController;
 import jchess.entities.Square;
-import jchess.helper.MoveEvaluator;
+import jchess.controller.MoveEvaluator;
 import jchess.move.effects.MoveEffect;
 import jchess.move.effects.MoveEffectsBuilder;
 

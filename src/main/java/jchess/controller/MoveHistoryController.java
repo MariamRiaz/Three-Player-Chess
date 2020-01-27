@@ -22,7 +22,7 @@ package jchess.controller;
 
 import jchess.model.GameModel;
 import jchess.entities.Square;
-import jchess.helper.Log;
+import jchess.utilities.Log;
 import jchess.model.MoveHistoryModel;
 import jchess.move.Move;
 import jchess.move.MoveType;

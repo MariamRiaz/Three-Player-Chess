@@ -1,4 +1,4 @@
-package jchess.helper;
+package jchess.controller;
 
 import java.util.HashSet;
 import java.util.Iterator;

@@ -4,8 +4,8 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.util.logging.Level;
 
-import jchess.helper.ResourceLoader;
-import jchess.helper.Log;
+import jchess.controller.loaders.ResourceLoader;
+import jchess.utilities.Log;
 import jchess.view.gameview.chessboardview.RoundChessboardView;
 
 /**

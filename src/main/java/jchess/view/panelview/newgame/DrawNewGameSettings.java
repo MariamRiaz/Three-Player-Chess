@@ -17,7 +17,7 @@
  * Authors:
  * Mateusz Sławomir Lach ( matlak, msl )
  */
-package jchess.view.panelview.jchessview.newgame;
+package jchess.view.panelview.newgame;
 
 import javax.swing.*;
 import java.awt.event.ActionListener;
@@ -31,7 +31,7 @@ import javax.swing.text.BadLocationException;
 import jchess.controller.GameController;
 import jchess.model.GameModel;
 import jchess.JChessApp;
-import jchess.helper.Log;
+import jchess.utilities.Log;
 import jchess.entities.Player;
 
 /**

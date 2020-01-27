@@ -15,8 +15,8 @@
 
 package jchess;
 
-import jchess.helper.Log;
-import jchess.view.panelview.jchessview.JChessView;
+import jchess.utilities.Log;
+import jchess.view.panelview.JChessView;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
 

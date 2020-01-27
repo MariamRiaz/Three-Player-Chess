@@ -18,7 +18,7 @@
  *
  * Created on 2009-10-20, 15:11:49
  */
-package jchess.view.panelview.jchessview.newgame;
+package jchess.view.panelview.newgame;
 
 import javax.swing.*;
 

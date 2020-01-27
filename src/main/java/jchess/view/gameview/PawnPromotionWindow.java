@@ -23,7 +23,7 @@ package jchess.view.gameview;
 import java.awt.*;
 import javax.swing.*;
 
-import jchess.helper.ResourceLoader;
+import jchess.controller.loaders.ResourceLoader;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;

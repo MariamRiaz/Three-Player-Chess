@@ -1,6 +1,6 @@
 package jchessTest;
 
-import jchess.helper.CartesianPolarConverter;
+import jchess.utilities.CartesianPolarConverter;
 import jchess.entities.PolarPoint;
 import org.junit.Test;
 

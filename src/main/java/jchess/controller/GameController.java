@@ -22,8 +22,8 @@ package jchess.controller;
 
 import jchess.controller.gameclock.GameClock;
 import jchess.entities.Square;
-import jchess.helper.Log;
-import jchess.helper.RoundChessboardLoader;
+import jchess.utilities.Log;
+import jchess.controller.loaders.RoundChessboardLoader;
 import jchess.model.GameModel;
 import jchess.move.buff.BuffEvaluator;
 import jchess.pieces.Piece;

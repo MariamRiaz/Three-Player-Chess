@@ -23,7 +23,7 @@ package jchess.controller.gameclock;
 import java.util.logging.Level;
 
 import jchess.controller.GameController;
-import jchess.helper.Log;
+import jchess.utilities.Log;
 import jchess.model.GameModel;
 import jchess.view.gameview.gameclockview.GameClockView;
 

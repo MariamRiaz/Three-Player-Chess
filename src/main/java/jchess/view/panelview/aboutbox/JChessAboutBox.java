@@ -13,7 +13,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package jchess.view.panelview.jchessview.aboutbox;
+package jchess.view.panelview.aboutbox;
 
 import org.jdesktop.application.Action;
 import org.jdesktop.application.Application;

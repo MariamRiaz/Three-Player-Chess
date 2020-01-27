@@ -1,10 +1,10 @@
 package jchess.view.gameview.chessboardview;
 
-import jchess.helper.Images;
-import jchess.helper.ResourceLoader;
-import jchess.helper.Log;
+import jchess.model.Images;
+import jchess.controller.loaders.ResourceLoader;
+import jchess.utilities.Log;
 import jchess.entities.Square;
-import jchess.helper.CartesianPolarConverter;
+import jchess.utilities.CartesianPolarConverter;
 import jchess.pieces.Piece;
 import jchess.pieces.PieceVisual;
 import jchess.entities.PolarPoint;

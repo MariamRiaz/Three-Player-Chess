@@ -1,6 +1,6 @@
 package jchess.entities;
 
-import jchess.helper.Images;
+import jchess.model.Images;
 
 public enum PlayerColor {
 

@@ -21,7 +21,6 @@
 package jchess.model;
 
 import jchess.entities.Player;
-import jchess.helper.Images;
 
 import java.io.Serializable;
 import java.util.PropertyResourceBundle;

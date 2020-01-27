@@ -1,4 +1,4 @@
-package jchess.helper;
+package jchess.controller.loaders;
 
 import java.io.BufferedReader;
 import java.io.IOException;
