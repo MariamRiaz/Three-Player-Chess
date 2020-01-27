@@ -9,7 +9,6 @@ import jchess.helper.CartesianPolarConverter;
 import jchess.helper.Images;
 import jchess.helper.MoveEvaluator;
 import jchess.helper.RoundChessboardLoader;
-import jchess.model.IChessboardModel;
 import jchess.model.IGameModel;
 import jchess.model.RoundChessboardModel;
 import jchess.move.effects.MoveEffect;
@@ -33,7 +32,7 @@ import java.util.Queue;
  * Class that represents the interaction interface for the RoundChessboard component
  */
 public class RoundChessboardController implements IChessboardController {
-    private IChessboardModel model;
+    private RoundChessboardModel model;
     private AbstractChessboardView view;
     private Square activeSquare;
     private SquareObservable squareObservable;
@@ -374,6 +373,6 @@ public class RoundChessboardController implements IChessboardController {
     }
 
     public RoundChessboardModel getModel() {
-        return (RoundChessboardModel) model;
+        return model;
     }
 }

@@ -3,6 +3,7 @@ package jchess.controller;
 import jchess.entities.Player;
 import jchess.entities.Square;
 import jchess.model.IChessboardModel;
+import jchess.model.RoundChessboardModel;
 import jchess.move.effects.MoveEffect;
 import jchess.pieces.Piece;
 import jchess.view.AbstractChessboardView;
@@ -51,5 +52,7 @@ public interface IChessboardController extends MouseListener {
     Square getSquareFromClick(int x, int y);
 
     Square getSquare(int x, int y);
+
+    IChessboardModel getModel();
 
 }

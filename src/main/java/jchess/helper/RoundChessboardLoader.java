@@ -23,7 +23,7 @@ public class RoundChessboardLoader {
     private static final String boardsFolder = "boards", defaultBoardFile = "circle_rim.json";
     private static final URL defaultBoardPath = JChessApp.class.getClassLoader().getResource(boardsFolder + "/" + defaultBoardFile);
 
-    private IChessboardModel model = null;
+    private RoundChessboardModel model = null;
     private ArrayList<Character> columnNames = new ArrayList<>();
 
     /**
@@ -32,7 +32,7 @@ public class RoundChessboardLoader {
      * @param gameModel The GameModel with the Players to use.
      * @return The loaded model or null if loading failed.
      */
-    public IChessboardModel loadDefaultFromJSON(IGameModel gameModel) {
+    public RoundChessboardModel loadDefaultFromJSON(IGameModel gameModel) {
         return loadFromJSON(defaultBoardPath, gameModel);
     }
 
@@ -42,7 +42,7 @@ public class RoundChessboardLoader {
      * @param gameModel The GameModel with the Players to use.
      * @return The loaded model or null if loading failed.
      */
-    private IChessboardModel loadFromJSON(URL boardPath, IGameModel gameModel) {
+    private RoundChessboardModel loadFromJSON(URL boardPath, IGameModel gameModel) {
         model = null;
 
         try {
