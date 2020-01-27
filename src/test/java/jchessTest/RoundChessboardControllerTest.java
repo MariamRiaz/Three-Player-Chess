@@ -13,9 +13,11 @@ import jchess.pieces.Piece;
 import jchess.pieces.PieceLoader;
 import jchess.game.chessboard.view.RoundChessboardView;
 import org.junit.Before;
+import org.junit.Test;
 
 import java.util.ArrayList;
 
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
