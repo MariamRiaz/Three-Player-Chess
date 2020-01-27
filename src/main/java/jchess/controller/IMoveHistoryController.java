@@ -4,6 +4,7 @@ import jchess.move.effects.MoveEffect;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Queue;
 
 public interface IMoveHistoryController {
@@ -14,7 +15,7 @@ public interface IMoveHistoryController {
 
     JScrollPane getScrollPane();
 
-    ArrayList<String> getMoves();
+    List<String> getMoves();
 
     Queue<MoveEffect> undo();
 

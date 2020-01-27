@@ -11,6 +11,7 @@ import jchess.helper.MoveEvaluator;
 import jchess.helper.RoundChessboardLoader;
 import jchess.model.IChessboardModel;
 import jchess.model.IGameModel;
+import jchess.model.RoundChessboardModel;
 import jchess.move.effects.MoveEffect;
 import jchess.move.effects.PositionChange;
 import jchess.move.effects.StateChange;
@@ -372,7 +373,7 @@ public class RoundChessboardController implements IChessboardController {
         return model.getSquare(x, y);
     }
 
-    public IChessboardModel getModel() {
-        return model;
+    public RoundChessboardModel getModel() {
+        return (RoundChessboardModel) model;
     }
 }

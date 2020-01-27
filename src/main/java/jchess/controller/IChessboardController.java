@@ -51,6 +51,4 @@ public interface IChessboardController extends MouseListener {
     Square getSquareFromClick(int x, int y);
 
     Square getSquare(int x, int y);
-
-    IChessboardModel getModel();
 }

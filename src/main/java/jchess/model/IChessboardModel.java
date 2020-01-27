@@ -21,10 +21,6 @@ public interface IChessboardModel {
 
     boolean isInPromotionArea(Square square);
 
-    boolean getHasContinuousRows();
-
-    boolean getInnerRimConnected();
-
     Square getSquare(Piece piece);
 
     Square getSquare(int id);
