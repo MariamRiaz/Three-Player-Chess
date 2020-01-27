@@ -20,22 +20,23 @@
  */
 package jchess.controller;
 
-import java.util.logging.Level;
-
-import jchess.helper.Log;
-import jchess.model.GameModel;
 import jchess.helper.GameRoundTimer;
+import jchess.helper.Log;
+import jchess.model.IGameModel;
+import jchess.view.AbstractGameClockView;
 import jchess.view.GameClockView;
+
+import java.util.logging.Level;
 
 /**
  * Class to represent the full game clock logic interacts with game clock view to generate the clocks on the game window
  */
-public class GameClock implements Runnable {
+public class GameClock implements IGameClock {
 
-    private GameModel gameModel;
+    private IGameModel gameModel;
     private Thread thread;
-    private GameController gameController;
-    private GameClockView gameClockView;
+    private IGameController gameController;
+    private AbstractGameClockView gameClockView;
     private GameRoundTimer runningClock;
     private int totalPlayerTimeLimit;
     private int timeSpentByPlayers[];
@@ -45,7 +46,7 @@ public class GameClock implements Runnable {
     /**
      * @param gameController The current gameController
      */
-    public GameClock(GameController gameController) {
+    public GameClock(IGameController gameController) {
         super();
         gameClockView = new GameClockView(gameController);
         this.runningClock = new GameRoundTimer();
@@ -55,12 +56,12 @@ public class GameClock implements Runnable {
         activePlayer = PlayerColors.WHITE;
         this.setTimes(time);
 		this.thread = new Thread(this);
-		if (this.gameModel.timeLimitSet) {
+		if (this.gameModel.getTimeLimitSet()) {
 			thread.start();
 		}
 	}
 
-	public GameClockView getGameClockView() {
+	public AbstractGameClockView getGameClockView() {
 		return gameClockView;
 	}
 
@@ -86,7 +87,7 @@ public class GameClock implements Runnable {
 		}
 	}
 
-	void switchPlayers(boolean forward) {
+	public void switchPlayers(boolean forward) {
 		if (forward) {
 			if (this.activePlayer == PlayerColors.WHITE) {
 				this.activePlayer = PlayerColors.BLACK;

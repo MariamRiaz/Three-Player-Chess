@@ -14,7 +14,7 @@ import java.util.logging.Level;
 /**
  * Class that holds the state of the RoundChessboard component
  */
-public class RoundChessboardModel {
+public class RoundChessboardModel implements IChessboardModel {
     private List<Square> squares;
     private HashSet<Piece> crucialPieces = new HashSet<>();
     private int squaresPerRow;

@@ -1,12 +1,11 @@
 package jchess.pieces;
 
-import java.awt.Graphics;
-import java.awt.Image;
-import java.util.logging.Level;
-
-import jchess.helper.ResourceLoader;
 import jchess.helper.Log;
-import jchess.view.RoundChessboardView;
+import jchess.helper.ResourceLoader;
+import jchess.view.AbstractChessboardView;
+
+import java.awt.*;
+import java.util.logging.Level;
 
 /**
  * Class to represent the visual of a Piece.
@@ -33,7 +32,7 @@ public class PieceVisual {
 	 * @param height The height for the PieceVisual image.
 	 * @param view The view where the image will be drawn
 	 */
-	public final void draw(Graphics g, int x, int y, int width, int height, RoundChessboardView view) {
+	public final void draw(Graphics g, int x, int y, int width, int height, AbstractChessboardView view) {
 		try {
 			if (image != null && g != null) {
 				g.drawImage(image, x, y, width, height, view);
