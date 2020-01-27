@@ -56,9 +56,10 @@ public class PieceVisual {
 
     private void drawBuffs(Graphics graphics, int x, int y, int width, int height) {
         buffList.forEach(b -> {
-            if (b.getType().equals(BuffType.Confusion)) {
+            if (b.getType().equals(BuffType.Confusion))
                 graphics.setColor(Color.green);
-            }
+            else if (b.getType().equals(BuffType.ImminentExplosion))
+            	graphics.setColor(Color.red);
 
             drawDots(graphics, x, y, width, height, b.getRemainingTicks());
         });

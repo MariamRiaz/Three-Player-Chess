@@ -243,13 +243,14 @@ public class RoundChessboardController implements IChessboardController {
 
     public void apply(MoveEffect me) {
         for (PositionChange ent : me.getPositionChanges()) {
-            if (view != null) {
+            if (view != null)
                 view.removeVisual(model.getSquare(ent.getPiece()));
-            }
+                
             model.setPieceOnSquare(ent.getPiece(), ent.getSquare());
             if (view != null) {
-                Square square = ent.getSquare();
-                view.setVisual(square.getPiece(), square.getPozX(), square.getPozY());
+                final Square square = ent.getSquare();
+                if (square != null)
+                	view.setVisual(square.getPiece(), square.getPozX(), square.getPozY());
             }
         }
 
@@ -283,9 +284,9 @@ public class RoundChessboardController implements IChessboardController {
         }
 
         for (PositionChange ent : me.getPositionChangesReverse()) {
-            if (view != null) {
+            if (view != null)
                 view.removeVisual(model.getSquare(ent.getPiece()));
-            }
+            
             model.setPieceOnSquare(ent.getPiece(), ent.getSquare());
             if (view != null) {
                 Square square = ent.getSquare();

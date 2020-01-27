@@ -43,13 +43,13 @@ public class MoveEffectsBuilder {
 	}
 
 	public MoveEffectsBuilder addPosChange(Square firstSquare, Square secondSquare) {
-		if (firstSquare == null || secondSquare == null || firstSquare.getPiece() == null)
+		if (firstSquare == null || firstSquare.getPiece() == null)
 			return this;
 			
 		positionChanges.add(new PositionChange(firstSquare.getPiece(), secondSquare));
 		positionChangesReversed.add(new PositionChange(firstSquare.getPiece(), firstSquare));
 		
-		if (secondSquare.getPiece() != null)
+		if (secondSquare != null && secondSquare.getPiece() != null)
 			positionChangesReversed.add(new PositionChange(secondSquare.getPiece(), secondSquare));
 		
 		return this;

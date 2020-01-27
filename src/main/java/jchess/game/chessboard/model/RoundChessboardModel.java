@@ -196,17 +196,13 @@ public class RoundChessboardModel implements IChessboardModel {
      * @param square    Square  square where to put the piece on
      * @return          Piece   after setting it on the Square
      */
-    public Piece setPieceOnSquare(Piece piece, Square square) {
-        if (square == null) {
-            Log.log(Level.WARNING, "Piece was not set on square because square is null");
-            return null;
-        }
-        
+    public Piece setPieceOnSquare(Piece piece, Square square) {        
         Square prev = getSquare(piece);
         if (prev != null)
         	prev.setPiece(null);
         
-        square.setPiece(piece);
+        if (square != null)
+        	square.setPiece(piece);
         return piece;
     }
     
