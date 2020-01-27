@@ -3,6 +3,7 @@ package jchess.pieces;
 import jchess.game.chessboard.view.RoundChessboardView;
 import jchess.io.ResourceLoader;
 import jchess.logging.Log;
+import jchess.move.buff.Buff;
 import jchess.move.buff.BuffType;
 
 import java.awt.*;
@@ -15,7 +16,7 @@ import java.util.logging.Level;
 public class PieceVisual {
     private final Image image;
 
-    private List<BuffType> buffList;
+    private List<Buff> buffList;
 
     /**
      * Creates a new PieceVisual instance.
@@ -55,10 +56,58 @@ public class PieceVisual {
 
     private void drawBuffs(Graphics graphics, int x, int y, int width, int height) {
         buffList.forEach(b -> {
-            if (b.equals(BuffType.Confusion)) {
+            if (b.getType().equals(BuffType.Confusion)) {
                 graphics.setColor(Color.green);
-                graphics.fillOval(x + width / 2, y + width / 2, width / 5, height / 5);
             }
+
+            drawDots(graphics, x, y, width, height, b.getRemainingTicks());
         });
+    }
+
+    private void drawOneDot(Graphics g, int x, int y, int width, int height) {
+        int dotHeight = height / 6;
+        int dotWidth = width / 6;
+        int dotX = x + width / 2 - dotWidth / 2;
+        int dotY = y + height / 2 - dotHeight / 2;
+        g.fillOval(dotX, dotY, dotWidth, dotHeight);
+    }
+
+    private void drawTwoDots(Graphics g, int x, int y, int width, int height) {
+        int dotHeight = height / 6;
+        int dotWidth = width / 6;
+        int dotX = x + width / 2 - dotWidth / 2;
+        int dotY = y + height / 2;
+        g.fillOval(dotX, dotY, dotWidth, dotHeight);
+        int secondDotY = dotY - dotHeight;
+        g.fillOval(dotX, secondDotY, dotWidth, dotHeight);
+    }
+
+    private void drawThreeDots(Graphics g, int x, int y, int width, int height) {
+        int dotHeight = height / 6;
+        int dotWidth = width / 6;
+        int dotX = x + width / 2 - dotWidth / 2;
+        int dotY = y + height / 2;
+        g.fillOval(dotX, dotY, dotWidth, dotHeight);
+        int otherDotsY = dotY - dotHeight;
+        int secondDotX = dotX - dotWidth / 2;
+        g.fillOval(secondDotX, otherDotsY, dotWidth, dotHeight);
+        int thirdDotX = dotX + dotWidth / 2;
+        g.fillOval(thirdDotX, otherDotsY, dotWidth, dotHeight);
+
+    }
+
+    private void drawDots(Graphics g, int x, int y, int width, int height, int number) {
+        switch (number) {
+            case 1:
+                drawOneDot(g, x, y, width, height);
+                break;
+            case 2:
+                drawTwoDots(g, x, y, width, height);
+                break;
+            case 3:
+                drawThreeDots(g, x, y, width, height);
+            default:
+                break;
+        }
     }
 }

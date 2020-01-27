@@ -169,10 +169,9 @@ public class Piece {
 		buffs.removeIf(Buff::isWornOff);
 	}
 	
-	public List<BuffType> getActiveBuffs() {
-		ArrayList<BuffType> retVal = new ArrayList<>();
-		for (Buff buff : this.buffs)
-			retVal.add(buff.getType());
+	public List<Buff> getActiveBuffs() {
+		ArrayList<Buff> retVal = new ArrayList<>();
+		retVal.addAll(this.buffs);
 		
 		return retVal;
 	}

@@ -36,7 +36,9 @@ public class Buff {
 		return remainingTicks < 1;
 	}
 
-
+    public int getRemainingTicks() {
+        return remainingTicks;
+    }
 
     public void tick() {
         remainingTicks -= 1;

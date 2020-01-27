@@ -31,7 +31,7 @@ public class BuffEvaluator implements IBuffEvaluator {
                 Piece piece = square.getPiece();
                 if (piece != null) {
                     if (piece.getPlayer().equals(activePlayer)) {
-                        for (BuffType buff : square.getPiece().getActiveBuffs())
+                        for (Buff buff : square.getPiece().getActiveBuffs())
                             evaluateBuff(square, buff);
                     }
                 }
@@ -49,8 +49,8 @@ public class BuffEvaluator implements IBuffEvaluator {
         }
     }
 
-    private void evaluateBuff(Square square, BuffType buff) {
-        if (buff == BuffType.Confusion) {
+    private void evaluateBuff(Square square, Buff buff) {
+        if (buff.getType().equals(BuffType.Confusion)) {
             evaluateConfusion(square);
         }
     }
