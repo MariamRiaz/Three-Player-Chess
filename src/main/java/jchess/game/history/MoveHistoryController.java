@@ -103,12 +103,12 @@ public class MoveHistoryController implements IMoveHistoryController {
     public void addMove(MoveEffect moveEffects, boolean registerInHistory, boolean registerInTable) {
         if (registerInTable) {
             HashMap<String, String> values = new HashMap<String, String>() {{
-                put(Move.formatStringPiece, moveEffects.getMoving().getDefinition().getSymbol());
-                put(Move.formatStringFrom, getPosition(moveEffects.getFrom()));
-                put(Move.formatStringTo, getPosition(moveEffects.getTrigger()));
+                put(Move.formatStringPiece, moveEffects.getPiece().getDefinition().getSymbol());
+                put(Move.formatStringFrom, getPosition(moveEffects.getFromSquare()));
+                put(Move.formatStringTo, getPosition(moveEffects.getToSquare()));
             }};
 
-            String formatString = moveEffects.getMove().getFormatString(moveEffects.getFlag());
+            String formatString = moveEffects.getMove().getFormatString(moveEffects.getMoveType());
             if (formatString == null)
                 formatString = moveEffects.getMove().getFormatString(MoveType.OnlyMove);
             if (formatString == null)
@@ -141,7 +141,7 @@ public class MoveHistoryController implements IMoveHistoryController {
     }
 
     public Queue<MoveEffect> undo() {
-        Queue<MoveEffect> retVal = new PriorityQueue<>();
+        Queue<MoveEffect> retVal = new LinkedList<>();
 
         MoveEffect toAdd = null;
         while ((toAdd = undoOne()) != null) {
@@ -187,7 +187,7 @@ public class MoveHistoryController implements IMoveHistoryController {
     }
 
     public Queue<MoveEffect> redo() {
-        Queue<MoveEffect> retVal = new PriorityQueue<>();
+        Queue<MoveEffect> retVal = new LinkedList<>();
 
         MoveEffect toAdd = null;
         while ((toAdd = redoOne()) != null) {
@@ -195,7 +195,6 @@ public class MoveHistoryController implements IMoveHistoryController {
                 undoOne();
                 break;
             }
-
             retVal.add(toAdd);
         }
 

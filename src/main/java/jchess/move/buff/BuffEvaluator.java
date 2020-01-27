@@ -1,11 +1,13 @@
 package jchess.move.buff;
 
 import jchess.game.chessboard.controller.IChessboardController;
-import jchess.game.history.IMoveHistoryController;
 import jchess.game.chessboard.model.Square;
-import jchess.move.effects.MoveEffect;
+import jchess.game.history.IMoveHistoryController;
+import jchess.game.player.Player;
 import jchess.move.IMoveEvaluator;
+import jchess.move.effects.MoveEffect;
 import jchess.move.effects.MoveEffectsBuilder;
+import jchess.pieces.Piece;
 
 import java.util.HashSet;
 import java.util.Random;
@@ -13,35 +15,44 @@ import java.util.Random;
 public class BuffEvaluator implements IBuffEvaluator {
     private final IChessboardController chessboard;
     private final IMoveHistoryController history;
+    private final Player activePlayer;
     private IMoveEvaluator moveEvaluator;
 
-    public BuffEvaluator(IChessboardController controller, IMoveHistoryController history, IMoveEvaluator moveEvaluator) {
-        if (controller == null)
-            throw new NullPointerException("'model' of BuffEvaluator cannot be null.");
+    public BuffEvaluator(IChessboardController controller, IMoveHistoryController history, IMoveEvaluator moveEvaluator, Player activePlayer) {
         this.chessboard = controller;
-
-        if (history == null)
-            throw new NullPointerException("'model' of BuffEvaluator cannot be null.");
         this.history = history;
-
+        this.activePlayer = activePlayer;
         this.moveEvaluator = moveEvaluator;
     }
 
     public void evaluate() {
         for (Square square : chessboard.getSquares()) {
-            if (square == null || square.getPiece() == null)
-                continue;
-
-            for (BuffType buff : square.getPiece().getActiveBuffs())
-                evaluateBuff(square, buff);
-
-            square.getPiece().tickBuffs();
+            if (square != null) {
+                Piece piece = square.getPiece();
+                if (piece != null) {
+                    if (piece.getPlayer().equals(activePlayer)) {
+                        for (Buff buff : square.getPiece().getActiveBuffs())
+                            evaluateBuff(square, buff);
+                    }
+                }
+            }
+        }
+        for (Square square : chessboard.getSquares()) {
+            if (square != null) {
+                Piece piece = square.getPiece();
+                if (piece != null) {
+                    if (piece.getPlayer().equals(activePlayer)) {
+                        piece.tickBuffs();
+                    }
+                }
+            }
         }
     }
 
-    private void evaluateBuff(Square square, BuffType buff) {
-        if (buff == BuffType.Confusion)
+    private void evaluateBuff(Square square, Buff buff) {
+        if (buff.getType().equals(BuffType.Confusion)) {
             evaluateConfusion(square);
+        }
     }
 
     private void evaluateConfusion(Square square) {
