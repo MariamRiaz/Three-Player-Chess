@@ -21,8 +21,8 @@ public class RoundChessboardViewInitializer {
         this.rows = rows;
     }
 
-    public List<SquareView> createCells() {
-        List<SquareView> cells = new ArrayList<>();
+    public List<PolarSquareView> createCells() {
+        List<PolarSquareView> cells = new ArrayList<>();
 
         double degreesIncrement = 360.0 / rows;
         double degreesCenter = degreesIncrement / 2;

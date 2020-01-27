@@ -24,7 +24,7 @@ public abstract class AbstractChessboardView extends JPanel {
 
     public abstract void setVisual(Piece piece, int x, int y);
 
-    public abstract List<SquareView> getCells();
+    public abstract List<? extends SquareView> getCells();
 
     public abstract Point getCircleCenter();
 

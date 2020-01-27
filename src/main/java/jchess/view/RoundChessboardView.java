@@ -26,9 +26,9 @@ public class RoundChessboardView extends AbstractChessboardView {
     private int chessBoardSize;
     private Point topLeft = new Point(0, 0);
     private Set<Square> moves = new HashSet<>();
-    private List<SquareView> cells;
+    private List<PolarSquareView> cells;
     private Point circleCenter;
-    private SquareView activeCell;
+    private PolarSquareView activeCell;
 
     /**
      * Constructor
@@ -57,7 +57,7 @@ public class RoundChessboardView extends AbstractChessboardView {
      *
      * @return List of PolarCells
      */
-    public List<SquareView> getCells() {
+    public List<PolarSquareView> getCells() {
         return cells;
     }
 
@@ -75,8 +75,8 @@ public class RoundChessboardView extends AbstractChessboardView {
         this.cells = initializer.createCells();
     }
 
-    private void drawFigure(SquareView cell, PieceVisual visual, Graphics g) {
-        PolarSquareView polarSquareView = (PolarSquareView) cell;
+    private void drawFigure(PolarSquareView cell, PieceVisual visual, Graphics g) {
+        PolarSquareView polarSquareView = cell;
         CartesianPolarConverter converter = new CartesianPolarConverter();
         Point center = converter.getCartesianPointFromPolar(polarSquareView.getCenterPoint(), circleCenter);
         int figureSize = getImageSizeForCell(polarSquareView);
@@ -93,11 +93,10 @@ public class RoundChessboardView extends AbstractChessboardView {
         return Math.min(verticalSize, horizontalSize);
     }
 
-    private void drawImage(SquareView cell, Image image, Graphics g) {
-        PolarSquareView polarSquareView = (PolarSquareView) cell;
+    private void drawImage(PolarSquareView cell, Image image, Graphics g) {
         CartesianPolarConverter converter = new CartesianPolarConverter();
-        Point center = converter.getCartesianPointFromPolar(polarSquareView.getCenterPoint(), circleCenter);
-        int imageSize = getImageSizeForCell(polarSquareView);
+        Point center = converter.getCartesianPointFromPolar(cell.getCenterPoint(), circleCenter);
+        int imageSize = getImageSizeForCell(cell);
         g.drawImage(image, center.x - imageSize / 2, center.y - imageSize / 2, imageSize, imageSize, this);
     }
 
@@ -152,7 +151,7 @@ public class RoundChessboardView extends AbstractChessboardView {
 
             try {
                 for (Square move : moves) {
-                    SquareView cell = getCellByPosition(move.getPozX(), move.getPozY());
+                    PolarSquareView cell = getCellByPosition(move.getPozX(), move.getPozY());
                     drawImage(cell, ableSquareImage, g);
                 }
             } catch (NullPointerException e) {
@@ -162,7 +161,7 @@ public class RoundChessboardView extends AbstractChessboardView {
     }
 
     private void drawPieceVisuals(Graphics g) {
-        for (SquareView cell : cells) {
+        for (PolarSquareView cell : cells) {
             if (cell.getPieceVisual() != null) {
                 drawFigure(cell, cell.getPieceVisual(), g);
             }
@@ -216,7 +215,7 @@ public class RoundChessboardView extends AbstractChessboardView {
         removeVisual(square.getPozX(), square.getPozY());
     }
 
-    private SquareView getCellByPosition(int x, int y) {
+    private PolarSquareView getCellByPosition(int x, int y) {
         return cells.stream()
                 .filter(c -> c.getxIndex() == x && c.getyIndex() == y).findFirst().get();
     }

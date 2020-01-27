@@ -45,9 +45,6 @@ public class BuffEvaluator implements IBuffEvaluator {
     }
 
     private void evaluateConfusion(Square square) {
-//        HashSet<MoveEffect> mes =
-//                new MoveEvaluator(chessboard).getValidTargetSquaresToSavePiece(square.getPiece(), chessboard.getCrucialPieces(square.getPiece().getPlayer()));
-
         HashSet<MoveEffect> mes = moveEvaluator.getValidTargetSquaresToSavePiece(square.getPiece(), chessboard.getCrucialPieces(square.getPiece().getPlayer()));
         MoveEffect temp = (MoveEffect) mes.toArray()[new Random().nextInt(mes.size())];
         MoveEffect randomMove = new MoveEffectsBuilder(temp).setFromMove(false).build();
