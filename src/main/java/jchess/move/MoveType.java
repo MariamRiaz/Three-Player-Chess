@@ -10,5 +10,6 @@ public enum MoveType {
 	OnlyWhenFresh,
 	Castling, 
 	EnPassant,
-	ApplyConfusion
+	ApplyConfusion,
+	Explode
 }
