@@ -1,12 +1,12 @@
 package jchess.move.effects;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
 import jchess.entities.Square;
 import jchess.move.Move;
 import jchess.move.MoveType;
 import jchess.pieces.Piece;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class MoveEffect {
 	private final Piece moving;

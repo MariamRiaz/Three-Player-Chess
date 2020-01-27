@@ -1,11 +1,12 @@
 package jchessTest;
 
-import jchess.controller.loaders.RoundChessboardLoader;
-import jchess.model.GameModel;
 import jchess.controller.MoveHistoryController;
+import jchess.controller.RoundChessboardController;
+import jchess.controller.loaders.RoundChessboardLoader;
 import jchess.entities.Player;
 import jchess.entities.Square;
-import jchess.controller.RoundChessboardController;
+import jchess.model.GameModel;
+import jchess.model.IGameModel;
 import jchess.model.RoundChessboardModel;
 import jchess.move.Orientation;
 import jchess.pieces.Piece;
@@ -15,15 +16,13 @@ import org.junit.Before;
 
 import java.util.ArrayList;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class RoundChessboardControllerTest {
 
 
-    private GameModel gameModel;
+    private IGameModel gameModel;
     private MoveHistoryController moveHistoryControllerMock;
     private RoundChessboardController controller;
     private RoundChessboardModel modelMock;

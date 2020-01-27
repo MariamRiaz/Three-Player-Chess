@@ -20,6 +20,8 @@ import jchess.view.panelview.JChessView;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
 
+import javax.swing.*;
+
 /**
  * The main class of the application.
  */

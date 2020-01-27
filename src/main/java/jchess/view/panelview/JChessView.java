@@ -15,39 +15,34 @@
 
 package jchess.view.panelview;
 
-import jchess.*;
+import jchess.JChessApp;
 import jchess.controller.GameController;
+import jchess.controller.IGameController;
 import jchess.controller.loaders.ResourceLoader;
 import jchess.utilities.Log;
+import jchess.view.AbstractGameView;
 import jchess.view.gameview.PawnPromotionWindow;
 import jchess.view.gameview.GameView;
 import jchess.view.panelview.aboutbox.JChessAboutBox;
 import jchess.view.panelview.newgame.NewGameWindow;
 import jchess.view.panelview.themechoose.ThemeChooseWindow;
 import org.jdesktop.application.Action;
-import org.jdesktop.application.ResourceMap;
-import org.jdesktop.application.SingleFrameApplication;
-import org.jdesktop.application.FrameView;
-import org.jdesktop.application.TaskMonitor;
+import org.jdesktop.application.*;
 
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.Timer;
-import javax.swing.Icon;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.*;
-import java.awt.event.*;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.util.logging.Level;
 
 /**
  * The application's main frame.
  */
 public class JChessView extends FrameView implements ActionListener, ComponentListener {
-    static ResourceLoader resourceLoader = null;
 
-    public GameController addNewTab(String title) {
-        GameController newGUI = new GameController();
+    public IGameController addNewTab(String title) {
+        IGameController newGUI = new GameController();
         this.gamesPane.addTab(title, newGUI.getView());
         return newGUI;
     }
@@ -355,7 +350,7 @@ public class JChessView extends FrameView implements ActionListener, ComponentLi
     {//GEN-HEADEREND:event_moveBackItemActionPerformed
 
         try {
-            GameController activeGame = this.getActiveTabGame();
+            IGameController activeGame = this.getActiveTabGame();
             if (!activeGame.undo()) {
                 JOptionPane.showMessageDialog(null, "Nie da sie cofnac!");
             }
@@ -385,7 +380,7 @@ public class JChessView extends FrameView implements ActionListener, ComponentLi
         // TODO add your handling code here:
 
         try {
-            GameController activeGame = this.getActiveTabGame();
+            IGameController activeGame = this.getActiveTabGame();
             if (!activeGame.redo()) {
                 JOptionPane.showMessageDialog(null, "W pamieci brak ruchow do przodu!");
             }
@@ -400,7 +395,7 @@ public class JChessView extends FrameView implements ActionListener, ComponentLi
     private void rewindToBeginActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_rewindToBeginActionPerformed
     {//GEN-HEADEREND:event_rewindToBeginActionPerformed
         try {
-            GameController activeGame = this.getActiveTabGame();
+            IGameController activeGame = this.getActiveTabGame();
             if (!activeGame.rewindToBegin()) {
                 JOptionPane.showMessageDialog(null, "W pamieci brak ruchow do przodu!");
             }
@@ -414,7 +409,7 @@ public class JChessView extends FrameView implements ActionListener, ComponentLi
     private void rewindToEndActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_rewindToEndActionPerformed
     {//GEN-HEADEREND:event_rewindToEndActionPerformed
         try {
-            GameController activeGame = this.getActiveTabGame();
+            IGameController activeGame = this.getActiveTabGame();
             if (!activeGame.rewindToEnd()) {
                 JOptionPane.showMessageDialog(null, "W pamieci brak ruchow wstecz!");
             }
@@ -458,8 +453,8 @@ public class JChessView extends FrameView implements ActionListener, ComponentLi
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public GameController getActiveTabGame() throws ArrayIndexOutOfBoundsException {
-        GameView activeGameView = (GameView) this.gamesPane.getComponentAt(this.gamesPane.getSelectedIndex());
+    public IGameController getActiveTabGame() throws ArrayIndexOutOfBoundsException {
+        AbstractGameView activeGameView = (GameView) this.gamesPane.getComponentAt(this.gamesPane.getSelectedIndex());
         return activeGameView.getGameController();
     }
 

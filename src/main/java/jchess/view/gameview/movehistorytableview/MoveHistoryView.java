@@ -1,6 +1,7 @@
 package jchess.view.gameview.movehistorytableview;
 
-import jchess.model.MoveHistoryModel;
+import jchess.model.AbstractMoveHistoryModel;
+import jchess.view.IMoveHistoryView;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.ResourceMap;
 
@@ -12,14 +13,14 @@ import java.awt.*;
  * it a view for Move History class.
  * */
 
-public class MoveHistoryView {
+public class MoveHistoryView implements IMoveHistoryView {
 
     private JScrollPane scrollPane;
     private JTable table;
-    ResourceMap resources = new ResourceMap(Application.getInstance().getContext().getResourceMap(),
+    private ResourceMap resources = new ResourceMap(Application.getInstance().getContext().getResourceMap(),
             MoveHistoryView.class.getClassLoader(), "MoveHistoryView");
 
-    public MoveHistoryView(MoveHistoryModel model) {
+    public MoveHistoryView(AbstractMoveHistoryModel model) {
         int dimension = resources.getInteger("dimension");
         this.table = new JTable(model);
         this.scrollPane = new JScrollPane(this.table);

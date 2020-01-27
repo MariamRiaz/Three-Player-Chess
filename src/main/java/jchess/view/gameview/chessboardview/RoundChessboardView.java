@@ -1,42 +1,46 @@
 package jchess.view.gameview.chessboardview;
 
-import jchess.model.Images;
 import jchess.controller.loaders.ResourceLoader;
-import jchess.utilities.Log;
+import jchess.entities.PolarPoint;
 import jchess.entities.Square;
-import jchess.utilities.CartesianPolarConverter;
+import jchess.model.Images;
 import jchess.pieces.Piece;
 import jchess.pieces.PieceVisual;
-import jchess.entities.PolarPoint;
+import jchess.utilities.CartesianPolarConverter;
+import jchess.utilities.Log;
+import jchess.view.AbstractChessboardView;
+import jchess.view.PolarSquareView;
+import jchess.view.SquareView;
 
-import javax.swing.*;
 import java.awt.*;
-import java.util.List;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 
 /**
  * Class to generate the view of a circular board
  */
-public class RoundChessboardView extends JPanel {
+public class RoundChessboardView extends AbstractChessboardView {
 
     private Image boardImage;
     private Image selectedSquareImage;// image of highlighted square
     private Image ableSquareImage;// image of square where piece can go
     private int chessBoardSize;
     private Point topLeft = new Point(0, 0);
-    private HashSet<Square> moves = new HashSet<>();
-    private List<PolarCell> cells;
+    private Set<Square> moves = new HashSet<>();
+    private List<PolarSquareView> cells;
     private Point circleCenter;
-    private PolarCell activeCell;
+    private PolarSquareView activeCell;
 
     /**
      * Constructor
-     * @param chessBoardSize        int     Size of the chessboard to be viewed
-     * @param chessBoardImagePath   String  Path of the chessboard image
-     * @param rows                  int     count of rows
-     * @param cellsPerRow           int     count of cells per row
-     * @param squares               List<Square>    List of square objects from the corresponding model
+     *
+     * @param chessBoardSize      int     Size of the chessboard to be viewed
+     * @param chessBoardImagePath String  Path of the chessboard image
+     * @param rows                int     count of rows
+     * @param cellsPerRow         int     count of cells per row
+     * @param squares             List<Square>    List of square objects from the corresponding model
      */
     public RoundChessboardView(int chessBoardSize, String chessBoardImagePath, int rows, int cellsPerRow, List<Square> squares) {
         super();
@@ -53,15 +57,17 @@ public class RoundChessboardView extends JPanel {
 
     /**
      * getter for the list of PolarCells of the view
-     * @return  List of PolarCells
+     *
+     * @return List of PolarCells
      */
-    public List<PolarCell> getCells() {
+    public List<PolarSquareView> getCells() {
         return cells;
     }
 
     /**
      * getter for the center of the circular chessboard
-     * @return  Point of the center
+     *
+     * @return Point of the center
      */
     public Point getCircleCenter() {
         return circleCenter;
@@ -72,14 +78,15 @@ public class RoundChessboardView extends JPanel {
         this.cells = initializer.createCells();
     }
 
-    private void drawFigure(PolarCell cell, PieceVisual visual, Graphics g) {
+    private void drawFigure(PolarSquareView cell, PieceVisual visual, Graphics g) {
+        PolarSquareView polarSquareView = cell;
         CartesianPolarConverter converter = new CartesianPolarConverter();
-        Point center = converter.getCartesianPointFromPolar(cell.getCenterPoint(), circleCenter);
-        int figureSize = getImageSizeForCell(cell);
+        Point center = converter.getCartesianPointFromPolar(polarSquareView.getCenterPoint(), circleCenter);
+        int figureSize = getImageSizeForCell(polarSquareView);
         visual.draw(g, center.x - figureSize / 2, center.y - figureSize / 2, figureSize, figureSize, this);
     }
 
-    private int getImageSizeForCell(PolarCell cell) {
+    private int getImageSizeForCell(PolarSquareView cell) {
         CartesianPolarConverter converter = new CartesianPolarConverter();
         double bottomRadius = cell.getBottomBound();
         Point bottomLeft = converter.getCartesianPointFromPolar(new PolarPoint(bottomRadius, cell.getLeftBound()), circleCenter);
@@ -89,7 +96,7 @@ public class RoundChessboardView extends JPanel {
         return Math.min(verticalSize, horizontalSize);
     }
 
-    private void drawImage(PolarCell cell, Image image, Graphics g) {
+    private void drawImage(PolarSquareView cell, Image image, Graphics g) {
         CartesianPolarConverter converter = new CartesianPolarConverter();
         Point center = converter.getCartesianPointFromPolar(cell.getCenterPoint(), circleCenter);
         int imageSize = getImageSizeForCell(cell);
@@ -106,8 +113,9 @@ public class RoundChessboardView extends JPanel {
 
     /**
      * sets the active cell by the selected x and y coordinate
-     * @param x     int x index
-     * @param y     int y index
+     *
+     * @param x int x index
+     * @param y int y index
      */
     public void setActiveCell(int x, int y) {
         activeCell = getCellByPosition(x, y);
@@ -129,9 +137,10 @@ public class RoundChessboardView extends JPanel {
 
     /**
      * setter for the possible moves of the selected piece
-     * @param moves     HashSet<Square> set of possible squares to move the selected piece to
+     *
+     * @param moves HashSet<Square> set of possible squares to move the selected piece to
      */
-    public void setMoves(HashSet<Square> moves) {
+    public void setMoves(Set<Square> moves) {
         this.moves = moves;
     }
 
@@ -145,7 +154,7 @@ public class RoundChessboardView extends JPanel {
 
             try {
                 for (Square move : moves) {
-                    PolarCell cell = getCellByPosition(move.getPozX(), move.getPozY());
+                    PolarSquareView cell = getCellByPosition(move.getPozX(), move.getPozY());
                     drawImage(cell, ableSquareImage, g);
                 }
             } catch (NullPointerException e) {
@@ -155,7 +164,7 @@ public class RoundChessboardView extends JPanel {
     }
 
     private void drawPieceVisuals(Graphics g) {
-        for (PolarCell cell : cells) {
+        for (PolarSquareView cell : cells) {
             if (cell.getPieceVisual() != null) {
                 drawFigure(cell, cell.getPieceVisual(), g);
             }
@@ -174,55 +183,42 @@ public class RoundChessboardView extends JPanel {
         activeCell = null;
         repaint();
     }
-    
+
     /**
      * sets visuals for a piece
-     * @param piece     piece to set the visual of
-     * @param square 	Square on which to show Piece
-     */
-    public void setVisual(Piece piece, Square square) {
-        if (piece == null || square == null)//TODO
-            return;
-        
-        setVisual(piece, square.getPozX(), square.getPozY());
-    }
-    
-    /**
-     * sets visuals for a piece
-     * @param piece     piece to set the visual of
-     * @param x         x index of the piece
-     * @param y         y index of the piece
+     *
+     * @param piece piece to set the visual of
+     * @param x     x index of the piece
+     * @param y     y index of the piece
      */
     public void setVisual(Piece piece, int x, int y) {
         if (piece == null)//TODO
             return;
-        PolarCell cell = getCellByPosition(x, y);
+        SquareView cell = getCellByPosition(x, y);
 
         PieceVisual visual = new PieceVisual(piece);
         cell.setPieceVisual(visual);
     }
-    
-    /**
-     * remove  visual for a piece at the given index
-     * @param square Square on which the Piece is shown
-     */
-    public void removeVisual(Square square) {
-    	if (square == null)
-    		return;
-    	removeVisual(square.getPozX(), square.getPozY());
-    }
 
     /**
      * remove  visual for a piece at the given index
-     * @param x     int x index of the piece
-     * @param y     int y index of the piece
+     *
+     * @param x int x index of the piece
+     * @param y int y index of the piece
      */
     public void removeVisual(int x, int y) {
-        PolarCell cell = getCellByPosition(x, y);
+        SquareView cell = getCellByPosition(x, y);
         cell.setPieceVisual(null);
     }
 
-    private PolarCell getCellByPosition(int x, int y) {
+    public void removeVisual(Square square){
+        if (square == null){
+            return;
+        }
+        removeVisual(square.getPozX(), square.getPozY());
+    }
+
+    private PolarSquareView getCellByPosition(int x, int y) {
         return cells.stream()
                 .filter(c -> c.getxIndex() == x && c.getyIndex() == y).findFirst().get();
     }

@@ -20,22 +20,24 @@
  */
 package jchess.controller.gameclock;
 
-import java.util.logging.Level;
-
-import jchess.controller.GameController;
+import jchess.controller.IGameClock;
+import jchess.controller.IGameController;
+import jchess.model.IGameModel;
 import jchess.utilities.Log;
-import jchess.model.GameModel;
+import jchess.view.AbstractGameClockView;
 import jchess.view.gameview.gameclockview.GameClockView;
+
+import java.util.logging.Level;
 
 /**
  * Class to represent the full game clock logic interacts with game clock view to generate the clocks on the game window
  */
-public class GameClock implements Runnable {
+public class GameClock implements IGameClock {
 
-    private GameModel gameModel;
+    private IGameModel gameModel;
     private Thread thread;
-    private GameController gameController;
-    private GameClockView gameClockView;
+    private IGameController gameController;
+    private AbstractGameClockView gameClockView;
     private GameRoundTimer runningClock;
     private int totalPlayerTimeLimit;
     private int timeSpentByPlayers[];
@@ -45,7 +47,7 @@ public class GameClock implements Runnable {
     /**
      * @param gameController The current gameController
      */
-    public GameClock(GameController gameController) {
+    public GameClock(IGameController gameController) {
         super();
         gameClockView = new GameClockView(gameController);
         this.runningClock = new GameRoundTimer();
@@ -55,12 +57,12 @@ public class GameClock implements Runnable {
         activePlayer = PlayerColors.WHITE;
         this.setTimes(time);
 		this.thread = new Thread(this);
-		if (this.gameModel.timeLimitSet) {
+		if (this.gameModel.getTimeLimitSet()) {
 			thread.start();
 		}
 	}
 
-	public GameClockView getGameClockView() {
+	public AbstractGameClockView getGameClockView() {
 		return gameClockView;
 	}
 

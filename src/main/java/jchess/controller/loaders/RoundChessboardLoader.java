@@ -1,28 +1,23 @@
 package jchess.controller.loaders;
 
+import com.google.gson.*;
+import jchess.JChessApp;
+import jchess.entities.Player;
+import jchess.entities.Square;
+import jchess.model.IChessboardModel;
+import jchess.model.IGameModel;
+import jchess.model.RoundChessboardModel;
+import jchess.move.Orientation;
+import jchess.pieces.Piece;
+import jchess.pieces.PieceDefinition;
+import jchess.pieces.PieceLoader;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
-
-import jchess.JChessApp;
-import jchess.model.GameModel;
-import jchess.entities.Player;
-import jchess.entities.Square;
-import jchess.model.RoundChessboardModel;
-import jchess.move.Orientation;
-import jchess.pieces.Piece;
-import jchess.pieces.PieceDefinition;
-import jchess.pieces.PieceLoader;
 
 public class RoundChessboardLoader {
     private static final String boardsFolder = "boards", defaultBoardFile = "circle_rim.json";
@@ -37,7 +32,7 @@ public class RoundChessboardLoader {
      * @param gameModel The GameModel with the Players to use.
      * @return The loaded model or null if loading failed.
      */
-    public RoundChessboardModel loadDefaultFromJSON(GameModel gameModel) {
+    public RoundChessboardModel loadDefaultFromJSON(IGameModel gameModel) {
         return loadFromJSON(defaultBoardPath, gameModel);
     }
 
@@ -47,7 +42,7 @@ public class RoundChessboardLoader {
      * @param gameModel The GameModel with the Players to use.
      * @return The loaded model or null if loading failed.
      */
-    private RoundChessboardModel loadFromJSON(URL boardPath, GameModel gameModel) {
+    private RoundChessboardModel loadFromJSON(URL boardPath, IGameModel gameModel) {
         model = null;
 
         try {
@@ -56,11 +51,10 @@ public class RoundChessboardLoader {
         } catch (JsonIOException | JsonSyntaxException | IOException e) {
             e.printStackTrace();
         }
-
         return model;
     }
 
-    private Player parsePlayerCode(String code, GameModel gameModel) {
+    private Player parsePlayerCode(String code, IGameModel gameModel) {
         switch (code) {
             case "WH":
                 return gameModel.getPlayerWhite();
@@ -72,7 +66,7 @@ public class RoundChessboardLoader {
         return null;
     }
 
-    private void initializeFromJSON(JsonElement jsonBody, GameModel gameModel) {
+    private void initializeFromJSON(JsonElement jsonBody, IGameModel gameModel) {
         if (jsonBody == null || !jsonBody.isJsonObject())
             return;
 

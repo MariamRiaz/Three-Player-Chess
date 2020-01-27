@@ -21,34 +21,39 @@
 package jchess.controller;
 
 import jchess.controller.gameclock.GameClock;
-import jchess.entities.Square;
-import jchess.utilities.Log;
 import jchess.controller.loaders.RoundChessboardLoader;
+import jchess.entities.Square;
+import jchess.helper.IMoveEvaluator;
 import jchess.model.GameModel;
+import jchess.model.IGameModel;
 import jchess.move.buff.BuffEvaluator;
+import jchess.move.buff.IBuffEvaluator;
 import jchess.pieces.Piece;
+import jchess.utilities.Log;
+import jchess.view.AbstractGameView;
 import jchess.view.gameview.GameView;
 
 import javax.swing.*;
 import java.util.HashSet;
 import java.util.Observable;
-import java.util.Observer;
 
 /**
  * Class that represents a chess game. It is responsible for starting and ending games
  * and for storing the currently active player.
  * It also provides functionality for saving and loading games.
  */
-public class GameController implements Observer {
+public class GameController implements IGameController {
 
-    private GameView gameView;
+    private AbstractGameView gameView;
 
-    private GameModel gameModel;
-    private RoundChessboardController chessboardController;
-    private MoveHistoryController moveHistoryController;
-    private GameClock gameClock;
+    private IGameModel gameModel;
+    private IChessboardController chessboardController;
+    private IMoveHistoryController moveHistoryController;
+    private IGameClock gameClock;
     private final int chessboardSize = 800;
     private RoundChessboardLoader chessboardLoader;
+    private IBuffEvaluator buffEvaluator;
+    private IMoveEvaluator moveEvaluator;
 
 
     public GameController() {
@@ -65,14 +70,16 @@ public class GameController implements Observer {
         moveHistoryController = new MoveHistoryController(chessboardLoader.getColumnNames());
         chessboardController = new RoundChessboardController(chessboardLoader, chessboardSize, this.gameModel, this.moveHistoryController);
         gameClock = new GameClock(this);
+        moveEvaluator = new MoveEvaluator((RoundChessboardController) chessboardController);
+        buffEvaluator = new BuffEvaluator(chessboardController, moveHistoryController, moveEvaluator);
         chessboardController.addSelectSquareObserver(this);
     }
 
-    public GameModel getGameModel() {
+    public IGameModel getGameModel() {
         return gameModel;
     }
 
-    public GameClock getGameClock() {
+    public IGameClock getGameClock() {
         return gameClock;
     }
 
@@ -108,12 +115,7 @@ public class GameController implements Observer {
                 gameModel.setActivePlayer(gameModel.getPlayerBlack());
         }
         this.gameClock.switchPlayers(forward);
-        if (gameModel.getActivePlayer() == gameModel.getPlayerWhite())
-            moveHistoryController.setActivePlayForColumn(MoveHistoryController.PlayerColumn.player1);
-        else if (gameModel.getActivePlayer() == gameModel.getPlayerBlack())
-            moveHistoryController.setActivePlayForColumn(MoveHistoryController.PlayerColumn.player2);
-        else if (gameModel.getActivePlayer() == gameModel.getPlayerGray())
-            moveHistoryController.setActivePlayForColumn(MoveHistoryController.PlayerColumn.player3);
+        this.moveHistoryController.switchColumns(forward);
     }
 
     /**
@@ -126,21 +128,6 @@ public class GameController implements Observer {
     }
 
     /**
-     * Method to simulate Move to check if it's correct etc.
-     *
-     * @param beginX the initial x coordinate of the square where the move starts
-     * @param beginY the initial y coordinate of the square where the move starts
-     * @param endX   the final x coordinate of the square where the move ends
-     * @param endY   the final y coordinate of the square where the move ends
-     * @return Returns true if the move is valid
-     */
-    public boolean simulateMove(int beginX, int beginY, int endX, int endY) {
-        boolean moveCorrect = chessboardController.moveIsPossible(beginX, beginY, endX, endY);
-        nextMove();
-        return moveCorrect;
-    }
-
-    /**
      * Checks if the current state can be undone
      *
      * @return True if the current state of the game is undoable
@@ -148,7 +135,7 @@ public class GameController implements Observer {
     public boolean undo() {
         boolean status;
 
-        status = chessboardController.undo(true);
+        status = chessboardController.undo();
         if (status)
             this.switchActive(false);
         return status;
@@ -162,7 +149,7 @@ public class GameController implements Observer {
     public boolean rewindToBegin() {
         boolean result = false;
 
-        while (chessboardController.undo(true)) {
+        while (chessboardController.undo()) {
             result = true;
         }
         return result;
@@ -177,7 +164,7 @@ public class GameController implements Observer {
     public boolean rewindToEnd() throws UnsupportedOperationException {
         boolean result = false;
 
-        while (chessboardController.redo(true)) {
+        while (chessboardController.redo()) {
             result = true;
         }
         return result;
@@ -189,7 +176,7 @@ public class GameController implements Observer {
      * @return True if the most recent undone move can be redone
      */
     public boolean redo() {
-        boolean status = chessboardController.redo(true);
+        boolean status = chessboardController.redo();
         if (status)
             this.nextMove();
 
@@ -220,8 +207,7 @@ public class GameController implements Observer {
             {
                 chessboardController.move(chessboardController.getActiveSquare(), square, true, true);
                 chessboardController.unselect();
-                new BuffEvaluator(chessboardController, moveHistoryController).evaluate();
-
+                buffEvaluator.evaluate();
                 this.nextMove();
 
                 HashSet<Piece> cp = chessboardController.getCrucialPieces(gameModel.getActivePlayer());
@@ -240,13 +226,12 @@ public class GameController implements Observer {
      * @param o   The observable square that generates the events
      * @param arg The new generated Square
      */
-    @Override
     public void update(Observable o, Object arg) {
         Square square = (Square) arg;
         selectedSquare(square);
     }
 
-    public GameView getView() {
+    public AbstractGameView getView() {
         return this.gameView;
     }
 }
