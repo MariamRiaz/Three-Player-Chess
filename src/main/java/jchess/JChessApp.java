@@ -17,6 +17,7 @@ package jchess;
 
 import jchess.utilities.Log;
 import jchess.view.panelview.JChessView;
+import jchess.view.panelview.newgame.NewGameWindow;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
 
@@ -35,7 +36,8 @@ public class JChessApp extends SingleFrameApplication {
     protected void startup() {
         Log.init();
         jcv = new JChessView(this);
-        show(jcv);
+        jcv.newGameFrame = new NewGameWindow();
+        JChessApp.getApplication().show(jcv.newGameFrame);
     }
 
     /**
