@@ -3,7 +3,7 @@ package jchess.move.effects;
 import java.util.ArrayList;
 import java.util.List;
 
-import jchess.entities.Square;
+import jchess.game.chessboard.model.Square;
 import jchess.move.Move;
 import jchess.move.MoveType;
 import jchess.pieces.Piece;

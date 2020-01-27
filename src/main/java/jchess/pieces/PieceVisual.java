@@ -1,9 +1,9 @@
 package jchess.pieces;
 
-import jchess.helper.Log;
-import jchess.helper.ResourceLoader;
+import jchess.game.chessboard.view.RoundChessboardView;
+import jchess.io.ResourceLoader;
+import jchess.logging.Log;
 import jchess.move.buff.BuffType;
-import jchess.view.RoundChessboardView;
 
 import java.awt.*;
 import java.util.List;

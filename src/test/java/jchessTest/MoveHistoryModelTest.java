@@ -1,7 +1,6 @@
 package jchessTest;
 
-import jchess.model.MoveHistoryModel;
-import jchess.view.MoveHistoryView;
+import jchess.game.history.MoveHistoryModel;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

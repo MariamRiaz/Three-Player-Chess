@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import jchess.entities.Player;
+import jchess.game.player.Player;
 import jchess.move.Orientation;
 import jchess.move.buff.Buff;
 import jchess.move.buff.BuffType;
