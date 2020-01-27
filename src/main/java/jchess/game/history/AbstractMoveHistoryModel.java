@@ -8,8 +8,6 @@ import java.util.Stack;
 
 public abstract class AbstractMoveHistoryModel extends DefaultTableModel {
 
-    public int rowsNum;
-
     public abstract MoveHistoryController.PlayerColumn getActivePlayerColumn();
 
     public abstract Stack<MoveEffect> getMoveBackStack();
@@ -19,4 +17,8 @@ public abstract class AbstractMoveHistoryModel extends DefaultTableModel {
     public abstract List<String> getMove();
 
     public abstract void setActivePlayerColumn(MoveHistoryController.PlayerColumn activePlayerColumn);
+
+    public abstract int getCurrentRow();
+
+    public abstract void setCurrentRow(int currentRow);
 }

@@ -72,16 +72,14 @@ public class MoveHistoryController implements IMoveHistoryController {
         try {
             if (moveHistoryModel.getActivePlayerColumn().equals(PlayerColumn.player1)) {
                 moveHistoryModel.addRow(new String[2]);
-                moveHistoryModel.rowsNum = this.moveHistoryModel.getRowCount() - 1;
-                this.moveHistoryModel.setValueAt(str, moveHistoryModel.rowsNum, 0);
+                moveHistoryModel.setCurrentRow(this.moveHistoryModel.getRowCount() - 1);
+                this.moveHistoryModel.setValueAt(str, moveHistoryModel.getCurrentRow(), 0);
 
             } else if (moveHistoryModel.getActivePlayerColumn().equals(PlayerColumn.player2)) {
-                this.moveHistoryModel.setValueAt(str, moveHistoryModel.rowsNum, 1);
-                moveHistoryModel.rowsNum = this.moveHistoryModel.getRowCount() - 1;
+                this.moveHistoryModel.setValueAt(str, moveHistoryModel.getCurrentRow(), 1);
 
             } else if (moveHistoryModel.getActivePlayerColumn().equals(PlayerColumn.player3)) {
-                this.moveHistoryModel.setValueAt(str, moveHistoryModel.rowsNum, 2);
-                moveHistoryModel.rowsNum = this.moveHistoryModel.getRowCount() - 1;
+                this.moveHistoryModel.setValueAt(str, moveHistoryModel.getCurrentRow(), 2);
             }
 
             this.moveHistoryView.getTable().scrollRectToVisible(this.moveHistoryView.getTable().getCellRect(
@@ -89,8 +87,8 @@ public class MoveHistoryController implements IMoveHistoryController {
 
         } catch (
                 java.lang.ArrayIndexOutOfBoundsException exc) {
-            if (moveHistoryModel.rowsNum > 0) {
-                this.moveHistoryModel.rowsNum--;
+            if (moveHistoryModel.getCurrentRow() > 0) {
+                this.moveHistoryModel.setCurrentRow(moveHistoryModel.getCurrentRow() - 1);
                 addMoveToTable(str);
             }
         }
@@ -171,8 +169,8 @@ public class MoveHistoryController implements IMoveHistoryController {
                 } else if (moveHistoryModel.getActivePlayerColumn().equals(MoveHistoryController.PlayerColumn.player2)) {
                     moveHistoryModel.setValueAt("", moveHistoryModel.getRowCount() - 1, 0);
                     moveHistoryModel.removeRow(moveHistoryModel.getRowCount() - 1);
-                    if (moveHistoryModel.rowsNum > 0)
-                        moveHistoryModel.rowsNum--;
+                    if (moveHistoryModel.getCurrentRow() > 0)
+                        moveHistoryModel.setCurrentRow(moveHistoryModel.getCurrentRow() - 1);
 
                 } else {
                     if (moveHistoryModel.getRowCount() > 0)
@@ -224,5 +222,17 @@ public class MoveHistoryController implements IMoveHistoryController {
             moveHistoryModel.setActivePlayerColumn(forward ? PlayerColumn.player3 : PlayerColumn.player1);
         else if (moveHistoryModel.getActivePlayerColumn().equals(PlayerColumn.player3))
             moveHistoryModel.setActivePlayerColumn(forward ? PlayerColumn.player1 : PlayerColumn.player2);
+    }
+
+    public void setMoveHistoryModel(AbstractMoveHistoryModel moveHistoryModel) {
+        this.moveHistoryModel = moveHistoryModel;
+    }
+
+    public AbstractMoveHistoryModel getMoveHistoryModel() {
+        return moveHistoryModel;
+    }
+
+    public void setMoveHistoryView(IMoveHistoryView moveHistoryView) {
+        this.moveHistoryView = moveHistoryView;
     }
 }

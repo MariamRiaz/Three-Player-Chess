@@ -11,8 +11,8 @@ public class MoveHistoryModel extends AbstractMoveHistoryModel {
     private Stack<MoveEffect> moveBackStack;
     private Stack<MoveEffect> moveForwardStack;
     private MoveHistoryController.PlayerColumn activePlayerColumn = MoveHistoryController.PlayerColumn.player1;
-    public int rowsNum = 0;
     private ArrayList<String> move;
+    private int currentRow;
 
 
     public MoveHistoryModel() {
@@ -41,6 +41,16 @@ public class MoveHistoryModel extends AbstractMoveHistoryModel {
 
     public void setActivePlayerColumn(MoveHistoryController.PlayerColumn activePlayerColumn) {
         this.activePlayerColumn = activePlayerColumn;
+    }
+
+    @Override
+    public int getCurrentRow() {
+        return currentRow;
+    }
+
+    @Override
+    public void setCurrentRow(int currentRow) {
+        this.currentRow = currentRow;
     }
 
     @Override
