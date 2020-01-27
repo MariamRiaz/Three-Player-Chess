@@ -90,6 +90,18 @@ public class RoundChessboardModel implements IChessboardModel {
     			retVal.add(el);
     	
     	return retVal;
+    }    
+    
+    /**
+     * @param player The Player whose Pieces to return.
+     * @return The Pieces of the given Player, which cause him to lose if they are taken.
+     */
+    public HashSet<Piece> getCrucialPieces() {
+    	HashSet<Piece> retVal = new HashSet<>();
+    	for (Piece el : crucialPieces)
+    		retVal.add(el);
+    	
+    	return retVal;
     }
 
     /**

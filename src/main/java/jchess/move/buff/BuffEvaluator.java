@@ -78,7 +78,8 @@ public class BuffEvaluator implements IBuffEvaluator {
     	final HashSet<Square> squares = chessboard.getModel().getSquaresBetween(chessboard.getSquare(square.getPozX() + 1,  square.getPozY() + 1),
     			chessboard.getSquare(square.getPozX() - 1, square.getPozY() - 1));
     	for (Square sq : squares) 
-    		meb.addPosChange(sq, null);
+    		if (sq.getPiece() != null && !chessboard.getCrucialPieces().contains(sq.getPiece()))
+    			meb.addPosChange(sq, null);
     	
     	return meb.build();
     }

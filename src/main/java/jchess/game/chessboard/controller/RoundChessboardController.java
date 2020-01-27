@@ -160,6 +160,10 @@ public class RoundChessboardController implements IChessboardController {
         return model.getCrucialPieces(player);
     }
 
+    public HashSet<Piece> getCrucialPieces() {
+        return model.getCrucialPieces();
+    }
+
     /**
      * @return The currently selected Square.
      */
