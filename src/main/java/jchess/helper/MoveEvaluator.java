@@ -17,7 +17,7 @@ import java.util.Iterator;
 /**
  * Class that contains method to evaluate if a move is valid and gets possible target Squares
  */
-public class MoveEvaluator {
+public class MoveEvaluator implements IMoveEvaluator {
     private RoundChessboardController chessboard;
 
     /**
@@ -230,7 +230,7 @@ public class MoveEvaluator {
      * @param square Square  The Square to check for being threatened.
      * @return boolean true if Piece is threatened
      */
-    public boolean squareIsThreatened(Square square) {
+    private boolean squareIsThreatened(Square square) {
         if (square == null || square.getPiece() == null)
             return false;
 
@@ -244,7 +244,7 @@ public class MoveEvaluator {
      * @param player Player The Player for which the Square should be checked.
      * @return boolean true if Piece is threatened by any other player.
      */
-    public boolean squareIsThreatened(Square square, Player player) {
+    private boolean squareIsThreatened(Square square, Player player) {
         if (square == null)
             return false;
 

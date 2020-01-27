@@ -21,11 +21,14 @@
 package jchess.controller;
 
 import jchess.entities.Square;
+import jchess.helper.IMoveEvaluator;
 import jchess.helper.Log;
+import jchess.helper.MoveEvaluator;
 import jchess.helper.RoundChessboardLoader;
 import jchess.model.GameModel;
 import jchess.model.IGameModel;
 import jchess.move.buff.BuffEvaluator;
+import jchess.move.buff.IBuffEvaluator;
 import jchess.pieces.Piece;
 import jchess.view.AbstractGameView;
 import jchess.view.GameView;
@@ -49,6 +52,8 @@ public class GameController implements IGameController {
     private IGameClock gameClock;
     private final int chessboardSize = 800;
     private RoundChessboardLoader chessboardLoader;
+    private IBuffEvaluator buffEvaluator;
+    private IMoveEvaluator moveEvaluator;
 
 
     public GameController() {
@@ -65,6 +70,8 @@ public class GameController implements IGameController {
         moveHistoryController = new MoveHistoryController(chessboardLoader.getColumnNames());
         chessboardController = new RoundChessboardController(chessboardLoader, chessboardSize, this.gameModel, this.moveHistoryController);
         gameClock = new GameClock(this);
+        moveEvaluator = new MoveEvaluator((RoundChessboardController) chessboardController);
+        buffEvaluator = new BuffEvaluator(chessboardController, moveHistoryController, moveEvaluator);
         chessboardController.addSelectSquareObserver(this);
     }
 
@@ -200,8 +207,7 @@ public class GameController implements IGameController {
             {
                 chessboardController.move(chessboardController.getActiveSquare(), square, true, true);
                 chessboardController.unselect();
-                new BuffEvaluator(chessboardController, moveHistoryController).evaluate();
-
+                buffEvaluator.evaluate();
                 this.nextMove();
 
                 HashSet<Piece> cp = chessboardController.getCrucialPieces(gameModel.getActivePlayer());
