@@ -107,17 +107,9 @@ public class GameController implements IGameController {
             else if (gameModel.getActivePlayer() == gameModel.getPlayerGray())
                 gameModel.setActivePlayer(gameModel.getPlayerBlack());
         }
+        this.gameModel.setBlockedChessboard(false);
         this.gameClock.switchPlayers(forward);
         this.moveHistoryController.switchColumns(forward);
-    }
-
-    /**
-     * Method to go to next move
-     */
-    private void nextMove() {
-
-        switchActive(true);
-        gameModel.setBlockedChessboard(false);
     }
 
     /**
@@ -171,7 +163,7 @@ public class GameController implements IGameController {
     public boolean redo() {
         boolean status = chessboardController.redo();
         if (status)
-            this.nextMove();
+            switchActive(true);
 
         return status;
     }
@@ -182,36 +174,52 @@ public class GameController implements IGameController {
      * @param square The selected square
      */
     private void selectedSquare(Square square) {
-//        TODO add action listener for buttons
-        if (!gameModel.isBlockedChessboard()) {
-            if ((square == null && square.getPiece() == null && chessboardController.getActiveSquare() == null)
-                    || (this.chessboardController.getActiveSquare() == null && square.getPiece() != null
-                    && square.getPiece().getPlayer() != gameModel.getActivePlayer())) {
-                return;
-            }
-            if (square.getPiece() != null && square.getPiece().getPlayer() == gameModel.getActivePlayer() && square != chessboardController.getActiveSquare()) {
+        if (gameModel.isBlockedChessboard()) return;
+        if (square == null) return;
+        if (chessboardController.getActiveSquare() != null) {
+            if (didSelectSameSquare(square)) {
+                chessboardController.unselect();
+            } else if (didSelectOwnPiece(square)) {
                 chessboardController.unselect();
                 chessboardController.select(square);
-            } else if (chessboardController.getActiveSquare() == square) // unselect
-            {
-                chessboardController.unselect();
-            } else if (chessboardController.getActiveSquare() != null && chessboardController.getActiveSquare().getPiece() != null
-                    && chessboardController.moveIsPossible(chessboardController.getActiveSquare(), square)) // move
-            {
+            } else if (didSelectPossibleMove(square)) {
                 chessboardController.move(chessboardController.getActiveSquare(), square, true, true);
                 chessboardController.unselect();
-                new BuffEvaluator(chessboardController, moveHistoryController, gameModel.getActivePlayer()).evaluate();
-                this.nextMove();
-
-                HashSet<Piece> cp = chessboardController.getCrucialPieces(gameModel.getActivePlayer());
-                for (Piece piece : cp)
-                    if (chessboardController.pieceIsUnsavable(piece))
-                        this.endGame("Checkmate! " + piece.getPlayer().getColor().name() + " player lose!");
+                applyBuffs();
+                switchActive(true);
+                if (isCheckMate()) {
+                    this.endGame("Checkmate! " + gameModel.getActivePlayer().getName() + " player won!");
+                }
             }
-        } else {
-            Log.log("Chessboard is blocked");
+        } else if (didSelectOwnPiece(square)) {
+            chessboardController.select(square);
         }
-        chessboardController.getView().repaint();
+    }
+
+    private void applyBuffs() {
+        BuffEvaluator evaluator;
+        evaluator = new BuffEvaluator(chessboardController, moveHistoryController, gameModel.getActivePlayer());
+        evaluator.evaluate();
+    }
+
+    private boolean isCheckMate() {
+        HashSet<Piece> crucialPieces = chessboardController.getCrucialPieces(gameModel.getActivePlayer());
+        return crucialPieces.stream().anyMatch(p -> chessboardController.pieceIsUnsavable(p));
+    }
+
+    private boolean didSelectOwnPiece(Square square) {
+        if (square.getPiece() == null) {
+            return false;
+        }
+        return square.getPiece().getPlayer().equals(gameModel.getActivePlayer());
+    }
+
+    private boolean didSelectSameSquare(Square square) {
+        return square.equals(chessboardController.getActiveSquare());
+    }
+
+    private boolean didSelectPossibleMove(Square square) {
+        return chessboardController.moveIsPossible(chessboardController.getActiveSquare(), square);
     }
 
     /**
