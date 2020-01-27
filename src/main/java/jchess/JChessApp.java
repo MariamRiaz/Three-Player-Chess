@@ -15,13 +15,11 @@
 
 package jchess;
 
-import jchess.utilities.Log;
-import jchess.view.panelview.JChessView;
-import jchess.view.panelview.newgame.NewGameWindow;
+import jchess.logging.Log;
+import jchess.panels.JChessView;
+import jchess.panels.newgame.NewGameWindow;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
-
-import javax.swing.*;
 
 /**
  * The main class of the application.

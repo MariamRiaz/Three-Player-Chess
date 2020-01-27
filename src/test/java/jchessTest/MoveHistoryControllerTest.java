@@ -1,11 +1,11 @@
 package jchessTest;
 
-import jchess.controller.GameController;
-import jchess.controller.IGameController;
-import jchess.controller.MoveHistoryController;
-import jchess.entities.Player;
-import jchess.entities.Square;
-import jchess.model.GameModel;
+import jchess.game.GameController;
+import jchess.game.IGameController;
+import jchess.game.history.MoveHistoryController;
+import jchess.game.player.Player;
+import jchess.game.chessboard.model.Square;
+import jchess.game.GameModel;
 import jchess.pieces.Piece;
 import org.junit.Before;
 import org.junit.Test;

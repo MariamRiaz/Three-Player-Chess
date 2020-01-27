@@ -1,8 +1,8 @@
 package jchess.pieces;
 
-import jchess.controller.loaders.ResourceLoader;
-import jchess.utilities.Log;
-import jchess.view.AbstractChessboardView;
+import jchess.io.ResourceLoader;
+import jchess.logging.Log;
+import jchess.game.chessboard.view.AbstractChessboardView;
 
 import java.awt.*;
 import java.util.logging.Level;

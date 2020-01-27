@@ -1,8 +1,8 @@
 package jchess.move.buff;
 
-import jchess.controller.IChessboardController;
-import jchess.controller.IMoveHistoryController;
-import jchess.entities.Square;
+import jchess.game.chessboard.controller.IChessboardController;
+import jchess.game.history.IMoveHistoryController;
+import jchess.game.chessboard.model.Square;
 import jchess.move.effects.MoveEffect;
 import jchess.move.IMoveEvaluator;
 import jchess.move.effects.MoveEffectsBuilder;

@@ -23,7 +23,7 @@ package jchess.pieces;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import jchess.entities.Player;
+import jchess.game.player.Player;
 import jchess.move.Orientation;
 import jchess.move.buff.Buff;
 import jchess.move.buff.BuffType;

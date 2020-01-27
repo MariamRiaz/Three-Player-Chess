@@ -1,7 +1,7 @@
 package jchessTest;
 
-import jchess.utilities.CartesianPolarConverter;
-import jchess.entities.PolarPoint;
+import jchess.game.chessboard.CartesianPolarConverter;
+import jchess.game.chessboard.PolarPoint;
 import org.junit.Test;
 
 import java.awt.*;

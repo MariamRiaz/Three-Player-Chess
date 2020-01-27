@@ -1,6 +1,6 @@
 package jchess.move.effects;
 
-import jchess.entities.Square;
+import jchess.game.chessboard.model.Square;
 import jchess.pieces.Piece;
 
 public class PositionChange {

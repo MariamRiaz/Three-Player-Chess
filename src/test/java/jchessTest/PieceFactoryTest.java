@@ -1,11 +1,5 @@
 package jchessTest;
 
-import static org.junit.Assert.*;
-
-import org.junit.Test;
-
-import jchess.entities.Player;
-
 public class PieceFactoryTest {
    /* @Test
     public void testRookCreation() {
