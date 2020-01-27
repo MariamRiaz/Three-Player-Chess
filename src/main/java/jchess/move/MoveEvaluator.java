@@ -136,20 +136,24 @@ public class MoveEvaluator implements IMoveEvaluator{
         } else if (move.getConditions().contains(MoveType.OnlyMove)) {
             if (next.getPiece() != null)
                 return null;
-        } else if (next.getPiece() != null && next.getPiece().getPlayer() == piece.getPlayer())
+        } else if (next.getPiece() != null && next.getPiece().getPlayer() == piece.getPlayer() && next.getPiece() != piece)
             return null;
-
+        
         if (move.getConditions().contains(MoveType.OnlyWhenFresh) && piece.hasMoved())
             return null;
-
+        
         if (move.getConditions().contains(MoveType.Castling))
             return evaluateCastling(move, next, piece, meb);
         if (move.getConditions().contains(MoveType.ApplyConfusion)) {
             return evaluateApplyConfusion(next, meb);
         }
-
+        
         if (move.getConditions().contains(MoveType.EnPassant)) {
 
+        }
+        
+        if (move.getConditions().contains(MoveType.Explode)) {
+        	
         }
 
         return meb;
