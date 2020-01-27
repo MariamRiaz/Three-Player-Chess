@@ -145,7 +145,7 @@ public class MoveHistoryController implements IMoveHistoryController {
     }
 
     public Queue<MoveEffect> undo() {
-        Queue<MoveEffect> retVal = new PriorityQueue<>();
+        Queue<MoveEffect> retVal = new LinkedList<>();
 
         MoveEffect toAdd = null;
         while ((toAdd = undoOne()) != null) {
@@ -191,7 +191,7 @@ public class MoveHistoryController implements IMoveHistoryController {
     }
 
     public Queue<MoveEffect> redo() {
-        Queue<MoveEffect> retVal = new PriorityQueue<>();
+        Queue<MoveEffect> retVal = new LinkedList<>();
 
         MoveEffect toAdd = null;
         while ((toAdd = redoOne()) != null) {
@@ -199,7 +199,6 @@ public class MoveHistoryController implements IMoveHistoryController {
                 undoOne();
                 break;
             }
-
             retVal.add(toAdd);
         }
 
