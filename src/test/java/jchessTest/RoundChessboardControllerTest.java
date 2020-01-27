@@ -57,13 +57,13 @@ public class RoundChessboardControllerTest {
         controller = new RoundChessboardController(chessboardLoaderMock, 800, gameModel, moveHistoryControllerMock);
     }
 
-    @Test
-    public void testUnselect() {
-        controller.setActiveSquare(square);
-        controller.unselect();
-        assertNull(controller.getActiveSquare());
-
-    }
+//    @Test
+//    public void testUnselect() {
+//        controller.setActiveSquare(square);
+//        controller.unselect();
+//        assertNull(controller.getActiveSquare());
+//
+//    }
 //
 //    @Test
 //    public void testSetActiveSquare() {
