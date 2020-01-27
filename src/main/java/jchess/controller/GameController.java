@@ -21,11 +21,13 @@
 package jchess.controller;
 
 import jchess.controller.gameclock.GameClock;
+import jchess.controller.gameclock.IGameClock;
 import jchess.controller.loaders.RoundChessboardLoader;
 import jchess.entities.Square;
-import jchess.helper.IMoveEvaluator;
 import jchess.model.GameModel;
 import jchess.model.IGameModel;
+import jchess.move.IMoveEvaluator;
+import jchess.move.MoveEvaluator;
 import jchess.move.buff.BuffEvaluator;
 import jchess.move.buff.IBuffEvaluator;
 import jchess.pieces.Piece;

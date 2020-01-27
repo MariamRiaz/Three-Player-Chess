@@ -9,6 +9,7 @@ import jchess.entities.SquareObservable;
 import jchess.model.IGameModel;
 import jchess.model.Images;
 import jchess.model.RoundChessboardModel;
+import jchess.move.MoveEvaluator;
 import jchess.move.effects.MoveEffect;
 import jchess.move.effects.PositionChange;
 import jchess.move.effects.StateChange;

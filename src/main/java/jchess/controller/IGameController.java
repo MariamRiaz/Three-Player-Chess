@@ -1,5 +1,6 @@
 package jchess.controller;
 
+import jchess.controller.gameclock.IGameClock;
 import jchess.model.IGameModel;
 import jchess.view.AbstractGameView;
 

@@ -1,12 +1,8 @@
-package jchess.controller;
+package jchess.move;
 
 import jchess.controller.RoundChessboardController;
 import jchess.entities.Player;
 import jchess.entities.Square;
-import jchess.helper.IMoveEvaluator;
-import jchess.move.Move;
-import jchess.move.MoveType;
-import jchess.move.Orientation;
 import jchess.move.effects.MoveEffect;
 import jchess.move.effects.MoveEffectsBuilder;
 import jchess.pieces.Piece;

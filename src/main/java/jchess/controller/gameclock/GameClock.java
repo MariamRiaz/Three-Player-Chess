@@ -20,7 +20,6 @@
  */
 package jchess.controller.gameclock;
 
-import jchess.controller.IGameClock;
 import jchess.controller.IGameController;
 import jchess.model.IGameModel;
 import jchess.utilities.Log;

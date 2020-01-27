@@ -4,7 +4,7 @@ import jchess.controller.IChessboardController;
 import jchess.controller.IMoveHistoryController;
 import jchess.entities.Square;
 import jchess.move.effects.MoveEffect;
-import jchess.helper.IMoveEvaluator;
+import jchess.move.IMoveEvaluator;
 import jchess.move.effects.MoveEffectsBuilder;
 
 import java.util.HashSet;

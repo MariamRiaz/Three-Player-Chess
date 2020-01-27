@@ -1,4 +1,4 @@
-package jchess.helper;
+package jchess.move;
 
 import jchess.move.effects.MoveEffect;
 import jchess.pieces.Piece;
