@@ -22,6 +22,7 @@ package jchess.game;
 
 import jchess.game.history.IMoveHistoryController;
 import jchess.game.history.MoveHistoryController;
+import jchess.game.player.Player;
 import jchess.game.chessboard.controller.RoundChessboardController;
 import jchess.game.clock.GameClock;
 import jchess.game.clock.IGameClock;
@@ -31,7 +32,6 @@ import jchess.game.chessboard.controller.IChessboardController;
 import jchess.move.IMoveEvaluator;
 import jchess.move.MoveEvaluator;
 import jchess.move.buff.BuffEvaluator;
-import jchess.move.buff.IBuffEvaluator;
 import jchess.pieces.Piece;
 import jchess.logging.Log;
 
@@ -98,25 +98,36 @@ public class GameController implements IGameController {
      * Method to switch active players after move
      */
     private void switchActive(boolean forward) {
-        if (forward) {
-            if (gameModel.getActivePlayer() == gameModel.getPlayerWhite())
-                gameModel.setActivePlayer(gameModel.getPlayerBlack());
-            else if (gameModel.getActivePlayer() == gameModel.getPlayerBlack())
-                gameModel.setActivePlayer(gameModel.getPlayerGray());
-            else if (gameModel.getActivePlayer() == gameModel.getPlayerGray())
-                gameModel.setActivePlayer(gameModel.getPlayerWhite());
-
-        } else {
-            if (gameModel.getActivePlayer() == gameModel.getPlayerWhite())
-                gameModel.setActivePlayer(gameModel.getPlayerGray());
-            else if (gameModel.getActivePlayer() == gameModel.getPlayerBlack())
-                gameModel.setActivePlayer(gameModel.getPlayerWhite());
-            else if (gameModel.getActivePlayer() == gameModel.getPlayerGray())
-                gameModel.setActivePlayer(gameModel.getPlayerBlack());
-        }
+        if (forward)
+        	gameModel.setActivePlayer(getNext());
+        else 
+        	gameModel.setActivePlayer(getPrevious());
+        
         this.gameModel.setBlockedChessboard(false);
         this.gameClock.switchPlayers(forward);
         this.moveHistoryController.switchColumns(forward);
+    }
+    
+    private Player getNext() {
+        if (gameModel.getActivePlayer() == gameModel.getPlayerWhite())
+            return gameModel.getPlayerBlack();
+        if (gameModel.getActivePlayer() == gameModel.getPlayerBlack())
+            return gameModel.getPlayerGray();
+        if (gameModel.getActivePlayer() == gameModel.getPlayerGray())
+            return gameModel.getPlayerWhite();
+        
+        return null;
+    }
+    
+    private Player getPrevious() {
+        if (gameModel.getActivePlayer() == gameModel.getPlayerWhite())
+            return gameModel.getPlayerGray();
+        if (gameModel.getActivePlayer() == gameModel.getPlayerBlack())
+            return gameModel.getPlayerWhite();
+        if (gameModel.getActivePlayer() == gameModel.getPlayerGray())
+            return gameModel.getPlayerBlack();
+        
+        return null;
     }
 
     /**
@@ -184,19 +195,18 @@ public class GameController implements IGameController {
         if (gameModel.isBlockedChessboard()) return;
         if (square == null) return;
         if (chessboardController.getActiveSquare() != null) {
-            if (didSelectSameSquare(square)) {
-                chessboardController.unselect();
-            } else if (didSelectOwnPiece(square)) {
-                chessboardController.unselect();
-                chessboardController.select(square);
-            } else if (didSelectPossibleMove(square)) {
+            if (didSelectPossibleMove(square)) {
                 chessboardController.move(chessboardController.getActiveSquare(), square, true, true);
                 chessboardController.unselect();
                 applyBuffs();
+                
                 switchActive(true);
                 if (isCheckMate()) {
                     this.endGame("Checkmate! " + gameModel.getActivePlayer().getName() + " player won!");
                 }
+            } else if (didSelectOwnPiece(square)) {
+                chessboardController.unselect();
+                chessboardController.select(square);
             }
         } else if (didSelectOwnPiece(square)) {
             chessboardController.select(square);
@@ -204,8 +214,7 @@ public class GameController implements IGameController {
     }
 
     private void applyBuffs() {
-        BuffEvaluator evaluator;
-        evaluator = new BuffEvaluator(chessboardController, moveHistoryController, moveEvaluator, gameModel.getActivePlayer());
+        BuffEvaluator evaluator = new BuffEvaluator(chessboardController, moveHistoryController, moveEvaluator, getNext());
         evaluator.evaluate();
     }
 

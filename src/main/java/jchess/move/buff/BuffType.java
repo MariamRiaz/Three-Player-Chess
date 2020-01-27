@@ -1,5 +1,6 @@
 package jchess.move.buff;
 
 public enum BuffType {
-	Confusion
+	Confusion,
+	ImminentExplosion
 }
