@@ -45,8 +45,6 @@ public class DrawNewGameSettings extends JPanel implements ActionListener, TextL
     JRadioButton oponentComp;// choose oponent
     JRadioButton oponentHuman;// choose oponent (human)
     ButtonGroup oponentChoos;// group 4 radio buttons
-    JFrame localPanel;
-    JLabel compLevLab;
     JSlider computerLevel;// slider to choose jChess Engine level
     JTextField firstName;// editable field 4 nickname
     JTextField secondName;// editable field 4 nickname
@@ -56,7 +54,6 @@ public class DrawNewGameSettings extends JPanel implements ActionListener, TextL
     JLabel thirdNameLab;
     GridBagLayout gbl;
     GridBagConstraints gbc;
-    Container cont;
     JSeparator sep;
     JButton okButton;
     JCheckBox timeGame;
@@ -134,8 +131,6 @@ public class DrawNewGameSettings extends JPanel implements ActionListener, TextL
 			Player pl2 = gameModel.getPlayerBlack();// set local player variable
 			Player pl3 = gameModel.getPlayerGray();// set local player variable
 			gameModel.setGameMode(GameModel.gameModes.newGame);
-			// if(this.firstName.getText().length() >9 )
-			// this.firstName.setText(this.firstName.getText(0,8));
 			if (this.color.getActionCommand().equals("biały")) // if first player is white
 			{
 				pl1.setName(this.firstName.getText());// set name of player
