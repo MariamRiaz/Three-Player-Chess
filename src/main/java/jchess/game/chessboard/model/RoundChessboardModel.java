@@ -1,6 +1,5 @@
 package jchess.game.chessboard.model;
 
-import jchess.logging.Log;
 import jchess.game.player.Player;
 import jchess.pieces.Piece;
 
@@ -8,7 +7,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Level;
 
 /**
  * Class that holds the state of the RoundChessboard component

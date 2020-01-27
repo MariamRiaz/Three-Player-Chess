@@ -31,7 +31,6 @@ import jchess.game.chessboard.controller.IChessboardController;
 import jchess.move.IMoveEvaluator;
 import jchess.move.MoveEvaluator;
 import jchess.move.buff.BuffEvaluator;
-import jchess.move.buff.IBuffEvaluator;
 import jchess.pieces.Piece;
 import jchess.logging.Log;
 
@@ -184,12 +183,11 @@ public class GameController implements IGameController {
         if (gameModel.isBlockedChessboard()) return;
         if (square == null) return;
         if (chessboardController.getActiveSquare() != null) {
-            /*if (didSelectSameSquare(square)) {
-                chessboardController.unselect();
-            } else */if (didSelectPossibleMove(square)) {
+            if (didSelectPossibleMove(square)) {
                 chessboardController.move(chessboardController.getActiveSquare(), square, true, true);
                 chessboardController.unselect();
                 applyBuffs();
+                
                 switchActive(true);
                 if (isCheckMate()) {
                     this.endGame("Checkmate! " + gameModel.getActivePlayer().getName() + " player won!");
@@ -204,8 +202,7 @@ public class GameController implements IGameController {
     }
 
     private void applyBuffs() {
-        BuffEvaluator evaluator;
-        evaluator = new BuffEvaluator(chessboardController, moveHistoryController, moveEvaluator, gameModel.getActivePlayer());
+        BuffEvaluator evaluator = new BuffEvaluator(chessboardController, moveHistoryController, moveEvaluator, gameModel.getActivePlayer());
         evaluator.evaluate();
     }
 

@@ -144,17 +144,13 @@ public class MoveEvaluator implements IMoveEvaluator{
         
         if (move.getConditions().contains(MoveType.Castling))
             return evaluateCastling(move, next, piece, meb);
-        if (move.getConditions().contains(MoveType.ApplyConfusion)) {
+        else if (move.getConditions().contains(MoveType.ApplyConfusion))
             return evaluateApplyConfusion(next, meb);
-        }
-        
-        if (move.getConditions().contains(MoveType.EnPassant)) {
+        else if (move.getConditions().contains(MoveType.EnPassant)) {
 
         }
-        
-        if (move.getConditions().contains(MoveType.Explode)) {
+        else if (move.getConditions().contains(MoveType.Explode))
         	return meb.addStateChange(piece, piece.clone().addBuff(new Buff(BuffType.ImminentExplosion, 2)));
-        }
 
         return meb;
     }
