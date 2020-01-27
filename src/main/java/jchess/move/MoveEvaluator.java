@@ -153,7 +153,7 @@ public class MoveEvaluator implements IMoveEvaluator{
         }
         
         if (move.getConditions().contains(MoveType.Explode)) {
-        	
+        	return meb.addStateChange(piece, piece.clone().addBuff(new Buff(BuffType.ImminentExplosion, 1)));
         }
 
         return meb;

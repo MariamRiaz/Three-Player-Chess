@@ -26,33 +26,29 @@ public class BuffEvaluator implements IBuffEvaluator {
     }
 
     public void evaluate() {
-        for (Square square : chessboard.getSquares()) {
+        for (Square square : chessboard.getSquares())
             if (square != null) {
                 Piece piece = square.getPiece();
-                if (piece != null) {
-                    if (piece.getPlayer().equals(activePlayer)) {
+                if (piece != null)
+                    if (piece.getPlayer().equals(activePlayer))
                         for (Buff buff : square.getPiece().getActiveBuffs())
                             evaluateBuff(square, buff);
-                    }
-                }
             }
-        }
-        for (Square square : chessboard.getSquares()) {
+            
+        for (Square square : chessboard.getSquares())
             if (square != null) {
                 Piece piece = square.getPiece();
-                if (piece != null) {
-                    if (piece.getPlayer().equals(activePlayer)) {
+                if (piece != null)
+                    if (piece.getPlayer().equals(activePlayer))
                         piece.tickBuffs();
-                    }
-                }
             }
-        }
     }
 
     private void evaluateBuff(Square square, Buff buff) {
-        if (buff.getType().equals(BuffType.Confusion)) {
+        if (buff.getType().equals(BuffType.Confusion))
             evaluateConfusion(square);
-        }
+        else if (buff.getType().equals(BuffType.ImminentExplosion))
+        	evaluateImminentExplosion(square, buff);
     }
 
     private void evaluateConfusion(Square square) {
@@ -62,5 +58,11 @@ public class BuffEvaluator implements IBuffEvaluator {
         chessboard.apply(randomMove);
 
         history.addMove(randomMove, true, false);
+    }
+    
+    private void evaluateImminentExplosion(Square square, Buff buff) {
+    	if (buff.getRemainingTicks() > 1)
+    		return;
+    	
     }
 }
