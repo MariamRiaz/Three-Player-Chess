@@ -1,16 +1,17 @@
 package jchess.game.chessboard.controller;
 
 import jchess.JChessApp;
-import jchess.game.player.Player;
-import jchess.game.chessboard.PolarPoint;
-import jchess.game.chessboard.model.Square;
 import jchess.game.IGameModel;
+import jchess.game.chessboard.CartesianPolarConverter;
+import jchess.game.chessboard.PolarPoint;
 import jchess.game.chessboard.RoundChessboardLoader;
 import jchess.game.chessboard.model.RoundChessboardModel;
+import jchess.game.chessboard.model.Square;
+import jchess.game.chessboard.view.AbstractChessboardView;
 import jchess.game.chessboard.view.RoundChessboardView;
 import jchess.game.chessboard.view.SquareView;
-import jchess.game.chessboard.view.AbstractChessboardView;
 import jchess.game.history.IMoveHistoryController;
+import jchess.game.player.Player;
 import jchess.io.Images;
 import jchess.move.MoveEvaluator;
 import jchess.move.effects.MoveEffect;
@@ -19,7 +20,6 @@ import jchess.move.effects.StateChange;
 import jchess.pieces.Piece;
 import jchess.pieces.PieceDefinition;
 import jchess.pieces.PieceLoader;
-import jchess.game.chessboard.CartesianPolarConverter;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
