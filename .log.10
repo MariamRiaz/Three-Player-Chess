@@ -1,0 +1,13 @@
+Jan 28, 2020 12:53:04 AM jchess.logging.Log log
+INFO: Present number of tabs: 1
+Jan 28, 2020 12:53:04 AM jchess.logging.Log log
+INFO: comboBoxChanged
+Jan 28, 2020 12:53:04 AM jchess.logging.Log log
+INFO: ****************
+Starting new game: 2 vs. 1
+time 4 game: 0
+time limit set: false
+white on top?: 
+****************
+Jan 28, 2020 12:55:13 AM jchess.logging.Log log
+INFO: Removing tab with 0 number!...

@@ -7,7 +7,8 @@
     		"x": 0,
     		"y": 0,
     		"limit": 1,
-    		"conditions": [ "Explode" ]
+    		"conditions": [ "Explode" ],
+            "formatStrings": { "Explode": "${Piece}${From}@" }
     	},
     	{ 
             "x": 0,

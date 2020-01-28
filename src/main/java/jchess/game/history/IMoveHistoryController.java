@@ -1,6 +1,6 @@
 package jchess.game.history;
 
-import jchess.move.effects.MoveEffect;
+import jchess.move.effects.BoardTransition;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -9,7 +9,7 @@ import java.util.Queue;
 
 public interface IMoveHistoryController {
 
-    void addMove(MoveEffect moveEffects, boolean registerInHistory, boolean registerInTable);
+    void addMove(BoardTransition moveEffects);
 
     void clearMoveForwardStack();
 
@@ -17,13 +17,13 @@ public interface IMoveHistoryController {
 
     List<String> getMoves();
 
-    Queue<MoveEffect> undo();
+    Queue<BoardTransition> undo();
 
-    MoveEffect undoOne();
+    BoardTransition undoOne();
 
-    Queue<MoveEffect> redo();
+    Queue<BoardTransition> redo();
 
-    MoveEffect redoOne();
+    BoardTransition redoOne();
 
     void switchColumns(boolean forward);
 }

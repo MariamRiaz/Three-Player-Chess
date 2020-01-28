@@ -1,6 +1,6 @@
 package jchess.game.history;
 
-import jchess.move.effects.MoveEffect;
+import jchess.move.effects.BoardTransition;
 
 import java.util.ArrayList;
 import java.util.Stack;
@@ -8,8 +8,8 @@ import java.util.Stack;
 public class MoveHistoryModel extends AbstractMoveHistoryModel {
 
 
-    private Stack<MoveEffect> moveBackStack;
-    private Stack<MoveEffect> moveForwardStack;
+    private Stack<BoardTransition> moveBackStack;
+    private Stack<BoardTransition> moveForwardStack;
     private MoveHistoryController.PlayerColumn activePlayerColumn = MoveHistoryController.PlayerColumn.player1;
     public int rowsNum = 0;
     private ArrayList<String> move;
@@ -23,11 +23,11 @@ public class MoveHistoryModel extends AbstractMoveHistoryModel {
         this.addTableModelListener(null);
     }
 
-    public Stack<MoveEffect> getMoveBackStack() {
+    public Stack<BoardTransition> getMoveBackStack() {
         return moveBackStack;
     }
 
-    public Stack<MoveEffect> getMoveForwardStack() {
+    public Stack<BoardTransition> getMoveForwardStack() {
         return moveForwardStack;
     }
 

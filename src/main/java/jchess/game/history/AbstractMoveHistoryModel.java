@@ -1,6 +1,6 @@
 package jchess.game.history;
 
-import jchess.move.effects.MoveEffect;
+import jchess.move.effects.BoardTransition;
 
 import javax.swing.table.DefaultTableModel;
 import java.util.List;
@@ -12,9 +12,9 @@ public abstract class AbstractMoveHistoryModel extends DefaultTableModel {
 
     public abstract MoveHistoryController.PlayerColumn getActivePlayerColumn();
 
-    public abstract Stack<MoveEffect> getMoveBackStack();
+    public abstract Stack<BoardTransition> getMoveBackStack();
 
-    public abstract Stack<MoveEffect> getMoveForwardStack();
+    public abstract Stack<BoardTransition> getMoveForwardStack();
 
     public abstract List<String> getMove();
 
