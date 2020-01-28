@@ -48,12 +48,12 @@
     },
     {
         "square": [4, 23],
-        "type": "Pawn",
+        "type": "Bomber",
         "player": "WH"
     },
     {
         "square": [4, 0],
-        "type": "Pawn",
+        "type": "Mage",
         "player": "WH"
     },
     {
@@ -82,12 +82,12 @@
         "player": "WH"
     },
     {
-        "square": [1, 6],
+        "square": [4, 6],
         "type": "Mage",
         "player": "WH"
     },
     {
-        "square": [1, 7],
+        "square": [4, 7],
         "type": "Bomber",
         "player": "WH"
     },
@@ -136,12 +136,12 @@
 
     {
         "square": [4, 7],
-        "type": "Pawn",
+        "type": "Bomber",
         "player": "BL"
     },
     {
         "square": [4, 8],
-        "type": "Pawn",
+        "type": "Mage",
         "player": "BL"
     },
     {
@@ -166,12 +166,12 @@
     },
     {
         "square": [4, 13],
-        "type": "Pawn",
+        "type": "Mage",
         "player": "BL"
     },
     {
         "square": [4, 14],
-        "type": "Pawn",
+        "type": "Bomber",
         "player": "BL"
     },
 
@@ -218,12 +218,12 @@
     },
     {
         "square": [4, 15],
-        "type": "Pawn",
+        "type": "Bomber",
         "player": "GR"
     },
     {
         "square": [4, 16],
-        "type": "Pawn",
+        "type": "Mage",
         "player": "GR"
     },
     {
@@ -248,12 +248,12 @@
     },
     {
         "square": [4, 21],
-        "type": "Pawn",
+        "type": "Mage",
         "player": "GR"
     },
     {
         "square": [4, 22],
-        "type": "Pawn",
+        "type": "Bomber",
         "player": "GR"
     }
     ]
