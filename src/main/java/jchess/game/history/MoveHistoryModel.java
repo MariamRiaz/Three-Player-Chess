@@ -5,16 +5,19 @@ import jchess.move.effects.BoardTransition;
 import java.util.ArrayList;
 import java.util.Stack;
 
+/**
+ * Class that represents the Model of the MoveHistoryComponent.
+ */
 public class MoveHistoryModel extends AbstractMoveHistoryModel {
-
-
     private Stack<BoardTransition> moveBackStack;
     private Stack<BoardTransition> moveForwardStack;
     private MoveHistoryController.PlayerColumn activePlayerColumn = MoveHistoryController.PlayerColumn.player1;
-    public int rowsNum = 0;
     private ArrayList<String> move;
+    private int currentRow;
 
-
+    /**
+     * Constructor for MoveHistoryModel
+     */
     public MoveHistoryModel() {
         super();
         this.moveBackStack = new Stack<>();
@@ -22,28 +25,63 @@ public class MoveHistoryModel extends AbstractMoveHistoryModel {
         this.move = new ArrayList<>();
         this.addTableModelListener(null);
     }
-
-    public Stack<BoardTransition> getMoveBackStack() {
+    
+	/**
+	 * {@inheritDoc}
+	 */
+	public Stack<BoardTransition> getMoveBackStack() {
         return moveBackStack;
     }
-
+	
+	/**
+    * {@inheritDoc}
+    */
     public Stack<BoardTransition> getMoveForwardStack() {
         return moveForwardStack;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public ArrayList<String> getMove() {
         return move;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public MoveHistoryController.PlayerColumn getActivePlayerColumn() {
         return activePlayerColumn;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void setActivePlayerColumn(MoveHistoryController.PlayerColumn activePlayerColumn) {
         this.activePlayerColumn = activePlayerColumn;
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
+    public int getCurrentRow() {
+        return currentRow;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setCurrentRow(int currentRow) {
+        this.currentRow = currentRow;
+    }
+
+    /**
+     * returns if a table cell is editable
+     *
+     * @param a row of the cell
+     * @param b column of the cell
+     * @return if cell is editable
+     */
     public boolean isCellEditable(int a, int b) {
         return false;
     }

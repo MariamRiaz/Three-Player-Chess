@@ -289,7 +289,7 @@ public class MoveEvaluator implements IMoveEvaluator{
         		return null;
         	if (toSquare.getPiece() != null)
         		priorityMoveType = MoveType.OnlyAttack;
-        	priorityMoveType = MoveType.OnlyMove;
+        	else priorityMoveType = MoveType.OnlyMove;
         }
         
         if (move.getConditions().contains(MoveType.OnlyWhenFresh)) {
