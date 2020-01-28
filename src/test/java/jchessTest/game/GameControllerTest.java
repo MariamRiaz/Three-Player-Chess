@@ -39,6 +39,7 @@ public class GameControllerTest {
         //Arrange
         IChessboardController chessboardControllerMock = mock(RoundChessboardController.class);
         when(chessboardControllerMock.redo()).thenReturn(true);
+        gameController.setChessboardController(chessboardControllerMock);
 
         //Act
         gameController.redo();
