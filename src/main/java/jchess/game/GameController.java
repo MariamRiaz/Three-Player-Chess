@@ -182,8 +182,7 @@ public class GameController implements IGameController {
         }
         if (chessboardController.getActiveSquare() != null) {
             if (didSelectPossibleMove(square)) {
-                chessboardController.move(chessboardController.getActiveSquare(), square, true, true);
-                chessboardController.unselect();
+                chessboardController.move(chessboardController.getActiveSquare(), square);
                 applyBuffs();
 
                 switchActive(true);
