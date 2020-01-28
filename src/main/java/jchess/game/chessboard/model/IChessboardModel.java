@@ -16,6 +16,8 @@ public interface IChessboardModel {
 
     HashSet<Piece> getCrucialPieces(Player player);
 
+    HashSet<Piece> getCrucialPieces();
+
     Square getSquare(int x, int y);
 
     boolean isInPromotionArea(Square square);

@@ -26,41 +26,61 @@ public class BuffEvaluator implements IBuffEvaluator {
     }
 
     public void evaluate() {
-        for (Square square : chessboard.getSquares()) {
+        for (Square square : chessboard.getSquares())
             if (square != null) {
                 Piece piece = square.getPiece();
-                if (piece != null) {
-                    if (piece.getPlayer().equals(activePlayer)) {
+                if (piece != null)
+                    if (piece.getPlayer().equals(activePlayer))
                         for (Buff buff : square.getPiece().getActiveBuffs())
-                            evaluateBuff(square, buff);
-                    }
-                }
+                            applyBuffEffect(evaluateBuff(square, buff));
             }
-        }
-        for (Square square : chessboard.getSquares()) {
+            
+        for (Square square : chessboard.getSquares())
             if (square != null) {
                 Piece piece = square.getPiece();
-                if (piece != null) {
-                    if (piece.getPlayer().equals(activePlayer)) {
+                if (piece != null)
+                    if (piece.getPlayer().equals(activePlayer))
                         piece.tickBuffs();
-                    }
-                }
             }
-        }
     }
 
-    private void evaluateBuff(Square square, Buff buff) {
-        if (buff.getType().equals(BuffType.Confusion)) {
-            evaluateConfusion(square);
-        }
+    private MoveEffect evaluateBuff(Square square, Buff buff) {
+        if (buff.getType().equals(BuffType.Confusion))
+            return evaluateConfusion(square);
+        else if (buff.getType().equals(BuffType.ImminentExplosion))
+        	return evaluateImminentExplosion(square, buff);
+        
+        return null;
+    }
+    
+    private void applyBuffEffect(MoveEffect buffEffect) {
+    	if (buffEffect == null)
+    		return;
+    	
+        chessboard.apply(buffEffect);
+        history.addMove(buffEffect, true, false);
     }
 
-    private void evaluateConfusion(Square square) {
+    private MoveEffect evaluateConfusion(Square square) {
         HashSet<MoveEffect> mes = moveEvaluator.getValidTargetSquaresToSavePiece(square.getPiece(), chessboard.getCrucialPieces(square.getPiece().getPlayer()));
         MoveEffect temp = (MoveEffect) mes.toArray()[new Random().nextInt(mes.size())];
         MoveEffect randomMove = new MoveEffectsBuilder(temp).setFromMove(false).build();
-        chessboard.apply(randomMove);
+        
+        return randomMove;
+    }
+    
+    private MoveEffect evaluateImminentExplosion(Square square, Buff buff) {
+    	if (buff.getRemainingTicks() > 1)
+    		return null;
+    	
+    	MoveEffectsBuilder meb = new MoveEffectsBuilder(square.getPiece(), square, square, null, false);
 
-        history.addMove(randomMove, true, false);
+    	final HashSet<Square> squares = chessboard.getModel().getSquaresBetween(chessboard.getSquare(square.getPozX() + 1,  square.getPozY() + 1),
+    			chessboard.getSquare(square.getPozX() - 1, square.getPozY() - 1));
+    	for (Square sq : squares) 
+    		if (sq.getPiece() != null && !chessboard.getCrucialPieces().contains(sq.getPiece()))
+    			meb.addPosChange(sq, null);
+    	
+    	return meb.build();
     }
 }
