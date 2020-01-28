@@ -12,6 +12,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Observer;
 
+
+
 public interface IChessboardController extends MouseListener {
     /**
      * @return The view of the chessboard.

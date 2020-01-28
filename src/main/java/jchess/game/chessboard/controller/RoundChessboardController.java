@@ -59,10 +59,10 @@ public class RoundChessboardController implements IChessboardController {
     public AbstractChessboardView getView() {
         return view;
     }
-	
+
     /**
-	 * {@inheritDoc}
-	 */
+     * {@inheritDoc}
+     */
     public void addSelectSquareObserver(Observer observer) {
         this.squareObservable.addObserver(observer);
     }
@@ -109,9 +109,9 @@ public class RoundChessboardController implements IChessboardController {
 
     }
 
-	/**
-	 * {@inheritDoc}
-	 */
+    /**
+     * {@inheritDoc}
+     */
     public boolean moveIsPossible(int fromX, int fromY, int toX, int toY) {
         Square square = model.getSquare(fromX, fromY);
         Square to = model.getSquare(toX, toY);
@@ -123,15 +123,15 @@ public class RoundChessboardController implements IChessboardController {
         HashSet<Piece> crucialPieces = getCrucialPieces(square.getPiece().getPlayer());
         HashSet<BoardTransition> moveEffects = evaluator
                 .getPieceTargetToSavePieces(square.getPiece(), crucialPieces);
-        
+
         HashSet<Square> squares = new HashSet<>();
         moveEffects.forEach(m ->
-        	{ 
-        		if (m.getMoveHistoryEntry() != null) 
-        			squares.add(m.getMoveHistoryEntry().getToSquare()); 
-        	});
-        
-    	return squares.contains(model.getSquare(to.getPozX(), to.getPozY()));
+        {
+            if (m.getMoveHistoryEntry() != null)
+                squares.add(m.getMoveHistoryEntry().getToSquare());
+        });
+
+        return squares.contains(model.getSquare(to.getPozX(), to.getPozY()));
     }
 
     /**
@@ -196,8 +196,8 @@ public class RoundChessboardController implements IChessboardController {
 
             HashSet<Square> squares = new HashSet<>();
             for (BoardTransition me : moveEffects)
-            	if (me.getMoveHistoryEntry() != null)
-            		squares.add(me.getMoveHistoryEntry().getToSquare());
+                if (me.getMoveHistoryEntry() != null)
+                    squares.add(me.getMoveHistoryEntry().getToSquare());
             view.setMoves(squares);
         }
     }
@@ -220,24 +220,24 @@ public class RoundChessboardController implements IChessboardController {
      * {@inheritDoc}
      */
     public void move(Square begin, Square end) {
-    	BoardTransition move = null;
-    	
-    	for (BoardTransition me : moveEffects)
-    		if (me.getMoveHistoryEntry() != null && model.getSquare(me.getMoveHistoryEntry().getPiece()) == begin 
-    			&& me.getMoveHistoryEntry().getToSquare() == end) {
-    			move = me;
-    			break;
-    		}
-    	
-    	applyBoardTransition(move);
-    	
+        BoardTransition move = null;
+
+        for (BoardTransition me : moveEffects)
+            if (me.getMoveHistoryEntry() != null && model.getSquare(me.getMoveHistoryEntry().getPiece()) == begin
+                    && me.getMoveHistoryEntry().getToSquare() == end) {
+                move = me;
+                break;
+            }
+
+        applyBoardTransition(move);
+
         this.unselect();
         this.movesHistory.clearMoveForwardStack();
         this.movesHistory.addMove(move);
 
         view.updateAfterMove();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -245,30 +245,23 @@ public class RoundChessboardController implements IChessboardController {
         applyPositionChanges(boardTransition.getPositionChanges());
         applyStateChanges(boardTransition.getStateChanges());
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public void reverseBoardTransition(BoardTransition boardTransition) {
-        applyStateChanges(boardTransition.getStateChangesReverse());
-        applyPositionChanges(boardTransition.getPositionChangesReverse());
-    }
 
     private void applyPositionChanges(List<PositionChange> positionChanges) {
-    	for (PositionChange positionChange : positionChanges) {
+        for (PositionChange positionChange : positionChanges) {
             if (view != null)
                 view.removeVisual(model.getSquare(positionChange.getPiece()));
-                
+
             model.setPieceOnSquare(positionChange.getPiece(), positionChange.getSquare());
             if (view != null) {
                 final Square square = positionChange.getSquare();
                 if (square != null)
-                	view.setVisual(square.getPiece(), square.getPozX(), square.getPozY());
+                    view.setVisual(square.getPiece(), square.getPozX(), square.getPozY());
             }
         }
 
     }
-    
+
+
     private void applyStateChanges(List<StateChange> stateChanges) {
         for (StateChange stateChange : stateChanges) {
             final Square sq = model.getSquare(stateChange.getID());
@@ -283,6 +276,14 @@ public class RoundChessboardController implements IChessboardController {
             if (view != null)
                 view.setVisual(stateChange.getState(), sq.getPozX(), sq.getPozY());
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void reverseBoardTransition(BoardTransition boardTransition) {
+        applyStateChanges(boardTransition.getStateChangesReverse());
+        applyPositionChanges(boardTransition.getPositionChangesReverse());
     }
 
     /**
