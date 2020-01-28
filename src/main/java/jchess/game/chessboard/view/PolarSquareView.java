@@ -19,6 +19,15 @@ public class PolarSquareView implements SquareView {
 
     private PieceVisual pieceVisual;
 
+    /**
+     * 
+     * @param centerPoint
+     * @param widthInDegrees
+     * @param polarHeight
+     * @param xIndex
+     * @param yIndex
+     */
+
     public PolarSquareView(PolarPoint centerPoint, double widthInDegrees, double polarHeight, int xIndex, int yIndex) {
         this.centerPoint = centerPoint;
         this.widthInDegrees = widthInDegrees;
@@ -27,21 +36,8 @@ public class PolarSquareView implements SquareView {
         this.yIndex = yIndex;
     }
 
-    public PolarSquareView(int xIndex, int yIndex) {
-        this.xIndex = xIndex;
-        this.yIndex = yIndex;
-    }
-
     public PolarPoint getCenterPoint() {
         return centerPoint;
-    }
-
-    public double getWidthInDegrees() {
-        return widthInDegrees;
-    }
-
-    public double getPolarHeight() {
-        return polarHeight;
     }
 
     public int getxIndex() {
