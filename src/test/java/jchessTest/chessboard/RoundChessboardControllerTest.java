@@ -1,4 +1,4 @@
-package jchessTest;
+package jchessTest.chessboard;
 
 import jchess.game.history.MoveHistoryController;
 import jchess.game.chessboard.controller.RoundChessboardController;

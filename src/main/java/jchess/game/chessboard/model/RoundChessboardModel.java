@@ -89,7 +89,7 @@ public class RoundChessboardModel implements IChessboardModel {
         }
         HashSet<Piece> retVal = new HashSet<>();
         for (Piece el : crucialPieces) {
-            if (el.getPlayer().getColor().equals(player.getColor())) {
+            if (el.getPlayer().equals(player)) {
                 retVal.add(el);
             }
         }
