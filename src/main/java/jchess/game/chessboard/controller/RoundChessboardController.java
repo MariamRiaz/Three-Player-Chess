@@ -274,7 +274,7 @@ public class RoundChessboardController implements IChessboardController {
         }
 
     }
-    
+
     
     private void applyStateChanges(List<StateChange> stateChanges) {
         for (StateChange stateChange : stateChanges) {
