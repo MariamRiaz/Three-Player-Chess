@@ -42,8 +42,7 @@ public class MoveHistoryTest {
         MoveDefinition moveMock = mock(MoveDefinition.class);
         MoveType moveTypeMock = MoveType.OnlyMove;
         moveHistoryViewMock = mock(MoveHistoryView.class);
-
-        MoveHistoryEntry entryMock = new MoveHistoryEntry(pieceMock, square2, square1, moveMock);
+        MoveHistoryEntry entryMock = mock(MoveHistoryEntry.class);
 
         Player testPlayer = new Player("test", "white");
         columnNames.add('a');
@@ -55,6 +54,10 @@ public class MoveHistoryTest {
 
         when(square2.getPozX()).thenReturn(2);
         when(square2.getPozY()).thenReturn(2);
+        
+        when(entryMock.getPiece()).thenReturn(pieceMock);
+        when(pieceMock.getDefinition()).thenReturn(pieceDefinitionMock);
+        when(entryMock.getMove()).thenReturn(moveMock);
 
         when(moveHistoryViewMock.getTable()).thenReturn(new JTable());
         
