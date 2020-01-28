@@ -78,16 +78,11 @@
     },
     {
         "square": [4, 5],
-        "type": "Pawn",
-        "player": "WH"
-    },
-    {
-        "square": [4, 6],
         "type": "Mage",
         "player": "WH"
     },
     {
-        "square": [4, 7],
+        "square": [4, 6],
         "type": "Bomber",
         "player": "WH"
     },
