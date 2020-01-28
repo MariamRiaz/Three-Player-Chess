@@ -23,38 +23,38 @@ package jchess.game.player;
 import java.io.Serializable;
 
 /**
- * Class representing the player in the game
+ * Class representing the player in the game.
  */
 public class Player implements Serializable {
 
-	private String name;
+    private String name;
 
-	private PlayerColor color;
+    private PlayerColor color;
 
-	public Player(String name, String color) {
-		this.name = name;
-		this.color = PlayerColor.getColor(color);
-	}
+    public Player(String name, String color) {
+        this.name = name;
+        this.color = PlayerColor.getColor(color);
+    }
 
-	/**
-	 * Method setting the players name
-	 * 
-	 * @param name name of player
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
+    /**
+     * Method setting the players name
+     *
+     * @param name name of player
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	/**
-	 * Method getting the players name
-	 * 
-	 * @return name of player
-	 */
-	public String getName() {
-		return this.name;
-	}
+    /**
+     * Method getting the players name
+     *
+     * @return name of player
+     */
+    public String getName() {
+        return this.name;
+    }
 
-	public PlayerColor getColor() {
-		return color;
-	}
+    public PlayerColor getColor() {
+        return color;
+    }
 }
