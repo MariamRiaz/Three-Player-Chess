@@ -10,12 +10,15 @@ import jchess.io.Images;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.swing.*;
+
 import static org.mockito.Mockito.*;
 
 public class GameControllerTest {
 
     GameController gameController;
     Player testPlayer;
+    JOptionPane lul;
 
 
     @Before
@@ -24,19 +27,8 @@ public class GameControllerTest {
 
         testPlayer = new Player("", Images.WHITE_COLOR);
 
-    }
+        lul = spy(JOptionPane.class);
 
-    @Test
-    public void testEndGame() {
-        //Arrange
-        IGameModel gameModelMock = mock(GameModel.class);
-        gameController.setGameModel(gameModelMock);
-
-        //Act
-        gameController.endGame("test");
-
-        //Assert
-        verify(gameModelMock, times(1)).setBlockedChessboard(true);
     }
 
     @Test
@@ -53,6 +45,7 @@ public class GameControllerTest {
         //Assert
         verify(chessboardControllerMock, times(1)).undo();
     }
+
     @Test
     public void testRedo() {
 
