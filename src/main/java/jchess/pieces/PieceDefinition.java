@@ -5,7 +5,7 @@ import java.util.HashSet;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 
-import jchess.move.Move;
+import jchess.move.MoveDefinition;
 
 public class PieceDefinition {
 	public static final PieceDefinition PLACEHOLDER = new PieceDefinition("Placeholder", 0, "", new HashSet<>());
@@ -21,7 +21,7 @@ public class PieceDefinition {
 	
 	private int value;
 	private String type, symbol;
-	private HashSet<Move> moves;
+	private HashSet<MoveDefinition> moves;
 	
 	/**
 	 * Creates a new Piece with the same attributes as those of the Piece other.
@@ -32,12 +32,12 @@ public class PieceDefinition {
 			throw new NullPointerException("Argument 'other' is null.");
 		
 		this.value = other.value;
-		this.moves = new HashSet<Move>(other.moves);
+		this.moves = new HashSet<MoveDefinition>(other.moves);
 		this.symbol = new String(other.symbol);
 		this.type = new String(other.type);
 	}
 
-	private PieceDefinition(String type, int value, String symbol, HashSet<Move> moves) {
+	private PieceDefinition(String type, int value, String symbol, HashSet<MoveDefinition> moves) {
 		this.type = type;
 		this.value = value;
 		this.symbol = symbol;
@@ -75,7 +75,7 @@ public class PieceDefinition {
 	/**
 	 * @return List of all available Moves for this Piece.
 	 */
-	public HashSet<Move> getMoves() {
+	public HashSet<MoveDefinition> getMoves() {
 		return moves;
 	}
 }

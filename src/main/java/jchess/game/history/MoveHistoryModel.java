@@ -1,6 +1,6 @@
 package jchess.game.history;
 
-import jchess.move.effects.MoveEffect;
+import jchess.move.effects.BoardTransition;
 
 import java.util.ArrayList;
 import java.util.Stack;
@@ -9,9 +9,8 @@ import java.util.Stack;
  * Class that represents the Model of the MoveHistoryComponent.
  */
 public class MoveHistoryModel extends AbstractMoveHistoryModel {
-
-    private Stack<MoveEffect> moveBackStack;
-    private Stack<MoveEffect> moveForwardStack;
+    private Stack<BoardTransition> moveBackStack;
+    private Stack<BoardTransition> moveForwardStack;
     private MoveHistoryController.PlayerColumn activePlayerColumn = MoveHistoryController.PlayerColumn.player1;
     private ArrayList<String> move;
     private int currentRow;
@@ -26,18 +25,18 @@ public class MoveHistoryModel extends AbstractMoveHistoryModel {
         this.move = new ArrayList<>();
         this.addTableModelListener(null);
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Stack<MoveEffect> getMoveBackStack() {
+    
+	/**
+	 * {@inheritDoc}
+	 */
+	public Stack<BoardTransition> getMoveBackStack() {
         return moveBackStack;
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Stack<MoveEffect> getMoveForwardStack() {
+	
+	/**
+    * {@inheritDoc}
+    */
+    public Stack<BoardTransition> getMoveForwardStack() {
         return moveForwardStack;
     }
 
