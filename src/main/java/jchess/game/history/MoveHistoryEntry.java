@@ -18,9 +18,8 @@ public class MoveHistoryEntry {
 		this.moveDefinition = move;
 	}
 	
-	public MoveHistoryEntry setPriorityMoveType(MoveType priorityMoveType) {
+	public void setPriorityMoveType(MoveType priorityMoveType) {
 		this.priorityMoveType = priorityMoveType;
-		return this;
 	}
 	
 	public MoveType getPriorityMoveType() {
