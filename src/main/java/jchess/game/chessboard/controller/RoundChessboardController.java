@@ -170,7 +170,6 @@ public class RoundChessboardController implements IChessboardController {
         return activeSquare;
     }
 
-    private void setActiveSquare(Square square) {
     /**
      * {@inheritDoc}
      */
@@ -324,7 +323,7 @@ public class RoundChessboardController implements IChessboardController {
     /**
      * {@inheritDoc}
      */
-    private Square getSquareFromClick(int x, int y) {
+    public Square getSquareFromClick(int x, int y) {
         Point clickedPoint = new Point(x, y);
         CartesianPolarConverter converter = new CartesianPolarConverter();
         PolarPoint polarPoint = converter.getPolarFromCartesian(clickedPoint, view.getCircleCenter());

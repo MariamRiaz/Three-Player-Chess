@@ -59,6 +59,7 @@ public class GameController implements IGameController {
     private void initializeControllers() {
         moveHistoryController = new MoveHistoryController(chessboardLoader.getColumnNames());
         RoundChessboardModel chessboardModel = chessboardLoader.loadDefaultFromJSON(gameModel);
+        int chessboardSize = 800;
         chessboardController = new RoundChessboardController(chessboardModel, chessboardSize, this.moveHistoryController);
         gameClock = new GameClock(this);
         moveEvaluator = new MoveEvaluator((RoundChessboardController) chessboardController);
@@ -192,6 +193,7 @@ public class GameController implements IGameController {
             return;
         }
         if (chessboardController.getActiveSquare() != null) {
+            MoveEvaluator evaluator = new MoveEvaluator((RoundChessboardController) chessboardController);
             if (didSelectPossibleMove(square, evaluator)) {
                 chessboardController.move(chessboardController.getActiveSquare(), square);
                 applyBuffs();
@@ -231,8 +233,8 @@ public class GameController implements IGameController {
         return square.getPiece().getPlayer().equals(gameModel.getActivePlayer());
     }
 
-    private boolean didSelectPossibleMove(Square square) {
-        return chessboardController.moveIsPossible(chessboardController.getActiveSquare(), square);
+    private boolean didSelectPossibleMove(Square square, MoveEvaluator evaluator) {
+        return chessboardController.moveIsPossible(chessboardController.getActiveSquare(), square, evaluator);
     }
 
     /**
