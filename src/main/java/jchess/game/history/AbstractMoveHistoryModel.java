@@ -1,6 +1,6 @@
 package jchess.game.history;
 
-import jchess.move.effects.MoveEffect;
+import jchess.move.effects.BoardTransition;
 
 import java.util.List;
 import java.util.Stack;
@@ -23,14 +23,14 @@ public abstract class AbstractMoveHistoryModel extends DefaultTableModel {
      *
      * @return MoveBackStack
      */
-    public abstract Stack<MoveEffect> getMoveBackStack();
+    public abstract Stack<BoardTransition> getMoveBackStack();
 
     /**
      * getter for the MoveForwardStack
      *
      * @return MoveForwardStack
      */
-    public abstract Stack<MoveEffect> getMoveForwardStack();
+    public abstract Stack<BoardTransition> getMoveForwardStack();
 
     /**
      * getter for the List Moves contained in the MoveHistory Table as Strings

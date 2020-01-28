@@ -6,7 +6,7 @@ import java.util.HashSet;
 /**
  * Class representing a potential Move of a Piece. It describes the direction, limit and conditions for this Move.
  */
-public class Move {
+public class MoveDefinition {
 	public static final String formatStringPiece = "Piece", formatStringFrom = "From", formatStringTo = "To";
 	
 	private static final HashMap<MoveType, String> defaultFormatStrings = new HashMap<MoveType, String>() {{
@@ -40,16 +40,20 @@ public class Move {
 	}
 	
 	public String getFormatString(MoveType type) {
-		if (formatStrings == null)
-			return defaultFormatStrings.get(type);
+		if (formatStrings == null || formatStrings.get(type) == null) {
+			final String retVal = defaultFormatStrings.get(type);
+			if (retVal == null)
+				return getDefaultFormatString();
+			return retVal;
+		}
 		return formatStrings.get(type);
 	}
 	
 	public String getDefaultFormatString() {
-		if (!formatStrings.isEmpty())
+		if (formatStrings != null && !formatStrings.isEmpty())
 			return formatStrings.entrySet().iterator().next().getValue();
 		if (!defaultFormatStrings.isEmpty())
 			return defaultFormatStrings.entrySet().iterator().next().getValue();
-		return null;
+		return "";
 	}
 }
