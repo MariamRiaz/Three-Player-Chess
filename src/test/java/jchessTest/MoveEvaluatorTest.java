@@ -34,10 +34,13 @@ public class MoveEvaluatorTest {
 	 */
 	@Test
 	public void testAttackMoveEvaluation() {
+		//Arrange
 		generate4by1AttackerDefenderScenario(0, 3);
-		
-		HashSet<BoardTransition> moves = moveEvaluator.getPieceTargetToSavePieces(rcc.getSquare(0, 0).getPiece(), null); // action
-		
+
+		//Act
+		HashSet<BoardTransition> moves = moveEvaluator.getPieceTargetToSavePieces(rcc.getSquare(0, 0).getPiece(), null);
+
+		//Assert
 		assertEquals(1, moves.size()); // assertions
 		assertNotNull(moves.iterator().next());
 		assertNotNull(moves.iterator().next().getMoveHistoryEntry());
@@ -50,10 +53,13 @@ public class MoveEvaluatorTest {
 	 */
 	@Test
 	public void testNonAttackMoveEvaluation() {
+		//Arrange
 		generate4by1AttackerDefenderScenario(1, 2);
-		
-		HashSet<BoardTransition> moves = moveEvaluator.getPieceTargetToSavePieces(rcc.getSquare(2, 0).getPiece(), null); // action
-		
+
+		//Act
+		HashSet<BoardTransition> moves = moveEvaluator.getPieceTargetToSavePieces(rcc.getSquare(2, 0).getPiece(), null);
+
+		//Assert
 		assertEquals(0, moves.size()); // assertions
 	}
 	
@@ -62,10 +68,13 @@ public class MoveEvaluatorTest {
 	 */
 	@Test
 	public void testMoveBlockEvaluation() {
+		//Arrange
 		generate4by1AttackerDefenderScenario(1, 3);
 
-		HashSet<BoardTransition> moves = moveEvaluator.getPieceTargetToSavePieces(rcc.getSquare(3, 0).getPiece(), null); // action
-		
+		//Act
+		HashSet<BoardTransition> moves = moveEvaluator.getPieceTargetToSavePieces(rcc.getSquare(3, 0).getPiece(), null);
+
+		//Assert
 		assertEquals(1,  moves.size()); // assertions
 		
 		for (BoardTransition sq : moves) {
@@ -79,10 +88,13 @@ public class MoveEvaluatorTest {
 	 */
 	@Test
 	public void testCastlingEvaluation() {
+		//Arrange
 		generateCastlingScenario();
-		
-		HashSet<BoardTransition> moves = moveEvaluator.getPieceTargetToSavePieces(rcc.getSquare(0, 0).getPiece(), null); // action
 
+		//Act
+		HashSet<BoardTransition> moves = moveEvaluator.getPieceTargetToSavePieces(rcc.getSquare(0, 0).getPiece(), null);
+
+		//Assert
 		assertEquals(1, moves.size()); // assertions
 		assertNotNull(moves.iterator().next());
 		assertNotNull(moves.iterator().next().getMoveHistoryEntry());
