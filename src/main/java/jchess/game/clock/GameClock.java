@@ -21,7 +21,6 @@
 package jchess.game.clock;
 
 import jchess.game.IGameController;
-import jchess.game.IGameModel;
 import jchess.logging.Log;
 
 import java.util.logging.Level;

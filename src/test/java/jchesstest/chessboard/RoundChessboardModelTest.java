@@ -82,14 +82,10 @@ public class RoundChessboardModelTest {
         Square secondSquare = sut.getSquare(2,0);
         // Act
         HashSet<Square> squares = sut.getSquaresBetween(firstSquare, secondSquare);
-        Square betweenSquareLast = (Square) Arrays.asList(squares.toArray()).get(0);
-        Square betweenSquareSecond = (Square) Arrays.asList(squares.toArray()).get(1);
-        Square betweenSquareFirst = (Square) Arrays.asList(squares.toArray()).get(2);
         // Assert
         assertEquals(squares.size(), 3);
-        assertEquals(betweenSquareLast, secondSquare);
-        assertEquals(betweenSquareSecond, sut.getSquare(1,0));
-        assertEquals(betweenSquareFirst, firstSquare);
+        assertTrue(squares.contains(secondSquare));
+        assertTrue(squares.contains(firstSquare));
     }
 
     @Test

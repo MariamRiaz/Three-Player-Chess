@@ -5,9 +5,7 @@ import jchess.logging.Log;
 import jchess.pieces.Piece;
 
 import java.awt.*;
-import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Properties;
 import java.util.PropertyResourceBundle;

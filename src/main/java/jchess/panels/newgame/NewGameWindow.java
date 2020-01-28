@@ -20,12 +20,10 @@
  */
 package jchess.panels.newgame;
 
-import javax.annotation.Resource;
-import javax.swing.*;
-
-import jchess.game.GameModel;
 import jchess.io.ResourceLoader;
 import jchess.io.Texts;
+
+import javax.swing.*;
 
 /**
  *

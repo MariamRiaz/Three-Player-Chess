@@ -22,13 +22,11 @@ public class Piece {
     private final Player player;
 
     /**
-     * Creates a new Piece based on the given parameters. Piece attributes cannot be changed after initialization.
-     *
-     * @param player Must be non-null.
-     * @param type   Must be non-null. The type of this Piece, e.g. Pawn, King etc.
-     * @param value  The value in points of this Piece.
-     * @param symbol Must be non-null. The shorthand symbol of this Piece, e.g. N, K, Q etc.
-     * @param moves  The Moves for this Piece. Each Move must be non-null.
+     * Creates a new Piece based on the given parameters.
+     * Piece attributes cannot be changed after initialization.
+     * @param definition The piece definition
+     * @param player The player that owns the piece.
+     * @param orientation The orientation of the piece
      */
     public Piece(PieceDefinition definition, Player player, Orientation orientation) {
         if (definition == null)
