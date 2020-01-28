@@ -31,12 +31,9 @@ public class Player implements Serializable {
 
 	private PlayerColor color;
 
-	public boolean goDown;
-
 	public Player(String name, String color) {
 		this.name = name;
 		this.color = PlayerColor.getColor(color);
-		this.goDown = false;
 	}
 
 	/**
