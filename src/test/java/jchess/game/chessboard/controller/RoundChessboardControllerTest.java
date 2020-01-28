@@ -3,6 +3,7 @@ package jchess.game.chessboard.controller;
 import jchess.game.GameModel;
 import jchess.game.IGameModel;
 import jchess.game.chessboard.RoundChessboardLoader;
+import jchess.game.chessboard.model.RoundChessboardModel;
 import jchess.game.chessboard.model.Square;
 import jchess.game.chessboard.view.AbstractChessboardView;
 import jchess.game.chessboard.view.RoundChessboardView;
@@ -70,16 +71,25 @@ public class RoundChessboardControllerTest {
         assert piece.getDefinition().getType().equals("King");
     }
 
-    @Test
-    public void getActiveSquare() {
-        roundChessboardController.select(new Square(1, 1, mock(Piece.class)));
-        System.out.println(roundChessboardController.getActiveSquare());
-    }
+//    @Test
+//    public void getActiveSquare() {
+//        roundChessboardController.setActiveSquare(null);
+//        //roundChessboardController.select(new Square(1, 1, mock(Piece.class)));
+//        System.out.println(roundChessboardController.getActiveSquare());
+//    }
 
     @Test
     public void getSquareTest1() {
         assert roundChessboardController.getSquare(1, 1).equals(new Square(1, 1, null));
         //assert roundChessboardController.getSquare(1000, 1000).equals(new Square(1000, 1000, null));
+    }
+
+    @Test
+    public void getSquareTest3() {
+        HashSet<Piece> crucialPieces = roundChessboardController.getCrucialPieces(new Player("", Images.WHITE_COLOR));
+        Piece piece = (Piece) crucialPieces.toArray()[0];
+        assert roundChessboardController.getSquare(piece).getPozX() == 5;
+        assert roundChessboardController.getSquare(piece).getPozY() == 3;
     }
 
     @Test (expected = NullPointerException.class)
@@ -110,11 +120,8 @@ public class RoundChessboardControllerTest {
     }
 
     @Test
-    public void testGetSquare() {
-        
-    }
-
-    @Test
     public void getModel() {
+//        RoundChessboardModel model = chessboardLoader.loadDefaultFromJSON(gameModel);
+//        System.out.println(roundChessboardController.getModel());
     }
 }
