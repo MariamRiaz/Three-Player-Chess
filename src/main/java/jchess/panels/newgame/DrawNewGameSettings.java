@@ -23,7 +23,6 @@ import java.util.logging.Level;
 public class DrawNewGameSettings extends JPanel implements ActionListener, TextListener {
 
     JDialog parent;// needet to close newGame window
-    JComboBox color;// to choose color of player
     JRadioButton oponentComp;// choose oponent
     JRadioButton oponentHuman;// choose oponent (human)
     ButtonGroup oponentChoos;// group 4 radio buttons
@@ -139,7 +138,6 @@ public class DrawNewGameSettings extends JPanel implements ActionListener, TextL
     public DrawNewGameSettings(JDialog parent) {
         super();
         this.parent = parent;
-        this.color = new JComboBox(colors);
         this.gbl = new GridBagLayout();
         this.gbc = new GridBagConstraints();
         this.sep = new JSeparator();
@@ -181,8 +179,6 @@ public class DrawNewGameSettings extends JPanel implements ActionListener, TextL
         this.add(firstName);
         this.gbc.gridx = 1;
         this.gbc.gridy = 2;
-        this.gbl.setConstraints(color, gbc);
-        this.add(color);
         this.gbc.gridx = 0;
         this.gbc.gridy = 3;
         this.gbl.setConstraints(secondNameLab, gbc);
