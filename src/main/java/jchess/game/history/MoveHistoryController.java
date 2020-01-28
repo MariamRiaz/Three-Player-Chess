@@ -1,9 +1,9 @@
 package jchess.game.history;
 
-import jchess.game.GameModel;
 import jchess.game.chessboard.model.Square;
+import jchess.io.ResourceLoader;
+import jchess.io.Texts;
 import jchess.move.MoveDefinition;
-import jchess.move.MoveType;
 import jchess.move.effects.BoardTransition;
 import org.apache.commons.text.StringSubstitutor;
 
@@ -15,19 +15,22 @@ import java.util.*;
  * Class that holds all the move history of the game, and all the necessary methods to undo and redo a move.
  */
 public class MoveHistoryController implements IMoveHistoryController {
+
+    /**
+     * Enum that store the player columns.
+     */
     public enum PlayerColumn {
         player1,
         player2,
         player3
     }
 
-    private String[] names = new String[]{GameModel.getTexts("white"), GameModel.getTexts("black"), GameModel.getTexts("gray")};
     private IMoveHistoryView moveHistoryView;
     private AbstractMoveHistoryModel moveHistoryModel;
     private ArrayList<Character> columnNames;
 
     /**
-     * Constructor for MoveHistoryController
+     * Constructor for MoveHistoryController.
      *
      * @param columns List of Column Names of the ChessBoard that was loaded
      */
@@ -35,9 +38,12 @@ public class MoveHistoryController implements IMoveHistoryController {
         super();
         this.moveHistoryModel = new MoveHistoryModel();
         this.moveHistoryView = new MoveHistoryView(moveHistoryModel);
-        this.moveHistoryModel.addColumn(this.names[0]);
-        this.moveHistoryModel.addColumn(this.names[1]);
-        this.moveHistoryModel.addColumn(this.names[2]);
+        String[] names = new String[]{ResourceLoader.getTexts(Texts.WHITE_KEY),
+                ResourceLoader.getTexts(Texts.BLACK_KEY),
+                ResourceLoader.getTexts(Texts.GRAY_KEY)};
+        this.moveHistoryModel.addColumn(names[0]);
+        this.moveHistoryModel.addColumn(names[1]);
+        this.moveHistoryModel.addColumn(names[2]);
         this.columnNames = columns;
     }
 
@@ -80,10 +86,10 @@ public class MoveHistoryController implements IMoveHistoryController {
             }};
 
             final String formatString = moveEffects.getMoveHistoryEntry().getMove().getFormatString(moveEffects.getMoveHistoryEntry().getPriorityMoveType());
-            
+
             addMove(new StringSubstitutor(values).replace(formatString));
         }
-        
+
         moveHistoryModel.getMoveBackStack().add(moveEffects);
     }
 
@@ -113,22 +119,23 @@ public class MoveHistoryController implements IMoveHistoryController {
         return moveHistoryModel.getMove();
     }
 
-	/**
-	 * {@inheritDoc}
-	 */
+    /**
+     * {@inheritDoc}
+     */
     public Queue<BoardTransition> undo() {
         Queue<BoardTransition> retVal = new LinkedList<>();
 
         BoardTransition toAdd = null;
         while ((toAdd = undoOne()) != null) {
             retVal.add(toAdd);
-            if (toAdd.getMoveHistoryEntry() != null)
+            if (toAdd.getMoveHistoryEntry() != null) {
                 break;
+            }
         }
 
         return retVal;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -144,18 +151,22 @@ public class MoveHistoryController implements IMoveHistoryController {
 
             if (last.getMoveHistoryEntry() != null) {
                 if (moveHistoryModel.getActivePlayerColumn().equals(MoveHistoryController.PlayerColumn.player1)) {
-                    if (moveHistoryModel.getRowCount() > 0)
+                    if (moveHistoryModel.getRowCount() > 0) {
                         moveHistoryModel.setValueAt("", moveHistoryModel.getRowCount() - 1, 2);
+                    }
 
-                } else if (moveHistoryModel.getActivePlayerColumn().equals(MoveHistoryController.PlayerColumn.player2)) {
+                } else if (moveHistoryModel.getActivePlayerColumn()
+                        .equals(MoveHistoryController.PlayerColumn.player2)) {
                     moveHistoryModel.setValueAt("", moveHistoryModel.getRowCount() - 1, 0);
                     moveHistoryModel.removeRow(moveHistoryModel.getRowCount() - 1);
-                    if (moveHistoryModel.getCurrentRow() > 0)
+                    if (moveHistoryModel.getCurrentRow() > 0) {
                         moveHistoryModel.setCurrentRow(moveHistoryModel.getCurrentRow() - 1);
+                    }
 
                 } else {
-                    if (moveHistoryModel.getRowCount() > 0)
+                    if (moveHistoryModel.getRowCount() > 0) {
                         moveHistoryModel.setValueAt("", moveHistoryModel.getRowCount() - 1, 1);
+                    }
 
                 }
                 moveHistoryModel.getMove().remove(moveHistoryModel.getMove().size() - 1);
@@ -164,7 +175,7 @@ public class MoveHistoryController implements IMoveHistoryController {
 
         return last;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -182,10 +193,10 @@ public class MoveHistoryController implements IMoveHistoryController {
 
         return retVal;
     }
-    
-	/**
-	 * {@inheritDoc}
-	 */
+
+    /**
+     * {@inheritDoc}
+     */
     public BoardTransition redoOne() {
         try {
             BoardTransition first = moveHistoryModel.getMoveForwardStack().pop();
@@ -205,12 +216,13 @@ public class MoveHistoryController implements IMoveHistoryController {
      * {@inheritDoc}
      */
     public void switchColumns(boolean forward) {
-        if (moveHistoryModel.getActivePlayerColumn().equals(PlayerColumn.player1))
+        if (moveHistoryModel.getActivePlayerColumn().equals(PlayerColumn.player1)) {
             moveHistoryModel.setActivePlayerColumn(forward ? PlayerColumn.player2 : PlayerColumn.player3);
-        else if (moveHistoryModel.getActivePlayerColumn().equals(PlayerColumn.player2))
+        } else if (moveHistoryModel.getActivePlayerColumn().equals(PlayerColumn.player2)) {
             moveHistoryModel.setActivePlayerColumn(forward ? PlayerColumn.player3 : PlayerColumn.player1);
-        else if (moveHistoryModel.getActivePlayerColumn().equals(PlayerColumn.player3))
+        } else if (moveHistoryModel.getActivePlayerColumn().equals(PlayerColumn.player3)) {
             moveHistoryModel.setActivePlayerColumn(forward ? PlayerColumn.player1 : PlayerColumn.player2);
+        }
     }
 
     /**
@@ -221,7 +233,7 @@ public class MoveHistoryController implements IMoveHistoryController {
     }
 
     /**
-     * getter for the Model of the MoveHistory Component
+     * getter for the Model of the MoveHistory Component.
      *
      * @return Model of the MoveHistory Component
      */
@@ -230,7 +242,7 @@ public class MoveHistoryController implements IMoveHistoryController {
     }
 
     /**
-     * setter for the MoveHistoryView
+     * setter for the MoveHistoryView.
      */
     public void setMoveHistoryView(IMoveHistoryView moveHistoryView) {
         this.moveHistoryView = moveHistoryView;

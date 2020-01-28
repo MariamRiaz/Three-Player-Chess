@@ -8,10 +8,6 @@ public class Images {
 
     public static final String DEFAULT_THEME = "default";
 
-    public static final String HUNTER_THEME = "hunter";
-
-    public static final String MATLAK_THEME = "matlak";
-
     public static final String BLACK_COLOR = "-B";
 
     public static final String GREY_COLOR = "-G";
@@ -30,6 +26,5 @@ public class Images {
 
     public static final String CLICKED_ADD_TAB = "clicked-add-tab-icon.png";
 
-    public static final String PREVIEW = "Preview.png";
 
 }

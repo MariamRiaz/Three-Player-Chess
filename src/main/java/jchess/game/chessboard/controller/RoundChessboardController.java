@@ -69,6 +69,9 @@ public class RoundChessboardController implements IChessboardController {
         this.squareObservable.addObserver(observer);
     }
 
+    /**
+     * Processes a mouse-click event.
+     */
     @Override
     public void mouseClicked(MouseEvent e) {
 
@@ -86,16 +89,25 @@ public class RoundChessboardController implements IChessboardController {
         }
     }
 
+    /**
+     * Processes a mouse-released event.
+     */
     @Override
     public void mouseReleased(MouseEvent e) {
 
     }
 
+    /**
+     * Processes a mouse-entered event.
+     */
     @Override
     public void mouseEntered(MouseEvent e) {
 
     }
 
+    /**
+     * Processes a mouse-exited event.
+     */
     @Override
     public void mouseExited(MouseEvent e) {
 
@@ -159,6 +171,10 @@ public class RoundChessboardController implements IChessboardController {
     }
 
     private void setActiveSquare(Square square) {
+    /**
+     * {@inheritDoc}
+     */
+    public void setActiveSquare(Square square) {
         this.activeSquare = square;
         if (square == null) {
             view.resetActiveCell();
@@ -237,6 +253,7 @@ public class RoundChessboardController implements IChessboardController {
                 }
             }
         }
+
     }
 
     private void applyStateChanges(List<StateChange> stateChanges) {
@@ -307,7 +324,7 @@ public class RoundChessboardController implements IChessboardController {
     /**
      * {@inheritDoc}
      */
-    public Square getSquareFromClick(int x, int y) {
+    private Square getSquareFromClick(int x, int y) {
         Point clickedPoint = new Point(x, y);
         CartesianPolarConverter converter = new CartesianPolarConverter();
         PolarPoint polarPoint = converter.getPolarFromCartesian(clickedPoint, view.getCircleCenter());

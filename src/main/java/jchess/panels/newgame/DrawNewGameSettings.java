@@ -1,29 +1,11 @@
-/*
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
-#
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
-#
-#    You should have received a copy of the GNU General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/*
- * Authors:
- * Mateusz Sławomir Lach ( matlak, msl )
- */
 package jchess.panels.newgame;
 
 import jchess.JChessApp;
 import jchess.game.IGameController;
-import jchess.game.player.Player;
-import jchess.game.GameModel;
 import jchess.game.IGameModel;
+import jchess.game.player.Player;
+import jchess.io.ResourceLoader;
+import jchess.io.Texts;
 import jchess.logging.Log;
 
 import javax.swing.*;
@@ -36,7 +18,7 @@ import java.awt.event.TextListener;
 import java.util.logging.Level;
 
 /**
- * Class responsible for drawing the fold with local game gameModel
+ * Class responsible for drawing the fold with local game gameModel.
  */
 public class DrawNewGameSettings extends JPanel implements ActionListener, TextListener {
 
@@ -58,13 +40,13 @@ public class DrawNewGameSettings extends JPanel implements ActionListener, TextL
     JButton okButton;
     JCheckBox timeGame;
     JComboBox time4Game;
-    String colors[] = {GameModel.getTexts("white"), GameModel.getTexts("black"), GameModel.getTexts("gray")};
+    String colors[] = {ResourceLoader.getTexts(Texts.WHITE_KEY), ResourceLoader.getTexts(Texts.BLACK_KEY), ResourceLoader.getTexts(Texts.GRAY_KEY)};
     String times[] = {"1", "3", "5", "8", "10", "15", "20", "25", "30", "60", "120"};
 
     ;
 
     /**
-     * Method witch is checking correction of edit tables
+     * Method witch is checking correction of edit tables.
      *
      * @param e Object where is saving this what contents edit tables
      */
@@ -89,59 +71,52 @@ public class DrawNewGameSettings extends JPanel implements ActionListener, TextL
         }
     }
 
-	/**
-	 * Method responsible for changing the options which can make a player when he
-	 * want to start new local game
-	 *
-	 * @param e where is saving data of performed action
-	 */
-	public void actionPerformed(ActionEvent e) {
-		Object target = e.getSource();
-		if (target == this.oponentComp) // toggle enabled of controls depends of oponent (if computer)
-		{
-			this.computerLevel.setEnabled(true);// enable level of computer abilities
-			this.secondName.setEnabled(false);// disable field with name of player2
-		} else if (target == this.oponentHuman) // else if oponent will be HUMAN
-		{
-			this.computerLevel.setEnabled(false);// disable level of computer abilities
-			this.secondName.setEnabled(true);// enable field with name of player2
-		} else if (target == this.okButton) // if clicked OK button (on finish)
-		{
-			if (this.firstName.getText().length() > 9) {// make names short to 10 digits
-				this.firstName.setText(this.trimString(firstName, 9));
-			}
-			if (this.secondName.getText().length() > 9) {// make names short to 10 digits
-				this.secondName.setText(this.trimString(secondName, 9));
-			}
-			if (this.thirdName.getText().length() > 9) {// make names short to 10 digits
-				this.thirdName.setText(this.trimString(thirdName, 9));
-			}
-			if (this.firstName.getText().length() == 0 || this.secondName.getText().length() == 0 || this.thirdName.getText().length() == 0) {
-				JOptionPane.showMessageDialog(this, GameModel.getTexts("fill_names"));
-				return;
-			}
-			if (this.firstName.getText().length() == 0) {
-				JOptionPane.showMessageDialog(this, GameModel.getTexts("fill_name"));
-				return;
-			}
-			JChessApp.getApplication().show(JChessApp.jcv);
-			IGameController newGUI = JChessApp.jcv.addNewTab(this.firstName.getText() + " vs " + this.secondName.getText() + " vs " + this.thirdName.getText());
-			IGameModel gameModel = newGUI.getGameModel();// sett local gameModel variable
-			Player pl1 = gameModel.getPlayerWhite();// set local player variable
-			Player pl2 = gameModel.getPlayerBlack();// set local player variable
-			Player pl3 = gameModel.getPlayerGray();// set local player variable
-			gameModel.setGameMode(GameModel.GAME_MODES.newGame);
-			if (this.color.getActionCommand().equals("biały")) // if first player is white
-			{
-				pl1.setName(this.firstName.getText());// set name of player
-				pl2.setName(this.secondName.getText());// set name of player
-				pl3.setName(this.thirdName.getText());// set name of player
-			} else // else change names
-			{
-				pl2.setName(this.firstName.getText());// set name of player
-				pl1.setName(this.secondName.getText());// set name of player
-				pl3.setName(this.thirdName.getText());// set name of player
-			}
+    /**
+     * Method responsible for changing the options which can make a player when he
+     * want to start new local game.
+     *
+     * @param e where is saving data of performed action
+     */
+    public void actionPerformed(ActionEvent e) {
+        Object target = e.getSource();
+        if (target == this.oponentComp) // toggle enabled of controls depends of oponent (if computer)
+        {
+            this.computerLevel.setEnabled(true);// enable level of computer abilities
+            this.secondName.setEnabled(false);// disable field with name of player2
+        } else if (target == this.oponentHuman) // else if oponent will be HUMAN
+        {
+            this.computerLevel.setEnabled(false);// disable level of computer abilities
+            this.secondName.setEnabled(true);// enable field with name of player2
+        } else if (target == this.okButton) // if clicked OK button (on finish)
+        {
+            if (this.firstName.getText().length() > 9) {// make names short to 10 digits
+                this.firstName.setText(this.trimString(firstName, 9));
+            }
+            if (this.secondName.getText().length() > 9) {// make names short to 10 digits
+                this.secondName.setText(this.trimString(secondName, 9));
+            }
+            if (this.thirdName.getText().length() > 9) {// make names short to 10 digits
+                this.thirdName.setText(this.trimString(thirdName, 9));
+            }
+            if (this.firstName.getText().length() == 0 || this.secondName.getText().length() == 0 || this.thirdName.getText().length() == 0) {
+                JOptionPane.showMessageDialog(this, ResourceLoader.getTexts(Texts.FILL_KEY));
+                return;
+            }
+            if (this.firstName.getText().length() == 0) {
+                JOptionPane.showMessageDialog(this, ResourceLoader.getTexts(Texts.FILL_KEY));
+                return;
+            }
+            JChessApp.getApplication().show(JChessApp.jcv);
+            IGameController newGUI = JChessApp.jcv.addNewTab(this.firstName.getText() + " vs " + this.secondName.getText() + " vs " + this.thirdName.getText());
+            IGameModel gameModel = newGUI.getGameModel();// sett local gameModel variable
+            Player pl1 = gameModel.getPlayerWhite();// set local player variable
+            Player pl2 = gameModel.getPlayerBlack();// set local player variable
+            Player pl3 = gameModel.getPlayerGray();// set local player variable
+            pl1.setName(this.firstName.getText());// set name of player
+            pl2.setName(this.secondName.getText());// set name of player
+            pl3.setName(this.thirdName.getText());// set name of player
+            newGUI.getGameClock().setPlayerNames(firstName.getText(),
+                    secondName.getText(), thirdName.getText());
 
 
             if (this.timeGame.isSelected()) // if timeGame is checked
@@ -171,7 +146,7 @@ public class DrawNewGameSettings extends JPanel implements ActionListener, TextL
         this.gbl = new GridBagLayout();
         this.gbc = new GridBagConstraints();
         this.sep = new JSeparator();
-        this.okButton = new JButton(GameModel.getTexts("ok"));
+        this.okButton = new JButton(ResourceLoader.getTexts(Texts.OK_KEY));
 
         this.firstName = new JTextField("", 10);
         this.firstName.setSize(new Dimension(200, 50));
@@ -179,18 +154,15 @@ public class DrawNewGameSettings extends JPanel implements ActionListener, TextL
         this.secondName.setSize(new Dimension(200, 50));
         this.thirdName = new JTextField("", 10);
         this.thirdName.setSize(new Dimension(200, 50));
-        this.firstNameLab = new JLabel(GameModel.getTexts("first_player_name") + ": ");
-        this.secondNameLab = new JLabel(GameModel.getTexts("second_player_name") + ": ");
-        this.thirdNameLab = new JLabel(GameModel.getTexts("third_player_name") + ": ");
+        this.firstNameLab = new JLabel(ResourceLoader.getTexts(Texts.FIRST_PLAYER_KEY) + ": ");
+        this.secondNameLab = new JLabel(ResourceLoader.getTexts(Texts.SECOND_PLAYER_KEY) + ": ");
+        this.thirdNameLab = new JLabel(ResourceLoader.getTexts(Texts.THIRD_PLAYER_KEY) + ": ");
         this.oponentChoos = new ButtonGroup();
         this.computerLevel = new JSlider();
-        this.timeGame = new JCheckBox(GameModel.getTexts("time_game_min"));
+        this.timeGame = new JCheckBox(ResourceLoader.getTexts(Texts.TIME_GAME_KEY));
         this.time4Game = new JComboBox(times);
 
-        this.oponentHuman = new JRadioButton(GameModel.getTexts("against_other_human"), true);
-
         this.setLayout(gbl);
-        this.oponentHuman.addActionListener(this);
         this.okButton.addActionListener(this);
 
         this.secondName.addActionListener(this);
@@ -252,14 +224,14 @@ public class DrawNewGameSettings extends JPanel implements ActionListener, TextL
     }
 
     /**
-     * Method responsible for triming white symbols from strings
+     * Method responsible for triming white symbols from strings.
      *
      * @param txt    Where is capt value to equal
      * @param length How long is the string
      * @return result trimmed String
      */
-    public String trimString(JTextField txt, int length) {
-        String result = new String();
+    private String trimString(JTextField txt, int length) {
+        String result = "";
         try {
             result = txt.getText(0, length);
         } catch (BadLocationException exc) {
