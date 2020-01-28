@@ -1,8 +1,6 @@
 package jchess.game.clock;
 
-import jchess.game.clock.AbstractGameClockView;
-
-public interface IGameClock extends Runnable{
+public interface IGameClock extends Runnable {
 
 
     AbstractGameClockView getGameClockView();
@@ -12,4 +10,6 @@ public interface IGameClock extends Runnable{
     void switchPlayers(boolean forward);
 
     void setTimes(int time);
+
+    void setPlayerNames(String playerOne, String playerTwo, String playerThree);
 }

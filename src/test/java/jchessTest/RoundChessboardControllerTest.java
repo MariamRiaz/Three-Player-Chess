@@ -1,23 +1,21 @@
 package jchessTest;
 
-import jchess.game.history.MoveHistoryController;
-import jchess.game.chessboard.controller.RoundChessboardController;
-import jchess.game.chessboard.RoundChessboardLoader;
-import jchess.game.player.Player;
-import jchess.game.chessboard.model.Square;
 import jchess.game.GameModel;
 import jchess.game.IGameModel;
+import jchess.game.chessboard.RoundChessboardLoader;
+import jchess.game.chessboard.controller.RoundChessboardController;
 import jchess.game.chessboard.model.RoundChessboardModel;
+import jchess.game.chessboard.model.Square;
+import jchess.game.chessboard.view.RoundChessboardView;
+import jchess.game.history.MoveHistoryController;
+import jchess.game.player.Player;
 import jchess.move.Orientation;
 import jchess.pieces.Piece;
 import jchess.pieces.PieceLoader;
-import jchess.game.chessboard.view.RoundChessboardView;
 import org.junit.Before;
-import org.junit.Test;
 
 import java.util.ArrayList;
 
-import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

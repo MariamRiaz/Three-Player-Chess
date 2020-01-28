@@ -23,7 +23,7 @@ package jchess.game.player;
 import java.io.Serializable;
 
 /**
- * Class representing the player in the game
+ * Class representing the player in the game.
  */
 public class Player implements Serializable {
 
@@ -31,12 +31,9 @@ public class Player implements Serializable {
 
     private PlayerColor color;
 
-    public boolean goDown;
-
     public Player(String name, String color) {
         this.name = name;
         this.color = PlayerColor.getColor(color);
-        this.goDown = false;
     }
 
     /**
