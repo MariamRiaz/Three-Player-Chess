@@ -194,10 +194,11 @@ public class GameController implements IGameController {
      * @param square The selected square
      */
     private void selectedSquare(Square square) {
+        MoveEvaluator evaluator = new MoveEvaluator((RoundChessboardController) chessboardController);
         if (gameModel.isBlockedChessboard()) return;
         if (square == null) return;
         if (chessboardController.getActiveSquare() != null) {
-            if (didSelectPossibleMove(square)) {
+            if (didSelectPossibleMove(square, evaluator)) {
                 chessboardController.move(chessboardController.getActiveSquare(), square);
                 applyBuffs();
                 
@@ -235,8 +236,8 @@ public class GameController implements IGameController {
         return square.equals(chessboardController.getActiveSquare());
     }
 
-    private boolean didSelectPossibleMove(Square square) {
-        return chessboardController.moveIsPossible(chessboardController.getActiveSquare(), square);
+    private boolean didSelectPossibleMove(Square square, MoveEvaluator evaluator) {
+        return chessboardController.moveIsPossible(chessboardController.getActiveSquare(), square, evaluator);
     }
 
     /**

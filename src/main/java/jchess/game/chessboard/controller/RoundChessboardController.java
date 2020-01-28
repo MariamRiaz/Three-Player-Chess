@@ -103,12 +103,11 @@ public class RoundChessboardController implements IChessboardController {
     /**
      * {@inheritDoc}
      */
-    public boolean moveIsPossible(Square squareFrom, Square squareTo) {
+    public boolean moveIsPossible(Square squareFrom, Square squareTo, MoveEvaluator evaluator) {
         if (squareFrom == null || squareTo == null || squareFrom.getPiece() == null) {
             return false;
         }
 
-        MoveEvaluator evaluator = new MoveEvaluator(this);
         HashSet<Piece> crucialPieces = getCrucialPieces(squareFrom.getPiece().getPlayer());
         HashSet<BoardTransition> moveEffects = evaluator
                 .getPieceTargetToSavePieces(squareFrom.getPiece(), crucialPieces);

@@ -4,6 +4,7 @@ import jchess.game.chessboard.model.IChessboardModel;
 import jchess.game.chessboard.model.Square;
 import jchess.game.chessboard.view.AbstractChessboardView;
 import jchess.game.player.Player;
+import jchess.move.MoveEvaluator;
 import jchess.move.effects.BoardTransition;
 import jchess.pieces.Piece;
 
@@ -38,7 +39,7 @@ public interface IChessboardController extends MouseListener {
      * @param squareTo   The destination square of the move
      * @return True if the move can be performed, false otherwise
      */
-    boolean moveIsPossible(Square squareFrom, Square squareTo);
+    boolean moveIsPossible(Square squareFrom, Square squareTo, MoveEvaluator evaluator);
 
     /**
      * Applies changes to model and view whenever a square is selected.
