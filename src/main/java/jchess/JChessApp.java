@@ -63,5 +63,3 @@ public class JChessApp extends SingleFrameApplication {
         launch(JChessApp.class, args);
     }
 }
-
-// comment

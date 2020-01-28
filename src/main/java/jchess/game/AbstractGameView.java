@@ -1,10 +1,12 @@
 package jchess.game;
 
-import jchess.game.IGameController;
-
-import javax.swing.*;
 import java.awt.event.ComponentListener;
+import javax.swing.*;
 
+
+/**
+ * Abstract representation of a view of a game.
+ */
 public abstract class AbstractGameView extends JPanel implements ComponentListener {
 
     public abstract IGameController getGameController();

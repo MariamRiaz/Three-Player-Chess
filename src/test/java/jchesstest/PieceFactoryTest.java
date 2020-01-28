@@ -1,4 +1,4 @@
-package jchessTest;
+package jchesstest;
 
 public class PieceFactoryTest {
    /* @Test

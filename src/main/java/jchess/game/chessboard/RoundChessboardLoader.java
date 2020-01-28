@@ -2,10 +2,10 @@ package jchess.game.chessboard;
 
 import com.google.gson.*;
 import jchess.JChessApp;
-import jchess.game.player.Player;
 import jchess.game.IGameModel;
 import jchess.game.chessboard.model.RoundChessboardModel;
 import jchess.game.chessboard.model.Square;
+import jchess.game.player.Player;
 import jchess.move.Orientation;
 import jchess.pieces.Piece;
 import jchess.pieces.PieceDefinition;
@@ -18,6 +18,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Class responsible of loading a board state form JSON.
+ */
 public class RoundChessboardLoader {
     private static final String boardsFolder = "boards", defaultBoardFile = "circle_rim.json";
     private static final URL defaultBoardPath = JChessApp.class.getClassLoader().getResource(boardsFolder + "/" + defaultBoardFile);
@@ -32,7 +35,7 @@ public class RoundChessboardLoader {
      * @return The loaded model or null if loading failed.
      */
     public RoundChessboardModel loadDefaultFromJSON(IGameModel gameModel) {
-        return loadFromJSON(defaultBoardPath, gameModel);
+        return loadFromJSON(gameModel);
     }
 
     /**
@@ -41,12 +44,14 @@ public class RoundChessboardLoader {
      * @param gameModel The GameModel with the Players to use.
      * @return The loaded model or null if loading failed.
      */
-    private RoundChessboardModel loadFromJSON(URL boardPath, IGameModel gameModel) {
+    @SuppressWarnings("checkstyle:Regexp")
+    private RoundChessboardModel loadFromJSON(IGameModel gameModel) {
         model = null;
 
         try {
-            if (boardPath != null)
-                initializeFromJSON(new JsonParser().parse(new BufferedReader(new InputStreamReader(boardPath.openStream()))), gameModel);
+            if (RoundChessboardLoader.defaultBoardPath != null) {
+                initializeFromJSON(new JsonParser().parse(new BufferedReader(new InputStreamReader(RoundChessboardLoader.defaultBoardPath.openStream()))), gameModel);
+            }
         } catch (JsonIOException | JsonSyntaxException | IOException e) {
             e.printStackTrace();
         }
@@ -65,6 +70,7 @@ public class RoundChessboardLoader {
         return null;
     }
 
+    @SuppressWarnings("checkstyle:NeedBraces")
     private void initializeFromJSON(JsonElement jsonBody, IGameModel gameModel) {
         if (jsonBody == null || !jsonBody.isJsonObject())
             return;

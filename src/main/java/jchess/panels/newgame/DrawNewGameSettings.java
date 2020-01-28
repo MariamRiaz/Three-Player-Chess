@@ -130,7 +130,7 @@ public class DrawNewGameSettings extends JPanel implements ActionListener, TextL
 			Player pl1 = gameModel.getPlayerWhite();// set local player variable
 			Player pl2 = gameModel.getPlayerBlack();// set local player variable
 			Player pl3 = gameModel.getPlayerGray();// set local player variable
-			gameModel.setGameMode(GameModel.gameModes.newGame);
+			gameModel.setGameMode(GameModel.GAME_MODES.newGame);
 			if (this.color.getActionCommand().equals("biały")) // if first player is white
 			{
 				pl1.setName(this.firstName.getText());// set name of player

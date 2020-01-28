@@ -1,4 +1,4 @@
-package jchessTest.chessboard;
+package jchesstest.chessboard;
 
 import jchess.game.chessboard.RoundChessboardLoader;
 import jchess.game.chessboard.controller.RoundChessboardController;

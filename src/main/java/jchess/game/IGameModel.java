@@ -22,7 +22,7 @@ public interface IGameModel extends Serializable {
 
     int getTimeForGame();
 
-    void setGameMode(GameModel.gameModes gameMode);
+    void setGameMode(GameModel.GAME_MODES gameMode);
 
     void setTimeForGame(int timeForGame);
 

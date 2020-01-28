@@ -26,12 +26,6 @@ page at http://checkstyle.sourceforge.net/config.html -->
 <module name="Checker">
     
     <property name="charset" value="UTF-8"/>
- 
-    <module name="FileTabCharacter">
-        <property name="severity" value="error" />
-        <!-- Checks that there are no tab characters in the file.
-        -->
-    </module>
 
     <!--
 
@@ -42,11 +36,6 @@ page at http://checkstyle.sourceforge.net/config.html -->
     <module name="FileLength">
         <property name="max" value="3000" />
         <property name="severity" value="warning" />
-    </module>
-
-
-    <module name="NewlineAtEndOfFile">
-        <property name="lineSeparator" value="lf" />
     </module>
 
     <module name="RegexpSingleline">
@@ -81,24 +70,9 @@ page at http://checkstyle.sourceforge.net/config.html -->
 
         -->
 
-        <module name="AvoidStarImport">
-            <property name="allowClassImports" value="false" />
-            <property name="severity" value="error" />
-        </module>
-
         <module name="RedundantImport">
             <!-- Checks for redundant import statements. -->
             <property name="severity" value="error" />
-        </module>
-
-        <module name="ImportOrder">
-            <!-- Checks for out of order import statements. -->
-            <property name="severity" value="error" />
-            <property name="ordered" value="true" />
-            <property name="groups" value="/([^j]|.[^a]|..[^v]|...[^a])/,/^javax?\./" />
-            <!-- This ensures that static imports go to the end. -->
-            <property name="option" value="bottom" />
-            <property name="tokens" value="STATIC_IMPORT, IMPORT" />
         </module>
 
         <module name="IllegalImport">
@@ -137,15 +111,6 @@ page at http://checkstyle.sourceforge.net/config.html -->
             <property name="allowMissingThrowsTags" value="true" />
             <property name="allowThrowsTagsForSubclasses" value="true" />
             <property name="allowUndeclaredRTE" value="true" />
-        </module>
-
-        <module name="JavadocType">
-            <property name="scope" value="protected" />
-            <property name="severity" value="error" />
-        </module>
-
-        <module name="JavadocStyle">
-            <property name="severity" value="error" />
         </module>
 
         <!--
@@ -244,7 +209,7 @@ page at http://checkstyle.sourceforge.net/config.html -->
 
         <module name="LineLength">
             <!-- Checks if a line is too long. -->
-            <property name="max" value="120" default="120" />
+            <property name="max" value="200" default="120" />
             <property name="severity" value="error" />
 
             <!--
@@ -257,10 +222,6 @@ page at http://checkstyle.sourceforge.net/config.html -->
                 default="^(package .*;\s*)|(import .*;\s*)|( *\* *https?://.*)$" />
         </module>
 
-        <module name="LeftCurly">
-            <!-- Checks for placement of the left curly brace ('{'). -->
-            <property name="severity" value="error" />
-        </module>
 
         <module name="RightCurly">
             <!-- Checks right curlies on CATCH, ELSE, and TRY blocks are on
@@ -281,12 +242,6 @@ page at http://checkstyle.sourceforge.net/config.html -->
             -->
             <property name="option" value="same" />
             <property name="severity" value="error" />
-        </module>
-
-        <!-- Checks for braces around if and else blocks -->
-        <module name="NeedBraces">
-            <property name="severity" value="error" />
-            <property name="tokens" value="LITERAL_IF, LITERAL_ELSE, LITERAL_FOR, LITERAL_WHILE, LITERAL_DO" />
         </module>
 
         <module name="UpperEll">
@@ -328,31 +283,6 @@ page at http://checkstyle.sourceforge.net/config.html -->
         -->
         <module name="GenericWhitespace" />
 
-        <module name="WhitespaceAround">
-            <!-- Checks that various tokens are surrounded by whitespace.
-                 This includes most binary operators and keywords followed
-                 by regular or curly braces.
-            -->
-            <property name="tokens"
-                value="ASSIGN, BAND, BAND_ASSIGN, BOR,
-        BOR_ASSIGN, BSR, BSR_ASSIGN, BXOR, BXOR_ASSIGN, COLON, DIV, DIV_ASSIGN,
-        EQUAL, GE, GT, LAND, LCURLY, LE, LITERAL_CATCH, LITERAL_DO, LITERAL_ELSE,
-        LITERAL_FINALLY, LITERAL_FOR, LITERAL_IF, LITERAL_RETURN,
-        LITERAL_SYNCHRONIZED, LITERAL_TRY, LITERAL_WHILE, LOR, LT, MINUS,
-        MINUS_ASSIGN, MOD, MOD_ASSIGN, NOT_EQUAL, PLUS, PLUS_ASSIGN, QUESTION,
-        SL, SLIST, SL_ASSIGN, SR_ASSIGN, STAR, STAR_ASSIGN" />
-            <property name="allowEmptyConstructors" value="true" />
-            <property name="allowEmptyMethods" value="true" />
-            <property name="severity" value="error" />
-        </module>
-
-        <module name="WhitespaceAfter">
-            <!-- Checks that commas, semicolons and typecasts are followed by
-                 whitespace.
-            -->
-            <property name="tokens" value="COMMA, SEMI, TYPECAST" />
-            <property name="severity" value="error" />
-        </module>
 
         <module name="NoWhitespaceAfter">
             <!-- Checks that there is no whitespace after various unary operators.
@@ -390,13 +320,6 @@ page at http://checkstyle.sourceforge.net/config.html -->
         <module name="Regexp">
             <!-- . matches any character, so we need to escape it and use \. to match dots. -->
             <property name="format" value="System\.err\.println" />
-            <property name="illegalPattern" value="true" />
-        </module>
-
-        <!-- No printStackTrace -->
-        <module name="Regexp">
-            <!-- . matches any character, so we need to escape it and use \. to match dots. -->
-            <property name="format" value="e\.printStackTrace\(\)" />
             <property name="illegalPattern" value="true" />
         </module>
     </module>

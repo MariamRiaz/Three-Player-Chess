@@ -1,17 +1,14 @@
-package jchessTest.chessboard;
+package jchesstest.chessboard;
 
 import jchess.game.chessboard.model.RoundChessboardModel;
 import jchess.game.chessboard.model.Square;
 import jchess.game.player.Player;
 import jchess.pieces.Piece;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;

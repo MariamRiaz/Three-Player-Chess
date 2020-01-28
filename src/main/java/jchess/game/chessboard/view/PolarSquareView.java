@@ -5,6 +5,9 @@ package jchess.game.chessboard.view;
 import jchess.game.chessboard.PolarPoint;
 import jchess.pieces.PieceVisual;
 
+/**
+ * Represents the view of a square on a round board.
+ */
 public class PolarSquareView implements SquareView {
 
     private PolarPoint centerPoint;
@@ -27,54 +30,63 @@ public class PolarSquareView implements SquareView {
         this.yIndex = yIndex;
     }
 
-    public PolarSquareView(int xIndex, int yIndex) {
-        this.xIndex = xIndex;
-        this.yIndex = yIndex;
-    }
-
     public PolarPoint getCenterPoint() {
         return centerPoint;
     }
 
-    public double getWidthInDegrees() {
-        return widthInDegrees;
-    }
-
-    public double getPolarHeight() {
-        return polarHeight;
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     public int getxIndex() {
         return xIndex;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public int getyIndex() {
         return yIndex;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public PieceVisual getPieceVisual() {
         return pieceVisual;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void setPieceVisual(PieceVisual pieceVisual) {
         this.pieceVisual = pieceVisual;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public double getTopBound() {
         return centerPoint.getRadius() + polarHeight / 2;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public double getBottomBound() {
         return centerPoint.getRadius() - polarHeight / 2;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public double getLeftBound() {
         return centerPoint.getDegrees() - widthInDegrees / 2;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public double getRightBound() {
         return centerPoint.getDegrees() + widthInDegrees / 2;
     }
-
-
 }

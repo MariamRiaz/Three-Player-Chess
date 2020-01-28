@@ -37,12 +37,12 @@ public class GameModel implements IGameModel {
     private Player activePlayer;
     private boolean blockedChessboard;
 
-    public enum gameModes {
+    public enum GAME_MODES {
 
         newGame
     }
 
-    private gameModes gameMode;
+    private GAME_MODES gameMode;
     private Player playerWhite;
     private Player playerBlack;
     private Player playerGray;
@@ -59,7 +59,7 @@ public class GameModel implements IGameModel {
         this.timeLimitSet = limitSet;
     }
 
-    public void setGameMode(gameModes gameMode) {
+    public void setGameMode(GAME_MODES gameMode) {
         this.gameMode = gameMode;
     }
 
@@ -97,7 +97,7 @@ public class GameModel implements IGameModel {
         this.playerBlack = new Player("", Images.BLACK_COLOR);
         this.playerGray = new Player("", Images.GREY_COLOR);
         this.timeLimitSet = false;
-        gameMode = gameModes.newGame;
+        gameMode = GAME_MODES.newGame;
     }
 
     // TODO : put somewhere else

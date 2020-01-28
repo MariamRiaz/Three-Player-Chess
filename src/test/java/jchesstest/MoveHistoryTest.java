@@ -1,4 +1,4 @@
-package jchessTest;
+package jchesstest;
 
 import jchess.game.GameModel;
 import jchess.game.IGameModel;

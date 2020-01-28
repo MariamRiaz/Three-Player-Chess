@@ -9,7 +9,6 @@ import jchess.game.chessboard.view.AbstractChessboardView;
 import jchess.game.chessboard.view.RoundChessboardView;
 import jchess.game.chessboard.view.SquareView;
 import jchess.game.history.IMoveHistoryController;
-import jchess.game.history.MoveHistoryEntry;
 import jchess.game.player.Player;
 import jchess.io.Images;
 import jchess.move.IMoveEvaluator;
