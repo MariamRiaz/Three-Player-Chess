@@ -21,7 +21,6 @@
 package jchess.io;
 
 import jchess.JChessApp;
-import jchess.panels.themechoose.Theme;
 import jchess.pieces.Piece;
 import jchess.logging.Log;
 
@@ -52,9 +51,8 @@ public class ResourceLoader {
         Image img = null;
         Toolkit tk = Toolkit.getDefaultToolkit();
         try {
-            Theme currentTheme = getTheme();
             String imageLink = Images.THEME_FOLDER + "/"
-                    + currentTheme.getThemeString() + "/" +
+                    + "default" + "/" +
                     Images.IMAGES_FOLDER + "/" + name;
             URL url = JChessApp.class.getClassLoader().getResource(imageLink);
             img = tk.getImage(url);
@@ -80,9 +78,8 @@ public class ResourceLoader {
         Image img = null;
         Toolkit tk = Toolkit.getDefaultToolkit();
         try {
-            Theme currentTheme = getTheme();
             String imageLink = Images.THEME_FOLDER + "/"
-                    + currentTheme.getThemeString()  + "/" + Images.IMAGES_FOLDER +
+                    + "default"  + "/" + Images.IMAGES_FOLDER +
                     "/" + piece.getDefinition().getType()
                     + piece.getPlayer().getColor().getColor() + Images.PNG_EXTENSION;
             URL url = JChessApp.class.getClassLoader().getResource(imageLink);
@@ -93,12 +90,6 @@ public class ResourceLoader {
             e.printStackTrace();
         }
         return img;
-    }
-
-
-    private static Theme getTheme() {
-        String currentTheme = getConfigFile().getProperty(ResourceLoader.THEME_PROPERTY);
-        return Theme.getTheme(currentTheme);
     }
 
     public static Properties getConfigFile() {
