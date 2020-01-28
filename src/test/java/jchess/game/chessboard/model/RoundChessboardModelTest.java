@@ -35,12 +35,12 @@ public class RoundChessboardModelTest {
 
     @Test
     public void getRows() {
-        assert roundChessboardModel.getRows() == 5;
+        assert roundChessboardModel.getRows() == 24;
     }
 
     @Test
     public void getColumns() {
-        assert roundChessboardModel.getColumns() == 20;
+        assert roundChessboardModel.getColumns() == 6;
     }
 
     @Test
@@ -85,16 +85,20 @@ public class RoundChessboardModelTest {
     public void getSquaresBetween() {
         Square fromSquare = new Square(5, 0, null);
         Square toSquare = new Square(5, 5, null);
-        System.out.println(roundChessboardModel.getSquaresBetween(fromSquare, toSquare).toArray()[0].equals((Square)new Square(5, 1, null)));
-
-
+        assert roundChessboardModel.getSquaresBetween(fromSquare, toSquare).size() == 6;
     }
 
     @Test
     public void setPieceOnSquare() {
+        HashSet<Piece> crucialPieces = roundChessboardModel.getCrucialPieces(new Player("", Images.WHITE_COLOR));
+        Piece piece = (Piece) crucialPieces.toArray()[0];
+        System.out.println(piece.getDefinition().getType());
+        roundChessboardModel.setPieceOnSquare(piece, new Square(3, 4, piece));
+        System.out.println(roundChessboardModel.getSquare(3, 4).getPiece().getDefinition().getType());
     }
 
     @Test
     public void getSquares() {
+        assert roundChessboardModel.getSquares().size() == 144;
     }
 }
