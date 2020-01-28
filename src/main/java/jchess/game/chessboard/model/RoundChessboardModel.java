@@ -208,6 +208,9 @@ public class RoundChessboardModel implements IChessboardModel {
         return piece;
     }
     
+    /**
+     * Gets a list of all Squares that make up this board model.
+     */
     public List<Square> getSquares() {
     	return squares;
     }

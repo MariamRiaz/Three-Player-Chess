@@ -20,7 +20,7 @@ import java.util.Set;
  */
 public class MoveEvaluator implements IMoveEvaluator{
     private RoundChessboardController chessboardController;
-
+    
     /**
      * Constructor
      *
@@ -29,22 +29,22 @@ public class MoveEvaluator implements IMoveEvaluator{
     public MoveEvaluator(RoundChessboardController chessboardController) {
         this.chessboardController = chessboardController;
     }
-
+    
     /**
-     * Gets all Squares to which the Piece on the given Square can move such that the given Squares to be saved are all non-threatened by other Players.
+     * Gets all Squares to which the Piece on the given Square can move such that the given Pieces are all non-threatened by other Players.
      *
      * @param moving The Piece to be moved.
      * @param toSave The Pieces which must be non-threatened by other Players.
-     * @return The possible Squares to which this Piece can be moved under these constraints.
+     * @return The possible BoardTransition, which this Piece can trigger when selecting to trigger a move to a corresponding Square.
      */
     public HashSet<BoardTransition> getPieceTargetToSavePieces(Piece moving, HashSet<Piece> toSave) {
         HashSet<BoardTransition> ret = getPieceTargetSquares(moving);
         if (ret.size() == 0 || toSave == null)
             return ret;
-
+        
         for (Iterator<BoardTransition> it = ret.iterator(); it.hasNext(); ) {
             final BoardTransition me = it.next();
-
+            
             chessboardController.applyBoardTransition(me);
             boolean rm = false;
             for (Piece piece : toSave)
@@ -56,8 +56,58 @@ public class MoveEvaluator implements IMoveEvaluator{
             if (rm)
                 it.remove();
         }
-
+        
         return ret;
+    }
+    
+    /**
+     * Evaluates whether the given Piece cannot be made non-threatened regardless of the moves its owning Player undertakes.
+     *
+     * @param piece Piece  The Piece to be checked.
+     * @return boolean true if a the Piece is unsavable.
+     */
+    public boolean pieceIsUnsavable(Piece piece) {
+        if (piece == null)
+            return false;
+        for (Square sq : chessboardController.getSquares()) {
+            if (sq.getPiece() == null || sq.getPiece().getPlayer() != piece.getPlayer())
+                continue;
+
+            if (!getPieceTargetToSavePieces(sq.getPiece(), new HashSet<Piece>() {{
+                add(piece);
+            }}).isEmpty())
+                return false;
+        }
+        return true;
+    }
+    
+    /**
+     * Determines whether the given Square is threatened
+     *
+     * @param square Square  The Square to check for being threatened.
+     * @param player Player The Player for which the Square should be checked.
+     * @return boolean true if Piece is threatened by any other player.
+     */
+    private boolean squareIsThreatened(Square square, Player player) {
+        if (square == null)
+            return false;
+
+        Piece piece = square.getPiece();
+        for (Square sq : chessboardController.getSquares()) {
+            if (sq.getPiece() == null || sq.getPiece().getPlayer() == player)
+                continue;
+
+            HashSet<BoardTransition> validMoveSquares = getPieceTargetSquares(sq.getPiece());
+            for (BoardTransition it2 : validMoveSquares) {
+                chessboardController.applyBoardTransition(it2);
+                if ((piece == null && square.getPiece() != null) || (piece != null && chessboardController.getSquare(piece) == null)) {
+                    chessboardController.reverseBoardTransition(it2);
+                    return true;
+                }
+                chessboardController.reverseBoardTransition(it2);
+            }
+        }
+        return false;
     }
 
     /**
@@ -147,57 +197,7 @@ public class MoveEvaluator implements IMoveEvaluator{
         Square retVal = chessboardController.getSquare(current.getPozX() + x, current.getPozY() + y);
         return retVal;
     }
-
-    /**
-     * Evaluates whether the given Piece cannot be made non-threatened regardless of the moves its owning Player undertakes.
-     *
-     * @param piece Piece  The Piece to be checked.
-     * @return boolean true if a the Piece is unsavable.
-     */
-    public boolean pieceIsUnsavable(Piece piece) {
-        if (piece == null)
-            return false;
-        for (Square sq : chessboardController.getSquares()) {
-            if (sq.getPiece() == null || sq.getPiece().getPlayer() != piece.getPlayer())
-                continue;
-
-            if (!getPieceTargetToSavePieces(sq.getPiece(), new HashSet<Piece>() {{
-                add(piece);
-            }}).isEmpty())
-                return false;
-        }
-        return true;
-    }
     
-    /**
-     * Determines whether the given Square is threatened
-     *
-     * @param square Square  The Square to check for being threatened.
-     * @param player Player The Player for which the Square should be checked.
-     * @return boolean true if Piece is threatened by any other player.
-     */
-    private boolean squareIsThreatened(Square square, Player player) {
-        if (square == null)
-            return false;
-
-        Piece piece = square.getPiece();
-        for (Square sq : chessboardController.getSquares()) {
-            if (sq.getPiece() == null || sq.getPiece().getPlayer() == player)
-                continue;
-
-            HashSet<BoardTransition> validMoveSquares = getPieceTargetSquares(sq.getPiece());
-            for (BoardTransition it2 : validMoveSquares) {
-                chessboardController.applyBoardTransition(it2);
-                if ((piece == null && square.getPiece() != null) || (piece != null && chessboardController.getSquare(piece) == null)) {
-                    chessboardController.reverseBoardTransition(it2);
-                    return true;
-                }
-                chessboardController.reverseBoardTransition(it2);
-            }
-        }
-        return false;
-    }
-
     private BoardTransitionBuilder buildDefaultMoveBoardTransition(BoardTransitionBuilder builder, Piece piece, Square square, Orientation orientation) {
     	return builder.addPosChange(chessboardController.getSquare(piece), square)
                 .addStateChange(piece, piece.clone().setHasMoved(true).reorient(orientation.clone()));
@@ -232,9 +232,9 @@ public class MoveEvaluator implements IMoveEvaluator{
                 nextRook = chessboardController.getSquare(next.getPozX(), next.getPozY() + 1);
             }
 
-            if (rook.getPiece() == null || rook.getPiece().hasMoved())
+            if (rook.getPiece() == null || rook.getPiece().hasMoved() || rook.getPiece().getPlayer() != piece.getPlayer())
                 return null;
-
+            
             for (Square sq : chessboardController.getModel().getSquaresBetween(chessboardController.getSquare(piece), rook))
                 if (squareIsThreatened(sq, piece.getPlayer()))
                     return null;

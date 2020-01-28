@@ -18,6 +18,13 @@ public class BuffEvaluator implements IBuffEvaluator {
     private final Player activePlayer;
     private IMoveEvaluator moveEvaluator;
 
+    /**
+     * Constructor.
+     * @param controller The chessboard controller.
+     * @param history The controller of the game's history.
+     * @param moveEvaluator The move evaluator to use.
+     * @param activePlayer The currently active Player.
+     */
     public BuffEvaluator(IChessboardController controller, IMoveHistoryController history, IMoveEvaluator moveEvaluator, Player activePlayer) {
         this.chessboard = controller;
         this.history = history;
@@ -25,6 +32,9 @@ public class BuffEvaluator implements IBuffEvaluator {
         this.moveEvaluator = moveEvaluator;
     }
 
+    /**
+     * Evaluates all buffs on the currently active Player's Pieces, triggers their effects, and removes expiring buffs.
+     */
     public void evaluate() {
         for (Square square : chessboard.getSquares())
             if (square != null) {

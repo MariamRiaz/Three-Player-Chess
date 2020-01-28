@@ -1,33 +1,11 @@
-/*
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
-#
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
-#
-#    You should have received a copy of the GNU General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/*
- * Authors:
- * Mateusz Sławomir Lach ( matlak, msl )
- * Damian Marciniak
- */
 package jchess.pieces;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import jchess.game.player.Player;
 import jchess.move.Orientation;
 import jchess.move.buff.Buff;
-import jchess.move.buff.BuffType;
 
 /**
  * Class to represent a Piece of any kind. Each Piece is defined by specific values for its member attributes.
@@ -161,17 +139,29 @@ public class Piece {
         return this;
     }
 
+    /**
+     * Adds a Buff to this Piece.
+     *
+     * @param buff The Buff to add.
+     * @return This Piece.
+     */
     public Piece addBuff(Buff buff) {
         if (buff != null)
             buffs.add(buff.clone());
         return this;
     }
 
+    /**
+     * Ticks the Buffs on this Piece and removes expiring ones.
+     */
     public void tickBuffs() {
         buffs.forEach(Buff::tick);
         buffs.removeIf(Buff::isWornOff);
     }
 
+    /**
+     * @return The active Buffs on this Piece.
+     */
     public List<Buff> getActiveBuffs() {
         ArrayList<Buff> retVal = new ArrayList<>();
         retVal.addAll(this.buffs);
