@@ -54,19 +54,22 @@ public class RoundChessboardController implements IChessboardController {
     }
 
     /**
-     * @return The view of the chessboard.
+     * {@inheritDoc}
      */
     public AbstractChessboardView getView() {
         return view;
     }
-
+	
     /**
-     * @param observer Adds an Observer to the currently selected Square.
-     */
+	 * {@inheritDoc}
+	 */
     public void addSelectSquareObserver(Observer observer) {
         this.squareObservable.addObserver(observer);
     }
 
+    /**
+     * Processes a mouse-click event.
+     */
     @Override
     public void mouseClicked(MouseEvent e) {
 
@@ -82,30 +85,33 @@ public class RoundChessboardController implements IChessboardController {
             squareObservable.setSquare(square);
     }
 
+    /**
+     * Processes a mouse-released event.
+     */
     @Override
     public void mouseReleased(MouseEvent e) {
 
     }
 
+    /**
+     * Processes a mouse-entered event.
+     */
     @Override
     public void mouseEntered(MouseEvent e) {
 
     }
 
+    /**
+     * Processes a mouse-exited event.
+     */
     @Override
     public void mouseExited(MouseEvent e) {
 
     }
 
-    /**
-     * Checks whether a move from a given origin Square to another Square is possible.
-     *
-     * @param fromX The x index of the origin Square.
-     * @param fromY The y index of the origin Square.
-     * @param toX   The x index of the target Square.
-     * @param toY   The y index of the target Square.
-     * @return Whether the move is possible.
-     */
+	/**
+	 * {@inheritDoc}
+	 */
     public boolean moveIsPossible(int fromX, int fromY, int toX, int toY) {
         Square square = model.getSquare(fromX, fromY);
         Square to = model.getSquare(toX, toY);
@@ -129,11 +135,7 @@ public class RoundChessboardController implements IChessboardController {
     }
 
     /**
-     * Checks whether a move from a given origin Square to another Square is possible.
-     *
-     * @param squareFrom The origin Square, containing its x and y indices.
-     * @param squareTo   The target Square, containing its x and y indices.
-     * @return Whether the move is possible.
+     * {@inheritDoc}
      */
     public boolean moveIsPossible(Square squareFrom, Square squareTo) {
         if (squareFrom == null || squareTo == null)
@@ -143,9 +145,7 @@ public class RoundChessboardController implements IChessboardController {
     }
 
     /**
-     * Selectes the given Square.
-     *
-     * @param sq The Square.
+     * {@inheritDoc}
      */
     public void select(Square sq) {
         setActiveSquare(sq);
@@ -153,34 +153,35 @@ public class RoundChessboardController implements IChessboardController {
     }
 
     /**
-     * Checks whether the given Piece cannot be made non-threatened regardless what move its owning Player makes.
-     *
-     * @param piece The Piece to check.
-     * @return Whether the Piece can be saved.
+     * {@inheritDoc}
      */
     public boolean pieceIsUnsavable(Piece piece) {
         return new MoveEvaluator(this).pieceIsUnsavable(piece);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public HashSet<Piece> getCrucialPieces(Player player) {
         return model.getCrucialPieces(player);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public HashSet<Piece> getCrucialPieces() {
         return model.getCrucialPieces();
     }
 
     /**
-     * @return The currently selected Square.
+     * {@inheritDoc}
      */
     public Square getActiveSquare() {
         return activeSquare;
     }
 
     /**
-     * Sets the currently selected Square.
-     *
-     * @param square The Square to select, by indices.
+     * {@inheritDoc}
      */
     public void setActiveSquare(Square square) {
         this.activeSquare = square;
@@ -202,31 +203,21 @@ public class RoundChessboardController implements IChessboardController {
     }
 
     /**
-     * Gets the Square that a given Piece is on, if any.
-     *
-     * @param piece The Piece whose Square to retrieve.
-     * @return The Square of the given Piece, if any.
+     * {@inheritDoc}
      */
     public Square getSquare(Piece piece) {
         return piece != null ? model.getSquare(piece) : null;//TODO error handling
     }
 
     /**
-     * Gets a List of all Squares in the board.
-     *
-     * @return The List of Squares.
+     * {@inheritDoc}
      */
     public List<Square> getSquares() {
         return this.model.getSquares();
     }
 
     /**
-     * Method move a Piece from the given Square to a new Square, as defined by their x and y indices.
-     *
-     * @param begin               The origin Square, where the moving Piece is located.
-     * @param end                 The target Square, on which the moving Piece should end.
-     * @param refresh             Whether or not to refresh the chessboard.
-     * @param clearForwardHistory Whether or not to clear the forward history of the MoveHistoryController instance for this game.
+     * {@inheritDoc}
      */
     public void move(Square begin, Square end) {
     	BoardTransition move = null;
@@ -247,11 +238,22 @@ public class RoundChessboardController implements IChessboardController {
         view.updateAfterMove();
     }
     
+    /**
+     * {@inheritDoc}
+     */
     public void applyBoardTransition(BoardTransition boardTransition) {
         applyPositionChanges(boardTransition.getPositionChanges());
         applyStateChanges(boardTransition.getStateChanges());
     }
     
+    /**
+     * {@inheritDoc}
+     */
+    public void reverseBoardTransition(BoardTransition boardTransition) {
+        applyStateChanges(boardTransition.getStateChangesReverse());
+        applyPositionChanges(boardTransition.getPositionChangesReverse());
+    }
+
     private void applyPositionChanges(List<PositionChange> positionChanges) {
     	for (PositionChange positionChange : positionChanges) {
             if (view != null)
@@ -283,22 +285,15 @@ public class RoundChessboardController implements IChessboardController {
         }
     }
 
-    public void reverseBoardTransition(BoardTransition boardTransition) {
-        applyStateChanges(boardTransition.getStateChangesReverse());
-        applyPositionChanges(boardTransition.getPositionChangesReverse());
-    }
-
     /**
-     * Unselects the currently selected Square.
+     * {@inheritDoc}
      */
     public void unselect() {
         setActiveSquare(null);
     }
 
     /**
-     * Undoes the last-played move.
-     *
-     * @return Whether or not the undo operation was successful.
+     * {@inheritDoc}
      */
     public boolean undo() {
         Queue<BoardTransition> last = this.movesHistory.undo();
@@ -315,9 +310,7 @@ public class RoundChessboardController implements IChessboardController {
     }
 
     /**
-     * Redoes the move that was undone last.
-     *
-     * @return Whether or not the redo operation was successful.
+     * {@inheritDoc}
      */
     public boolean redo() {
         Queue<BoardTransition> first = this.movesHistory.redo();
@@ -342,7 +335,7 @@ public class RoundChessboardController implements IChessboardController {
      * @param y The y coordinate of the mouse click.
      * @return Reference to the clicked Square, if any.
      */
-    public Square getSquareFromClick(int x, int y) {
+    private Square getSquareFromClick(int x, int y) {
         Point clickedPoint = new Point(x, y);
         CartesianPolarConverter converter = new CartesianPolarConverter();
         PolarPoint polarPoint = converter.getPolarFromCartesian(clickedPoint, view.getCircleCenter());
@@ -357,16 +350,15 @@ public class RoundChessboardController implements IChessboardController {
     }
 
     /**
-     * Gets the Square with the given board indices.
-     *
-     * @param x The x index of the Square.
-     * @param y The y index of the Square.
-     * @return The Square.
+     * {@inheritDoc}
      */
     public Square getSquare(int x, int y) {
         return model.getSquare(x, y);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public RoundChessboardModel getModel() {
         return model;
     }

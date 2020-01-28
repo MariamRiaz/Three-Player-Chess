@@ -21,13 +21,11 @@
 package jchess.pieces;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import jchess.game.player.Player;
 import jchess.move.Orientation;
 import jchess.move.buff.Buff;
-import jchess.move.buff.BuffType;
 
 /**
  * Class to represent a Piece of any kind. Each Piece is defined by specific values for its member attributes.
@@ -158,17 +156,28 @@ public class Piece {
 		return this;
 	}
 	
+	/**
+	 * Adds a Buff to this Piece.
+	 * @param buff The Buff to add.
+	 * @return This Piece.
+	 */
 	public Piece addBuff(Buff buff) {
 		if (buff != null)
 			buffs.add(buff.clone());
 		return this;
 	}
 	
+	/**
+	 * Ticks the Buffs on this Piece and removes expiring ones.
+	 */
 	public void tickBuffs() {
 		buffs.forEach(Buff::tick);
 		buffs.removeIf(Buff::isWornOff);
 	}
 	
+	/**
+	 * @return The active Buffs on this Piece.
+	 */
 	public List<Buff> getActiveBuffs() {
 		ArrayList<Buff> retVal = new ArrayList<>();
 		retVal.addAll(this.buffs);
