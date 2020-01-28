@@ -86,6 +86,11 @@
         "type": "Mage",
         "player": "WH"
     },
+    {
+        "square": [1, 7],
+        "type": "Bomber",
+        "player": "WH"
+    },
 
     {
         "square": [5, 7],

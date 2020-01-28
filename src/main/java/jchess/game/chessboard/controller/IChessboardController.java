@@ -27,6 +27,8 @@ public interface IChessboardController extends MouseListener {
     boolean pieceIsUnsavable(Piece piece);
 
     HashSet<Piece> getCrucialPieces(Player player);
+    
+    HashSet<Piece> getCrucialPieces();
 
     Square getActiveSquare();
 
