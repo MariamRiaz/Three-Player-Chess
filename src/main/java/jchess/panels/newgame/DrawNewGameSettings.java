@@ -74,14 +74,12 @@ public class DrawNewGameSettings extends JPanel implements ActionListener, TextL
     /**
      * Method responsible for changing the options which can make a player when he
      * want to start new local game.
-     *
      * @param e where is saving data of performed action
      */
     public void actionPerformed(ActionEvent e) {
         Object target = e.getSource();
         if (target == this.oponentComp) // toggle enabled of controls depends of oponent (if computer)
         {
-            this.computerLevel.setEnabled(true);// enable level of computer abilities
             this.secondName.setEnabled(false);// disable field with name of player2
         } else if (target == this.oponentHuman) // else if oponent will be HUMAN
         {
@@ -140,7 +138,6 @@ public class DrawNewGameSettings extends JPanel implements ActionListener, TextL
 
     public DrawNewGameSettings(JDialog parent) {
         super();
-        // this.setA//choose oponent
         this.parent = parent;
         this.color = new JComboBox(colors);
         this.gbl = new GridBagLayout();

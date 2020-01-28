@@ -22,16 +22,18 @@ public class RoundChessboardModel implements IChessboardModel {
      * @param rows              int     row count of the chessboard
      * @param squaresPerRow     int     count of squares per row of the chessboard
      * @param continuousRows    boolean
+     * @param connectedInnerRim boolean
      */
+
     public RoundChessboardModel(int rows, int squaresPerRow, boolean continuousRows, boolean connectedInnerRim) {
     	this.rows = rows;
     	this.squaresPerRow = squaresPerRow;
     	this.hasContinuousRows = continuousRows;
     	this.innerRimConnected = connectedInnerRim;
-    	
         this.squares = new ArrayList<>();
         populateSquares();
     }
+
 
     private void populateSquares() {
     	squares.clear();
@@ -77,7 +79,7 @@ public class RoundChessboardModel implements IChessboardModel {
     
     /**
      * @param player The Player whose Pieces to return.
-     * @return The Pieces of the given Player, which cause him to lose if they are taken.
+     * @return The Pieces of the given Player, which cause them to lose if they are taken.
      */
     public HashSet<Piece> getCrucialPieces(Player player) {
     	if (player == null)
@@ -92,14 +94,12 @@ public class RoundChessboardModel implements IChessboardModel {
     }    
     
     /**
-     * @param player The Player whose Pieces to return.
-     * @return The Pieces of the given Player, which cause him to lose if they are taken.
+     * @return The Pieces of the given Player, which cause them to lose if they are taken.
      */
     public HashSet<Piece> getCrucialPieces() {
     	HashSet<Piece> retVal = new HashSet<>();
     	for (Piece el : crucialPieces)
     		retVal.add(el);
-    	
     	return retVal;
     }
 
@@ -131,7 +131,6 @@ public class RoundChessboardModel implements IChessboardModel {
     /**
      * Determines whether or not the given Square is in the area where e.g. pawns of the given player are promoted.
      * @param square The Square to check.
-     * @param color The color of the Player for whom to check.
      * @return Whether the given Player's Pieces upon reaching the given Square may be promoted.
      */
     public boolean isInPromotionArea(Square square) {

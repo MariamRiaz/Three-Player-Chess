@@ -4,6 +4,11 @@ import jchess.game.chessboard.model.Square;
 
 import java.util.Observable;
 
+/*
+Class that is getting the square value that is selected
+ */
+
+
 public class SquareObservable extends Observable {
 
     private Square square;

@@ -31,7 +31,7 @@ import java.awt.event.ActionEvent;
 /**
  * Class responsible for promotion of a pawn. When pawn reach the end of the
  * chessboard it can be change to rook, bishop, queen or knight. For what pawn
- * is promoted decideds player.
+ * is promoted decides the player.
  */
 public class PawnPromotionWindow extends JDialog implements ActionListener {
 
@@ -43,6 +43,12 @@ public class PawnPromotionWindow extends JDialog implements ActionListener {
     public String result;
     GridBagConstraints gbc;
 
+    /**
+     * Method to get the available images of pawn promotion and setting parameters of
+     * pawn promotion window
+     * @param color The players color
+     */
+
     public PawnPromotionWindow(Frame parent, String color) {
         super(parent);
         this.setTitle("Choose piece");
@@ -51,7 +57,6 @@ public class PawnPromotionWindow extends JDialog implements ActionListener {
         this.setMaximumSize(new Dimension(520, 130));
         this.setResizable(false);
         this.setLayout(new GridLayout(1, 4));
-        // this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 
 		this.gbl = new GridBagLayout();
 		this.gbc = new GridBagConstraints();
@@ -73,8 +78,7 @@ public class PawnPromotionWindow extends JDialog implements ActionListener {
     }
 
 	/**
-	 * Method setting the color fo promoted pawn
-	 * 
+	 * Method setting the color for promoted pawn
 	 * @param color The players color
 	 */
 	public void setColor(String color) {
@@ -85,10 +89,10 @@ public class PawnPromotionWindow extends JDialog implements ActionListener {
 	}
 
     /**
-     * Method wich is changing a pawn into queen, rook, bishop or knight
-     *
+     * Method which is changing a pawn into queen, rook, bishop or knight
      * @param arg0 Capt information about performed action
      */
+
     public void actionPerformed(ActionEvent arg0) {
         if (arg0.getSource() == queenButton) {
             result = "Queen";
