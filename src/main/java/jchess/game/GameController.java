@@ -51,6 +51,10 @@ public class GameController implements IGameController {
         gameModel.setActivePlayer(gameModel.getPlayerWhite());
     }
 
+    public void setChessboardController(IChessboardController chessboardController) {
+        this.chessboardController = chessboardController;
+    }
+
     private void initializeControllers() {
         moveHistoryController = new MoveHistoryController(chessboardLoader.getColumnNames());
         int chessboardSize = 800;
@@ -68,6 +72,15 @@ public class GameController implements IGameController {
      */
     public IGameModel getGameModel() {
         return gameModel;
+    }
+
+    /**
+     * setter for the Game Model of this Game Controller.
+     *
+     * @param gameModel Game Model
+     */
+    public void setGameModel(IGameModel gameModel) {
+        this.gameModel = gameModel;
     }
 
     /**
