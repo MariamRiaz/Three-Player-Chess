@@ -6,7 +6,7 @@ public class StateChange {
 	private final int id;
 	private final Piece state;
 	
-	protected StateChange (int id, Piece state) {
+	public StateChange(int id, Piece state) {
 		this.id = id;
 		this.state = state;
 	}

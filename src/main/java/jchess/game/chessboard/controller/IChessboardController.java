@@ -4,6 +4,7 @@ import jchess.game.chessboard.model.IChessboardModel;
 import jchess.game.chessboard.model.Square;
 import jchess.game.chessboard.view.AbstractChessboardView;
 import jchess.game.player.Player;
+import jchess.move.IMoveEvaluator;
 import jchess.move.MoveEvaluator;
 import jchess.move.effects.BoardTransition;
 import jchess.pieces.Piece;
@@ -54,7 +55,7 @@ public interface IChessboardController extends MouseListener {
      * @param piece The piece to be checked
      * @return True if the piece cannot be saved (doesn't have any possible moves), false otherwise
      */
-    boolean pieceIsUnsavable(Piece piece);
+    boolean pieceIsUnsavable(Piece piece, IMoveEvaluator evaluator);
 
     /**
      * Retrieves all the crucial pieces that a player owns. (pieces that cannot be captured)

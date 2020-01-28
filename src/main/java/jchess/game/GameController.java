@@ -222,7 +222,8 @@ public class GameController implements IGameController {
 
     private boolean isCheckMate() {
         HashSet<Piece> crucialPieces = chessboardController.getCrucialPieces(gameModel.getActivePlayer());
-        return crucialPieces.stream().anyMatch(p -> chessboardController.pieceIsUnsavable(p));
+        IMoveEvaluator evaluator = new MoveEvaluator((RoundChessboardController) chessboardController);
+        return crucialPieces.stream().anyMatch(p -> chessboardController.pieceIsUnsavable(p, moveEvaluator));
     }
 
     private boolean didSelectOwnPiece(Square square) {

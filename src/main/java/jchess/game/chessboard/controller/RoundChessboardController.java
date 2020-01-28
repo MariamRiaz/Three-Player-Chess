@@ -9,8 +9,10 @@ import jchess.game.chessboard.view.AbstractChessboardView;
 import jchess.game.chessboard.view.RoundChessboardView;
 import jchess.game.chessboard.view.SquareView;
 import jchess.game.history.IMoveHistoryController;
+import jchess.game.history.MoveHistoryEntry;
 import jchess.game.player.Player;
 import jchess.io.Images;
+import jchess.move.IMoveEvaluator;
 import jchess.move.MoveEvaluator;
 import jchess.move.effects.BoardTransition;
 import jchess.move.effects.PositionChange;
@@ -132,8 +134,8 @@ public class RoundChessboardController implements IChessboardController {
     /**
      * {@inheritDoc}
      */
-    public boolean pieceIsUnsavable(Piece piece) {
-        return new MoveEvaluator(this).pieceIsUnsavable(piece);
+    public boolean pieceIsUnsavable(Piece piece, IMoveEvaluator evaluator) {
+        return evaluator.pieceIsUnsavable(piece);
     }
 
     /**
@@ -176,6 +178,10 @@ public class RoundChessboardController implements IChessboardController {
             }
             view.setMoves(squares);
         }
+    }
+
+    public void setView(AbstractChessboardView view) {
+        this.view = view;
     }
 
     /**
