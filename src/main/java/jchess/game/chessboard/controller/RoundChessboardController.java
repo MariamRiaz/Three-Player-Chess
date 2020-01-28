@@ -225,8 +225,8 @@ public class RoundChessboardController implements IChessboardController {
      *
      * @param begin               The origin Square, where the moving Piece is located.
      * @param end                 The target Square, on which the moving Piece should end.
-     * @param refresh             Whether or not to refresh the chessboard.
-     * @param clearForwardHistory Whether or not to clear the forward history of the MoveHistoryController instance for this game.
+     * @checks refresh             Whether or not to refresh the chessboard.
+     * @checks clearForwardHistory Whether or not to clear the forward history of the MoveHistoryController instance for this game.
      */
     public void move(Square begin, Square end) {
     	BoardTransition move = null;
@@ -251,7 +251,15 @@ public class RoundChessboardController implements IChessboardController {
         applyPositionChanges(boardTransition.getPositionChanges());
         applyStateChanges(boardTransition.getStateChanges());
     }
-    
+
+    /**
+     * Method to remove the piece once moved from current position to next square where it is moved
+     *
+     * @param positionChanges
+     * gets the information about the piece and the next square on which it is moved and sets the visual of the piece there
+     */
+
+
     private void applyPositionChanges(List<PositionChange> positionChanges) {
     	for (PositionChange positionChange : positionChanges) {
             if (view != null)
@@ -266,6 +274,7 @@ public class RoundChessboardController implements IChessboardController {
         }
 
     }
+    
     
     private void applyStateChanges(List<StateChange> stateChanges) {
         for (StateChange stateChange : stateChanges) {
