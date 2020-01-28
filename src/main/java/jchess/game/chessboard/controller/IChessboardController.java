@@ -4,7 +4,7 @@ import jchess.game.player.Player;
 import jchess.game.chessboard.model.Square;
 import jchess.game.chessboard.view.AbstractChessboardView;
 import jchess.game.chessboard.model.IChessboardModel;
-import jchess.move.effects.MoveEffect;
+import jchess.move.effects.BoardTransition;
 import jchess.pieces.Piece;
 
 import java.awt.event.MouseListener;
@@ -38,11 +38,11 @@ public interface IChessboardController extends MouseListener {
 
     List<Square> getSquares();
 
-    void move(Square begin, Square end, boolean refresh, boolean clearForwardHistory);
+    void move(Square begin, Square end);
 
-    void apply(MoveEffect me);
+    void applyBoardTransition(BoardTransition me);
 
-    void reverse(MoveEffect me);
+    void reverseBoardTransition(BoardTransition me);
 
     void unselect();
 

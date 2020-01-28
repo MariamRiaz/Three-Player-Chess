@@ -14,7 +14,7 @@ import jchess.game.history.IMoveHistoryController;
 import jchess.game.player.Player;
 import jchess.io.Images;
 import jchess.move.MoveEvaluator;
-import jchess.move.effects.MoveEffect;
+import jchess.move.effects.BoardTransition;
 import jchess.move.effects.PositionChange;
 import jchess.move.effects.StateChange;
 import jchess.pieces.Piece;
@@ -37,7 +37,7 @@ public class RoundChessboardController implements IChessboardController {
     private Square activeSquare;
     private SquareObservable squareObservable;
     private IMoveHistoryController movesHistory;
-    private HashSet<MoveEffect> moveEffects = null;
+    private HashSet<BoardTransition> moveEffects = null;
 
     /**
      * Instantiates the RoundChessboardController with the given arguments.
@@ -115,10 +115,16 @@ public class RoundChessboardController implements IChessboardController {
 
         MoveEvaluator evaluator = new MoveEvaluator(this);
         HashSet<Piece> crucialPieces = getCrucialPieces(square.getPiece().getPlayer());
-        HashSet<MoveEffect> moveEffects = evaluator
-                .getValidTargetSquaresToSavePiece(square.getPiece(), crucialPieces);
+        HashSet<BoardTransition> moveEffects = evaluator
+                .getPieceTargetToSavePieces(square.getPiece(), crucialPieces);
+        
         HashSet<Square> squares = new HashSet<>();
-        moveEffects.forEach(m -> squares.add(m.getToSquare()));
+        moveEffects.forEach(m ->
+        	{ 
+        		if (m.getMoveHistoryEntry() != null) 
+        			squares.add(m.getMoveHistoryEntry().getToSquare()); 
+        	});
+        
     	return squares.contains(model.getSquare(to.getPozX(), to.getPozY()));
     }
 
@@ -185,11 +191,12 @@ public class RoundChessboardController implements IChessboardController {
         } else {
             view.setActiveCell(square.getPozX(), square.getPozY());
             moveEffects = new MoveEvaluator(this)
-                    .getValidTargetSquaresToSavePiece(square.getPiece(), getCrucialPieces(square.getPiece().getPlayer()));
+                    .getPieceTargetToSavePieces(square.getPiece(), getCrucialPieces(square.getPiece().getPlayer()));
 
             HashSet<Square> squares = new HashSet<>();
-            for (MoveEffect me : moveEffects)
-                squares.add(me.getToSquare());
+            for (BoardTransition me : moveEffects)
+            	if (me.getMoveHistoryEntry() != null)
+            		squares.add(me.getMoveHistoryEntry().getToSquare());
             view.setMoves(squares);
         }
     }
@@ -221,82 +228,64 @@ public class RoundChessboardController implements IChessboardController {
      * @param refresh             Whether or not to refresh the chessboard.
      * @param clearForwardHistory Whether or not to clear the forward history of the MoveHistoryController instance for this game.
      */
-    public void move(Square begin, Square end, boolean refresh, boolean clearForwardHistory) {
-    	MoveEffect move = null;
+    public void move(Square begin, Square end) {
+    	BoardTransition move = null;
     	
-    	for (MoveEffect me : moveEffects)
-    		if (model.getSquare(me.getPiece()) == begin && me.getToSquare() == end) {
+    	for (BoardTransition me : moveEffects)
+    		if (me.getMoveHistoryEntry() != null && model.getSquare(me.getMoveHistoryEntry().getPiece()) == begin 
+    			&& me.getMoveHistoryEntry().getToSquare() == end) {
     			move = me;
     			break;
     		}
     	
-    	apply(move);
-        if (refresh)
-            this.unselect();
-
-        if (clearForwardHistory) {
-            this.movesHistory.clearMoveForwardStack();
-            this.movesHistory.addMove(move, true, true);
-        } else this.movesHistory.addMove(move, false, true);
+    	applyBoardTransition(move);
+    	
+        this.unselect();
+        this.movesHistory.clearMoveForwardStack();
+        this.movesHistory.addMove(move);
 
         view.updateAfterMove();
-
-        //end.getPiece().setHasMoved(true);
-        // TODO: Reverse orientation on jump across board center.
     }
-
-    public void apply(MoveEffect me) {
-        for (PositionChange ent : me.getPositionChanges()) {
+    
+    public void applyBoardTransition(BoardTransition boardTransition) {
+        applyPositionChanges(boardTransition.getPositionChanges());
+        applyStateChanges(boardTransition.getStateChanges());
+    }
+    
+    private void applyPositionChanges(List<PositionChange> positionChanges) {
+    	for (PositionChange positionChange : positionChanges) {
             if (view != null)
-                view.removeVisual(model.getSquare(ent.getPiece()));
+                view.removeVisual(model.getSquare(positionChange.getPiece()));
                 
-            model.setPieceOnSquare(ent.getPiece(), ent.getSquare());
+            model.setPieceOnSquare(positionChange.getPiece(), positionChange.getSquare());
             if (view != null) {
-                final Square square = ent.getSquare();
+                final Square square = positionChange.getSquare();
                 if (square != null)
                 	view.setVisual(square.getPiece(), square.getPozX(), square.getPozY());
             }
         }
 
-        for (StateChange ent : me.getStateChanges()) {
-            final Square sq = model.getSquare(ent.getID());
+    }
+    
+    private void applyStateChanges(List<StateChange> stateChanges) {
+        for (StateChange stateChange : stateChanges) {
+            final Square sq = model.getSquare(stateChange.getID());
             if (sq == null)
                 continue;
 
-            if (ent.getState().getDefinition() == PieceDefinition.PLACEHOLDER)
-                ent.getState().setDefinition(PieceLoader.getPieceDefinition(
-                        JChessApp.jcv.showPawnPromotionBox(ent.getState().getPlayer().getColor().getColor())));
+            if (stateChange.getState().getDefinition() == PieceDefinition.PLACEHOLDER)
+                stateChange.getState().setDefinition(PieceLoader.getPieceDefinition(
+                        JChessApp.jcv.showPawnPromotionBox(stateChange.getState().getPlayer().getColor().getColor())));
 
-            model.setPieceOnSquare(ent.getState(), sq);
+            model.setPieceOnSquare(stateChange.getState(), sq);
             if (view != null)
-                view.setVisual(ent.getState(), sq.getPozX(), sq.getPozY());
+                view.setVisual(stateChange.getState(), sq.getPozX(), sq.getPozY());
         }
     }
 
-    public void reverse(MoveEffect me) {
-        if (model == null)
-            return;
-
-        for (StateChange ent : me.getStateChangesReverse()) {
-            final Square sq = model.getSquare(ent.getID());
-            if (sq == null)
-                continue;
-
-            model.setPieceOnSquare(ent.getState(), sq);
-            if (view != null)
-                view.setVisual(ent.getState(), sq.getPozX(), sq.getPozY());
-        }
-
-        for (PositionChange ent : me.getPositionChangesReverse()) {
-            if (view != null)
-                view.removeVisual(model.getSquare(ent.getPiece()));
-            
-            model.setPieceOnSquare(ent.getPiece(), ent.getSquare());
-            if (view != null) {
-                Square square = ent.getSquare();
-                view.setVisual(square.getPiece(), square.getPozX(), square.getPozY());
-            }
-        }
+    public void reverseBoardTransition(BoardTransition boardTransition) {
+        applyStateChanges(boardTransition.getStateChangesReverse());
+        applyPositionChanges(boardTransition.getPositionChangesReverse());
     }
 
     /**
@@ -312,11 +301,11 @@ public class RoundChessboardController implements IChessboardController {
      * @return Whether or not the undo operation was successful.
      */
     public boolean undo() {
-        Queue<MoveEffect> last = this.movesHistory.undo();
+        Queue<BoardTransition> last = this.movesHistory.undo();
 
         if (last != null && last.size() != 0) {
-            for (MoveEffect me : last)
-                reverse(me);
+            for (BoardTransition me : last)
+                reverseBoardTransition(me);
 
             this.unselect();
             view.repaint();
@@ -331,11 +320,11 @@ public class RoundChessboardController implements IChessboardController {
      * @return Whether or not the redo operation was successful.
      */
     public boolean redo() {
-        Queue<MoveEffect> first = this.movesHistory.redo();
+        Queue<BoardTransition> first = this.movesHistory.redo();
 
         if (first != null && first.size() != 0) {
-            for (MoveEffect me : first)
-                apply(me);
+            for (BoardTransition me : first)
+                applyBoardTransition(me);
 
             this.unselect();
             view.repaint();
