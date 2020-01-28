@@ -22,6 +22,15 @@ public class PolarSquareView implements SquareView {
 
     private PieceVisual pieceVisual;
 
+    /**
+     * Method to get the square parameters in polar form
+     * @param centerPoint
+     * @param widthInDegrees
+     * @param polarHeight
+     * @param xIndex
+     * @param yIndex
+     */
+
     public PolarSquareView(PolarPoint centerPoint, double widthInDegrees, double polarHeight, int xIndex, int yIndex) {
         this.centerPoint = centerPoint;
         this.widthInDegrees = widthInDegrees;
@@ -30,6 +39,10 @@ public class PolarSquareView implements SquareView {
         this.yIndex = yIndex;
     }
 
+    /**
+     *
+     * @return Center point of each square
+     */
     public PolarPoint getCenterPoint() {
         return centerPoint;
     }

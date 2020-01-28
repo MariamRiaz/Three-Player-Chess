@@ -19,22 +19,23 @@ public class RoundChessboardModel implements IChessboardModel {
     private boolean hasContinuousRows, innerRimConnected;
 
     /**
-     * Creates a new round chessboard model. (represents a round board)
+     * Constructor.
      *
-     * @param rows             The number of rows
-     * @param squaresPerRow    The number of squares per row (columns)
-     * @param hasContinousRows When true it means that the board is circular (last row is connected to the first)
-     * @param hasConnectedRim  When true it means that the pieces can jump over the middle of the board.
+     * @param rows              int     row count of the chessboard
+     * @param squaresPerRow     int     count of squares per row of the chessboard
+     * @param continuousRows    boolean
+     * @param connectedInnerRim boolean
      */
-    public RoundChessboardModel(int rows, int squaresPerRow, boolean hasContinousRows, boolean hasConnectedRim) {
+
+    public RoundChessboardModel(int rows, int squaresPerRow, boolean continuousRows, boolean connectedInnerRim) {
         this.rows = rows;
         this.squaresPerRow = squaresPerRow;
-        this.hasContinuousRows = hasContinousRows;
-        this.innerRimConnected = hasConnectedRim;
-
+        this.hasContinuousRows = continuousRows;
+        this.innerRimConnected = connectedInnerRim;
         this.squares = new ArrayList<>();
         populateSquares();
     }
+
 
     private void populateSquares() {
         squares.clear();
@@ -46,8 +47,7 @@ public class RoundChessboardModel implements IChessboardModel {
     }
 
     /**
-     * Converts the given Square y index to an array index in the list of Squares of this board,
-     * taking board linkage and into account.
+     * Converts the given Square y index to an array index in the list of Squares of this board, taking board linkage and into account.
      *
      * @param y The index to convert, e.g. -1 or 10.
      * @return The corresponding array index between 0 and the number of rows in the board minus one.
@@ -100,7 +100,10 @@ public class RoundChessboardModel implements IChessboardModel {
      * {@inheritDoc}
      */
     public HashSet<Piece> getCrucialPieces() {
-        return crucialPieces;
+        HashSet<Piece> retVal = new HashSet<>();
+        for (Piece el : crucialPieces)
+            retVal.add(el);
+        return retVal;
     }
 
     /**

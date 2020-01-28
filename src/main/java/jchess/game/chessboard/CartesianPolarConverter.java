@@ -7,11 +7,25 @@ import java.awt.*;
  * */
 public class CartesianPolarConverter {
 
+    /**
+     * Method to get radius from a particular point on board to circle center
+     * @param point X and Y coordinate of point
+     * @param circleCenter
+     * @return radius
+     */
+
     private double getRadiusFromCartesian(Point point, Point circleCenter) {
         double xDistance = Math.pow(point.getX() - circleCenter.getX(), 2);
         double yDistance = Math.pow(point.getY() - circleCenter.getY(), 2);
         return Math.sqrt(xDistance + yDistance);
     }
+
+    /**
+     * Method to get the degrees from a point at the cicular board
+     * @param point
+     * @param circleCenter
+     * @return
+     */
 
     private double getDegreesFromCartesian(Point point, Point circleCenter) {
         double degrees = Math.atan2(point.getY() - circleCenter.getY(),
