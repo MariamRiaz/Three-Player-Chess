@@ -16,12 +16,12 @@
 package jchess.panels;
 
 import jchess.JChessApp;
-import jchess.game.GameController;
-import jchess.game.IGameController;
-import jchess.logging.Log;
 import jchess.game.AbstractGameView;
-import jchess.game.chessboard.view.PawnPromotionWindow;
+import jchess.game.GameController;
 import jchess.game.GameView;
+import jchess.game.IGameController;
+import jchess.game.chessboard.view.PawnPromotionWindow;
+import jchess.logging.Log;
 import jchess.panels.aboutbox.JChessAboutBox;
 import jchess.panels.newgame.NewGameWindow;
 import org.jdesktop.application.Action;
@@ -32,7 +32,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.util.logging.Level;
 
 /**
  * The application's main frame.

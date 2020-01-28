@@ -11,13 +11,10 @@ import javax.swing.JScrollPane;
  */
 public interface IMoveHistoryController {
     /**
-     * adds MoveEffect to the MoveHistory Table
-     *
-     * @param moveEffects       MoveEffect to add to the Table
-     * @param registerInHistory boolean whether MoveEffect will be added to the MoveHistory
-     * @param registerInTable   boolean whether MoveEffect will be added to the MoveHistory Table
+     * Adds a board transtion to the move history table
+     * @param boardTransition The transition to be added
      */
-    void addMove(BoardTransition moveEffects);
+    void addMove(BoardTransition boardTransition);
 
     /**
      * method to clear the MoveForwardStack (for undo)

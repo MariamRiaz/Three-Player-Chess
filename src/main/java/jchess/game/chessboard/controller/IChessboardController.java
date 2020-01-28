@@ -1,9 +1,11 @@
 package jchess.game.chessboard.controller;
 
-import jchess.game.player.Player;
+import jchess.game.chessboard.model.IChessboardModel;
 import jchess.game.chessboard.model.Square;
 import jchess.game.chessboard.view.AbstractChessboardView;
-import jchess.game.chessboard.model.IChessboardModel;
+import jchess.game.player.Player;
+import jchess.move.IMoveEvaluator;
+import jchess.move.MoveEvaluator;
 import jchess.move.effects.BoardTransition;
 import jchess.pieces.Piece;
 
@@ -12,147 +14,150 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Observer;
 
-
-
+/**
+ * Interface that a chessboard controller must implement.
+ */
 public interface IChessboardController extends MouseListener {
+
     /**
-     * @return The view of the chessboard.
+     * Retrieves the chessboard  view that this controller is responsible for.
+     *
+     * @return A chessboard view (visual representation of the board)
      */
     AbstractChessboardView getView();
-    
+
     /**
-     * @param observer Adds an Observer to the currently selected Square.
+     * Adds an observer that is responsible of getting notified whenever a new square is selected.
+     *
+     * @param observer The square observer that will be added.
      */
     void addSelectSquareObserver(Observer observer);
-    
-    /**
-     * Checks whether a move from a given origin Square to another Square is possible.
-     *
-     * @param fromX The x index of the origin Square.
-     * @param fromY The y index of the origin Square.
-     * @param toX   The x index of the target Square.
-     * @param toY   The y index of the target Square.
-     * @return Whether the move is possible.
-     */
-    boolean moveIsPossible(int fromX, int fromY, int toX, int toY);
 
     /**
-     * Checks whether a move from a given origin Square to another Square is possible.
+     * Checks if a certain move is possible given the starting- and destination square.
      *
-     * @param squareFrom The origin Square, containing its x and y indices.
-     * @param squareTo   The target Square, containing its x and y indices.
-     * @return Whether the move is possible.
+     * @param squareFrom The starting square of the move
+     * @param squareTo   The destination square of the move
+     * @return True if the move can be performed, false otherwise
      */
-    boolean moveIsPossible(Square squareFrom, Square squareTo);
+    boolean moveIsPossible(Square squareFrom, Square squareTo, MoveEvaluator evaluator);
 
     /**
-     * Selectes the given Square.
+     * Applies changes to model and view whenever a square is selected.
      *
-     * @param sq The Square.
+     * @param sq The selected square
      */
     void select(Square sq);
 
     /**
-     * Checks whether the given Piece cannot be made non-threatened regardless what move its owning Player makes.
+     * Checks if a piece is threatened by other pieces and if it doesn't have any available moves.
      *
-     * @param piece The Piece to check.
-     * @return Whether the Piece can be saved.
+     * @param piece The piece to be checked
+     * @return True if the piece cannot be saved (doesn't have any possible moves), false otherwise
      */
-    boolean pieceIsUnsavable(Piece piece);
+    boolean pieceIsUnsavable(Piece piece, IMoveEvaluator evaluator);
 
     /**
-     * Gets the Pieces, which, when taken, will cause their owning Player to lose.
-     * @param player The Player whose crucial Pieces to retrieve.
-     * @return The Player's crucial Pieces.
+     * Retrieves all the crucial pieces that a player owns. (pieces that cannot be captured)
+     *
+     * @param player The player who owns the pieces
+     * @return The set of all crucial pieces that belong to the given player
      */
     HashSet<Piece> getCrucialPieces(Player player);
 
     /**
-     * Gets the Pieces, which, when taken, will cause their owning Player to lose.
-     * @return All Players' crucial Pieces.
+     * Retrieves all crucial pieces owned by all players.
+     *
+     * @return A set of all crucial pieces
      */
     HashSet<Piece> getCrucialPieces();
 
     /**
-     * @return The currently selected Square.
+     * Retrieves the currently clicked square.
+     *
+     * @return The active square
      */
     Square getActiveSquare();
 
     /**
-     * Sets the currently selected Square.
+     * Retrieves a square by looking at the piece that is located on it.
      *
-     * @param square The Square to select, by indices.
-     */
-    void setActiveSquare(Square square);
-
-    /**
-     * Gets the Square that a given Piece is on, if any.
-     *
-     * @param piece The Piece whose Square to retrieve.
-     * @return The Square of the given Piece, if any.
+     * @param piece The given piece
+     * @return The square where the piece is located
      */
     Square getSquare(Piece piece);
 
     /**
-     * Gets a List of all Squares in the board.
+     * Retrieves all squares of the chessboard.
      *
-     * @return The List of Squares.
+     * @return A list of all squares
      */
     List<Square> getSquares();
 
     /**
-     * Method move a Piece from the given Square to a new Square, as defined by their x and y indices.
+     * Moves a from a starting square to a destination square.
      *
-     * @param begin               The origin Square, where the moving Piece is located.
-     * @param end                 The target Square, on which the moving Piece should end.
-     * @param refresh             Whether or not to refresh the chessboard.
-     * @param clearForwardHistory Whether or not to clear the forward history of the MoveHistoryController instance for this game.
+     * @param begin The given starting square.
+     * @param end   The given destination.
      */
     void move(Square begin, Square end);
 
     /**
-     * Applies the given atomic BoardTransition to the current board state, making the Position and State Changes in sequence.
-     * @param me The BoardTransition to apply.
+     * Applies all the necessary changes to the model- and view during a move.
+     *
+     * @param boardTransition The given board transition that will be applied.
      */
-    void applyBoardTransition(BoardTransition me);
+    void applyBoardTransition(BoardTransition boardTransition);
 
     /**
-     * Reverses the given atomic BoardTransition to the current board state, making the Position and State Changes in the opposite sequence.
-     * @param me The BoardTransition to reverse.
+     * Reverts a previously applied board transition.
+     *
+     * @param boardTransition The given board transition that will be reverted.
      */
-    void reverseBoardTransition(BoardTransition me);
+    void reverseBoardTransition(BoardTransition boardTransition);
 
     /**
-     * Unselects the currently selected Square.
+     * Unselects the currently active square.
+     * Opposite of select.
      */
     void unselect();
-    
+
     /**
-     * Undoes the last-played move.
+     * Undoes the last move.
      *
-     * @return Whether or not the undo operation was successful.
+     * @return True when there is a move to be undone.
      */
     boolean undo();
 
     /**
-     * Redoes the move that was undone last.
+     * Redoes the last undone move.
      *
-     * @return Whether or not the redo operation was successful.
+     * @return Truen when there is a move to be redone.
      */
     boolean redo();
 
     /**
-     * Gets the Square with the given board indices.
+     * Retrieves the square that was clicked by looking at the UI coordinates of the click.
      *
-     * @param x The x index of the Square.
-     * @param y The y index of the Square.
-     * @return The Square.
+     * @param x The X UI coordinate
+     * @param y The Y UI coordinate
+     * @return The square that was clicked
+     */
+    Square getSquareFromClick(int x, int y);
+
+    /**
+     * Retrieves a square given the row- and column-coordinate.
+     *
+     * @param x The column coordinate
+     * @param y The row coordinate
+     * @return The square at column x and row y
      */
     Square getSquare(int x, int y);
 
     /**
-     * Retrieves the Controller's board model.
-     * @return The model.
+     * Retrieves the chessboard model that this controller is responsible for.
+     *
+     * @return The chessboard model
      */
     IChessboardModel getModel();
 

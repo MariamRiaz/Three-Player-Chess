@@ -21,6 +21,7 @@
 package jchess.game.player;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Class representing the player in the game.
@@ -56,5 +57,19 @@ public class Player implements Serializable {
 
     public PlayerColor getColor() {
         return color;
-    }
+        }
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Player player = (Player) o;
+		return name.equals(player.name) &&
+				color == player.color;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(name, color);
+	}
 }

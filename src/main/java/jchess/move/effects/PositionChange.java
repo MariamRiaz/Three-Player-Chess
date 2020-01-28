@@ -7,7 +7,7 @@ public class PositionChange {
 	private final Piece piece;
 	private final Square square;
 	
-	protected PositionChange(Piece piece, Square square) {
+	public PositionChange(Piece piece, Square square) {
 		this.piece = piece;
 		this.square = square;
 	}

@@ -1,4 +1,4 @@
-package jchessTest;
+package jchesstest;
 
 import jchess.game.chessboard.CartesianPolarConverter;
 import jchess.game.chessboard.PolarPoint;

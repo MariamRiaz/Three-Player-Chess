@@ -39,10 +39,11 @@ public class RoundChessboardModel implements IChessboardModel {
 
     private void populateSquares() {
         squares.clear();
-
-        for (int i = 0; i < rows; i++)
-            for (int j = 0; j < squaresPerRow; j++)
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < squaresPerRow; j++) {
                 squares.add(new Square(j, i, null));
+            }
+        }
     }
 
     /**
@@ -73,9 +74,9 @@ public class RoundChessboardModel implements IChessboardModel {
      * {@inheritDoc}
      */
     public void addCrucialPiece(Piece piece) {
-        if (piece == null)
+        if (piece == null) {
             return;
-
+        }
         crucialPieces.add(piece);
     }
 
@@ -83,14 +84,15 @@ public class RoundChessboardModel implements IChessboardModel {
      * {@inheritDoc}
      */
     public HashSet<Piece> getCrucialPieces(Player player) {
-        if (player == null)
+        if (player == null) {
             return new HashSet<>();
-
+        }
         HashSet<Piece> retVal = new HashSet<>();
-        for (Piece el : crucialPieces)
-            if (el.getPlayer().getColor().equals(player.getColor()))
+        for (Piece el : crucialPieces) {
+            if (el.getPlayer().equals(player)) {
                 retVal.add(el);
-
+            }
+        }
         return retVal;
     }
 
@@ -110,20 +112,18 @@ public class RoundChessboardModel implements IChessboardModel {
     public Square getSquare(int x, int y) {
         if (hasContinuousRows) {
             y = normalizeY(y);
-
             if (innerRimConnected && x < 0) {
                 x = -x - 1;
                 y = normalizeY(y + rows / 2);
             }
         }
-
         final int newX = x, newY = y;
         Optional<Square> optionalSquare = squares.stream().filter(s ->
                 s.getPozX() == newX && s.getPozY() == newY).findFirst();
-        if (optionalSquare.equals(Optional.empty()))
+        if (optionalSquare.equals(Optional.empty())) {
             return null;
-
-        return optionalSquare.get();
+        }
+        return optionalSquare.orElse(null);
     }
 
     /**
@@ -134,7 +134,8 @@ public class RoundChessboardModel implements IChessboardModel {
     }
 
     /**
-     * @return Whether or not the board inner rim is connected, if circular. I.e. whether jumps across the middle are possible.
+     * @return Whether or not the board inner rim is connected,
+     * if circular. I.e. whether jumps across the middle are possible.
      */
     public boolean getInnerRimConnected() {
         return hasContinuousRows && innerRimConnected;
@@ -144,21 +145,22 @@ public class RoundChessboardModel implements IChessboardModel {
      * {@inheritDoc}
      */
     public Square getSquare(Piece piece) {
-        if (piece == null)
+        if (piece == null) {
             return null;
-
+        }
         return getSquare(piece.getID());
     }
 
     /**
      * {@inheritDoc}
      */
-    public Square getSquare(int id) {
-        Optional<Square> optionalSquare = squares.stream().filter(s -> s.getPiece() != null && s.getPiece().getID() == id).findFirst();
-        if (optionalSquare.equals(Optional.empty()))
+    public Square getSquare(int pieceId) {
+        Optional<Square> optionalSquare = squares.stream()
+                .filter(s -> s.getPiece() != null && s.getPiece().getID() == pieceId).findFirst();
+        if (optionalSquare.equals(Optional.empty())) {
             return null;
-
-        return optionalSquare.get();//TODO
+        }
+        return optionalSquare.orElse(null);
     }
 
     /**
@@ -166,31 +168,30 @@ public class RoundChessboardModel implements IChessboardModel {
      */
     public HashSet<Square> getSquaresBetween(Square one, Square two) {
         HashSet<Square> retVal = new HashSet<>();
-
-        if (one == null || two == null)
+        if (one == null || two == null) {
             return retVal;
-
+        }
         final int minX = Math.min(one.getPozX(), two.getPozX()), maxX = Math.max(one.getPozX(), two.getPozX()),
                 minY = Math.min(one.getPozY(), two.getPozY()), maxY = Math.max(one.getPozY(), two.getPozY());
-
-        for (int i = minX; i <= maxX; i++)
-            for (int j = minY; j <= maxY; j++)
+        for (int i = minX; i <= maxX; i++) {
+            for (int j = minY; j <= maxY; j++) {
                 retVal.add(this.getSquare(i, j));
-
+            }
+        }
         return retVal;
     }
 
     /**
      * {@inheritDoc}
      */
-    public Piece setPieceOnSquare(Piece piece, Square square) {
+    public void setPieceOnSquare(Piece piece, Square square) {
         Square prev = getSquare(piece);
-        if (prev != null)
+        if (prev != null) {
             prev.setPiece(null);
-
-        if (square != null)
+        }
+        if (square != null) {
             square.setPiece(piece);
-        return piece;
+        }
     }
 
     /**

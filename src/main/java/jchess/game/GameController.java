@@ -2,13 +2,14 @@ package jchess.game;
 
 import jchess.game.chessboard.RoundChessboardLoader;
 import jchess.game.chessboard.controller.IChessboardController;
+import jchess.game.chessboard.model.RoundChessboardModel;
+import jchess.game.history.IMoveHistoryController;
+import jchess.game.history.MoveHistoryController;
+import jchess.game.player.Player;
 import jchess.game.chessboard.controller.RoundChessboardController;
 import jchess.game.chessboard.model.Square;
 import jchess.game.clock.GameClock;
 import jchess.game.clock.IGameClock;
-import jchess.game.history.IMoveHistoryController;
-import jchess.game.history.MoveHistoryController;
-import jchess.game.player.Player;
 import jchess.logging.Log;
 import jchess.move.IMoveEvaluator;
 import jchess.move.MoveEvaluator;
@@ -57,11 +58,9 @@ public class GameController implements IGameController {
 
     private void initializeControllers() {
         moveHistoryController = new MoveHistoryController(chessboardLoader.getColumnNames());
+        RoundChessboardModel chessboardModel = chessboardLoader.loadDefaultFromJSON(gameModel);
         int chessboardSize = 800;
-        chessboardController = new RoundChessboardController(
-                chessboardLoader,
-                chessboardSize, this.gameModel,
-                this.moveHistoryController);
+        chessboardController = new RoundChessboardController(chessboardModel, chessboardSize, this.moveHistoryController);
         gameClock = new GameClock(this);
         moveEvaluator = new MoveEvaluator((RoundChessboardController) chessboardController);
         chessboardController.addSelectSquareObserver(this);
@@ -194,7 +193,8 @@ public class GameController implements IGameController {
             return;
         }
         if (chessboardController.getActiveSquare() != null) {
-            if (didSelectPossibleMove(square)) {
+            MoveEvaluator evaluator = new MoveEvaluator((RoundChessboardController) chessboardController);
+            if (didSelectPossibleMove(square, evaluator)) {
                 chessboardController.move(chessboardController.getActiveSquare(), square);
                 applyBuffs();
 
@@ -222,7 +222,8 @@ public class GameController implements IGameController {
 
     private boolean isCheckMate() {
         HashSet<Piece> crucialPieces = chessboardController.getCrucialPieces(gameModel.getActivePlayer());
-        return crucialPieces.stream().anyMatch(p -> chessboardController.pieceIsUnsavable(p));
+        IMoveEvaluator evaluator = new MoveEvaluator((RoundChessboardController) chessboardController);
+        return crucialPieces.stream().anyMatch(p -> chessboardController.pieceIsUnsavable(p, moveEvaluator));
     }
 
     private boolean didSelectOwnPiece(Square square) {
@@ -232,8 +233,8 @@ public class GameController implements IGameController {
         return square.getPiece().getPlayer().equals(gameModel.getActivePlayer());
     }
 
-    private boolean didSelectPossibleMove(Square square) {
-        return chessboardController.moveIsPossible(chessboardController.getActiveSquare(), square);
+    private boolean didSelectPossibleMove(Square square, MoveEvaluator evaluator) {
+        return chessboardController.moveIsPossible(chessboardController.getActiveSquare(), square, evaluator);
     }
 
     /**

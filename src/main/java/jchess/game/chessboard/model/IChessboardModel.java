@@ -7,91 +7,100 @@ import java.util.HashSet;
 import java.util.List;
 
 /**
- * Interface that must be implemented by a ChessBoard Model.
+ * Interface that must be implemented by all models that represent a chessboard.
  */
 public interface IChessboardModel {
 
     /**
-     * @return The number of rows.
+     * Getter for the number of rows of the chessboard.
+     *
+     * @return Returns the number of rows of the chessboard.
      */
     int getRows();
 
     /**
-     * @return The number of Squares per row.
+     * Getter for the number of columns of the chessboard.
+     *
+     * @return Returns the number of columns of the chessboard.
      */
     int getColumns();
 
     /**
-     * Adds the given Piece to the list of crucial Pieces, which when taken cause their Player to lose.
+     * Adds a new crucial piece to the chessboard. (cannot be captured)
      *
-     * @param piece The Piece to add.
+     * @param piece The crucial piece to be added.
      */
     void addCrucialPiece(Piece piece);
 
     /**
-     * @param player The Player whose Pieces to return.
-     * @return The Pieces of the given Player, which cause them to lose if they are taken.
+     * Retrieves a set of all crucial pieces belonging to a player. (pieces that cannot be captured)
+     *
+     * @param player The player the pieces belong to.
+     * @return A set of crucial pieces.
      */
     HashSet<Piece> getCrucialPieces(Player player);
 
     /**
-     * @return The Pieces of the given Player, which cause them to lose if they are taken.
+     * Retrieves a set of all crucial pieces, belonging to all players. (pieces that cannot be captured)
+     *
+     * @return A set of all crucial pieces.
      */
     HashSet<Piece> getCrucialPieces();
 
     /**
-     * gets the Square corresponding to the given x and y index.
+     * Retrieves a square (board-cell) based on the given row- and column coordinates.
      *
-     * @param x int x index of the desired square
-     * @param y int y index of the desired square
-     * @return Square corresponding to the given x and y index
+     * @param x The column position.
+     * @param y The row position.
+     * @return The square instance that represents a board-cell.
      */
     Square getSquare(int x, int y);
 
     /**
-     * Determines whether or not the given Square is in the area where e.g. pawns of the given player are promoted.
+     * Checks whether a square is inside the promotion area. (For pawns for example)
      *
-     * @param square The Square to check.
-     * @return Whether the given Player's Pieces upon reaching the given Square may be promoted.
+     * @param square The square that will be checked.
+     * @return True if the square will be considered a promotion-square, false otherwise.
      */
     boolean isInPromotionArea(Square square);
 
     /**
-     * gets the Square where the given Piece is located on.
+     * Retrieves a square by looking at the piece that's on it.
      *
-     * @param piece Piece to get the Square from
-     * @return Square where the given Piece is located on
+     * @param piece The given piece.
+     * @return The square where the piece is located.
      */
     Square getSquare(Piece piece);
 
     /**
-     * gets the Square where the given Piece is located on.
+     * Retrieves a square a piece is located on given the piece identifier.
      *
-     * @param id id of Piece to get the Square from
-     * @return Square where the given Piece is located on
+     * @param pieceId The identifier of a piece.
+     * @return The square where the piece is currently situated.
      */
-    Square getSquare(int id);
+    Square getSquare(int pieceId);
 
     /**
-     * Gets all Squares between the two given Squares, including both of them.
+     * Retrieves all the squares between two given squares.
      *
-     * @param one The first Square.
-     * @param two The second Square.
-     * @return The Squares between the two given ones, including them.
+     * @param one The first square, lower limit.
+     * @param two The second square, upper limit.
+     * @return A set of squares between the two given squares.
      */
     HashSet<Square> getSquaresBetween(Square one, Square two);
 
     /**
-     * sets the given Piece on the given Square.
+     * Maps a piece to a square.
      *
-     * @param piece  Piece   piece to put on the Square
-     * @param square Square  square where to put the piece on
-     * @return Piece   after setting it on the Square
+     * @param piece  The given piece.
+     * @param square The given square the piece needs to be mapped to.
      */
-    Piece setPieceOnSquare(Piece piece, Square square);
+    void setPieceOnSquare(Piece piece, Square square);
 
     /**
-     * Gets a list of all Squares that make up this board model.
+     * Getter that returns all the squares in the model.
+     *
+     * @return A list containing all the squares.
      */
     List<Square> getSquares();
 
