@@ -254,7 +254,6 @@ public class RoundChessboardController implements IChessboardController {
 
     /**
      * Method to remove the piece once moved from current position to next square where it is moved
-     *
      * @param positionChanges
      * gets the information about the piece and the next square on which it is moved and sets the visual of the piece there
      */
