@@ -22,6 +22,8 @@ package jchess.game.history;
 
 import jchess.game.chessboard.model.Square;
 import jchess.game.GameModel;
+import jchess.io.ResourceLoader;
+import jchess.io.Texts;
 import jchess.move.Move;
 import jchess.move.MoveType;
 import jchess.move.effects.MoveEffect;
@@ -43,7 +45,7 @@ public class MoveHistoryController implements IMoveHistoryController {
 
     public List<Integer> column = new ArrayList<>();
 
-    private String[] names = new String[]{GameModel.getTexts("white"), GameModel.getTexts("black"), GameModel.getTexts("gray")};
+    private String[] names = new String[]{ResourceLoader.getTexts(Texts.WHITE_KEY), ResourceLoader.getTexts(Texts.BLACK_KEY), ResourceLoader.getTexts(Texts.GRAY_KEY)};
     private IMoveHistoryView moveHistoryView;
     private AbstractMoveHistoryModel moveHistoryModel;
     private ArrayList<Character> columnNames;

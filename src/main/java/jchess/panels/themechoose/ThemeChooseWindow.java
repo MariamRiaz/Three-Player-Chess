@@ -29,6 +29,7 @@ import javax.swing.event.ListSelectionListener;
 import jchess.io.Images;
 import jchess.io.ResourceLoader;
 import jchess.JChessApp;
+import jchess.io.Texts;
 import jchess.logging.Log;
 import jchess.game.GameModel;
 
@@ -59,7 +60,7 @@ public class ThemeChooseWindow extends JDialog implements ActionListener, ListSe
 
         File[] files = dir.listFiles();
         if (files != null && dir.exists()) {
-            this.setTitle(GameModel.getTexts("choose_theme_window_title"));
+            this.setTitle(ResourceLoader.getTexts(Texts.CHOOSE_THEME_KEY));
             Dimension winDim = new Dimension(550, 230);
             this.setMinimumSize(winDim);
             this.setMaximumSize(winDim);
@@ -100,7 +101,7 @@ public class ThemeChooseWindow extends JDialog implements ActionListener, ListSe
             this.okButton.addActionListener(this);
             this.setModal(true);
         } else {
-            throw new Exception(GameModel.getTexts("error_when_creating_theme_config_window"));
+            throw new Exception(ResourceLoader.getTexts(Texts.ERROR_THEME_WINDOW_KEY));
         }
 
     }
@@ -134,7 +135,7 @@ public class ThemeChooseWindow extends JDialog implements ActionListener, ListSe
                 outStream.close();
             } catch (IOException | URISyntaxException exc) {
             }
-            JOptionPane.showMessageDialog(this, GameModel.getTexts("changes_visible_after_restart"));
+            JOptionPane.showMessageDialog(this, ResourceLoader.getTexts(Texts.CHANGES_VISIBLE_KEY));
             this.setVisible(false);
 			Log.log(prp.getProperty(ResourceLoader.THEME_PROPERTY));
         }

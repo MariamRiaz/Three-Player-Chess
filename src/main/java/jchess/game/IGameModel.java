@@ -22,8 +22,6 @@ public interface IGameModel extends Serializable {
 
     int getTimeForGame();
 
-    void setGameMode(GameModel.gameModes gameMode);
-
     void setTimeForGame(int timeForGame);
 
     boolean getTimeLimitSet();

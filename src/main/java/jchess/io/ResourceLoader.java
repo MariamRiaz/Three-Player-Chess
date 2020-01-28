@@ -21,6 +21,7 @@
 package jchess.io;
 
 import jchess.JChessApp;
+import jchess.game.GameModel;
 import jchess.panels.themechoose.Theme;
 import jchess.pieces.Piece;
 import jchess.logging.Log;
@@ -30,6 +31,8 @@ import java.net.*;
 import java.io.*;
 
 import java.util.Properties;
+import java.util.PropertyResourceBundle;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 
 /**
@@ -40,6 +43,8 @@ import java.util.logging.Level;
 public class ResourceLoader {
 
     public static final String THEME_PROPERTY = "THEME";
+
+    private static final String RESOURCE_BUNDLE_KEY = "i18n.main";
 
     /*
      * Method load image by a given name with extension
@@ -64,6 +69,18 @@ public class ResourceLoader {
             e.printStackTrace();
         }
         return img;
+    }
+
+    public static String getTexts(String key) {
+
+        ResourceBundle bundle = PropertyResourceBundle.getBundle(RESOURCE_BUNDLE_KEY);
+        String result;
+        try {
+            result = bundle.getString(key);
+        } catch (java.util.MissingResourceException exc) {
+            result = key;
+        }
+        return result;
     }
 
     public static File getResource(String resourcePath) {

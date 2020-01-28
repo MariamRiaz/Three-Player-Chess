@@ -20,9 +20,12 @@
  */
 package jchess.panels.newgame;
 
+import javax.annotation.Resource;
 import javax.swing.*;
 
 import jchess.game.GameModel;
+import jchess.io.ResourceLoader;
+import jchess.io.Texts;
 
 /**
  *
@@ -36,7 +39,7 @@ public class NewGameWindow extends JDialog {
 
 		this.setSize(400, 700);
 		this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		this.jTabbedPane1.addTab(GameModel.getTexts("new_game"), new DrawNewGameSettings(this));
+		this.jTabbedPane1.addTab(ResourceLoader.getTexts(Texts.NEW_GAME_KEY), new DrawNewGameSettings(this));
 	}
 
 	/**

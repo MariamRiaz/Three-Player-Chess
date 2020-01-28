@@ -31,18 +31,11 @@ import java.util.ResourceBundle;
  */
 public class GameModel implements IGameModel {
 
-    private static ResourceBundle loc = null;
     private int timeForGame;
     private boolean timeLimitSet;
     private Player activePlayer;
     private boolean blockedChessboard;
 
-    public enum gameModes {
-
-        newGame
-    }
-
-    private gameModes gameMode;
     private Player playerWhite;
     private Player playerBlack;
     private Player playerGray;
@@ -57,10 +50,6 @@ public class GameModel implements IGameModel {
 
     public void setTimeLimitSet(boolean limitSet){
         this.timeLimitSet = limitSet;
-    }
-
-    public void setGameMode(gameModes gameMode) {
-        this.gameMode = gameMode;
     }
 
     public Player getPlayerWhite() {
@@ -92,26 +81,10 @@ public class GameModel implements IGameModel {
     }
 
     public GameModel() {
-        // temporally
         this.playerWhite = new Player("", Images.WHITE_COLOR);
         this.playerBlack = new Player("", Images.BLACK_COLOR);
         this.playerGray = new Player("", Images.GREY_COLOR);
         this.timeLimitSet = false;
-        gameMode = gameModes.newGame;
-    }
-
-    // TODO : put somewhere else
-    public static String getTexts(String key) {
-        if (GameModel.loc == null) {
-            GameModel.loc = PropertyResourceBundle.getBundle("i18n.main");
-        }
-        String result;
-        try {
-            result = GameModel.loc.getString(key);
-        } catch (java.util.MissingResourceException exc) {
-            result = key;
-        }
-        return result;
     }
 
     /**
