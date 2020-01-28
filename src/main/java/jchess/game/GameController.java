@@ -20,6 +20,7 @@
  */
 package jchess.game;
 
+import jchess.game.chessboard.model.RoundChessboardModel;
 import jchess.game.history.IMoveHistoryController;
 import jchess.game.history.MoveHistoryController;
 import jchess.game.player.Player;
@@ -69,7 +70,8 @@ public class GameController implements IGameController {
 
     private void initializeControllers() {
         moveHistoryController = new MoveHistoryController(chessboardLoader.getColumnNames());
-        chessboardController = new RoundChessboardController(chessboardLoader, chessboardSize, this.gameModel, this.moveHistoryController);
+        RoundChessboardModel chessboardModel = chessboardLoader.loadDefaultFromJSON(gameModel);
+        chessboardController = new RoundChessboardController(chessboardModel, chessboardSize, this.moveHistoryController);
         gameClock = new GameClock(this);
         moveEvaluator = new MoveEvaluator((RoundChessboardController) chessboardController);
         chessboardController.addSelectSquareObserver(this);
