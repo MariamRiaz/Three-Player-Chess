@@ -21,9 +21,8 @@ package jchess.panels.newgame;
 
 import jchess.JChessApp;
 import jchess.game.IGameController;
-import jchess.game.player.Player;
-import jchess.game.GameModel;
 import jchess.game.IGameModel;
+import jchess.game.player.Player;
 import jchess.io.ResourceLoader;
 import jchess.io.Texts;
 import jchess.logging.Log;
@@ -38,7 +37,7 @@ import java.awt.event.TextListener;
 import java.util.logging.Level;
 
 /**
- * Class responsible for drawing the fold with local game gameModel
+ * Class responsible for drawing the fold with local game gameModel.
  */
 public class DrawNewGameSettings extends JPanel implements ActionListener, TextListener {
 
@@ -47,8 +46,6 @@ public class DrawNewGameSettings extends JPanel implements ActionListener, TextL
     JRadioButton oponentComp;// choose oponent
     JRadioButton oponentHuman;// choose oponent (human)
     ButtonGroup oponentChoos;// group 4 radio buttons
-    JFrame localPanel;
-    JLabel compLevLab;
     JSlider computerLevel;// slider to choose jChess Engine level
     JTextField firstName;// editable field 4 nickname
     JTextField secondName;// editable field 4 nickname
@@ -58,7 +55,6 @@ public class DrawNewGameSettings extends JPanel implements ActionListener, TextL
     JLabel thirdNameLab;
     GridBagLayout gbl;
     GridBagConstraints gbc;
-    Container cont;
     JSeparator sep;
     JButton okButton;
     JCheckBox timeGame;
@@ -94,47 +90,47 @@ public class DrawNewGameSettings extends JPanel implements ActionListener, TextL
         }
     }
 
-	/**
-	 * Method responsible for changing the options which can make a player when he
-	 * want to start new local game
-	 *
-	 * @param e where is saving data of performed action
-	 */
-	public void actionPerformed(ActionEvent e) {
-		Object target = e.getSource();
-		if (target == this.oponentComp) // toggle enabled of controls depends of oponent (if computer)
-		{
-			this.computerLevel.setEnabled(true);// enable level of computer abilities
-			this.secondName.setEnabled(false);// disable field with name of player2
-		} else if (target == this.oponentHuman) // else if oponent will be HUMAN
-		{
-			this.computerLevel.setEnabled(false);// disable level of computer abilities
-			this.secondName.setEnabled(true);// enable field with name of player2
-		} else if (target == this.okButton) // if clicked OK button (on finish)
-		{
-			if (this.firstName.getText().length() > 9) {// make names short to 10 digits
-				this.firstName.setText(this.trimString(firstName, 9));
-			}
-			if (this.secondName.getText().length() > 9) {// make names short to 10 digits
-				this.secondName.setText(this.trimString(secondName, 9));
-			}
-			if (this.thirdName.getText().length() > 9) {// make names short to 10 digits
-				this.thirdName.setText(this.trimString(thirdName, 9));
-			}
-			if (this.firstName.getText().length() == 0 || this.secondName.getText().length() == 0 || this.thirdName.getText().length() == 0) {
-				JOptionPane.showMessageDialog(this, ResourceLoader.getTexts(Texts.FILL_KEY));
-				return;
-			}
-			if (this.firstName.getText().length() == 0) {
-				JOptionPane.showMessageDialog(this, ResourceLoader.getTexts(Texts.FILL_KEY));
-				return;
-			}
-			JChessApp.getApplication().show(JChessApp.jcv);
-			IGameController newGUI = JChessApp.jcv.addNewTab(this.firstName.getText() + " vs " + this.secondName.getText() + " vs " + this.thirdName.getText());
-			IGameModel gameModel = newGUI.getGameModel();// sett local gameModel variable
-			Player pl1 = gameModel.getPlayerWhite();// set local player variable
-			Player pl2 = gameModel.getPlayerBlack();// set local player variable
-			Player pl3 = gameModel.getPlayerGray();// set local player variable
+    /**
+     * Method responsible for changing the options which can make a player when he
+     * want to start new local game
+     *
+     * @param e where is saving data of performed action
+     */
+    public void actionPerformed(ActionEvent e) {
+        Object target = e.getSource();
+        if (target == this.oponentComp) // toggle enabled of controls depends of oponent (if computer)
+        {
+            this.computerLevel.setEnabled(true);// enable level of computer abilities
+            this.secondName.setEnabled(false);// disable field with name of player2
+        } else if (target == this.oponentHuman) // else if oponent will be HUMAN
+        {
+            this.computerLevel.setEnabled(false);// disable level of computer abilities
+            this.secondName.setEnabled(true);// enable field with name of player2
+        } else if (target == this.okButton) // if clicked OK button (on finish)
+        {
+            if (this.firstName.getText().length() > 9) {// make names short to 10 digits
+                this.firstName.setText(this.trimString(firstName, 9));
+            }
+            if (this.secondName.getText().length() > 9) {// make names short to 10 digits
+                this.secondName.setText(this.trimString(secondName, 9));
+            }
+            if (this.thirdName.getText().length() > 9) {// make names short to 10 digits
+                this.thirdName.setText(this.trimString(thirdName, 9));
+            }
+            if (this.firstName.getText().length() == 0 || this.secondName.getText().length() == 0 || this.thirdName.getText().length() == 0) {
+                JOptionPane.showMessageDialog(this, ResourceLoader.getTexts(Texts.FILL_KEY));
+                return;
+            }
+            if (this.firstName.getText().length() == 0) {
+                JOptionPane.showMessageDialog(this, ResourceLoader.getTexts(Texts.FILL_KEY));
+                return;
+            }
+            JChessApp.getApplication().show(JChessApp.jcv);
+            IGameController newGUI = JChessApp.jcv.addNewTab(this.firstName.getText() + " vs " + this.secondName.getText() + " vs " + this.thirdName.getText());
+            IGameModel gameModel = newGUI.getGameModel();// sett local gameModel variable
+            Player pl1 = gameModel.getPlayerWhite();// set local player variable
+            Player pl2 = gameModel.getPlayerBlack();// set local player variable
+            Player pl3 = gameModel.getPlayerGray();// set local player variable
             pl1.setName(this.firstName.getText());// set name of player
             pl2.setName(this.secondName.getText());// set name of player
             pl3.setName(this.thirdName.getText());// set name of player
@@ -178,7 +174,7 @@ public class DrawNewGameSettings extends JPanel implements ActionListener, TextL
         this.thirdName = new JTextField("", 10);
         this.thirdName.setSize(new Dimension(200, 50));
         this.firstNameLab = new JLabel(ResourceLoader.getTexts(Texts.FIRST_PLAYER_KEY) + ": ");
-        this.secondNameLab = new JLabel(ResourceLoader.getTexts(Texts.SECOND_PLAYER_KEY)+ ": ");
+        this.secondNameLab = new JLabel(ResourceLoader.getTexts(Texts.SECOND_PLAYER_KEY) + ": ");
         this.thirdNameLab = new JLabel(ResourceLoader.getTexts(Texts.THIRD_PLAYER_KEY) + ": ");
         this.oponentChoos = new ButtonGroup();
         this.computerLevel = new JSlider();
@@ -253,7 +249,7 @@ public class DrawNewGameSettings extends JPanel implements ActionListener, TextL
      * @param length How long is the string
      * @return result trimmed String
      */
-    public String trimString(JTextField txt, int length) {
+    private String trimString(JTextField txt, int length) {
         String result = "";
         try {
             result = txt.getText(0, length);

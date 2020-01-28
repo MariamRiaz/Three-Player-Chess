@@ -2,7 +2,6 @@ package jchess.game.chessboard.model;
 
 import jchess.game.player.Player;
 import jchess.pieces.Piece;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -139,13 +138,6 @@ public class RoundChessboardModel implements IChessboardModel {
     	return square != null && square.getPozX() == 5;
     }
 
-    /**
-     * @return Whether or not the board has continuous rows, i.e. is circular.
-     */
-    public boolean getHasContinuousRows() {
-    	return hasContinuousRows;
-    }
-    
     /**
      * @return Whether or not the board inner rim is connected, if circular. I.e. whether jumps across the middle are possible.
      */
