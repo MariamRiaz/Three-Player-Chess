@@ -1,10 +1,6 @@
 package jchess.game.clock;
 
-import jchess.game.IGameController;
-import jchess.game.IGameModel;
-
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
 /*
  * Class to generate the view of game clock

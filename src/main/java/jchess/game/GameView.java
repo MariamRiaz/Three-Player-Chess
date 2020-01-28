@@ -4,15 +4,30 @@ import java.awt.*;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 
-public class GameView extends AbstractGameView implements ComponentListener{
+/**
+ * GameView Class which represents the View of a Game Component.
+ */
+public class GameView extends AbstractGameView implements ComponentListener {
 
     private IGameController gameController;
     private Component chessboardView;
     private Component moveHistoryView;
     private Component gameClockView;
 
+    /**
+     * Constructor for GameView Class.
+     *
+     * @param gameController  Game Controller of the View
+     * @param chessboardView  View of the Chessboard within this Game
+     * @param moveHistoryView View of the MoveHistory within this Game
+     * @param gameClockView   View of the GameClock within this Game
+     */
+    public GameView(
+            IGameController gameController,
+            Component chessboardView,
+            Component moveHistoryView,
+            Component gameClockView) {
 
-    public GameView(IGameController gameController, Component chessboardView, Component moveHistoryView, Component gameClockView) {
         this.setLayout(null);
         this.gameController = gameController;
         this.chessboardView = chessboardView;
@@ -33,17 +48,20 @@ public class GameView extends AbstractGameView implements ComponentListener{
         addComponentListener(this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public IGameController getGameController() {
         return gameController;
     }
 
     @Override
     public void componentResized(ComponentEvent e) {
-        int chess_height;
-        chess_height = this.chessboardView.getHeight();
-        this.moveHistoryView.setLocation(new Point(chess_height + 5, 100));
-        this.moveHistoryView.setSize(moveHistoryView.getWidth(), chess_height - 100);
-        this.gameClockView.setLocation(new Point(chess_height + 5, 0));
+        int chessHeight;
+        chessHeight = this.chessboardView.getHeight();
+        this.moveHistoryView.setLocation(new Point(chessHeight + 5, 100));
+        this.moveHistoryView.setSize(moveHistoryView.getWidth(), chessHeight - 100);
+        this.gameClockView.setLocation(new Point(chessHeight + 5, 0));
     }
 
     @Override
