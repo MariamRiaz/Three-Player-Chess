@@ -84,27 +84,34 @@ public class RoundChessboardControllerTest {
 
     @Test (expected = NullPointerException.class)
     public void getSquareTest2() {
-        assert roundChessboardController.getSquare(1000, 1000).equals(new Square(1000, 1000, null));
+        roundChessboardController.getSquare(1000, 1000).equals(new Square(1000, 1000, null));
     }
 
     @Test
     public void getSquares() {
+        assert roundChessboardController.getSquares().size() == 144;
+
     }
 
     @Test
     public void undo() {
+        assert roundChessboardController.undo() == false;
     }
 
     @Test
     public void redo() {
+        assert roundChessboardController.redo() == false;
     }
 
     @Test
     public void getSquareFromClick() {
+        assert roundChessboardController.getSquareFromClick(200, 100).equals(new Square(5, 15, null));
+        assert roundChessboardController.getSquareFromClick(100, 200).equals(new Square(5, 14, null));
     }
 
     @Test
     public void testGetSquare() {
+        
     }
 
     @Test
