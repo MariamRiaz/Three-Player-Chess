@@ -1,6 +1,6 @@
 package jchess.game.history;
 
-import jchess.move.effects.MoveEffect;
+import jchess.move.effects.BoardTransition;
 
 import java.util.List;
 import java.util.Queue;
@@ -10,7 +10,6 @@ import javax.swing.JScrollPane;
  * Interface that a MoveHistoryController must implement.
  */
 public interface IMoveHistoryController {
-
     /**
      * adds MoveEffect to the MoveHistory Table
      *
@@ -18,7 +17,7 @@ public interface IMoveHistoryController {
      * @param registerInHistory boolean whether MoveEffect will be added to the MoveHistory
      * @param registerInTable   boolean whether MoveEffect will be added to the MoveHistory Table
      */
-    void addMove(MoveEffect moveEffects, boolean registerInHistory, boolean registerInTable);
+    void addMove(BoardTransition moveEffects);
 
     /**
      * method to clear the MoveForwardStack (for undo)
@@ -44,28 +43,28 @@ public interface IMoveHistoryController {
      *
      * @return Queue of undone MoveEffects
      */
-    Queue<MoveEffect> undo();
+    Queue<BoardTransition> undo();
 
     /**
      * gets the Move that was undone
      *
      * @return Move that was undone
      */
-    MoveEffect undoOne();
+    BoardTransition undoOne();
 
     /**
      * gets a Queue of MoveEffects that were redone
      *
      * @return Queue of MoveEffects that were redone
      */
-    Queue<MoveEffect> redo();
+    Queue<BoardTransition> redo();
 
     /**
      * gets a single MoveEffect that was redone
      *
      * @return MoveEffect that was redone
      */
-    MoveEffect redoOne();
+    BoardTransition redoOne();
 
     /**
      * switches Columns according to the active Player

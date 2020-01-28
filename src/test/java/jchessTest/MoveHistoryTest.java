@@ -4,12 +4,13 @@ import jchess.game.GameModel;
 import jchess.game.IGameModel;
 import jchess.game.chessboard.model.Square;
 import jchess.game.history.MoveHistoryController;
+import jchess.game.history.MoveHistoryEntry;
 import jchess.game.history.MoveHistoryModel;
 import jchess.game.history.MoveHistoryView;
 import jchess.game.player.Player;
-import jchess.move.Move;
+import jchess.move.MoveDefinition;
 import jchess.move.MoveType;
-import jchess.move.effects.MoveEffect;
+import jchess.move.effects.BoardTransition;
 import jchess.pieces.Piece;
 import jchess.pieces.PieceDefinition;
 import org.junit.Before;
@@ -27,21 +28,21 @@ public class MoveHistoryTest {
     private MoveHistoryController moveHistoryController;
     private MoveHistoryView moveHistoryViewMock;
     private ArrayList<Character> columnNames = new ArrayList<>();
-    private MoveEffect moveEffectMock;
+    private BoardTransition moveEffectMock;
 
 
     @Before
     public void setup() {
         IGameModel settingsMock = mock(GameModel.class);
         Piece pieceMock = mock(Piece.class);
-        moveEffectMock = mock(MoveEffect.class);
+        moveEffectMock = mock(BoardTransition.class);
         Square square1 = mock(Square.class);
         Square square2 = mock(Square.class);
         PieceDefinition pieceDefinitionMock = mock(PieceDefinition.class);
-        Move moveMock = mock(Move.class);
+        MoveDefinition moveMock = mock(MoveDefinition.class);
         MoveType moveTypeMock = MoveType.OnlyMove;
         moveHistoryViewMock = mock(MoveHistoryView.class);
-
+        MoveHistoryEntry entryMock = mock(MoveHistoryEntry.class);
 
         Player testPlayer = new Player("test", "white");
         columnNames.add('a');
@@ -53,19 +54,21 @@ public class MoveHistoryTest {
 
         when(square2.getPozX()).thenReturn(2);
         when(square2.getPozY()).thenReturn(2);
+        
+        when(entryMock.getPiece()).thenReturn(pieceMock);
+        when(pieceMock.getDefinition()).thenReturn(pieceDefinitionMock);
+        when(entryMock.getMove()).thenReturn(moveMock);
 
         when(moveHistoryViewMock.getTable()).thenReturn(new JTable());
-
-        when(moveEffectMock.isFromMove()).thenReturn(true);
-
-        when(moveEffectMock.getPiece()).thenReturn(pieceMock);
-        when(moveEffectMock.getPiece().getDefinition()).thenReturn(pieceDefinitionMock);
-        when(moveEffectMock.getPiece().getDefinition().getSymbol()).thenReturn("K");
-        when(moveEffectMock.getMove()).thenReturn(moveMock);
-        when(moveEffectMock.getMoveType()).thenReturn(moveTypeMock);
-        when(moveEffectMock.getMove().getFormatString(moveEffectMock.getMoveType())).thenReturn("move");
-        when(moveEffectMock.getFromSquare()).thenReturn(square1);
-        when(moveEffectMock.getToSquare()).thenReturn(square2);
+        
+        when(moveEffectMock.getMoveHistoryEntry()).thenReturn(entryMock);
+        when(moveEffectMock.getMoveHistoryEntry().getPiece().getDefinition()).thenReturn(pieceDefinitionMock);
+        when(moveEffectMock.getMoveHistoryEntry().getPiece().getDefinition().getSymbol()).thenReturn("K");
+        when(moveEffectMock.getMoveHistoryEntry().getMove()).thenReturn(moveMock);
+        when(moveEffectMock.getMoveHistoryEntry().getPriorityMoveType()).thenReturn(moveTypeMock);
+        when(moveEffectMock.getMoveHistoryEntry().getMove().getFormatString(moveEffectMock.getMoveHistoryEntry().getPriorityMoveType())).thenReturn("move");
+        when(moveEffectMock.getMoveHistoryEntry().getFromSquare()).thenReturn(square1);
+        when(moveEffectMock.getMoveHistoryEntry().getToSquare()).thenReturn(square2);
 
         when(settingsMock.getPlayerWhite()).thenReturn(testPlayer);
 
@@ -88,7 +91,7 @@ public class MoveHistoryTest {
 
         assertTrue(moveHistoryController.getMoves().isEmpty());
 
-        moveHistoryController.addMove(moveEffectMock, true, true);
+        moveHistoryController.addMove(moveEffectMock);
 
         assertEquals(1, moveHistoryController.getMoves().size());
         assertEquals(1, moveHistoryController.getMoveHistoryModel().getRowCount());
@@ -117,13 +120,13 @@ public class MoveHistoryTest {
         //Prepare
         moveHistoryController.setMoveHistoryView(moveHistoryViewMock);
 
-        moveHistoryController.addMove(moveEffectMock, true, true);
+        moveHistoryController.addMove(moveEffectMock);
         moveHistoryController.switchColumns(true);
-        moveHistoryController.addMove(moveEffectMock, true, true);
+        moveHistoryController.addMove(moveEffectMock);
         moveHistoryController.switchColumns(true);
-        moveHistoryController.addMove(moveEffectMock, true, true);
+        moveHistoryController.addMove(moveEffectMock);
         moveHistoryController.switchColumns(true);
-        moveHistoryController.addMove(moveEffectMock, true, true);
+        moveHistoryController.addMove(moveEffectMock);
         moveHistoryController.switchColumns(true);
 
         assertEquals(2, moveHistoryController.getMoveHistoryModel().getRowCount());

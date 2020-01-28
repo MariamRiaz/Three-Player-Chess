@@ -3,9 +3,8 @@ package jchess.game.history;
 import jchess.game.chessboard.model.Square;
 import jchess.io.ResourceLoader;
 import jchess.io.Texts;
-import jchess.move.Move;
-import jchess.move.MoveType;
-import jchess.move.effects.MoveEffect;
+import jchess.move.MoveDefinition;
+import jchess.move.effects.BoardTransition;
 import org.apache.commons.text.StringSubstitutor;
 
 import javax.swing.*;
@@ -40,8 +39,8 @@ public class MoveHistoryController implements IMoveHistoryController {
         this.moveHistoryModel = new MoveHistoryModel();
         this.moveHistoryView = new MoveHistoryView(moveHistoryModel);
         String[] names = new String[]{ResourceLoader.getTexts(Texts.WHITE_KEY),
-                        ResourceLoader.getTexts(Texts.BLACK_KEY),
-                        ResourceLoader.getTexts(Texts.GRAY_KEY)};
+                ResourceLoader.getTexts(Texts.BLACK_KEY),
+                ResourceLoader.getTexts(Texts.GRAY_KEY)};
         this.moveHistoryModel.addColumn(names[0]);
         this.moveHistoryModel.addColumn(names[1]);
         this.moveHistoryModel.addColumn(names[2]);
@@ -78,31 +77,20 @@ public class MoveHistoryController implements IMoveHistoryController {
     /**
      * {@inheritDoc}
      */
-    public void addMove(MoveEffect moveEffects, boolean registerInHistory, boolean registerInTable) {
-        if (registerInTable) {
+    public void addMove(BoardTransition moveEffects) {
+        if (moveEffects.getMoveHistoryEntry() != null) {
             HashMap<String, String> values = new HashMap<String, String>() {{
-                put(Move.formatStringPiece, moveEffects.getPiece().getDefinition().getSymbol());
-                put(Move.formatStringFrom, getPosition(moveEffects.getFromSquare()));
-                put(Move.formatStringTo, getPosition(moveEffects.getToSquare()));
+                put(MoveDefinition.formatStringPiece, moveEffects.getMoveHistoryEntry().getPiece().getDefinition().getSymbol());
+                put(MoveDefinition.formatStringFrom, getPosition(moveEffects.getMoveHistoryEntry().getFromSquare()));
+                put(MoveDefinition.formatStringTo, getPosition(moveEffects.getMoveHistoryEntry().getToSquare()));
             }};
 
-            String formatString = moveEffects.getMove().getFormatString(moveEffects.getMoveType());
-            if (formatString == null) {
-                formatString = moveEffects.getMove().getFormatString(MoveType.OnlyMove);
-            }
-            if (formatString == null) {
-                formatString = moveEffects.getMove().getDefaultFormatString();
-            }
-            if (formatString == null) {
-                formatString = "-";
-            }
+            final String formatString = moveEffects.getMoveHistoryEntry().getMove().getFormatString(moveEffects.getMoveHistoryEntry().getPriorityMoveType());
 
             addMove(new StringSubstitutor(values).replace(formatString));
         }
 
-        if (registerInHistory) {
-            moveHistoryModel.getMoveBackStack().add(moveEffects);
-        }
+        moveHistoryModel.getMoveBackStack().add(moveEffects);
     }
 
     private String getPosition(Square square) {
@@ -134,13 +122,13 @@ public class MoveHistoryController implements IMoveHistoryController {
     /**
      * {@inheritDoc}
      */
-    public Queue<MoveEffect> undo() {
-        Queue<MoveEffect> retVal = new LinkedList<>();
+    public Queue<BoardTransition> undo() {
+        Queue<BoardTransition> retVal = new LinkedList<>();
 
-        MoveEffect toAdd;
+        BoardTransition toAdd = null;
         while ((toAdd = undoOne()) != null) {
             retVal.add(toAdd);
-            if (toAdd.isFromMove()) {
+            if (toAdd.getMoveHistoryEntry() != null) {
                 break;
             }
         }
@@ -151,8 +139,8 @@ public class MoveHistoryController implements IMoveHistoryController {
     /**
      * {@inheritDoc}
      */
-    public MoveEffect undoOne() {
-        MoveEffect last = null;
+    public BoardTransition undoOne() {
+        BoardTransition last = null;
 
         if (!moveHistoryModel.getMoveBackStack().isEmpty()) {
             last = moveHistoryModel.getMoveBackStack().pop();
@@ -161,7 +149,7 @@ public class MoveHistoryController implements IMoveHistoryController {
         if (last != null) {
             moveHistoryModel.getMoveForwardStack().push(last);
 
-            if (last.isFromMove()) {
+            if (last.getMoveHistoryEntry() != null) {
                 if (moveHistoryModel.getActivePlayerColumn().equals(MoveHistoryController.PlayerColumn.player1)) {
                     if (moveHistoryModel.getRowCount() > 0) {
                         moveHistoryModel.setValueAt("", moveHistoryModel.getRowCount() - 1, 2);
@@ -191,12 +179,12 @@ public class MoveHistoryController implements IMoveHistoryController {
     /**
      * {@inheritDoc}
      */
-    public Queue<MoveEffect> redo() {
-        Queue<MoveEffect> retVal = new LinkedList<>();
+    public Queue<BoardTransition> redo() {
+        Queue<BoardTransition> retVal = new LinkedList<>();
 
-        MoveEffect toAdd;
+        BoardTransition toAdd = null;
         while ((toAdd = redoOne()) != null) {
-            if (toAdd.isFromMove() && retVal.size() != 0) {
+            if (toAdd.getMoveHistoryEntry() != null && retVal.size() != 0) {
                 undoOne();
                 break;
             }
@@ -209,10 +197,10 @@ public class MoveHistoryController implements IMoveHistoryController {
     /**
      * {@inheritDoc}
      */
-    public MoveEffect redoOne() {
+    public BoardTransition redoOne() {
         try {
-            MoveEffect first = moveHistoryModel.getMoveForwardStack().pop();
-            addMove(first, true, first.isFromMove());
+            BoardTransition first = moveHistoryModel.getMoveForwardStack().pop();
+            addMove(first);
             return first;
         } catch (java.util.EmptyStackException exc) {
             return null;

@@ -7,13 +7,15 @@
             "x": 0,
             "y": 2,
             "limit": 1,
-            "conditions": [ "Castling" ]
+            "conditions": [ "Castling" ],
+            "formatStrings": { "Castling": "o-o-o" } 
         },
         {
             "x": 0,
             "y": -3,
             "limit": 1,
-            "conditions": [ "Castling" ]
+            "conditions": [ "Castling" ],
+            "formatStrings": { "Castling": "O-O-O" }
         },
         { 
             "x": 1,
