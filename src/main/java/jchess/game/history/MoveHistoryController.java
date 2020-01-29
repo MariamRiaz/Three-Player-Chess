@@ -183,11 +183,7 @@ public class MoveHistoryController implements IMoveHistoryController {
         Queue<BoardTransition> retVal = new LinkedList<>();
 
         BoardTransition toAdd = null;
-        while ((toAdd = redoOne()) != null) {
-            if (toAdd.getMoveHistoryEntry() != null && retVal.size() != 0) {
-                undoOne();
-                break;
-            }
+        if ((toAdd = redoOne()) != null) {
             retVal.add(toAdd);
         }
 
