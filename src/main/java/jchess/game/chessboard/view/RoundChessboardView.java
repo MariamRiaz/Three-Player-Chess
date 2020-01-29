@@ -1,14 +1,14 @@
 package jchess.game.chessboard.view;
 
+import jchess.game.chessboard.CartesianPolarConverter;
 import jchess.game.chessboard.PolarPoint;
 import jchess.game.chessboard.RoundChessboardViewInitializer;
-import jchess.io.ResourceLoader;
 import jchess.game.chessboard.model.Square;
 import jchess.io.Images;
+import jchess.io.ResourceLoader;
+import jchess.logging.Log;
 import jchess.pieces.Piece;
 import jchess.pieces.PieceVisual;
-import jchess.game.chessboard.CartesianPolarConverter;
-import jchess.logging.Log;
 
 import java.awt.*;
 import java.util.HashSet;
@@ -54,18 +54,14 @@ public class RoundChessboardView extends AbstractChessboardView {
     }
 
     /**
-     * getter for the list of PolarCells of the view
-     *
-     * @return List of PolarCells
+     * {@inheritDoc}
      */
-    public List<PolarSquareView> getCells() {
+    public List<PolarSquareView> getListOfSquareViews() {
         return cells;
     }
 
     /**
-     * getter for the center of the circular chessboard
-     *
-     * @return Point of the center
+     * {@inheritDoc}
      */
     public Point getCircleCenter() {
         return circleCenter;
@@ -101,42 +97,34 @@ public class RoundChessboardView extends AbstractChessboardView {
         g.drawImage(image, center.x - imageSize / 2, center.y - imageSize / 2, imageSize, imageSize, this);
     }
 
-    /**
-     * Annotations to superclass GameController updating and painting the chessboard
-     */
     @Override
     public void update(Graphics g) {
         repaint();
     }
 
     /**
-     * sets the active cell by the selected x and y coordinate
-     *
-     * @param x int x index
-     * @param y int y index
+     * {@inheritDoc}
      */
     public void setActiveCell(int x, int y) {
         activeCell = getCellByPosition(x, y);
     }
 
     /**
-     * sets active cell to null
+     * {@inheritDoc}
      */
     public void resetActiveCell() {
         activeCell = null;
     }
 
     /**
-     * clears all possible moves of the selected piece
+     * {@inheritDoc}
      */
     public void resetPossibleMoves() {
         moves.clear();
     }
 
     /**
-     * setter for the possible moves of the selected piece
-     *
-     * @param moves HashSet<Square> set of possible squares to move the selected piece to
+     * {@inheritDoc}
      */
     public void setMoves(Set<Square> moves) {
         this.moves = moves;
@@ -174,7 +162,7 @@ public class RoundChessboardView extends AbstractChessboardView {
     }
 
     /**
-     * updates the RoundChessboardView after move was done
+     * {@inheritDoc}
      */
     public void updateAfterMove() {
         moves.clear();
@@ -183,11 +171,7 @@ public class RoundChessboardView extends AbstractChessboardView {
     }
 
     /**
-     * sets visuals for a piece
-     *
-     * @param piece piece to set the visual of
-     * @param x     x index of the piece
-     * @param y     y index of the piece
+     * {@inheritDoc}
      */
     public void setVisual(Piece piece, int x, int y) {
         if (piece == null)//TODO
@@ -199,18 +183,18 @@ public class RoundChessboardView extends AbstractChessboardView {
     }
 
     /**
-     * remove  visual for a piece at the given index
-     *
-     * @param x int x index of the piece
-     * @param y int y index of the piece
+     * {@inheritDoc}
      */
     public void removeVisual(int x, int y) {
         SquareView cell = getCellByPosition(x, y);
         cell.setPieceVisual(null);
     }
 
-    public void removeVisual(Square square){
-        if (square == null){
+    /**
+     * {@inheritDoc}
+     */
+    public void removeVisual(Square square) {
+        if (square == null) {
             return;
         }
         removeVisual(square.getPozX(), square.getPozY());

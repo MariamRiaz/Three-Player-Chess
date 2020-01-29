@@ -327,7 +327,7 @@ public class RoundChessboardController implements IChessboardController {
         Point clickedPoint = new Point(x, y);
         CartesianPolarConverter converter = new CartesianPolarConverter();
         PolarPoint polarPoint = converter.getPolarFromCartesian(clickedPoint, view.getCircleCenter());
-        for (SquareView cell : view.getCells()) {
+        for (SquareView cell : view.getListOfSquareViews()) {
             double top = cell.getTopBound(),
                     bottom = cell.getBottomBound(), left = cell.getLeftBound(), right = cell.getRightBound();
             if (polarPoint.getRadius() <= top && polarPoint.getRadius() > bottom && polarPoint.getDegrees() >= left
