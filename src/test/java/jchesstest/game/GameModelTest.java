@@ -1,4 +1,4 @@
-package jchessTest.game;
+package jchesstest.game;
 
 import jchess.game.GameModel;
 import org.junit.Assert;

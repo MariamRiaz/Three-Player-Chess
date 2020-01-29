@@ -1,4 +1,4 @@
-package jchessTest.game;
+package jchesstest.game;
 
 import jchess.game.GameController;
 import jchess.game.chessboard.controller.IChessboardController;

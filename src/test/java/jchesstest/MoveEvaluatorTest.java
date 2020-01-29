@@ -1,4 +1,4 @@
-package jchessTest;
+package jchesstest;
 
 import static org.junit.Assert.*;
 
