@@ -73,6 +73,10 @@ public class BuffEvaluator implements IBuffEvaluator {
 
     private BoardTransition evaluateConfusion(Square square) {
         HashSet<BoardTransition> mes = moveEvaluator.getPieceTargetToSavePieces(square.getPiece(), chessboard.getCrucialPieces(square.getPiece().getPlayer()));
+        
+        if (mes.size() == 0)
+        	return null;
+        
         BoardTransition temp = (BoardTransition) mes.toArray()[new Random().nextInt(mes.size())];
         BoardTransition randomMove = new BoardTransitionBuilder(temp).setMoveHistoryEntry(null).build();
         
